@@ -1,15 +1,13 @@
-import Link from "next/link";
-import { useFormState } from "react-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
-import { redirect, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 export function SignInWithEmailForm({ csrfToken }: { csrfToken: string }) {
   const [email, setEmail] = useState("");
   const searchParams = useSearchParams();
-  const error = searchParams.get("error");
+  const emailError = searchParams.get("error") == "EmailSignin";
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -22,7 +20,7 @@ export function SignInWithEmailForm({ csrfToken }: { csrfToken: string }) {
       action="/api/auth/signin/email"
       className="w-full transform space-y-4"
     >
-      {error && <p className="text-red-500">Email inválido</p>}
+      {emailError && <p className="text-red-500">Email inválido</p>}
       <input type="hidden" name="csrfToken" value={csrfToken} />
       <Input
         type="email"

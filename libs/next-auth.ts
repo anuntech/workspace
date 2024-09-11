@@ -5,7 +5,11 @@ import EmailProvider from "next-auth/providers/email";
 import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import config from "@/config";
 import connectMongo from "./mongo";
+import { custom } from "openid-client";
 
+custom.setHttpOptionsDefaults({
+  timeout: 10000,
+});
 interface NextAuthOptionsExtended extends NextAuthOptions {
   adapter: any;
 }
