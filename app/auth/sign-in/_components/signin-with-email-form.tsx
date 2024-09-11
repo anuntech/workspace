@@ -4,13 +4,16 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
+import { redirect, useSearchParams } from "next/navigation";
 
 export function SignInWithEmailForm({ csrfToken }: { csrfToken: string }) {
   const [email, setEmail] = useState("");
+  const searchParams = useSearchParams();
+  const error = searchParams.get("error");
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    signIn("email", { email });
+    await signIn("email", { email });
   };
 
   return (
@@ -19,6 +22,7 @@ export function SignInWithEmailForm({ csrfToken }: { csrfToken: string }) {
       action="/api/auth/signin/email"
       className="w-full transform space-y-4"
     >
+      {error && <p className="text-red-500">Email inválido</p>}
       <input type="hidden" name="csrfToken" value={csrfToken} />
       <Input
         type="email"
@@ -29,15 +33,6 @@ export function SignInWithEmailForm({ csrfToken }: { csrfToken: string }) {
         onChange={(e) => setEmail(e.target.value)}
         autoFocus
       />
-      {/* <div className="space-y-1.5">
-        <PasswordInput placeholder="Senha" name="password" />
-        <Link
-          href="/auth/forgot"
-          className="block text-end text-xs text-primary hover:underline"
-        >
-          Esqueceu a senha?
-        </Link>
-      </div> */}
       <Button onClick={handleSubmit} type="submit" className="w-full py-6">
         Continuar com e-mail
       </Button>

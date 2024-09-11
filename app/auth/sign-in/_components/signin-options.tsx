@@ -11,6 +11,7 @@ import { BuiltInProviderType } from "next-auth/providers";
 import { GetServerSidePropsContext } from "next";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/libs/next-auth";
+import { useSearchParams } from "next/navigation";
 
 interface SignInProps {
   providers: Record<
@@ -26,7 +27,9 @@ interface SignInProps {
 }
 
 export function SignInOptions({ csrfToken }: { csrfToken: string }) {
-  const [isEmailFormVisible, setIsEmailFormVisible] = useState(false);
+  const searchParams = useSearchParams();
+  const error = searchParams.get("error");
+  const [isEmailFormVisible, setIsEmailFormVisible] = useState(!!error);
 
   function handleContinueWithEmail() {
     setIsEmailFormVisible(!isEmailFormVisible);
@@ -47,10 +50,7 @@ export function SignInOptions({ csrfToken }: { csrfToken: string }) {
               type="button"
               variant="outline"
               className="w-full py-6"
-              onClick={
-                () => setIsEmailFormVisible(!isEmailFormVisible)
-                // signIn(undefined, { callbackUrl: config.auth.callbackUrl })
-              }
+              onClick={() => setIsEmailFormVisible(!isEmailFormVisible)}
             >
               Continuar com e-mail
             </Button>
