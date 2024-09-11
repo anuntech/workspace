@@ -1,8 +1,18 @@
-import Link from 'next/link'
-import Image from 'next/image'
-import { InviteWorkspaceForm } from './_components/invite-workspace-form'
+import Link from "next/link";
+import Image from "next/image";
+import { InviteWorkspaceForm } from "./_components/invite-workspace-form";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/libs/next-auth";
+import config from "@/config";
+import { redirect } from "next/navigation";
 
-export default function InviteWorkspacePage() {
+export default async function InviteWorkspacePage() {
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    redirect(config.auth.loginUrl);
+  }
+
   return (
     <div className="flex h-screen flex-col">
       <header className="flex justify-end px-8 py-5">
@@ -28,5 +38,5 @@ export default function InviteWorkspacePage() {
         </div>
       </main>
     </div>
-  )
+  );
 }

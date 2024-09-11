@@ -5,10 +5,27 @@ import { useState } from "react";
 import { GoogleButton } from "../../_components/google-button";
 import { Button } from "@/components/ui/button";
 import { SignInWithEmailForm } from "./signin-with-email-form";
-import { signIn } from "next-auth/react";
+import { getProviders, LiteralUnion, signIn } from "next-auth/react";
 import config from "@/config";
+import { BuiltInProviderType } from "next-auth/providers";
+import { GetServerSidePropsContext } from "next";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/libs/next-auth";
 
-export function SignInOptions() {
+interface SignInProps {
+  providers: Record<
+    LiteralUnion<BuiltInProviderType, string>,
+    {
+      id: string;
+      name: string;
+      type: string;
+      signinUrl: string;
+      callbackUrl: string;
+    }
+  >;
+}
+
+export function SignInOptions({ csrfToken }: { csrfToken: string }) {
   const [isEmailFormVisible, setIsEmailFormVisible] = useState(false);
 
   function handleContinueWithEmail() {
@@ -30,8 +47,9 @@ export function SignInOptions() {
               type="button"
               variant="outline"
               className="w-full py-6"
-              onClick={() =>
-                signIn(undefined, { callbackUrl: config.auth.callbackUrl })
+              onClick={
+                () => setIsEmailFormVisible(!isEmailFormVisible)
+                // signIn(undefined, { callbackUrl: config.auth.callbackUrl })
               }
             >
               Continuar com e-mail
@@ -51,7 +69,7 @@ export function SignInOptions() {
         </>
       ) : (
         <>
-          <SignInWithEmailForm />
+          <SignInWithEmailForm csrfToken={csrfToken} />
           <Button
             variant="link"
             className="mt-4"

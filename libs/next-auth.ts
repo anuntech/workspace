@@ -51,6 +51,9 @@ export const authOptions: NextAuthOptionsExtended = {
       }
       return session;
     },
+    async redirect({ url, baseUrl }) {
+      return url.startsWith(baseUrl) ? url : baseUrl;
+    },
   },
   session: {
     strategy: "jwt",
@@ -60,6 +63,9 @@ export const authOptions: NextAuthOptionsExtended = {
     // Add you own logo below. Recommended size is rectangle (i.e. 200x50px) and show your logo + name.
     // It will be used in the login flow to display your logo. If you don't add it, it will look faded.
     logo: `/anuntech-logo.svg`,
+  },
+  pages: {
+    signIn: "/auth/sign-in",
   },
 };
 
