@@ -18,6 +18,33 @@ export async function GET(request: Request) {
   }
 }
 
+export async function PATCH(request: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+
+    await connectMongo();
+
+    const body = await request.json();
+
+    const updatedUser = await User.findByIdAndUpdate(session.user.id, body, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!updatedUser) {
+      return NextResponse.json(
+        { error: "Usuário não encontrado" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(updatedUser);
+  } catch (e) {
+    console.error(e);
+    return NextResponse.json({ error: e?.message }, { status: 500 });
+  }
+}
+
 // import { NextResponse, NextRequest } from "next/server";
 // import { getServerSession } from "next-auth/next";
 // import { authOptions } from "@/libs/next-auth";
