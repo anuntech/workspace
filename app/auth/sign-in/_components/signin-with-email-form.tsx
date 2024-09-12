@@ -11,7 +11,7 @@ export function SignInWithEmailForm({ csrfToken }: { csrfToken: string }) {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    await signIn("email", { email });
+    await signIn("email", { email, callbackUrl: "/onboarding/name" });
   };
 
   return (

@@ -70,6 +70,7 @@ export const authOptions: NextAuthOptionsExtended = {
   },
   pages: {
     signIn: "/auth/sign-in",
+    newUser: "/onboarding/name",
   },
 };
 
