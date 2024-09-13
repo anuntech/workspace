@@ -1,19 +1,32 @@
+"use client";
+
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { signIn } from "next-auth/react";
+import { useState } from "react";
 
 export function GoogleButton() {
-  const googleUrl = process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URL;
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleGoogleSignIn = async () => {
+    setIsLoading(true);
+    const res = await signIn("google");
+    if (res.ok) {
+      setIsLoading(false);
+      return;
+    }
+    setIsLoading(false);
+  };
 
   return (
-    <a
-      href={googleUrl}
+    <Button
       className={cn(
         buttonVariants({ variant: "default" }),
         "w-full gap-2 py-6 cursor-pointer"
       )}
-      onClick={() => signIn("google")}
+      onClick={() => handleGoogleSignIn()}
+      disabled={isLoading}
     >
       <Image
         src="/google-logo.svg"
@@ -22,6 +35,6 @@ export function GoogleButton() {
         height={16}
       />
       Continuar com Google
-    </a>
+    </Button>
   );
 }
