@@ -26,3 +26,17 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: e?.message }, { status: 500 });
   }
 }
+
+export async function GET(request: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+
+    await connectMongo();
+
+    const user = await Workspace.find({ owner: session.user.id });
+    return NextResponse.json(user);
+  } catch (e) {
+    console.error(e);
+    return NextResponse.json({ error: e?.message }, { status: 500 });
+  }
+}

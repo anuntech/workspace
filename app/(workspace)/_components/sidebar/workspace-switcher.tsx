@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Apple, Plus, Triangle, Turtle } from "lucide-react";
 import {
   DropdownMenu,
@@ -12,26 +12,51 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { workspaceIcons } from "@/libs/icons";
 
-const workspaces = [
-  {
-    label: "Anuntech",
-    id: "workspace1",
-    icon: <Triangle className="size-5" />,
-  },
-  {
-    label: "Apple",
-    id: "workspace2",
-    icon: <Apple className="size-5" />,
-  },
-  {
-    label: "Turtle",
-    id: "workspace3",
-    icon: <Turtle className="size-5" />,
-  },
-];
+type Workspace = {
+  label: string;
+  id: string;
+  icon: any;
+};
+
+// const workspaces = [
+//   {
+//     label: "Anuntech",
+//     id: "workspace1",
+//     icon: <Triangle className="size-5" />,
+//   },
+//   {
+//     label: "Apple",
+//     id: "workspace2",
+//     icon: <Apple className="size-5" />,
+//   },
+//   {
+//     label: "Turtle",
+//     id: "workspace3",
+//     icon: <Turtle className="size-5" />,
+//   },
+// ];
 
 export function WorkspaceSwitcher() {
+  const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
+
+  useEffect(() => {
+    const res = async () => {
+      const data = await fetch("/api/workspace");
+      const json = await data.json();
+      setWorkspaces(
+        json.map((workspace: any) => ({
+          ...workspace,
+          icon: (workspaceIcons as any)[workspace.icon],
+          label: workspace.name,
+        }))
+      );
+    };
+
+    res();
+  }, []);
+
   const [selectedWorkspace, setSelectedWorkspace] = useState<string>(
     workspaces[0]?.id || ""
   );

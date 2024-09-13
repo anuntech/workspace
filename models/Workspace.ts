@@ -7,7 +7,7 @@ interface members extends Document {
   role: "admin" | "member";
 }
 
-interface IWorkspace extends Document {
+export interface IWorkspace extends Document {
   name: string;
   icon: string;
   owner: mongoose.Schema.Types.ObjectId;
