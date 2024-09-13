@@ -7,7 +7,39 @@ import { useRouter } from "next/navigation";
 
 export function SetNameForm() {
   const [nameInput, setNameInput] = useState("");
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
+
+  useEffect(() => {
+    const res = async () => {
+      setLoading(true);
+      const res = await fetch(`/api/user`);
+      const json = await res.json();
+      setNameInput(json.name);
+      setLoading(false);
+    };
+
+    res();
+  }, []);
+
+  const createFirstWorkspace = async (name: string) => {
+    const getRes = await fetch(`/api/workspace`);
+    const isThereAnyWorkspace = await getRes.json();
+    if (isThereAnyWorkspace.length > 0) {
+      return;
+    }
+
+    await fetch(`/api/workspace`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: name + "'s Workspace",
+        icon: "apple",
+      }),
+    });
+  };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -24,6 +56,7 @@ export function SetNameForm() {
     });
 
     if (res.ok) {
+      await createFirstWorkspace(nameInput);
       router.push("/");
       return;
     }
@@ -41,8 +74,14 @@ export function SetNameForm() {
         placeholder="Nome"
         className="py-6"
         autoFocus
+        disabled={loading}
       />
-      <Button onClick={handleSubmit} type="submit" className="w-full py-6">
+      <Button
+        disabled={loading}
+        onClick={handleSubmit}
+        type="submit"
+        className="w-full py-6"
+      >
         Continuar
       </Button>
     </form>
