@@ -25,35 +25,35 @@ export function WorkspaceSwitcher() {
   const urlParams = useSearchParams();
   const router = useRouter();
 
-  useEffect(() => {
-    const res = async () => {
-      const data = await fetch("/api/workspace");
-      const json = await data.json();
-      setWorkspaces(
-        json.map((workspace: any) => ({
-          ...workspace,
-          icon: (workspaceIcons as any)[workspace.icon],
-          label: workspace.name,
-        }))
-      );
-
-      if (!urlParams.get("workspace")) {
-        router.push(`/?workspace=${json[0]?.id}`);
-      }
-
-      handleWorkspaceChange(urlParams.get("workspace"));
-    };
-
-    res();
-  }, [workspaces]);
-
   const [selectedWorkspace, setSelectedWorkspace] = useState<string>(
     workspaces[0]?.id || ""
   );
 
-  function handleWorkspaceChange(id: string) {
-    setSelectedWorkspace(id);
-  }
+  useEffect(() => {
+    const res = async () => {
+      const data = await fetch("/api/workspace");
+      const json = await data.json();
+      const mappedWorkspaces = json.map((workspace: any) => ({
+        ...workspace,
+        icon: (workspaceIcons as any)[workspace.icon],
+        label: workspace.name,
+      }));
+      setWorkspaces(mappedWorkspaces);
+
+      const urlWorkspace = urlParams.get("workspace");
+
+      if (!urlWorkspace && mappedWorkspaces.length > 0) {
+        const firstWorkspaceId = mappedWorkspaces[0]?.id;
+        setSelectedWorkspace(firstWorkspaceId);
+        router.push(`/?workspace=${firstWorkspaceId}`);
+        return;
+      }
+
+      setSelectedWorkspace(urlWorkspace || "");
+    };
+
+    res();
+  }, []);
 
   return (
     <DropdownMenu>
@@ -74,7 +74,7 @@ export function WorkspaceSwitcher() {
           <DropdownMenuGroup key={workspace.id}>
             <DropdownMenuItem
               className="gap-3"
-              onClick={() => handleWorkspaceChange(workspace.id)}
+              onClick={() => setSelectedWorkspace(workspace.id)}
             >
               {workspace.icon}
               {workspace.label}

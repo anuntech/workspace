@@ -10,12 +10,35 @@ export function SetNameForm() {
   const [nameInput, setNameInput] = useState("");
   const router = useRouter();
 
+  const createFirstWorkspace = async (name: string) => {
+    const getRes = await fetch("/api/workspace");
+    const isThereAnyWorkspace = await getRes.json();
+    if (isThereAnyWorkspace.length > 0) {
+      return;
+    }
+
+    const res = await fetch("/api/workspace", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: name + "'s Workspace",
+        icon: "apple",
+      }),
+    });
+
+    if (res.ok) {
+      router.push("");
+    }
+  };
+
   useEffect(() => {
     const req = async () => {
       const res = await fetch("/api/user");
       const userJson = await res.json();
-
       if (userJson.name) {
+        createFirstWorkspace(userJson.name);
         router.push("/");
       }
 
@@ -40,6 +63,7 @@ export function SetNameForm() {
     });
 
     if (res.ok) {
+      await createFirstWorkspace(nameInput);
       router.push("/");
       return;
     }
