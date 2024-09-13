@@ -1,10 +1,16 @@
-import { WorkspaceSwitcher } from './workspace-switcher'
-import { House, Rocket, Settings } from 'lucide-react'
-import { Separator } from '@/components/ui/separator'
-import { UserNav } from './user-nav'
-import { NavLink } from './nav-link'
+"use client";
+
+import { WorkspaceSwitcher } from "./workspace-switcher";
+import { House, Rocket, Settings } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import { UserNav } from "./user-nav";
+import { NavLink } from "./nav-link";
+import { useSearchParams } from "next/navigation";
 
 export function Sidebar() {
+  const urlParams = useSearchParams();
+  const workspace = urlParams.get("workspace");
+
   return (
     <aside className="flex flex-col gap-3 rounded-md px-2">
       <section className="flex items-center justify-center">
@@ -16,7 +22,7 @@ export function Sidebar() {
           <House className="mr-3 size-5" />
           Home
         </NavLink>
-        <NavLink href="/settings">
+        <NavLink href={`/settings?workspace=${workspace}`}>
           <Settings className="mr-3 size-5" />
           Configurações
         </NavLink>
@@ -32,5 +38,5 @@ export function Sidebar() {
         <UserNav />
       </section>
     </aside>
-  )
+  );
 }

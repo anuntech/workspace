@@ -45,7 +45,7 @@ export function WorkspaceSwitcher() {
     };
 
     res();
-  }, []);
+  }, [workspaces]);
 
   const [selectedWorkspace, setSelectedWorkspace] = useState<string>(
     workspaces[0]?.id || ""
