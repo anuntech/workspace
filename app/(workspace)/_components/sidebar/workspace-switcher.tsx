@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { workspaceIcons } from "@/libs/icons";
 
 type Workspace = {
@@ -20,26 +20,10 @@ type Workspace = {
   icon: any;
 };
 
-// const workspaces = [
-//   {
-//     label: "Anuntech",
-//     id: "workspace1",
-//     icon: <Triangle className="size-5" />,
-//   },
-//   {
-//     label: "Apple",
-//     id: "workspace2",
-//     icon: <Apple className="size-5" />,
-//   },
-//   {
-//     label: "Turtle",
-//     id: "workspace3",
-//     icon: <Turtle className="size-5" />,
-//   },
-// ];
-
 export function WorkspaceSwitcher() {
   const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
+  const urlParams = useSearchParams();
+  const router = useRouter();
 
   useEffect(() => {
     const res = async () => {
@@ -52,6 +36,12 @@ export function WorkspaceSwitcher() {
           label: workspace.name,
         }))
       );
+
+      if (!urlParams.get("workspace")) {
+        router.push(`/?workspace=${json[0]?.id}`);
+      }
+
+      handleWorkspaceChange(urlParams.get("workspace"));
     };
 
     res();
@@ -64,8 +54,6 @@ export function WorkspaceSwitcher() {
   function handleWorkspaceChange(id: string) {
     setSelectedWorkspace(id);
   }
-
-  const router = useRouter();
 
   return (
     <DropdownMenu>
