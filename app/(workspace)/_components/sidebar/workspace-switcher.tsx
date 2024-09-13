@@ -1,7 +1,7 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { Apple, Plus, Triangle, Turtle } from 'lucide-react'
+import { useState } from "react";
+import { Apple, Plus, Triangle, Turtle } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,35 +9,38 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Button } from '@/components/ui/button'
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 const workspaces = [
   {
-    label: 'Anuntech',
-    id: 'workspace1',
+    label: "Anuntech",
+    id: "workspace1",
     icon: <Triangle className="size-5" />,
   },
   {
-    label: 'Apple',
-    id: 'workspace2',
+    label: "Apple",
+    id: "workspace2",
     icon: <Apple className="size-5" />,
   },
   {
-    label: 'Turtle',
-    id: 'workspace3',
+    label: "Turtle",
+    id: "workspace3",
     icon: <Turtle className="size-5" />,
   },
-]
+];
 
 export function WorkspaceSwitcher() {
   const [selectedWorkspace, setSelectedWorkspace] = useState<string>(
-    workspaces[0]?.id || '',
-  )
+    workspaces[0]?.id || ""
+  );
 
   function handleWorkspaceChange(id: string) {
-    setSelectedWorkspace(id)
+    setSelectedWorkspace(id);
   }
+
+  const router = useRouter();
 
   return (
     <DropdownMenu>
@@ -66,11 +69,14 @@ export function WorkspaceSwitcher() {
           </DropdownMenuGroup>
         ))}
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="gap-3">
+        <DropdownMenuItem
+          className="gap-3"
+          onClick={() => router.push("/create-workspace")}
+        >
           <Plus className="size-5" />
           Criar workspace
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }
