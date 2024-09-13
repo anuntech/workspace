@@ -1,7 +1,14 @@
 import mongoose from "mongoose";
 import toJSON from "./plugins/toJSON";
+import { Model } from "mongoose";
 
-const workspaceSchema = new mongoose.Schema(
+interface IWorkspace extends Document {
+  name: string;
+  icon: string;
+  owner: mongoose.Schema.Types.ObjectId;
+}
+
+const workspaceSchema = new mongoose.Schema<IWorkspace>(
   {
     name: {
       type: String,
@@ -13,6 +20,11 @@ const workspaceSchema = new mongoose.Schema(
       trim: true,
       required: true,
     },
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
   },
   {
     toJSON: { virtuals: true },
@@ -20,7 +32,10 @@ const workspaceSchema = new mongoose.Schema(
   }
 );
 
-workspaceSchema.plugin(toJSON);
+workspaceSchema.plugin(toJSON as any);
 
-export default mongoose.models.Workspace ||
-  mongoose.model("Workspace", workspaceSchema);
+const Workspace: Model<IWorkspace> =
+  mongoose.models.Workspace ||
+  mongoose.model<IWorkspace>("Workspace", workspaceSchema);
+
+export default Workspace;
