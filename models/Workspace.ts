@@ -2,10 +2,16 @@ import mongoose from "mongoose";
 import toJSON from "./plugins/toJSON";
 import { Model } from "mongoose";
 
+interface members extends Document {
+  memberId: mongoose.Schema.Types.ObjectId;
+  role: "admin" | "member";
+}
+
 interface IWorkspace extends Document {
   name: string;
   icon: string;
   owner: mongoose.Schema.Types.ObjectId;
+  members: members[];
 }
 
 const workspaceSchema = new mongoose.Schema<IWorkspace>(
@@ -24,6 +30,24 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
+    },
+    members: {
+      type: [
+        {
+          memberId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            required: true,
+          },
+          role: {
+            type: String,
+            enum: ["admin", "member"],
+            required: true,
+          },
+        },
+      ],
+      required: false,
+      default: [],
     },
   },
   {
