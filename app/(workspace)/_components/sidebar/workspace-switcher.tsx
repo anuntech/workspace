@@ -38,15 +38,19 @@ export function WorkspaceSwitcher() {
     const urlWorkspace = urlParams.get("workspace");
 
     if (!urlWorkspace && data.length > 0) {
-      setSelectedWorkspace(data[0]?.id);
       const firstWorkspaceId = data[0]?.id;
       setSelectedWorkspace(firstWorkspaceId);
       router.push(`/?workspace=${firstWorkspaceId}`);
       return;
     }
 
-    setSelectedWorkspace(urlWorkspace || "");
+    setSelectedWorkspace(urlWorkspace);
   }, [data]);
+
+  const handleSelectWorkspace = (workspaceId: string) => {
+    router.push(`/?workspace=${workspaceId}`);
+    window.location.reload();
+  };
 
   return isPending ? (
     <p>Carregando...</p>
@@ -65,7 +69,7 @@ export function WorkspaceSwitcher() {
           <DropdownMenuGroup key={workspace.id}>
             <DropdownMenuItem
               className="gap-3"
-              onClick={() => setSelectedWorkspace(workspace.id)}
+              onClick={() => handleSelectWorkspace(workspace.id)}
             >
               {getWorkspaceIcon(workspace.icon)}
               {workspace.name}
