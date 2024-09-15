@@ -2,9 +2,14 @@
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { useEffect } from "react";
+
+type Inputs = {
+  name: string;
+};
 
 export function SetNameForm() {
   const { isPending, data } = useQuery({
@@ -12,7 +17,19 @@ export function SetNameForm() {
     queryFn: () => fetch("/api/user").then((res) => res.json()),
   });
 
-  const [nameInput, setNameInput] = useState(data?.name);
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { isSubmitting },
+  } = useForm<Inputs>();
+
+  useEffect(() => {
+    if (data?.name) {
+      setValue("name", data.name);
+    }
+  }, [data]);
+
   const router = useRouter();
 
   const createFirstWorkspace = async (name: string) => {
@@ -34,9 +51,8 @@ export function SetNameForm() {
     });
   };
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-    if (!nameInput) {
+  const onSubmit: SubmitHandler<Inputs> = async ({ name }) => {
+    if (!name) {
       return;
     }
 
@@ -45,11 +61,11 @@ export function SetNameForm() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ name: nameInput }),
+      body: JSON.stringify({ name: name }),
     });
 
     if (res.ok) {
-      await createFirstWorkspace(nameInput);
+      await createFirstWorkspace(name);
       router.push("/");
       return;
     }
@@ -58,21 +74,19 @@ export function SetNameForm() {
   };
 
   return (
-    <form className="w-full space-y-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-4">
       <Input
         type="text"
         name="name"
-        value={nameInput}
         defaultValue={data?.name}
-        onChange={(e) => setNameInput(e.target.value)}
         placeholder="Nome"
         className="py-6"
         autoFocus
-        disabled={isPending}
+        disabled={isPending || isSubmitting}
+        {...register("name", { required: true })}
       />
       <Button
-        disabled={isPending}
-        onClick={handleSubmit}
+        disabled={isPending || isSubmitting}
         type="submit"
         className="w-full py-6"
       >
