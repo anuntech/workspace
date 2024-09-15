@@ -2,25 +2,18 @@
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 
 export function SetNameForm() {
-  const [nameInput, setNameInput] = useState("");
-  const [loading, setLoading] = useState(true);
+  const { isPending, data } = useQuery({
+    queryKey: ["user"],
+    queryFn: () => fetch("/api/user").then((res) => res.json()),
+  });
+
+  const [nameInput, setNameInput] = useState(data?.name);
   const router = useRouter();
-
-  useEffect(() => {
-    const res = async () => {
-      setLoading(true);
-      const res = await fetch(`/api/user`);
-      const json = await res.json();
-      setNameInput(json.name);
-      setLoading(false);
-    };
-
-    res();
-  }, []);
 
   const createFirstWorkspace = async (name: string) => {
     const getRes = await fetch(`/api/workspace`);
@@ -70,14 +63,15 @@ export function SetNameForm() {
         type="text"
         name="name"
         value={nameInput}
+        defaultValue={data?.name}
         onChange={(e) => setNameInput(e.target.value)}
         placeholder="Nome"
         className="py-6"
         autoFocus
-        disabled={loading}
+        disabled={isPending}
       />
       <Button
-        disabled={loading}
+        disabled={isPending}
         onClick={handleSubmit}
         type="submit"
         className="w-full py-6"
