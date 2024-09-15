@@ -25,7 +25,7 @@ export function WorkspaceSwitcher() {
   const urlParams = useSearchParams();
   const router = useRouter();
 
-  const { isPending, data } = useQuery<Workspace[]>({
+  const { isPending, data, isSuccess } = useQuery<Workspace[]>({
     queryKey: ["user"],
     queryFn: () => fetch("/api/workspace").then((res) => res.json()),
   });
@@ -33,6 +33,7 @@ export function WorkspaceSwitcher() {
   const [selectedWorkspace, setSelectedWorkspace] = useState<string>("");
 
   useEffect(() => {
+    if (!isSuccess) return;
     if (!data) return;
 
     const urlWorkspace = urlParams.get("workspace");

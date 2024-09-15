@@ -12,7 +12,7 @@ type Inputs = {
 };
 
 export function SetNameForm() {
-  const { isPending, data } = useQuery({
+  const { isPending, data, isSuccess } = useQuery({
     queryKey: ["user"],
     queryFn: () => fetch("/api/user").then((res) => res.json()),
   });
@@ -25,9 +25,9 @@ export function SetNameForm() {
   } = useForm<Inputs>();
 
   useEffect(() => {
-    if (data?.name) {
-      setValue("name", data.name);
-    }
+    if (!isSuccess) return;
+
+    setValue("name", data.name);
   }, [data]);
 
   const router = useRouter();
