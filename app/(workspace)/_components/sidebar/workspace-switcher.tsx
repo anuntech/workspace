@@ -26,7 +26,7 @@ export function WorkspaceSwitcher() {
   const router = useRouter();
 
   const { isPending, data, isSuccess } = useQuery<Workspace[]>({
-    queryKey: ["user"],
+    queryKey: ["workspace"],
     queryFn: () => fetch("/api/workspace").then((res) => res.json()),
   });
 

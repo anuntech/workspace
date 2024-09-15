@@ -1,5 +1,5 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Button } from '@/components/ui/button'
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,12 +8,22 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { CircleHelp, CircleUser, LogOut } from 'lucide-react'
-import Link from 'next/link'
+} from "@/components/ui/dropdown-menu";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useQuery } from "@tanstack/react-query";
+import { CircleHelp, CircleUser, LogOut } from "lucide-react";
+import { signOut } from "next-auth/react";
+import Link from "next/link";
 
 export function UserNav() {
-  return (
+  const { isPending, data } = useQuery({
+    queryKey: ["user"],
+    queryFn: () => fetch("/api/user").then((res) => res.json()),
+  });
+
+  return isPending ? (
+    <Skeleton className="h-11 w-full justify-start gap-2 px-3 text-start" />
+  ) : (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
@@ -21,21 +31,27 @@ export function UserNav() {
           className="relative h-11 w-full justify-start gap-2 px-3 text-start"
         >
           <Avatar className="size-10">
-            <AvatarImage src="/shad.png" alt="@shadcn" />
+            <AvatarImage src={data?.image || "/shad.png"} alt="@shadcn" />
             <AvatarFallback>SC</AvatarFallback>
           </Avatar>
-          <span className="flex flex-col">
-            <span>Shadcn</span>
-            <span className="text-xs text-zinc-500">m@example.com</span>
+          <span className="flex flex-col w-full overflow-hidden">
+            <span className="text-ellipsis overflow-hidden whitespace-nowrap">
+              {data.name}
+            </span>
+            <span className="text-xs text-zinc-500 text-ellipsis overflow-hidden whitespace-nowrap">
+              {data.email}
+            </span>
           </span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-48" align="center" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">shadcn</p>
-            <p className="text-xs leading-none text-muted-foreground">
-              m@example.com
+            <p className="text-sm font-medium leading-none text-ellipsis overflow-hidden whitespace-nowrap">
+              {data.name}
+            </p>
+            <p className="text-xs leading-none text-muted-foreground text-ellipsis overflow-hidden whitespace-nowrap">
+              {data.email}
             </p>
           </div>
         </DropdownMenuLabel>
@@ -56,11 +72,11 @@ export function UserNav() {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="gap-2">
+        <DropdownMenuItem className="gap-2" onClick={() => signOut()}>
           <LogOut className="size-4" />
           Sair
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }
