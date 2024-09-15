@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Apple, Plus, Triangle, Turtle } from "lucide-react";
+import { Plus } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,72 +12,63 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { useRouter, useSearchParams } from "next/navigation";
-import { workspaceIcons } from "@/libs/icons";
+import { getWorkspaceIcon } from "@/libs/icons";
+import { useQuery } from "@tanstack/react-query";
 
 type Workspace = {
-  label: string;
+  name: string;
   id: string;
   icon: any;
 };
 
 export function WorkspaceSwitcher() {
-  const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
   const urlParams = useSearchParams();
   const router = useRouter();
 
-  const [selectedWorkspace, setSelectedWorkspace] = useState<string>(
-    workspaces[0]?.id || ""
-  );
+  const { isPending, data } = useQuery<Workspace[]>({
+    queryKey: ["user"],
+    queryFn: () => fetch("/api/workspace").then((res) => res.json()),
+  });
+
+  const [selectedWorkspace, setSelectedWorkspace] = useState<string>("");
 
   useEffect(() => {
-    const res = async () => {
-      const data = await fetch("/api/workspace");
-      const json = await data.json();
-      const mappedWorkspaces = json.map((workspace: any) => ({
-        ...workspace,
-        icon: (workspaceIcons as any)[workspace.icon],
-        label: workspace.name,
-      }));
-      setWorkspaces(mappedWorkspaces);
+    if (!data) return;
 
-      const urlWorkspace = urlParams.get("workspace");
+    const urlWorkspace = urlParams.get("workspace");
 
-      if (!urlWorkspace && mappedWorkspaces.length > 0) {
-        const firstWorkspaceId = mappedWorkspaces[0]?.id;
-        setSelectedWorkspace(firstWorkspaceId);
-        router.push(`/?workspace=${firstWorkspaceId}`);
-        return;
-      }
+    if (!urlWorkspace && data.length > 0) {
+      setSelectedWorkspace(data[0]?.id);
+      const firstWorkspaceId = data[0]?.id;
+      setSelectedWorkspace(firstWorkspaceId);
+      router.push(`/?workspace=${firstWorkspaceId}`);
+      return;
+    }
 
-      setSelectedWorkspace(urlWorkspace || "");
-    };
+    setSelectedWorkspace(urlWorkspace || "");
+  }, [data]);
 
-    res();
-  }, []);
-
-  return (
+  return isPending ? (
+    <p>Carregando...</p>
+  ) : (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" className="w-full gap-2">
-          {
-            workspaces.find((workspace) => workspace.id === selectedWorkspace)
-              ?.icon
-          }
-          {
-            workspaces.find((workspace) => workspace.id === selectedWorkspace)
-              ?.label
-          }
+          {getWorkspaceIcon(
+            data?.find((workspace) => workspace.id === selectedWorkspace)?.icon
+          )}
+          {data?.find((workspace) => workspace.id === selectedWorkspace)?.name}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-44">
-        {workspaces.map((workspace) => (
+        {data?.map((workspace) => (
           <DropdownMenuGroup key={workspace.id}>
             <DropdownMenuItem
               className="gap-3"
               onClick={() => setSelectedWorkspace(workspace.id)}
             >
-              {workspace.icon}
-              {workspace.label}
+              {getWorkspaceIcon(workspace.icon)}
+              {workspace.name}
             </DropdownMenuItem>
           </DropdownMenuGroup>
         ))}

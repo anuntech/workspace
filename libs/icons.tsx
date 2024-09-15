@@ -6,3 +6,9 @@ export const workspaceIcons = {
   rocket: <Rocket className="size-5" />,
   house: <House className="size-5" />,
 };
+
+type ValueType = "apple" | "turtle" | "rocket" | "house";
+
+export const getWorkspaceIcon = (icon: ValueType) => {
+  return workspaceIcons[icon];
+};
