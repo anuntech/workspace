@@ -3,6 +3,8 @@ import { authOptions } from "@/libs/next-auth";
 import { NextResponse } from "next/server";
 import connectMongo from "@/libs/mongoose";
 import User from "@/models/User";
+import clientPromise from "@/libs/mongo";
+import mongoose from "mongoose";
 
 export async function GET(request: Request) {
   try {
@@ -10,7 +12,17 @@ export async function GET(request: Request) {
 
     await connectMongo();
 
-    const user = await User.findById(session?.user?.id);
+    const user = await User.findById(session?.user?.id).lean();
+
+    const accountsCollection = mongoose.connection.collection("accounts");
+    const account = await accountsCollection.findOne({
+      userId: new mongoose.Types.ObjectId(session?.user?.id),
+    });
+
+    if (account.provider == "google") {
+      return NextResponse.json({ ...user, isGoogle: true });
+    }
+
     return NextResponse.json(user);
   } catch (e) {
     console.error(e);
@@ -25,6 +37,18 @@ export async function PATCH(request: Request) {
     await connectMongo();
 
     const body = await request.json();
+
+    const accountsCollection = mongoose.connection.collection("accounts");
+    const account = await accountsCollection.findOne({
+      userId: new mongoose.Types.ObjectId(session?.user?.id),
+    });
+
+    if (account.provider == "google") {
+      return NextResponse.json(
+        { error: "Google account email can't be changed" },
+        { status: 400 }
+      );
+    }
 
     const updatedUser = await User.findByIdAndUpdate(session.user.id, body, {
       new: true,
