@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Carousel,
@@ -8,12 +10,73 @@ import {
 } from "@/components/ui/carousel";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+
+type User = {
+  id: string;
+  name: string;
+  email: string;
+  image: string;
+  customerId: string;
+  priceId: string;
+  hasAccess: boolean;
+};
 
 export default function AccountPage() {
+  const {
+    isPending,
+    data: user,
+    isSuccess,
+  } = useQuery({
+    queryKey: ["user"],
+    queryFn: () => fetch("/api/user").then((res) => res.json()),
+  });
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { isSubmitting },
+  } = useForm<User>();
+
+  useEffect(() => {
+    if (!isSuccess) return;
+
+    setValue("name", user?.name);
+    setValue("email", user?.email);
+    setValue("image", user?.image);
+  }, [isSuccess]);
+
+  const [isChanged, setIsChanged] = useState(false);
+
+  const mutation = useMutation({
+    mutationFn: (data: User) =>
+      fetch("/api/user", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }),
+    onSuccess: () => {
+      setIsChanged(false);
+    },
+  });
+
+  const onSubmit: SubmitHandler<User> = async (data) => {
+    if (!data.name) {
+      return;
+    }
+
+    mutation.mutate(data);
+  };
+
   return (
     <div className="flex flex-col items-center p-10">
       <div className="w-full max-w-3xl space-y-5">
-        <form action="POST">
+        <form action="POST" onSubmit={handleSubmit(onSubmit)}>
           <h1 className="text-2xl">Minhas configurações</h1>
           <Separator />
           <section className="grid grid-cols-2 gap-8 py-5">
@@ -50,10 +113,15 @@ export default function AccountPage() {
               </span>
             </div>
             <div className="flex justify-end">
-              <Input placeholder="Nome..." value="Kauan Ketner" />
+              <Input
+                placeholder="Nome..."
+                {...register("name", { required: true })}
+                onChange={() => setIsChanged(true)}
+                disabled={isPending || isSubmitting}
+              />
             </div>
           </section>
-          <Separator />
+          {/* <Separator />
           <section className="grid grid-cols-2 gap-8 py-5">
             <div>
               <p>Nome de usuário</p>
@@ -62,9 +130,14 @@ export default function AccountPage() {
               </span>
             </div>
             <div className="flex justify-end">
-              <Input placeholder="Nome de usuário..." value="kauanketner" />
+              <Input
+                placeholder="Nome de usuário..."
+                {...register("name", { required: true })}
+                onChange={() => setIsChanged(true)}
+                disabled={isPending || isSubmitting}
+              />
             </div>
-          </section>
+          </section> */}
           <Separator />
           <section className="grid grid-cols-2 gap-8 py-5">
             <div>
@@ -75,19 +148,12 @@ export default function AccountPage() {
               </span>
             </div>
             <div className="flex justify-end">
-              <Input placeholder="E-mail..." value="kauan@anuntech.com" />
-            </div>
-          </section>
-          <Separator />
-          <section className="grid grid-cols-2 gap-8 py-5">
-            <div>
-              <p>Senha</p>
-              <span className="text-sm text-muted-foreground">
-                Defina ou atualize sua senha para manter sua conta segura.
-              </span>
-            </div>
-            <div className="flex justify-end">
-              <Input placeholder="Senha..." value="*******" />
+              <Input
+                placeholder="E-mail..."
+                {...register("email", { required: true })}
+                onChange={() => setIsChanged(true)}
+                disabled={isPending || isSubmitting}
+              />
             </div>
           </section>
           <Separator />
@@ -105,6 +171,11 @@ export default function AccountPage() {
               </Button>
             </div>
           </section>
+          <div className="flex justify-end max-w-3xl items-center mt-20 w-full">
+            <Button type="submit" disabled={!isChanged || isSubmitting}>
+              Salvar as alterações
+            </Button>
+          </div>
         </form>
       </div>
     </div>
