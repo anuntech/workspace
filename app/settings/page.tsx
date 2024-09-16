@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/carousel";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -59,7 +59,27 @@ export default function SettingsPage() {
     formState: { isSubmitting },
   } = useForm<Workspace>();
 
-  const onSubmit: SubmitHandler<Workspace> = async (data) => {};
+  const mutation = useMutation({
+    mutationFn: (data: Workspace) =>
+      fetch("/api/workspace", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }),
+    onSuccess: () => {
+      setIsChanged(false);
+    },
+  });
+
+  const onSubmit: SubmitHandler<Workspace> = async (data) => {
+    if (!data.name) {
+      return;
+    }
+
+    mutation.mutate(data);
+  };
 
   return (
     <form action="POST" onSubmit={handleSubmit(onSubmit)}>

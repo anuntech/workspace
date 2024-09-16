@@ -40,3 +40,46 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: e?.message }, { status: 500 });
   }
 }
+
+export async function PATCH(request: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session) {
+      return NextResponse.json(
+        { error: "User not authenticated" },
+        { status: 401 }
+      );
+    }
+
+    await connectMongo();
+
+    const body = await request.json();
+
+    const workspace = await Workspace.findById(body.id);
+
+    if (!workspace) {
+      return NextResponse.json(
+        { error: "Workspace not found" },
+        { status: 404 }
+      );
+    }
+
+    if (workspace.owner.toString() !== session.user.id) {
+      return NextResponse.json(
+        { error: "You do not have permission to update this workspace" },
+        { status: 403 }
+      );
+    }
+
+    const updatedWorkspace = await Workspace.findByIdAndUpdate(body.id, body, {
+      new: true,
+      runValidators: true,
+    });
+
+    return NextResponse.json(updatedWorkspace);
+  } catch (e) {
+    console.error(e);
+    return NextResponse.json({ error: e?.message }, { status: 500 });
+  }
+}
