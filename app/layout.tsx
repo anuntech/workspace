@@ -7,6 +7,7 @@ import PlausibleProvider from "next-plausible";
 import config from "@/config";
 import ClientLayout from "@/components/LayoutClient";
 import { getSEOTags } from "@/libs/seo";
+import { MakeQueryClientProvider } from "@/libs/query-client";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -34,7 +35,7 @@ export default function RootLayout({
       <body className={cn("font-medium antialiased", inter.className)}>
         {/* ClientLayout contains all the client wrappers (Crisp chat support, toast messages, tooltips, etc.) */}
         <ClientLayout>
-          {children}
+          <MakeQueryClientProvider>{children}</MakeQueryClientProvider>
           <Toaster />
         </ClientLayout>
       </body>

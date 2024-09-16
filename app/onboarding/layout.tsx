@@ -4,7 +4,6 @@ import { getServerSession } from "next-auth";
 import config from "@/config";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/libs/next-auth";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 export default async function OnboardingLayout({
   children,
