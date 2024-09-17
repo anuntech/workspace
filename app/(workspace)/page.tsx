@@ -1,11 +1,11 @@
 export default function WorkspacePage() {
   return (
     <iframe
-      src="http://5.78.114.20:3000/"
+      src="https://t.anun.tech/"
       width="100%"
       height="100%"
-      style={{ border: 'none' }}
+      style={{ border: "none" }}
       title="Roteiro Digital"
     />
-  )
+  );
 }
