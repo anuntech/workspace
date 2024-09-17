@@ -11,12 +11,7 @@ export function GoogleButton() {
 
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
-    const res = await signIn("google");
-    if (res.ok) {
-      setIsLoading(false);
-      return;
-    }
-    setIsLoading(false);
+    await signIn("google");
   };
 
   return (
