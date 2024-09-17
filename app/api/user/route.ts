@@ -43,7 +43,7 @@ export async function PATCH(request: Request) {
       userId: new mongoose.Types.ObjectId(session?.user?.id),
     });
 
-    if (account?.provider == "google") {
+    if (account?.provider == "google" && body.email && body.email != "") {
       return NextResponse.json(
         { error: "Google account email can't be changed" },
         { status: 400 }
