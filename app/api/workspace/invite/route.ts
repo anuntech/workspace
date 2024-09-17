@@ -3,6 +3,7 @@ import { authOptions } from "@/libs/next-auth";
 import { sendInviteWorkspaceEmail } from "@/libs/workspace-invite";
 import User from "@/models/User";
 import Workspace from "@/models/Workspace";
+import mongoose from "mongoose";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
@@ -38,12 +39,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    const alreadyIn = worksPace.members.find(
+    const alreadyIn = worksPace.members?.find(
       (member) => member.memberId.toString() === user.id
     );
 
-    const alreadyInvited = worksPace.invitedMembersId.find(
-      (invitedId) => invitedId === user.id
+    const alreadyInvited = worksPace.invitedMembersId?.find(
+      (invitedId) => invitedId.toString() === user.id
     );
 
     if (alreadyIn || alreadyInvited) {
@@ -57,11 +58,11 @@ export async function POST(request: Request) {
 
     await Workspace.findByIdAndUpdate(workspaceId, {
       $push: {
-        invitedMembersId: user.id,
+        invitedMembersId: new mongoose.Types.ObjectId(user.id),
       },
     });
 
-    await sendInviteWorkspaceEmail(email, workspaceId);
+    await sendInviteWorkspaceEmail(email, workspaceId, worksPace.name);
 
     return NextResponse.json(user);
   } catch (e) {
@@ -76,9 +77,9 @@ export async function DELETE(request: Request) {
 
     await connectMongo();
 
-    const { id, userId } = await request.json();
+    const { workspaceId, userId } = await request.json();
 
-    const worksPace = await Workspace.findById(id);
+    const worksPace = await Workspace.findById(workspaceId);
 
     if (!worksPace) {
       return NextResponse.json(
@@ -98,7 +99,7 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    await Workspace.findByIdAndUpdate(id, {
+    await Workspace.findByIdAndUpdate(workspaceId, {
       $pull: {
         invitedMembersId: userId,
       },

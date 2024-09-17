@@ -3,7 +3,8 @@ import { sendEmail } from "./mailgun";
 
 export async function sendInviteWorkspaceEmail(
   email: string,
-  workspaceId: string
+  workspaceId: string,
+  name: string
 ) {
   const tokenToJoin = generateInviteWorkspaceToken(email, workspaceId);
 

@@ -1,3 +1,5 @@
+"use client";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,22 +15,57 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@radix-ui/react-dropdown-menu";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Trash2 } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { SubmitHandler, useForm } from "react-hook-form";
+
+type InsertEmailInputs = {
+  email: string;
+};
 
 export function Invites() {
-  // const { isPending, data, isSuccess } = useQuery({
-  //     queryKey: ["workspace/invite"],
-  //     queryFn: () => fetch("/api/workspace/invite").then((res) => res.json()),
-  //   });
+  const { isPending, data, isSuccess } = useQuery({
+    queryKey: ["workspace/invite"],
+    queryFn: () => fetch("/api/workspace/invite").then((res) => res.json()),
+  });
 
-  //   const {
-  //     register,
-  //     handleSubmit,
-  //     setValue,
-  //     formState: { isSubmitting },
-  //   } = useForm<InsertEmailInputs>();
+  const deleteMutation = useMutation({
+    mutationFn: (data) =>
+      fetch("/api/workspace/invite", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }),
+  });
 
-  //   const onSubmit: SubmitHandler<InsertEmailInputs> = async ({ email }) => {};
+  const inviteMutation = useMutation({
+    mutationFn: (data: { email: string; workspaceId: string }) =>
+      fetch("/api/workspace/invite", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }),
+  });
+
+  const {
+    register,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = useForm<InsertEmailInputs>();
+
+  const searchParams = useSearchParams();
+
+  const onSubmit: SubmitHandler<InsertEmailInputs> = async ({ email }) => {
+    inviteMutation.mutate({
+      email,
+      workspaceId: searchParams.get("workspace"),
+    });
+  };
 
   return (
     <div className="space-y-5">
@@ -38,8 +75,12 @@ export function Invites() {
           Convide os membros da sua equipe para colaborar.
         </span>
       </section>
-      <form className="flex gap-2">
-        <Input placeholder="Insira o e-mail para convidar..." />
+      <form className="flex gap-2" onSubmit={handleSubmit(onSubmit)}>
+        <Input
+          placeholder="Insira o e-mail para convidar..."
+          disabled={isSubmitting}
+          {...register("email", { required: true })}
+        />
         <Button type="submit">Enviar convite</Button>
       </form>
       <Separator />
