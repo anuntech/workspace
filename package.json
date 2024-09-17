@@ -32,6 +32,7 @@
     "eslint": "8.47.0",
     "eslint-config-next": "13.4.19",
     "form-data": "^4.0.0",
+    "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.439.0",
     "mailgun.js": "^9.4.1",
     "mongodb": "^5.9.2",
@@ -57,6 +58,7 @@
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",
+    "@types/jsonwebtoken": "^9.0.7",
     "@types/mdx": "^2.0.12",
     "@types/mongoose": "^5.11.97",
     "@types/node": "^20.12.2",

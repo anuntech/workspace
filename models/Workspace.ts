@@ -12,6 +12,7 @@ export interface IWorkspace extends Document {
   icon: string;
   owner: mongoose.Schema.Types.ObjectId;
   members: members[];
+  invitedMembersId: mongoose.Schema.Types.ObjectId[];
 }
 
 const workspaceSchema = new mongoose.Schema<IWorkspace>(
@@ -46,6 +47,11 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
           },
         },
       ],
+      required: false,
+      default: [],
+    },
+    invitedMembersId: {
+      type: [mongoose.Schema.Types.ObjectId],
       required: false,
       default: [],
     },
