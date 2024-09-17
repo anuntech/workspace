@@ -111,38 +111,3 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ error: e?.message }, { status: 500 });
   }
 }
-
-export async function GET(request: Request) {
-  try {
-    const session = await getServerSession(authOptions);
-
-    await connectMongo();
-
-    const { id } = await request.json();
-
-    const worksPace = await Workspace.findById(id);
-
-    if (!worksPace) {
-      return NextResponse.json(
-        { error: "Workspace not found" },
-        { status: 404 }
-      );
-    }
-
-    if (worksPace.owner.toString() !== session.user.id) {
-      return NextResponse.json(
-        { error: "You do not have permission to get this workspace invites" },
-        { status: 403 }
-      );
-    }
-
-    const invitedUsers = await User.find({
-      _id: { $in: worksPace.invitedMembersId },
-    }).select("name email image");
-
-    return NextResponse.json(invitedUsers);
-  } catch (e) {
-    console.error(e);
-    return NextResponse.json({ error: e?.message }, { status: 500 });
-  }
-}
