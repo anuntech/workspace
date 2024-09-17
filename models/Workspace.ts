@@ -54,6 +54,7 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
       type: [mongoose.Schema.Types.ObjectId],
       required: false,
       default: [],
+      unique: true,
     },
   },
   {
