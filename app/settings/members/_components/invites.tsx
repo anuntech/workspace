@@ -54,11 +54,12 @@ export function Invites() {
         },
         body: JSON.stringify(data),
       }),
-    onSuccess: () =>
+    onSuccess: () => {
       queryClient.refetchQueries({
         queryKey: ["workspace/invite"],
         type: "active",
-      }),
+      });
+    },
   });
 
   const inviteMutation = useMutation({
@@ -70,11 +71,15 @@ export function Invites() {
         },
         body: JSON.stringify(data),
       }),
-    onSuccess: () =>
-      queryClient.refetchQueries({
-        queryKey: ["workspace/invite"],
-        type: "active",
-      }),
+    onSuccess: (data) => {
+      if (data.status == 200) {
+        queryClient.refetchQueries({
+          queryKey: ["workspace/invite"],
+        });
+
+        reset();
+      }
+    },
   });
 
   const queryClient = useQueryClient();
@@ -91,8 +96,6 @@ export function Invites() {
       email,
       workspaceId: searchParams.get("workspace"),
     });
-
-    reset();
   };
 
   return (
@@ -119,7 +122,10 @@ export function Invites() {
       <Separator />
       {data?.map((user) => {
         return (
-          <div className="flex items-center justify-between space-x-4">
+          <div
+            key={user.id}
+            className="flex items-center justify-between space-x-4"
+          >
             <div className="flex items-center space-x-4">
               <Avatar>
                 <AvatarImage src="/shad.png" />
