@@ -106,6 +106,16 @@ export function Invites() {
           Convide os membros da sua equipe para colaborar.
         </span>
       </section>
+
+      {inviteMutation?.data?.status == 404 && (
+        <p className="text-sm text-destructive">Usuário não encontrado</p>
+      )}
+      {inviteMutation?.data?.status >= 400 &&
+        inviteMutation?.data?.status != 404 && (
+          <p className="text-sm text-destructive">
+            Ocorreu um erro inesperado ao buscar o usuário
+          </p>
+        )}
       <form className="flex gap-2" onSubmit={handleSubmit(onSubmit)}>
         <Input
           placeholder="Insira o e-mail para convidar..."
