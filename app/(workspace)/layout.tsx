@@ -3,6 +3,7 @@ import { Sidebar } from "./_components/sidebar";
 import { authOptions } from "@/libs/next-auth";
 import { redirect } from "next/navigation";
 import config from "@/config";
+import { env } from "process";
 
 export default async function WorkspaceLayout({
   children,
