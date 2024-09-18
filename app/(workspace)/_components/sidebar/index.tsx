@@ -5,13 +5,11 @@ import { House, Rocket, Settings } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { UserNav } from "./user-nav";
 import { NavLink } from "./nav-link";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 
 export function Sidebar() {
   const urlParams = useSearchParams();
   const workspace = urlParams.get("workspace");
-  const router = useRouter();
 
   return (
     <aside className="flex flex-col gap-3 rounded-md px-2">

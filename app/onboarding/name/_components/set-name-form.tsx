@@ -3,7 +3,7 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useEffect } from "react";
 
@@ -46,7 +46,7 @@ export function SetNameForm() {
     });
 
     if (res.ok) {
-      router.push("/");
+      router.push("/create-workspace");
       return;
     }
 

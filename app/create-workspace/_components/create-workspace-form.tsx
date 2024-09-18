@@ -5,10 +5,12 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { workspaceIcons } from "@/libs/icons";
+import { useQueryClient } from "@tanstack/react-query";
 
 export function CreateWorkspaceForm() {
   const [name, setName] = useState("");
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const handleCreateWorkspace = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -29,6 +31,9 @@ export function CreateWorkspaceForm() {
     });
 
     if (response.ok) {
+      queryClient.refetchQueries({
+        queryKey: ["workspace"],
+      });
       router.push("/");
     }
   };
