@@ -113,7 +113,7 @@ export function Invites() {
       {inviteMutation?.data?.status >= 400 &&
         inviteMutation?.data?.status != 404 && (
           <p className="text-sm text-destructive">
-            Ocorreu um erro inesperado ao buscar o usuário
+            Ocorreu um erro inesperado ao enviar o convite
           </p>
         )}
       <form className="flex gap-2" onSubmit={handleSubmit(onSubmit)}>

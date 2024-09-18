@@ -1,3 +1,5 @@
+"use client";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,9 +21,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useQuery } from "@tanstack/react-query";
 import { Trash2 } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 
 export function Members() {
+  const searchParams = useSearchParams();
+  const workspace = searchParams.get("workspace");
+
+  const ownerQuery = useQuery({
+    queryKey: ["user"],
+    queryFn: () => fetch("/api/user").then((res) => res.json()),
+  });
+
+  const workspaceQuery = useQuery({
+    queryKey: ["workspace/members"],
+    queryFn: () =>
+      fetch(`/api/workspace/members/${workspace}`).then((res) => res.json()),
+  });
+
   return (
     <div className="space-y-5">
       <section>
@@ -33,101 +51,93 @@ export function Members() {
       <div className="flex items-center justify-between space-x-4">
         <div className="flex items-center space-x-4">
           <Avatar>
-            <AvatarImage src="/shad.png" />
+            <AvatarImage src={ownerQuery.data?.image || "/shad.png"} />
             <AvatarFallback>OM</AvatarFallback>
           </Avatar>
           <div>
-            <p className="text-sm font-medium leading-none">João Oliveira</p>
-            <p className="text-sm text-muted-foreground">joao@anuntech.com</p>
+            <p className="text-sm font-medium leading-none">
+              {ownerQuery.data?.name}
+            </p>
+            <p className="text-sm text-muted-foreground">
+              {ownerQuery.data?.email}
+            </p>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Select defaultValue="user">
+          <Select defaultValue="user" disabled={true}>
             <SelectTrigger className="w-36">
               <SelectValue placeholder="Selecione um cargo" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectItem value="admin">Administrador</SelectItem>
-                <SelectItem value="user">Usuário</SelectItem>
+                <SelectItem value="user">Proprietário</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon"
-                className="group hover:border-red-500 hover:bg-red-50"
-              >
-                <Trash2 className="size-4 group-hover:text-red-500" />
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Esta ação não pode ser desfeita. Isso excluirá permanentemente
-                  o membro de seu workspace.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                <AlertDialogAction>Continuar</AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          <Button
+            variant="outline"
+            size="icon"
+            className="group hover:border-red-500 hover:bg-red-50"
+            disabled={true}
+          >
+            <Trash2 className="size-4 group-hover:text-red-500" />
+          </Button>
         </div>
       </div>
-      <div className="flex items-center justify-between space-x-4">
-        <div className="flex items-center space-x-4">
-          <Avatar>
-            <AvatarImage src="/shad.png" />
-            <AvatarFallback>OM</AvatarFallback>
-          </Avatar>
-          <div>
-            <p className="text-sm font-medium leading-none">Kauan Ketner</p>
-            <p className="text-sm text-muted-foreground">kauan@anuntech.com</p>
+      {workspaceQuery?.data?.map((member: any) => (
+        <div
+          key={member._id}
+          className="flex items-center justify-between space-x-4"
+        >
+          <div className="flex items-center space-x-4">
+            <Avatar>
+              <AvatarImage src={member.image || "/shad.png"} />
+              <AvatarFallback>OM</AvatarFallback>
+            </Avatar>
+            <div>
+              <p className="text-sm font-medium leading-none">{member.name}</p>
+              <p className="text-sm text-muted-foreground">{member.email}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Select defaultValue={member.role}>
+              <SelectTrigger className="w-36">
+                <SelectValue placeholder="Selecione um cargo" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectItem value="admin">Administrador</SelectItem>
+                  <SelectItem value="member">Membro</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="group hover:border-red-500 hover:bg-red-50"
+                >
+                  <Trash2 className="size-4 group-hover:text-red-500" />
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Esta ação não pode ser desfeita. Isso excluirá
+                    permanentemente o membro de seu workspace.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction>Continuar</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Select defaultValue="admin">
-            <SelectTrigger className="w-36">
-              <SelectValue placeholder="Selecione um cargo" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectItem value="admin">Administrador</SelectItem>
-                <SelectItem value="user">Usuário</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon"
-                className="group hover:border-red-500 hover:bg-red-50"
-              >
-                <Trash2 className="size-4 group-hover:text-red-500" />
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Esta ação não pode ser desfeita. Isso excluirá permanentemente
-                  o membro de seu workspace.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                <AlertDialogAction>Continuar</AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </div>
-      </div>
+      ))}
     </div>
   );
 }
