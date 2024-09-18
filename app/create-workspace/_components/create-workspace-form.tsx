@@ -35,7 +35,7 @@ export function CreateWorkspaceForm() {
         queryKey: ["workspace"],
         type: "all",
       });
-      router.push("/");
+      router.push(`/?workspace=${(await response.json()).id}`);
     }
   };
 
