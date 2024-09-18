@@ -33,6 +33,7 @@ export function CreateWorkspaceForm() {
     if (response.ok) {
       queryClient.refetchQueries({
         queryKey: ["workspace"],
+        type: "all",
       });
       router.push("/");
     }
