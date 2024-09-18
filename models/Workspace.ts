@@ -51,10 +51,14 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
       default: [],
     },
     invitedMembersId: {
-      type: [mongoose.Schema.Types.ObjectId],
+      type: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          unique: true,
+        },
+      ],
       required: false,
       default: [],
-      unique: true,
     },
   },
   {
