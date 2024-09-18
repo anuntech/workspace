@@ -28,8 +28,6 @@ export function InviteWorkspaceForm() {
     router.push("/");
   }
 
-  console.log(response?.data);
-
   const acceptInviteMutation = useMutation({
     mutationFn: (data: { invite: string }) =>
       fetch("/api/workspace/invite/accept", {
