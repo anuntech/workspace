@@ -31,7 +31,7 @@ export function CreateWorkspaceForm() {
     });
 
     if (response.ok) {
-      queryClient.refetchQueries({
+      await queryClient.refetchQueries({
         queryKey: ["workspace"],
         type: "all",
       });
