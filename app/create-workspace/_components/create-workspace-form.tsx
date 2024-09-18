@@ -5,12 +5,32 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { workspaceIcons } from "@/libs/icons";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export function CreateWorkspaceForm() {
   const [name, setName] = useState("");
   const router = useRouter();
   const queryClient = useQueryClient();
+
+  const sendCreateWorkspaceEmail = useMutation({
+    mutationFn: (data: { name: string; icon: string }) =>
+      fetch("/api/workspace", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }),
+    onSuccess: async (data) => {
+      if (data.status == 201) {
+        queryClient.refetchQueries({
+          queryKey: ["workspace"],
+          type: "all",
+        });
+        router.push(`/?workspace=${(await data.json()).id}`);
+      }
+    },
+  });
 
   const handleCreateWorkspace = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -22,21 +42,7 @@ export function CreateWorkspaceForm() {
       icon: randomIcon,
     };
 
-    const response = await fetch("/api/workspace", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-
-    if (response.ok) {
-      await queryClient.refetchQueries({
-        queryKey: ["workspace"],
-        type: "all",
-      });
-      router.push(`/?workspace=${(await response.json()).id}`);
-    }
+    sendCreateWorkspaceEmail.mutate(data);
   };
 
   return (
@@ -48,6 +54,7 @@ export function CreateWorkspaceForm() {
     >
       <Input
         type="text"
+        disabled={sendCreateWorkspaceEmail.isPending}
         name="name"
         value={name}
         onChange={(e) => setName(e.target.value)}
@@ -55,7 +62,11 @@ export function CreateWorkspaceForm() {
         className="py-6"
         autoFocus
       />
-      <Button type="submit" className="w-full py-6">
+      <Button
+        disabled={sendCreateWorkspaceEmail.isPending}
+        type="submit"
+        className="w-full py-6"
+      >
         Continuar
       </Button>
     </form>
