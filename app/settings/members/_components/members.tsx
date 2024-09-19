@@ -45,6 +45,27 @@ export function Members() {
       fetch(`/api/workspace/members/${workspace}`).then((res) => res.json()),
   });
 
+  const updateMutation = useMutation({
+    mutationFn: (data: {
+      workspaceId: string;
+      memberId: string;
+      role: string;
+    }) =>
+      fetch(`/api/workspace/member/${data.workspaceId}/${data.memberId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ role: data.role }),
+      }),
+    onSuccess: () => {
+      queryClient.refetchQueries({
+        queryKey: ["workspace/members"],
+        type: "active",
+      });
+    },
+  });
+
   const deleteMutation = useMutation({
     mutationFn: (data: { workspaceId: string; userId: string }) =>
       fetch(`/api/workspace/member/${data.workspaceId}/${data.userId}`, {
@@ -60,6 +81,14 @@ export function Members() {
       });
     },
   });
+
+  const handleRoleChange = async (memberId: string, role: string) => {
+    updateMutation.mutate({
+      workspaceId: workspace,
+      memberId: memberId,
+      role: role,
+    });
+  };
 
   console.log(workspaceQuery?.data);
 
@@ -117,7 +146,10 @@ export function Members() {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <Select defaultValue={member.role}>
+                <Select
+                  defaultValue={member.role}
+                  onValueChange={(props) => handleRoleChange(member._id, props)}
+                >
                   <SelectTrigger className="w-36">
                     <SelectValue placeholder="Selecione um cargo" />
                   </SelectTrigger>
@@ -155,7 +187,7 @@ export function Members() {
                       <AlertDialogAction
                         onClick={() =>
                           deleteMutation.mutate({
-                            workspaceId: searchParams.get("workspace"),
+                            workspaceId: workspace,
                             userId: member._id,
                           })
                         }

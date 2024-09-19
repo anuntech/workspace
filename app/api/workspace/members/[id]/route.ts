@@ -42,7 +42,7 @@ export async function GET(
         (u) => u._id.toString() === member.memberId.toString()
       );
       return {
-        ...user.toObject(),
+        ...user?.toObject(),
         role: member.role,
       };
     });
