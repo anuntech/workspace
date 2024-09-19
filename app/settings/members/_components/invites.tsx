@@ -138,7 +138,7 @@ export function Invites() {
           >
             <div className="flex items-center space-x-4">
               <Avatar>
-                <AvatarImage src="/shad.png" />
+                <AvatarImage src={user.image || "/shad.png"} />
                 <AvatarFallback>OM</AvatarFallback>
               </Avatar>
               <div>

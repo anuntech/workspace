@@ -22,13 +22,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Trash2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 
 export function Members() {
   const searchParams = useSearchParams();
   const workspace = searchParams.get("workspace");
+
+  const queryClient = useQueryClient();
 
   const ownerQuery = useQuery({
     queryKey: ["workspace/owner"],
@@ -42,6 +44,24 @@ export function Members() {
       fetch(`/api/workspace/members/${workspace}`).then((res) => res.json()),
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: (data: { workspaceId: string; userId: string }) =>
+      fetch(`/api/workspace/member/${data.workspaceId}/${data.userId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }),
+    onSuccess: () => {
+      queryClient.refetchQueries({
+        queryKey: ["workspace/members"],
+        type: "active",
+      });
+    },
+  });
+
+  console.log(workspaceQuery?.data);
+
   return (
     <div className="space-y-5">
       <section>
@@ -50,7 +70,9 @@ export function Members() {
           Convide os membros da sua equipe para colaborar.
         </span>
       </section>
-      {ownerQuery.isPending || workspaceQuery.isPending ? (
+      {deleteMutation.isPending ||
+      ownerQuery.isPending ||
+      workspaceQuery.isPending ? (
         <div className="space-y-3">
           <Skeleton className="h-11 w-full justify-start gap-2 px-3 text-start" />
           <Skeleton className="h-11 w-full justify-start gap-2 px-3 text-start" />
@@ -100,6 +122,9 @@ export function Members() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
+                      <SelectItem value="owner" className="text-destructive">
+                        Proprietário
+                      </SelectItem>
                       <SelectItem value="admin">Administrador</SelectItem>
                       <SelectItem value="member">Membro</SelectItem>
                     </SelectGroup>
@@ -125,7 +150,16 @@ export function Members() {
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                      <AlertDialogAction>Continuar</AlertDialogAction>
+                      <AlertDialogAction
+                        onClick={() =>
+                          deleteMutation.mutate({
+                            workspaceId: searchParams.get("workspace"),
+                            userId: member._id,
+                          })
+                        }
+                      >
+                        Continuar
+                      </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
                 </AlertDialog>
