@@ -26,6 +26,7 @@ import { Separator } from "@radix-ui/react-dropdown-menu";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Trash2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
+import { useState } from "react";
 
 export function Members() {
   const searchParams = useSearchParams();
@@ -90,7 +91,15 @@ export function Members() {
     });
   };
 
-  console.log(workspaceQuery?.data);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleTransferOwner = async (memberId: string) => {
+    // updateMutation.mutate({
+    //   workspaceId: workspace,
+    //   memberId: memberId,
+    //   role: "owner",
+    // });
+  };
 
   return (
     <div className="space-y-5">
@@ -147,6 +156,8 @@ export function Members() {
               </div>
               <div className="flex items-center gap-2">
                 <Select
+                  open={isOpen}
+                  onOpenChange={(open) => setIsOpen(open)}
                   defaultValue={member.role}
                   onValueChange={(props) => handleRoleChange(member._id, props)}
                 >
@@ -158,9 +169,36 @@ export function Members() {
                       <SelectItem value="admin">Administrador</SelectItem>
                       <SelectItem value="member">Membro</SelectItem>
                       <Separator className="my-1 h-px bg-gray-200" />
-                      <SelectItem value="owner" className="text-destructive">
-                        Transferir proprietário
-                      </SelectItem>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            value="owner"
+                            variant="ghost"
+                            className="text-destructive w-full text-left p-2 hover:bg-gray-100 rounded-sm focus:bg-gray-100"
+                          >
+                            Transferir proprietário
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>
+                              Você tem certeza?
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Esta ação não pode ser desfeita. Isso excluirá
+                              permanentemente o membro de seu workspace.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => handleTransferOwner(member._id)}
+                            >
+                              Continuar
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </SelectGroup>
                   </SelectContent>
                 </Select>
