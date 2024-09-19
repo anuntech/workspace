@@ -74,26 +74,6 @@ export function Members() {
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Select defaultValue="user" disabled={true}>
-                <SelectTrigger className="w-36">
-                  <SelectValue placeholder="Selecione um cargo" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem value="user">Proprietário</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-              <Button
-                variant="outline"
-                size="icon"
-                className="group hover:border-red-500 hover:bg-red-50"
-                disabled={true}
-              >
-                <Trash2 className="size-4 group-hover:text-red-500" />
-              </Button>
-            </div>
           </div>
           {workspaceQuery?.data?.map((member: any) => (
             <div
