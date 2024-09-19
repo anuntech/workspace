@@ -31,8 +31,9 @@ export function Members() {
   const workspace = searchParams.get("workspace");
 
   const ownerQuery = useQuery({
-    queryKey: ["user"],
-    queryFn: () => fetch("/api/user").then((res) => res.json()),
+    queryKey: ["workspace/owner"],
+    queryFn: () =>
+      fetch(`/api/workspace/owner/${workspace}`).then((res) => res.json()),
   });
 
   const workspaceQuery = useQuery({
@@ -40,8 +41,6 @@ export function Members() {
     queryFn: () =>
       fetch(`/api/workspace/members/${workspace}`).then((res) => res.json()),
   });
-
-  // return ownerQuery.isPending || workspaceQuery.isPending ? (
 
   return (
     <div className="space-y-5">
