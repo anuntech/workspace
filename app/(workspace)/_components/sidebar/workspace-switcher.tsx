@@ -35,10 +35,6 @@ export function WorkspaceSwitcher() {
   useEffect(() => {
     if (!isSuccess) return;
 
-    if (data.length === 0) {
-      router.push("/create-workspace");
-    }
-
     const urlWorkspace = urlParams.get("workspace");
 
     if (!urlWorkspace && data.length > 0) {

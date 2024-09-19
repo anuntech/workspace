@@ -3,6 +3,7 @@ import { Sidebar } from "./_components/sidebar";
 import { authOptions } from "@/libs/next-auth";
 import config from "@/config";
 import { redirect } from "next/navigation";
+import { RedirectNoneWorkspace } from "@/libs/redirect-none-workspace";
 
 export default async function SettingsLayout({
   children,
@@ -19,7 +20,7 @@ export default async function SettingsLayout({
     <div className="grid h-screen grid-cols-[230px_1fr] overflow-hidden bg-zinc-50 py-3 pr-3">
       <Sidebar />
       <main className="overflow-auto rounded-md border bg-white">
-        {children}
+        <RedirectNoneWorkspace>{children}</RedirectNoneWorkspace>
       </main>
     </div>
   );
