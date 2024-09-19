@@ -16,7 +16,6 @@ export async function POST(request: Request) {
       name: body.name,
       icon: body.icon,
       owner: new mongoose.Types.ObjectId(session.user.id),
-      invitedMembersId: [],
     });
 
     await user.save();
