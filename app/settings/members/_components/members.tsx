@@ -22,6 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Separator } from "@radix-ui/react-dropdown-menu";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Trash2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
@@ -122,11 +123,12 @@ export function Members() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
-                      <SelectItem value="owner" className="text-destructive">
-                        Proprietário
-                      </SelectItem>
                       <SelectItem value="admin">Administrador</SelectItem>
                       <SelectItem value="member">Membro</SelectItem>
+                      <Separator className="my-1 h-px bg-gray-200" />
+                      <SelectItem value="owner" className="text-destructive">
+                        Transferir proprietário
+                      </SelectItem>
                     </SelectGroup>
                   </SelectContent>
                 </Select>
