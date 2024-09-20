@@ -42,8 +42,6 @@ export async function GET(request: Request) {
       },
     });
 
-    console.log(memberWorkspace, user);
-
     return NextResponse.json([...user, ...memberWorkspace]);
   } catch (e) {
     console.error(e);
