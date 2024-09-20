@@ -101,7 +101,7 @@ export function Members() {
   });
 
   const handleRoleChange = async (memberId: string, role: string) => {
-    await updateMutation.mutate({
+    updateMutation.mutate({
       workspaceId: workspace,
       memberId: memberId,
       role: role,
@@ -111,11 +111,13 @@ export function Members() {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleTransferOwner = async (memberId: string) => {
-    await transferOwnerMutation.mutate({
+    transferOwnerMutation.mutate({
       workspaceId: workspace,
       userId: memberId,
     });
   };
+
+  console.log(workspaceQuery.data);
 
   return (
     <div className="space-y-5">

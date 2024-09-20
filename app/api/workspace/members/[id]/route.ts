@@ -26,13 +26,6 @@ export async function GET(
       );
     }
 
-    if (worksPace.owner.toString() !== session.user.id) {
-      return NextResponse.json(
-        { error: "You do not have permission to get this workspace members" },
-        { status: 403 }
-      );
-    }
-
     const users = await User.find({
       _id: { $in: worksPace.members?.map((member) => member.memberId) },
     }).select("name email image");

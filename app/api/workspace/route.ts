@@ -34,7 +34,17 @@ export async function GET(request: Request) {
     await connectMongo();
 
     const user = await Workspace.find({ owner: session.user.id });
-    return NextResponse.json(user);
+    const memberWorkspace = await Workspace.find({
+      members: {
+        $elemMatch: {
+          memberId: session.user.id,
+        },
+      },
+    });
+
+    console.log(memberWorkspace, user);
+
+    return NextResponse.json([...user, ...memberWorkspace]);
   } catch (e) {
     console.error(e);
     return NextResponse.json({ error: e?.message }, { status: 500 });
