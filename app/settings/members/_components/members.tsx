@@ -67,6 +67,23 @@ export function Members() {
     },
   });
 
+  const transferOwnerMutation = useMutation({
+    mutationFn: (data: { workspaceId: string; userId: string }) =>
+      fetch(`/api/workspace/transfer-owner`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }),
+    onSuccess: () => {
+      queryClient.refetchQueries({
+        queryKey: ["workspace/members"],
+        type: "active",
+      });
+    },
+  });
+
   const deleteMutation = useMutation({
     mutationFn: (data: { workspaceId: string; userId: string }) =>
       fetch(`/api/workspace/member/${data.workspaceId}/${data.userId}`, {
@@ -84,7 +101,7 @@ export function Members() {
   });
 
   const handleRoleChange = async (memberId: string, role: string) => {
-    updateMutation.mutate({
+    await updateMutation.mutate({
       workspaceId: workspace,
       memberId: memberId,
       role: role,
@@ -94,11 +111,10 @@ export function Members() {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleTransferOwner = async (memberId: string) => {
-    // updateMutation.mutate({
-    //   workspaceId: workspace,
-    //   memberId: memberId,
-    //   role: "owner",
-    // });
+    await transferOwnerMutation.mutate({
+      workspaceId: workspace,
+      userId: memberId,
+    });
   };
 
   return (
