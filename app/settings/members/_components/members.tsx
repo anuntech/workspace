@@ -40,10 +40,15 @@ export function Members() {
       fetch(`/api/workspace/owner/${workspace}`).then((res) => res.json()),
   });
 
-  const workspaceQuery = useQuery({
+  const membersQuery = useQuery({
     queryKey: ["workspace/members"],
     queryFn: () =>
       fetch(`/api/workspace/members/${workspace}`).then((res) => res.json()),
+  });
+
+  const userQuery = useQuery({
+    queryKey: ["user"],
+    queryFn: () => fetch("/api/user").then((res) => res.json()),
   });
 
   const updateMutation = useMutation({
@@ -117,7 +122,9 @@ export function Members() {
     });
   };
 
-  console.log(workspaceQuery.data);
+  const yourMemberInfo = membersQuery.data?.find(
+    (member: any) => member._id.toString() == userQuery.data?._id.toString()
+  );
 
   return (
     <div className="space-y-5">
@@ -129,7 +136,7 @@ export function Members() {
       </section>
       {deleteMutation.isPending ||
       ownerQuery.isPending ||
-      workspaceQuery.isPending ? (
+      membersQuery.isPending ? (
         <div className="space-y-3">
           <Skeleton className="h-11 w-full justify-start gap-2 px-3 text-start" />
           <Skeleton className="h-11 w-full justify-start gap-2 px-3 text-start" />
@@ -153,7 +160,7 @@ export function Members() {
               </div>
             </div>
           </div>
-          {workspaceQuery?.data?.map((member: any) => (
+          {membersQuery?.data?.map((member: any) => (
             <div
               key={member._id}
               className="flex items-center justify-between space-x-4"
@@ -178,6 +185,7 @@ export function Members() {
                   onOpenChange={(open) => setIsOpen(open)}
                   defaultValue={member.role}
                   onValueChange={(props) => handleRoleChange(member._id, props)}
+                  disabled={yourMemberInfo?.role == "member"}
                 >
                   <SelectTrigger className="w-36">
                     <SelectValue placeholder="Selecione um cargo" />

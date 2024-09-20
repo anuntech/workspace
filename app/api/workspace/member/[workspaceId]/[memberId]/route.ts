@@ -72,7 +72,15 @@ export async function PATCH(
       );
     }
 
-    if (worksPace.owner.toString() !== session.user.id) {
+    const userRole = worksPace.members.find(
+      (member) => member.memberId.toString() === memberId
+    );
+
+    if (
+      userRole &&
+      userRole?.role != "admin" &&
+      worksPace.owner.toString() !== session.user.id
+    ) {
       return NextResponse.json(
         { error: "You do not have permission to update this workspace" },
         { status: 403 }
