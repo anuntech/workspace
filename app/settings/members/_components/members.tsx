@@ -24,6 +24,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@radix-ui/react-dropdown-menu";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import clsx from "clsx";
 import { Trash2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
@@ -81,12 +82,17 @@ export function Members() {
         },
         body: JSON.stringify(data),
       }),
-    onSuccess: () => {
-      queryClient.refetchQueries({
-        queryKey: ["workspace/members"],
-        type: "active",
-      });
-    },
+    onSuccess: () =>
+      Promise.all([
+        queryClient.refetchQueries({
+          queryKey: ["workspace/members"],
+          type: "active",
+        }),
+        queryClient.refetchQueries({
+          queryKey: ["workspace/owner"],
+          type: "active",
+        }),
+      ]),
   });
 
   const deleteMutation = useMutation({
@@ -194,13 +200,23 @@ export function Members() {
                     <SelectGroup>
                       <SelectItem value="admin">Administrador</SelectItem>
                       <SelectItem value="member">Membro</SelectItem>
-                      <Separator className="my-1 h-px bg-gray-200" />
+                      <Separator
+                        className={clsx(
+                          "my-1 h-px bg-gray-200",
+                          ownerQuery?.data.id.toString() !=
+                            userQuery?.data?._id.toString() && "hidden"
+                        )}
+                      />
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
                           <Button
                             value="owner"
                             variant="ghost"
-                            className="text-destructive w-full text-left p-2 hover:bg-gray-100 rounded-sm focus:bg-gray-100"
+                            className={clsx(
+                              "text-destructive w-full text-left p-2 hover:bg-gray-100 rounded-sm focus:bg-gray-100",
+                              ownerQuery?.data.id.toString() !=
+                                userQuery?.data?._id.toString() && "hidden"
+                            )}
                           >
                             Transferir proprietário
                           </Button>
@@ -233,6 +249,10 @@ export function Members() {
                     <Button
                       variant="outline"
                       size="icon"
+                      disabled={
+                        yourMemberInfo?.role == "member" ||
+                        userQuery.data?._id.toString() == member._id.toString()
+                      }
                       className="group hover:border-red-500 hover:bg-red-50"
                     >
                       <Trash2 className="size-4 group-hover:text-red-500" />
