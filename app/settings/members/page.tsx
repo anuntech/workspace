@@ -28,6 +28,8 @@ export default function MembersPage() {
       fetch(`/api/workspace/owner/${workspace}`).then((res) => res.json()),
   });
 
+  console.log(userQuery.data, ownerQuery.data, "\n\n\n\n\n\n\n\n\n");
+
   return (
     <main className="flex flex-col items-center p-10">
       <div className="w-full max-w-3xl space-y-5">
@@ -37,7 +39,7 @@ export default function MembersPage() {
           <TabsList>
             <TabsTrigger value="members">Membros</TabsTrigger>
             <TabsTrigger
-              disabled={userQuery?.data?.id != ownerQuery?.data?.id}
+              disabled={userQuery?.data?._id != ownerQuery?.data?.id}
               value="invites"
             >
               Convites
