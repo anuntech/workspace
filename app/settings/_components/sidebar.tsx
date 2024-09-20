@@ -17,7 +17,10 @@ export function Sidebar() {
 
   return (
     <aside className="flex flex-col gap-4 rounded-md px-2">
-      <Link href="/" className="flex w-max items-center gap-2">
+      <Link
+        href={`?workspace=${workspace}`}
+        className="flex w-max items-center gap-2"
+      >
         <ChevronLeft className="size-4" />
         Voltar
       </Link>
