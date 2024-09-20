@@ -27,7 +27,7 @@ export function Sidebar() {
           Configurações
         </NavLink>
         <div className="mt-auto">
-          <NavLink href="/settings/plans">
+          <NavLink href={`/settings/plans?workspace=${workspace}`}>
             <Rocket className="mr-3 size-5" />
             Fazer upgrade
           </NavLink>
