@@ -28,8 +28,6 @@ export default function MembersPage() {
       fetch(`/api/workspace/owner/${workspace}`).then((res) => res.json()),
   });
 
-  console.log(userQuery.data, ownerQuery.data, "\n\n\n\n\n\n\n\n\n");
-
   return (
     <main className="flex flex-col items-center p-10">
       <div className="w-full max-w-3xl space-y-5">
