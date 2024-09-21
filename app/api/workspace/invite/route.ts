@@ -43,8 +43,8 @@ export async function POST(request: Request) {
       (member) => member.memberId.toString() === user.id
     );
 
-    const alreadyInvited = worksPace.invitedMembersId?.find(
-      (invitedId) => invitedId.toString() === user.id
+    const alreadyInvited = worksPace.invitedMembersEmail?.find(
+      (invitedId) => invitedId === user.email
     );
 
     if (alreadyIn || alreadyInvited) {
@@ -58,7 +58,7 @@ export async function POST(request: Request) {
 
     await Workspace.findByIdAndUpdate(workspaceId, {
       $push: {
-        invitedMembersId: new mongoose.Types.ObjectId(user.id),
+        invitedMembersEmail: user.email,
       },
     });
 
@@ -101,7 +101,7 @@ export async function DELETE(request: Request) {
 
     await Workspace.findByIdAndUpdate(workspaceId, {
       $pull: {
-        invitedMembersId: userId,
+        invitedMembersEmail: userId,
       },
     });
 

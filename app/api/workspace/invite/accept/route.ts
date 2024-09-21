@@ -51,7 +51,7 @@ export async function POST(request: Request) {
         },
       },
       $pull: {
-        invitedMembersId: user.id,
+        invitedMembersEmail: user.email,
       },
     });
 

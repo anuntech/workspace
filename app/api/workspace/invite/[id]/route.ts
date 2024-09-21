@@ -17,7 +17,7 @@ export async function GET(
 
     const { id } = params;
 
-    const worksPace = await Workspace.findById(new mongoose.Types.ObjectId(id));
+    const worksPace = await Workspace.findById(id);
 
     if (!worksPace) {
       return NextResponse.json(
@@ -34,7 +34,7 @@ export async function GET(
     }
 
     const invitedUsers = await User.find({
-      _id: { $in: worksPace.invitedMembersId },
+      email: { $in: worksPace.invitedMembersEmail },
     }).select("name email image");
 
     return NextResponse.json(invitedUsers);

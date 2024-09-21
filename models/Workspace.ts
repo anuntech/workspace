@@ -12,7 +12,7 @@ export interface IWorkspace extends Document {
   icon: string;
   owner: mongoose.Schema.Types.ObjectId;
   members: members[];
-  invitedMembersId: mongoose.Schema.Types.ObjectId[];
+  invitedMembersEmail: String[];
 }
 
 const workspaceSchema = new mongoose.Schema<IWorkspace>(
@@ -50,13 +50,15 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
       required: false,
       default: [],
     },
-    invitedMembersId: {
-      type: [
-        {
-          type: mongoose.Schema.Types.ObjectId,
-          unique: true,
+    invitedMembersEmail: {
+      type: [String],
+      validate: {
+        validator: function (value: string[]) {
+          return value.length === new Set(value).size;
         },
-      ],
+        message: "duplicated email",
+      },
+
       default: [],
     },
   },
