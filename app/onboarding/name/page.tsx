@@ -1,5 +1,3 @@
-"use client";
-
 import { SetNameForm } from "./_components/set-name-form";
 
 export default function NamePage() {

@@ -1,17 +1,25 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import { InviteWorkspaceForm } from "./_components/invite-workspace-form";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/libs/next-auth";
-import config from "@/config";
-import { redirect } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "next/navigation";
 
-export default async function InviteWorkspacePage() {
-  const session = await getServerSession(authOptions);
+export default function InviteWorkspacePage() {
+  const searchParams = useSearchParams();
+  const invite = searchParams.get("token");
 
-  if (!session) {
-    redirect(config.auth.loginUrl);
-  }
+  const getInviteDataQuery = useQuery({
+    queryKey: ["workspace/get-invite-data"],
+    queryFn: async () => {
+      const res = await fetch(`/api/workspace/get-invite-data/${invite}`);
+      return {
+        data: await res.json(),
+        status: res.status,
+      };
+    },
+  });
 
   return (
     <div className="flex h-screen flex-col">
@@ -30,7 +38,8 @@ export default async function InviteWorkspacePage() {
         />
         <div className="flex w-full max-w-sm flex-col items-center">
           <h1 className="mb-8 text-center text-2xl font-bold text-primary">
-            Convite para participar do workspace
+            Convite para participar do workspace{" "}
+            {getInviteDataQuery.data?.data.name}
           </h1>
           <section className="w-full space-y-4">
             <InviteWorkspaceForm />

@@ -3,7 +3,7 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useEffect } from "react";
 
@@ -15,6 +15,35 @@ export function SetNameForm() {
   const { isPending, data, isSuccess } = useQuery({
     queryKey: ["user"],
     queryFn: () => fetch("/api/user").then((res) => res.json()),
+  });
+
+  const saveNameMutation = useMutation({
+    mutationFn: ({ name }: Inputs) =>
+      fetch("/api/user", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name }),
+      }),
+    onSuccess: (data) => {
+      if (data.ok) {
+        getTokenMutation.mutate();
+        return;
+      }
+    },
+  });
+
+  const getTokenMutation = useMutation({
+    mutationFn: async () => fetch("/api/user/get-invitations-link"),
+    onSuccess: async (data) => {
+      if (data.ok) {
+        router.push(`/invite-workspace?token=${(await data.json()).token}`);
+        return;
+      }
+
+      router.push("/create-workspace");
+    },
   });
 
   const {
@@ -37,20 +66,7 @@ export function SetNameForm() {
       return;
     }
 
-    const res = await fetch("/api/user", {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ name: name }),
-    });
-
-    if (res.ok) {
-      router.push("/create-workspace");
-      return;
-    }
-
-    return;
+    saveNameMutation.mutate({ name });
   };
 
   return (
