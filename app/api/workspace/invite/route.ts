@@ -3,7 +3,6 @@ import { authOptions } from "@/libs/next-auth";
 import { sendInviteWorkspaceEmail } from "@/libs/workspace-invite";
 import User from "@/models/User";
 import Workspace from "@/models/Workspace";
-import mongoose from "mongoose";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
@@ -77,7 +76,7 @@ export async function DELETE(request: Request) {
 
     await connectMongo();
 
-    const { workspaceId, userId } = await request.json();
+    const { workspaceId, email } = await request.json();
 
     const worksPace = await Workspace.findById(workspaceId);
 
@@ -95,13 +94,9 @@ export async function DELETE(request: Request) {
       );
     }
 
-    if (!(await User.findById(userId))) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
-
     await Workspace.findByIdAndUpdate(workspaceId, {
       $pull: {
-        invitedMembersEmail: userId,
+        invitedMembersEmail: email,
       },
     });
 

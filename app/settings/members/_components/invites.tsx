@@ -46,7 +46,7 @@ export function Invites() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (data: { workspaceId: string; userId: string }) =>
+    mutationFn: (data: { workspaceId: string; email: string }) =>
       fetch("/api/workspace/invite", {
         method: "DELETE",
         headers: {
@@ -170,7 +170,7 @@ export function Invites() {
                     onClick={() =>
                       deleteMutation.mutate({
                         workspaceId: searchParams.get("workspace"),
-                        userId: user.id,
+                        email: user.email,
                       })
                     }
                   >
