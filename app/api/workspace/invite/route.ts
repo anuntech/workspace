@@ -30,20 +30,14 @@ export async function POST(request: Request) {
       );
     }
 
-    const user = await User.findOne({
-      email,
-    });
-
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
+    const user = await User.findOne({ email });
 
     const alreadyIn = worksPace.members?.find(
-      (member) => member.memberId.toString() === user.id
+      (member) => member.memberId.toString() === user?.id
     );
 
     const alreadyInvited = worksPace.invitedMembersEmail?.find(
-      (invitedId) => invitedId === user.email
+      (invitedId) => invitedId === email
     );
 
     if (alreadyIn || alreadyInvited) {
@@ -57,7 +51,7 @@ export async function POST(request: Request) {
 
     await Workspace.findByIdAndUpdate(workspaceId, {
       $push: {
-        invitedMembersEmail: user.email,
+        invitedMembersEmail: email,
       },
     });
 

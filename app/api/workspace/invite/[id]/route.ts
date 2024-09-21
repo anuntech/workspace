@@ -37,6 +37,18 @@ export async function GET(
       email: { $in: worksPace.invitedMembersEmail },
     }).select("name email image");
 
+    const usersWithoutAccounst = worksPace.invitedMembersEmail.filter(
+      (email) => !invitedUsers.find((user) => user.email == email)
+    );
+
+    invitedUsers.push(
+      ...usersWithoutAccounst.map((email) => ({
+        email,
+        name: email.split("@")[0],
+        image: undefined,
+      }))
+    );
+
     return NextResponse.json(invitedUsers);
   } catch (e) {
     console.error(e);
