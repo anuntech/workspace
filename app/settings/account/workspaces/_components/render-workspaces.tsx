@@ -15,7 +15,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getWorkspaceIcon } from "@/libs/icons";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { LogOut, Trash2 } from "lucide-react";
 
 export function RenderWorkspaces() {
@@ -27,6 +27,24 @@ export function RenderWorkspaces() {
   const userQuery = useQuery({
     queryKey: ["user"],
     queryFn: () => fetch("/api/user").then((res) => res.json()),
+  });
+
+  const queryClient = useQueryClient();
+
+  const deleteWorkspaceMutation = useMutation({
+    mutationFn: (data: { workspaceId: string }) =>
+      fetch(`/api/workspace/${data.workspaceId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }),
+    onSuccess: () => {
+      queryClient.refetchQueries({
+        queryKey: ["workspace"],
+        type: "active",
+      });
+    },
   });
 
   const isOwner = (workspace: any) => {
@@ -93,7 +111,15 @@ export function RenderWorkspaces() {
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                  <AlertDialogAction>Continuar</AlertDialogAction>
+                  <AlertDialogAction
+                    onClick={() =>
+                      deleteWorkspaceMutation.mutate({
+                        workspaceId: workspace.id,
+                      })
+                    }
+                  >
+                    Continuar
+                  </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
