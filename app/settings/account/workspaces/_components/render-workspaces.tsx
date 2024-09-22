@@ -14,6 +14,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getWorkspaceIcon } from "@/libs/icons";
 import { useQuery } from "@tanstack/react-query";
 import { LogOut, Trash2 } from "lucide-react";
 
@@ -49,11 +50,19 @@ export function RenderWorkspaces() {
     </div>
   ) : (
     workspaceQuery.data?.map((workspace: any) => (
-      <div className="flex items-center justify-between space-x-4">
+      <div
+        className="flex items-center justify-between space-x-4"
+        key={workspace.id}
+      >
         <div className="flex items-center space-x-4">
           <Avatar>
-            <AvatarImage src="/shad.png" />
-            <AvatarFallback>OM</AvatarFallback>
+            {getWorkspaceIcon(workspace.icon) ? (
+              <div className="flex items-center justify-center w-full h-full">
+                {getWorkspaceIcon(workspace.icon)}
+              </div>
+            ) : (
+              <AvatarFallback>OM</AvatarFallback>
+            )}
           </Avatar>
           <div>
             <p className="text-sm font-medium leading-none">{workspace.name}</p>
