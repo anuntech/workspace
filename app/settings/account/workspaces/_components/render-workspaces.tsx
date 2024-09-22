@@ -47,6 +47,22 @@ export function RenderWorkspaces() {
     },
   });
 
+  const leftMutation = useMutation({
+    mutationFn: (data: { workspaceId: string }) =>
+      fetch(`/api/workspace/leave/${data.workspaceId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }),
+    onSuccess: () => {
+      queryClient.refetchQueries({
+        queryKey: ["workspace"],
+        type: "active",
+      });
+    },
+  });
+
   const isOwner = (workspace: any) => {
     return workspace.owner === userQuery.data?._id;
   };
@@ -147,7 +163,13 @@ export function RenderWorkspaces() {
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                    <AlertDialogAction>Continuar</AlertDialogAction>
+                    <AlertDialogAction
+                      onClick={() =>
+                        leftMutation.mutate({ workspaceId: workspace.id })
+                      }
+                    >
+                      Continuar
+                    </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
