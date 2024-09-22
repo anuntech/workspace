@@ -8,11 +8,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Button } from '@/components/ui/button'
-import { Separator } from '@/components/ui/separator'
-import { LogOut, Trash2 } from 'lucide-react'
+} from "@/components/ui/alert-dialog";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { LogOut, Trash2 } from "lucide-react";
+import { RenderWorkspaces } from "./_components/render-workspaces";
 
 export default function WorkspacesPage() {
   return (
@@ -27,83 +28,8 @@ export default function WorkspacesPage() {
             eficiente.
           </span>
         </section>
-        <div className="flex items-center justify-between space-x-4">
-          <div className="flex items-center space-x-4">
-            <Avatar>
-              <AvatarImage src="/shad.png" />
-              <AvatarFallback>OM</AvatarFallback>
-            </Avatar>
-            <div>
-              <p className="text-sm font-medium leading-none">Anuntech</p>
-              <p className="text-sm text-muted-foreground">Administrador</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="group hover:border-red-500 hover:bg-red-50"
-                >
-                  <Trash2 className="size-4 group-hover:text-red-500" />
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Esta ação não pode ser desfeita. Isso excluirá
-                    permanentemente o membro de seu workspace.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                  <AlertDialogAction>Continuar</AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </div>
-        </div>
-        <div className="flex items-center justify-between space-x-4">
-          <div className="flex items-center space-x-4">
-            <Avatar>
-              <AvatarImage src="/shad.png" />
-              <AvatarFallback>OM</AvatarFallback>
-            </Avatar>
-            <div>
-              <p className="text-sm font-medium leading-none">Watec Service</p>
-              <p className="text-sm text-muted-foreground">Usuário</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="group hover:border-red-500 hover:bg-red-50"
-                >
-                  <LogOut className="size-4 group-hover:text-red-500" />
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Ao sair, você perderá o acesso a este workspace. Esta ação
-                    não pode ser desfeita.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                  <AlertDialogAction>Continuar</AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </div>
-        </div>
+        <RenderWorkspaces />
       </div>
     </main>
-  )
+  );
 }
