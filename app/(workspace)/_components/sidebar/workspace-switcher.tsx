@@ -30,7 +30,7 @@ export function WorkspaceSwitcher() {
     queryFn: () => fetch("/api/workspace").then((res) => res.json()),
   });
 
-  const [selectedWorkspace, setSelectedWorkspace] = useState<string>("");
+  const selectedWorkspace = urlParams.get("workspace");
 
   useEffect(() => {
     if (!isSuccess) return;
@@ -39,18 +39,10 @@ export function WorkspaceSwitcher() {
 
     if (!urlWorkspace && data.length > 0) {
       const firstWorkspaceId = data[0]?.id;
-      setSelectedWorkspace(firstWorkspaceId);
       router.push(`/?workspace=${firstWorkspaceId}`);
       return;
     }
-
-    setSelectedWorkspace(urlWorkspace);
   }, [data]);
-
-  const handleSelectWorkspace = (workspaceId: string) => {
-    setSelectedWorkspace(workspaceId);
-    router.push(`/?workspace=${workspaceId}`);
-  };
 
   return isPending ? (
     <p>Carregando...</p>
@@ -64,15 +56,14 @@ export function WorkspaceSwitcher() {
           {data?.find((workspace) => workspace.id === selectedWorkspace)?.name}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-44">
+      <DropdownMenuContent className="w-44" defaultValue={selectedWorkspace}>
         {data?.map((workspace) => (
           <DropdownMenuGroup key={workspace.id}>
-            <DropdownMenuItem
-              className="gap-3"
-              onClick={() => handleSelectWorkspace(workspace.id)}
-            >
-              {getWorkspaceIcon(workspace.icon)}
-              {workspace.name}
+            <DropdownMenuItem>
+              <a href={`/?workspace=${workspace.id}`} className="flex gap-3">
+                {getWorkspaceIcon(workspace.icon)}
+                {workspace.name}
+              </a>
             </DropdownMenuItem>
           </DropdownMenuGroup>
         ))}

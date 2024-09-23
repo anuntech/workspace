@@ -25,6 +25,7 @@ export function RedirectNoneWorkspace({
   };
 
   const verifyIfWorkspaceIsValid = () => {
+    if (workspacesQuery.isPending) return;
     const workspaceId = searchParams.get("workspace");
 
     const isThereWorkspace = workspacesQuery.data?.find(
@@ -32,7 +33,7 @@ export function RedirectNoneWorkspace({
     );
 
     if (workspaceId && !isThereWorkspace) {
-      router.push("/");
+      router.push(`/?workspace=${workspacesQuery.data[0].id}`);
     }
   };
 

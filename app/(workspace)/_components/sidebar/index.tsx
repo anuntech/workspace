@@ -6,10 +6,17 @@ import { Separator } from "@/components/ui/separator";
 import { UserNav } from "./user-nav";
 import { NavLink } from "./nav-link";
 import { useSearchParams } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 
 export function Sidebar() {
   const urlParams = useSearchParams();
   const workspace = urlParams.get("workspace");
+
+  const roleQuery = useQuery({
+    queryKey: ["workspace/role"],
+    queryFn: () =>
+      fetch(`/api/workspace/role/${workspace}`).then((res) => res.json()),
+  });
 
   return (
     <aside className="flex flex-col gap-3 rounded-md px-2">
@@ -22,10 +29,13 @@ export function Sidebar() {
           <House className="mr-3 size-5" />
           Home
         </NavLink>
-        <NavLink href={`/settings?workspace=${workspace}`}>
-          <Settings className="mr-3 size-5" />
-          Configurações
-        </NavLink>
+
+        {roleQuery.data?.role !== "member" && !roleQuery.isPending && (
+          <NavLink href={`/settings?workspace=${workspace}`}>
+            <Settings className="mr-3 size-5" />
+            Configurações
+          </NavLink>
+        )}
         <div className="mt-auto">
           <NavLink href={`/settings/plans?workspace=${workspace}`}>
             <Rocket className="mr-3 size-5" />

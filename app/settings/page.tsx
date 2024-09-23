@@ -39,12 +39,14 @@ export default function SettingsPage() {
     queryFn: () => fetch("/api/workspace").then((res) => res.json()),
   });
 
-  const userQuery = useQuery({
-    queryKey: ["user"],
-    queryFn: () => fetch("/api/user").then((res) => res.json()),
-  });
-
   const searchParams = useSearchParams();
+  const workspace = searchParams.get("workspace");
+
+  const roleQuery = useQuery({
+    queryKey: ["workspace/role"],
+    queryFn: () =>
+      fetch(`/api/workspace/role/${workspace}`).then((res) => res.json()),
+  });
 
   const [isChanged, setIsChanged] = useState(false);
 
@@ -58,10 +60,6 @@ export default function SettingsPage() {
     setValue("icon", workspace?.icon);
     setValue("id", workspace?.id);
   }, [isSuccess]);
-
-  const actualWorkspace = data?.find(
-    (workspace) => workspace.id === searchParams.get("workspace")
-  );
 
   const {
     register,
@@ -91,8 +89,6 @@ export default function SettingsPage() {
 
     mutation.mutate(data);
   };
-
-  console.log(actualWorkspace?.owner, userQuery.data?._id);
 
   return (
     <form action="POST" onSubmit={handleSubmit(onSubmit)}>
@@ -140,11 +136,7 @@ export default function SettingsPage() {
                 placeholder="Nome..."
                 {...register("name", { required: true })}
                 onChange={() => setIsChanged(true)}
-                disabled={
-                  isPending ||
-                  isSubmitting ||
-                  actualWorkspace?.owner != userQuery?.data?._id
-                }
+                disabled={isPending || isSubmitting}
               />
             </div>
           </section>
@@ -163,7 +155,7 @@ export default function SettingsPage() {
                 <AlertDialogTrigger asChild>
                   <Button
                     variant="destructive"
-                    disabled={actualWorkspace?.owner != userQuery?.data?._id}
+                    disabled={roleQuery.data?.role != "owner"}
                   >
                     Deletar workspace
                   </Button>

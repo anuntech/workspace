@@ -73,9 +73,15 @@ export async function PATCH(request: Request) {
       );
     }
 
-    if (workspace.owner.toString() !== session.user.id) {
+    const admin =
+      workspace.members.find(
+        (val) => val.memberId.toString() === session.user.id.toString()
+      )?.role == "admin";
+    const owner = workspace.owner.toString() == session.user.id.toString();
+
+    if (!admin && !owner) {
       return NextResponse.json(
-        { error: "You do not have permission to update this workspace" },
+        { error: "You are not authorized to perform this action" },
         { status: 403 }
       );
     }
