@@ -1,18 +1,4 @@
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { LogOut, Trash2 } from "lucide-react";
 import { RenderWorkspaces } from "./_components/render-workspaces";
 
 export default function WorkspacesPage() {

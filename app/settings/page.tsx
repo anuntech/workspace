@@ -29,12 +29,19 @@ type Workspace = {
   name?: string;
   id?: string;
   icon?: any;
+  members?: any[];
+  owner: string;
 };
 
 export default function SettingsPage() {
   const { isPending, data, isSuccess } = useQuery<Workspace[]>({
     queryKey: ["workspace"],
     queryFn: () => fetch("/api/workspace").then((res) => res.json()),
+  });
+
+  const userQuery = useQuery({
+    queryKey: ["user"],
+    queryFn: () => fetch("/api/user").then((res) => res.json()),
   });
 
   const searchParams = useSearchParams();
@@ -51,6 +58,10 @@ export default function SettingsPage() {
     setValue("icon", workspace?.icon);
     setValue("id", workspace?.id);
   }, [isSuccess]);
+
+  const actualWorkspace = data?.find(
+    (workspace) => workspace.id === searchParams.get("workspace")
+  );
 
   const {
     register,
@@ -80,6 +91,8 @@ export default function SettingsPage() {
 
     mutation.mutate(data);
   };
+
+  console.log(actualWorkspace?.owner, userQuery.data?._id);
 
   return (
     <form action="POST" onSubmit={handleSubmit(onSubmit)}>
@@ -127,7 +140,11 @@ export default function SettingsPage() {
                 placeholder="Nome..."
                 {...register("name", { required: true })}
                 onChange={() => setIsChanged(true)}
-                disabled={isPending || isSubmitting}
+                disabled={
+                  isPending ||
+                  isSubmitting ||
+                  actualWorkspace?.owner != userQuery?.data?._id
+                }
               />
             </div>
           </section>
@@ -144,7 +161,12 @@ export default function SettingsPage() {
             <div className="flex justify-end">
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button variant="destructive">Deletar workspace</Button>
+                  <Button
+                    variant="destructive"
+                    disabled={actualWorkspace?.owner != userQuery?.data?._id}
+                  >
+                    Deletar workspace
+                  </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
