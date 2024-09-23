@@ -6,11 +6,10 @@ import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import config from "@/config";
 import connectMongo from "./mongo";
 import { custom } from "openid-client";
-import User from "@/models/User";
 import mongoose from "mongoose";
 
 custom.setHttpOptionsDefaults({
-  timeout: 10000,
+  timeout: 20000,
 });
 interface NextAuthOptionsExtended extends NextAuthOptions {
   adapter: any;
@@ -56,7 +55,9 @@ export const authOptions: NextAuthOptionsExtended = {
       const isOAuthLogin = account.provider === "google";
 
       if (isOAuthLogin && user) {
-        const existingUser = await User.findOne({ email: user.email });
+        const existingUser = await mongoose.connection
+          .collection("users")
+          .findOne({ email: user.email });
 
         if (existingUser) {
           await mongoose.connection.collection("accounts").insertOne({
@@ -64,7 +65,6 @@ export const authOptions: NextAuthOptionsExtended = {
             provider: "google",
             providerAccountId: account.providerAccountId,
           });
-
           return true;
         }
       }
