@@ -2,6 +2,7 @@
 
 import {
   AlertDialog,
+  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -174,26 +175,29 @@ export default function SettingsPage() {
                   <Button
                     variant="destructive"
                     disabled={roleQuery.data?.role != "owner"}
-                    onClick={() =>
-                      deleteWorkspaceMutation.mutate({ workspaceId: workspace })
-                    }
                   >
                     Deletar workspace
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>
-                      Entre em contato com o suporte
-                    </AlertDialogTitle>
+                    <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
                     <AlertDialogDescription>
-                      Para prosseguir com a exclusão do workspace, entre em
-                      contato com nosso suporte. Eles irão ajudar você a
-                      concluir essa ação de forma segura.
+                      Esta ação não pode ser desfeita. Isso excluirá
+                      permanentemente o seu workspace.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Ok</AlertDialogCancel>
+                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={() =>
+                        deleteWorkspaceMutation.mutate({
+                          workspaceId: workspace,
+                        })
+                      }
+                    >
+                      Continuar
+                    </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>

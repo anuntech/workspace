@@ -2,7 +2,6 @@ import connectMongo from "@/libs/mongoose";
 import { authOptions } from "@/libs/next-auth";
 import User from "@/models/User";
 import Workspace from "@/models/Workspace";
-import mongoose from "mongoose";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
@@ -26,7 +25,14 @@ export async function GET(
       );
     }
 
-    if (worksPace.owner.toString() !== session.user.id) {
+    const memberRole = worksPace.members.find(
+      (member) => member.memberId.toString() === session.user.id.toString()
+    )?.role;
+
+    if (
+      worksPace.owner.toString() !== session.user.id &&
+      memberRole !== "admin"
+    ) {
       return NextResponse.json(
         { error: "You do not have permission to get this workspace invites" },
         { status: 403 }
