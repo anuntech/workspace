@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/carousel";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -67,6 +67,24 @@ export default function SettingsPage() {
     setValue,
     formState: { isSubmitting },
   } = useForm<Workspace>();
+
+  const queryClient = useQueryClient();
+
+  const deleteWorkspaceMutation = useMutation({
+    mutationFn: (data: { workspaceId: string }) =>
+      fetch(`/api/workspace/${data.workspaceId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }),
+    onSuccess: () => {
+      queryClient.refetchQueries({
+        queryKey: ["workspace"],
+        type: "active",
+      });
+    },
+  });
 
   const mutation = useMutation({
     mutationFn: (data: Workspace) =>
@@ -156,6 +174,9 @@ export default function SettingsPage() {
                   <Button
                     variant="destructive"
                     disabled={roleQuery.data?.role != "owner"}
+                    onClick={() =>
+                      deleteWorkspaceMutation.mutate({ workspaceId: workspace })
+                    }
                   >
                     Deletar workspace
                   </Button>

@@ -105,7 +105,7 @@ export function RenderWorkspaces() {
             </p>
           </div>
         </div>
-        {isOwner(workspace) ? (
+        {!isOwner(workspace) && (
           <div className="flex items-center gap-2">
             <AlertDialog>
               <AlertDialogTrigger asChild>
@@ -114,24 +114,22 @@ export function RenderWorkspaces() {
                   size="icon"
                   className="group hover:border-red-500 hover:bg-red-50"
                 >
-                  <Trash2 className="size-4 group-hover:text-red-500" />
+                  <LogOut className="size-4 group-hover:text-red-500" />
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
                   <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    Esta ação não pode ser desfeita. Isso excluirá
-                    permanentemente o membro de seu workspace.
+                    Ao sair, você perderá o acesso a este workspace. Esta ação
+                    não pode ser desfeita.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancelar</AlertDialogCancel>
                   <AlertDialogAction
                     onClick={() =>
-                      deleteWorkspaceMutation.mutate({
-                        workspaceId: workspace.id,
-                      })
+                      leftMutation.mutate({ workspaceId: workspace.id })
                     }
                   >
                     Continuar
@@ -140,41 +138,6 @@ export function RenderWorkspaces() {
               </AlertDialogContent>
             </AlertDialog>
           </div>
-        ) : (
-          <>
-            <div className="flex items-center gap-2">
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="group hover:border-red-500 hover:bg-red-50"
-                  >
-                    <LogOut className="size-4 group-hover:text-red-500" />
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Ao sair, você perderá o acesso a este workspace. Esta ação
-                      não pode ser desfeita.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                    <AlertDialogAction
-                      onClick={() =>
-                        leftMutation.mutate({ workspaceId: workspace.id })
-                      }
-                    >
-                      Continuar
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </div>
-          </>
         )}
       </div>
     ))
