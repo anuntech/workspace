@@ -12,10 +12,21 @@ type Inputs = {
 };
 
 export function SetNameForm() {
+  const router = useRouter();
+
   const { isPending, data, isSuccess } = useQuery({
     queryKey: ["user"],
     queryFn: () => fetch("/api/user").then((res) => res.json()),
   });
+
+  const workspaces = useQuery({
+    queryKey: ["workspace"],
+    queryFn: () => fetch("/api/workspace").then((res) => res.json()),
+  });
+
+  if (workspaces?.data?.length > 0) {
+    router.push("/");
+  }
 
   const saveNameMutation = useMutation({
     mutationFn: ({ name }: Inputs) =>
@@ -58,8 +69,6 @@ export function SetNameForm() {
 
     setValue("name", data.name);
   }, [data]);
-
-  const router = useRouter();
 
   const onSubmit: SubmitHandler<Inputs> = async ({ name }) => {
     if (!name) {

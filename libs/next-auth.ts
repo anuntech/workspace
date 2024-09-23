@@ -6,7 +6,10 @@ import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import config from "@/config";
 import connectMongo from "./mongo";
 import { custom } from "openid-client";
-import mongoose from "mongoose";
+
+custom.setHttpOptionsDefaults({
+  timeout: 20000,
+});
 
 interface NextAuthOptionsExtended extends NextAuthOptions {
   adapter: any;
@@ -20,9 +23,7 @@ export const authOptions: NextAuthOptionsExtended = {
       // Follow the "Login with Google" tutorial to get your credentials
       clientId: process.env.GOOGLE_ID,
       clientSecret: process.env.GOOGLE_SECRET,
-      httpOptions: {
-        timeout: 30000,
-      },
+      allowDangerousEmailAccountLinking: true,
       async profile(profile) {
         return {
           id: profile.sub,
@@ -50,28 +51,6 @@ export const authOptions: NextAuthOptionsExtended = {
   ...(connectMongo && { adapter: MongoDBAdapter(connectMongo) }),
 
   callbacks: {
-    async signIn({ user, account, profile, email, credentials }) {
-      const isEmailLogin = account.provider === "email";
-      const isOAuthLogin = account.provider === "google";
-
-      if (isOAuthLogin && user) {
-        const existingUser = await mongoose.connection
-          .collection("users")
-          .findOne({ email: user.email });
-
-        if (existingUser) {
-          await mongoose.connection.collection("accounts").insertOne({
-            userId: existingUser._id,
-            provider: "google",
-            providerAccountId: account.providerAccountId,
-          });
-          return true;
-        }
-      }
-
-      return true;
-    },
-
     session: async ({ session, token }) => {
       if (session?.user) {
         session.user.id = token.sub;
