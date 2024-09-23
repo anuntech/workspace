@@ -76,7 +76,7 @@ export function SignInOptions({ csrfToken }: { csrfToken: string }) {
             )}
             {!isRegister && (
               <>
-                <p className="text-sm text-zinc-500">
+                {/* <p className="text-sm text-zinc-500">
                   Não possui conta?{" "}
                   <Link
                     href="/auth/sign-in?register=true"
@@ -84,7 +84,7 @@ export function SignInOptions({ csrfToken }: { csrfToken: string }) {
                   >
                     Cadastre-se
                   </Link>
-                </p>
+                </p> */}
               </>
             )}
           </section>
