@@ -40,10 +40,10 @@ export function UserNav() {
           </Avatar>
           <span className="flex flex-col w-full overflow-hidden">
             <span className="text-ellipsis overflow-hidden whitespace-nowrap">
-              {data.name}
+              {data?.name}
             </span>
             <span className="text-xs text-zinc-500 text-ellipsis overflow-hidden whitespace-nowrap">
-              {data.email}
+              {data?.email}
             </span>
           </span>
         </Button>
@@ -52,10 +52,10 @@ export function UserNav() {
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none text-ellipsis overflow-hidden whitespace-nowrap">
-              {data.name}
+              {data?.name}
             </p>
             <p className="text-xs leading-none text-muted-foreground text-ellipsis overflow-hidden whitespace-nowrap">
-              {data.email}
+              {data?.email}
             </p>
           </div>
         </DropdownMenuLabel>
