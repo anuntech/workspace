@@ -14,12 +14,16 @@ import { useQuery } from "@tanstack/react-query";
 import { CircleHelp, CircleUser, LogOut } from "lucide-react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
 export function UserNav() {
   const { isPending, data } = useQuery({
     queryKey: ["user"],
     queryFn: () => fetch("/api/user").then((res) => res.json()),
   });
+
+  const searchParams = useSearchParams();
+  const workspace = searchParams.get("workspace");
 
   return isPending ? (
     <Skeleton className="h-11 w-full justify-start gap-2 px-3 text-start" />
@@ -59,7 +63,7 @@ export function UserNav() {
         <DropdownMenuGroup>
           <DropdownMenuItem>
             <Link
-              href="/settings/account"
+              href={`/settings/account?workspace=${workspace}`}
               className="flex w-full items-center gap-2"
             >
               <CircleUser className="size-4" />
