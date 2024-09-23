@@ -17,6 +17,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { getWorkspaceIcon } from "@/libs/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { LogOut, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export function RenderWorkspaces() {
   const workspaceQuery = useQuery({
@@ -31,21 +32,7 @@ export function RenderWorkspaces() {
 
   const queryClient = useQueryClient();
 
-  const deleteWorkspaceMutation = useMutation({
-    mutationFn: (data: { workspaceId: string }) =>
-      fetch(`/api/workspace/${data.workspaceId}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }),
-    onSuccess: () => {
-      queryClient.refetchQueries({
-        queryKey: ["workspace"],
-        type: "active",
-      });
-    },
-  });
+  const router = useRouter();
 
   const leftMutation = useMutation({
     mutationFn: (data: { workspaceId: string }) =>
@@ -128,9 +115,10 @@ export function RenderWorkspaces() {
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancelar</AlertDialogCancel>
                   <AlertDialogAction
-                    onClick={() =>
-                      leftMutation.mutate({ workspaceId: workspace.id })
-                    }
+                    onClick={() => {
+                      leftMutation.mutate({ workspaceId: workspace.id });
+                      router.push("/");
+                    }}
                   >
                     Continuar
                   </AlertDialogAction>
