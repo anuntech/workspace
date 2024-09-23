@@ -33,7 +33,9 @@ export function Sidebar() {
           </span>
           <ul className="space-y-1 text-sm">
             <li>
-              <NavLink href={`/settings?workspace=${workspace}`}>Geral</NavLink>
+              <NavLink href={`/settings?workspace=${workspace}`}>
+                Visão geral
+              </NavLink>
             </li>
             <li>
               <NavLink href={`/settings/apps?workspace=${workspace}`}>
@@ -68,7 +70,7 @@ export function Sidebar() {
           <ul className="space-y-1 text-sm">
             <li>
               <NavLink href={`/settings/account?workspace=${workspace}`}>
-                Minhas configurações
+                Meu perfil
               </NavLink>
             </li>
             <li>
