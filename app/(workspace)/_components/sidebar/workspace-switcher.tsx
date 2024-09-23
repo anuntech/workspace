@@ -48,8 +48,8 @@ export function WorkspaceSwitcher() {
   }, [data]);
 
   const handleSelectWorkspace = (workspaceId: string) => {
+    setSelectedWorkspace(workspaceId);
     router.push(`/?workspace=${workspaceId}`);
-    window.location.reload();
   };
 
   return isPending ? (
