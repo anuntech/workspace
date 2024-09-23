@@ -10,7 +10,11 @@ declare global {
 }
 
 const uri = process.env.MONGODB_URI;
-const options = {};
+const options = {
+  bufferCommands: false,
+  serverSelectionTimeoutMS: 30000,
+  connectTimeoutMS: 30000,
+};
 
 let client: MongoClient | undefined;
 let clientPromise: Promise<MongoClient> | undefined;
