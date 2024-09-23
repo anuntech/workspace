@@ -31,7 +31,7 @@ export function RedirectNoneWorkspace({
       (workspace) => workspace.id === workspaceId
     );
 
-    if (!isThereWorkspace) {
+    if (workspaceId && !isThereWorkspace) {
       router.push("/");
     }
   };

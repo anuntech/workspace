@@ -6,6 +6,8 @@ import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import config from "@/config";
 import connectMongo from "./mongo";
 import { custom } from "openid-client";
+import User from "@/models/User";
+import mongoose from "mongoose";
 
 custom.setHttpOptionsDefaults({
   timeout: 10000,
@@ -49,6 +51,27 @@ export const authOptions: NextAuthOptionsExtended = {
   ...(connectMongo && { adapter: MongoDBAdapter(connectMongo) }),
 
   callbacks: {
+    async signIn({ user, account, profile, email, credentials }) {
+      const isEmailLogin = account.provider === "email";
+      const isOAuthLogin = account.provider === "google";
+
+      if (isOAuthLogin && user) {
+        const existingUser = await User.findOne({ email: user.email });
+
+        if (existingUser) {
+          await mongoose.connection.collection("accounts").insertOne({
+            userId: existingUser._id,
+            provider: "google",
+            providerAccountId: account.providerAccountId,
+          });
+
+          return true;
+        }
+      }
+
+      return true;
+    },
+
     session: async ({ session, token }) => {
       if (session?.user) {
         session.user.id = token.sub;
