@@ -8,10 +8,6 @@ import connectMongo from "./mongo";
 import { custom } from "openid-client";
 import mongoose from "mongoose";
 
-custom.setHttpOptionsDefaults({
-  timeout: 20000,
-});
-
 interface NextAuthOptionsExtended extends NextAuthOptions {
   adapter: any;
 }
@@ -24,6 +20,9 @@ export const authOptions: NextAuthOptionsExtended = {
       // Follow the "Login with Google" tutorial to get your credentials
       clientId: process.env.GOOGLE_ID,
       clientSecret: process.env.GOOGLE_SECRET,
+      httpOptions: {
+        timeout: 30000,
+      },
       async profile(profile) {
         return {
           id: profile.sub,
@@ -52,9 +51,6 @@ export const authOptions: NextAuthOptionsExtended = {
 
   callbacks: {
     async signIn({ user, account, profile, email, credentials }) {
-      custom.setHttpOptionsDefaults({
-        timeout: 20000,
-      });
       const isEmailLogin = account.provider === "email";
       const isOAuthLogin = account.provider === "google";
 
