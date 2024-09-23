@@ -11,6 +11,7 @@ import mongoose from "mongoose";
 custom.setHttpOptionsDefaults({
   timeout: 20000,
 });
+
 interface NextAuthOptionsExtended extends NextAuthOptions {
   adapter: any;
 }
@@ -51,6 +52,9 @@ export const authOptions: NextAuthOptionsExtended = {
 
   callbacks: {
     async signIn({ user, account, profile, email, credentials }) {
+      custom.setHttpOptionsDefaults({
+        timeout: 20000,
+      });
       const isEmailLogin = account.provider === "email";
       const isOAuthLogin = account.provider === "google";
 
