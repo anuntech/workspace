@@ -8,11 +8,5 @@ export default async function OnboardingLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await getServerSession(authOptions);
-
-  if (!session) {
-    redirect(config.auth.loginUrl);
-  }
-
   return children;
 }

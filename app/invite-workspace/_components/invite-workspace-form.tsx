@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 export function InviteWorkspaceForm() {
@@ -22,6 +23,29 @@ export function InviteWorkspaceForm() {
       };
     },
   });
+
+  const user = useQuery({
+    queryKey: ["user"],
+    queryFn: () => fetch("/api/user").then((res) => res.json()),
+  });
+
+  if (user.isFetched && !user) {
+    signIn("email", {
+      email: response.data.email,
+      callbackUrl: `/invite-workspace?token=${invite}`,
+    });
+  }
+
+  if (
+    user.isFetched &&
+    isFetched &&
+    user?.data?.email != response?.data?.email
+  ) {
+    signIn("email", {
+      email: response.data.email,
+      callbackUrl: `/invite-workspace?token=${invite}`,
+    });
+  }
 
   const router = useRouter();
   if (isFetched && response.status == 400) {
