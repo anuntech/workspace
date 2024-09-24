@@ -8,5 +8,7 @@ export default async function OnboardingLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await getServerSession(authOptions);
+
   return children;
 }
