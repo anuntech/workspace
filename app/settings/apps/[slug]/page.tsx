@@ -1,14 +1,20 @@
-import Link from 'next/link'
-import { ChevronLeft, CirclePlus } from 'lucide-react'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Button } from '@/components/ui/button'
+"use client";
+
+import Link from "next/link";
+import { ChevronLeft, CirclePlus } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { useSearchParams } from "next/navigation";
 
 export default function AppPage() {
+  const searchParams = useSearchParams();
+  const workspace = searchParams.get("workspace");
+
   return (
     <div className="flex flex-col items-center p-10">
       <div className="w-full max-w-3xl space-y-5">
         <Link
-          href="/settings/apps"
+          href={`/settings/apps?workspace=${workspace}`}
           className="flex w-max items-center gap-2 text-sm"
         >
           <ChevronLeft className="size-4" />
@@ -56,5 +62,5 @@ export default function AppPage() {
         </section>
       </div>
     </div>
-  )
+  );
 }

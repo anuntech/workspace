@@ -8,6 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import { Search } from "lucide-react";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "next/navigation";
 
 const apps = [
   {
@@ -134,6 +135,8 @@ const apps = [
 
 export default function AppsPage() {
   const [inputValue, setInputValue] = useState("");
+  const searchParams = useSearchParams();
+  const workspace = searchParams.get("workspace");
 
   const applicationsQuery = useQuery({
     queryKey: ["applications"],
@@ -199,7 +202,10 @@ export default function AppsPage() {
                 {applicationsQuery?.data
                   .filter((app: any) => app.status === "disabled")
                   ?.map((app: any) => (
-                    <Link href="/" key={app.name}>
+                    <Link
+                      href={`/settings/apps/${app._id}?workspace=${workspace}`}
+                      key={app.name}
+                    >
                       <Card>
                         <CardContent className="space-y-3 p-5">
                           <div className="flex items-center gap-3">
