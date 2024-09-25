@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Search } from "lucide-react";
 import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
 
 const apps = [
   {
@@ -134,6 +135,18 @@ const apps = [
 export default function AppsPage() {
   const [inputValue, setInputValue] = useState("");
 
+  const applicationsQuery = useQuery({
+    queryKey: ["applications"],
+    queryFn: async () => {
+      const res = await fetch("/api/applications");
+      return res.json();
+    },
+  });
+
+  if (applicationsQuery.isLoading) {
+    return <div>Carregando...</div>;
+  }
+
   return (
     <div className="flex flex-col items-center p-10">
       <div className="w-full max-w-3xl space-y-5">
@@ -153,9 +166,9 @@ export default function AppsPage() {
             <section className="space-y-4 py-5">
               <span className="text-sm text-muted-foreground">Habilitados</span>
               <div className="grid grid-cols-3 gap-5">
-                {apps
-                  .filter((app) => app.status === "enabled")
-                  .map((app) => (
+                {applicationsQuery?.data
+                  ?.filter((app: any) => app.status === "enabled")
+                  .map((app: any) => (
                     <Link href="/" key={app.name}>
                       <Card>
                         <CardContent className="flex items-center gap-3 p-5">
@@ -183,9 +196,9 @@ export default function AppsPage() {
                 Desabilitados
               </span>
               <div className="grid grid-cols-3 gap-5">
-                {apps
-                  .filter((app) => app.status === "disabled")
-                  .map((app) => (
+                {applicationsQuery?.data
+                  .filter((app: any) => app.status === "disabled")
+                  ?.map((app: any) => (
                     <Link href="/" key={app.name}>
                       <Card>
                         <CardContent className="space-y-3 p-5">
@@ -216,7 +229,7 @@ export default function AppsPage() {
               .filter((app) =>
                 app.name.toLowerCase().includes(inputValue.toLowerCase())
               )
-              .map((app) => (
+              ?.map((app) => (
                 <Link href="/" key={app.name}>
                   <Card>
                     <CardContent className="space-y-3 p-5">
