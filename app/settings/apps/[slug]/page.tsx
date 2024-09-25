@@ -6,8 +6,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useSearchParams } from "next/navigation";
 
-export default function AppPage() {
+export default function AppPage({ params }: { params: { slug: string } }) {
   const searchParams = useSearchParams();
+
   const workspace = searchParams.get("workspace");
 
   return (
