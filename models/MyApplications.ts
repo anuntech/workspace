@@ -3,21 +3,25 @@ import toJSON from "./plugins/toJSON";
 import { Model } from "mongoose";
 
 export interface IMyApplications extends Document {
-  userId: mongoose.Schema.Types.ObjectId;
-  applicationId: mongoose.Schema.Types.ObjectId;
+  workspaceId: mongoose.Schema.Types.ObjectId;
+  allowedApplicationsId: mongoose.Schema.Types.ObjectId[];
 }
 
 const myApplicationSchema = new mongoose.Schema<IMyApplications>(
   {
-    userId: {
+    workspaceId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "Workspace",
       required: true,
     },
-    applicationId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Applications",
-      required: true,
+    allowedApplicationsId: {
+      type: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Applications",
+        },
+      ],
+      default: [],
     },
   },
   {

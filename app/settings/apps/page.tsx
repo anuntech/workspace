@@ -141,7 +141,7 @@ export default function AppsPage() {
   const applicationsQuery = useQuery({
     queryKey: ["applications"],
     queryFn: async () => {
-      const res = await fetch("/api/applications");
+      const res = await fetch(`/api/applications/${workspace}`);
       return res.json();
     },
   });
