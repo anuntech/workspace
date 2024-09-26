@@ -10,129 +10,6 @@ import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 
-const apps = [
-  {
-    name: "GitHub",
-    status: "enabled",
-    avatarSrc: "/shad.png",
-    avatarFallback: "GH",
-    description:
-      "Plataforma de hospedagem de código para controle de versão e colaboração.",
-  },
-  {
-    name: "Slack",
-    status: "disabled",
-    avatarSrc: "/shad.png",
-    avatarFallback: "SL",
-    description:
-      "Ferramenta de comunicação em equipe com canais organizados e integração com diversos serviços.",
-  },
-  {
-    name: "Jira",
-    status: "enabled",
-    avatarSrc: "/shad.png",
-    avatarFallback: "JR",
-    description:
-      "Software de gerenciamento de projetos para desenvolvimento ágil e rastreamento de issues.",
-  },
-  {
-    name: "Notion",
-    status: "disabled",
-    avatarSrc: "/shad.png",
-    avatarFallback: "NT",
-    description:
-      "Aplicativo de organização e produtividade, combinando notas, tarefas e wikis.",
-  },
-  {
-    name: "Trello",
-    status: "disabled",
-    avatarSrc: "/shad.png",
-    avatarFallback: "TR",
-    description:
-      "Ferramenta de gerenciamento de projetos baseada em quadros de tarefas organizados em listas.",
-  },
-  {
-    name: "Figma",
-    status: "enabled",
-    avatarSrc: "/shad.png",
-    avatarFallback: "FG",
-    description:
-      "Editor de gráficos vetoriais e prototipagem com colaboração em tempo real.",
-  },
-  {
-    name: "Asana",
-    status: "enabled",
-    avatarSrc: "/shad.png",
-    avatarFallback: "AS",
-    description:
-      "Ferramenta de gerenciamento de tarefas e projetos para equipes.",
-  },
-  {
-    name: "Zoom",
-    status: "disabled",
-    avatarSrc: "/shad.png",
-    avatarFallback: "ZM",
-    description:
-      "Plataforma de videoconferência para reuniões, webinars e colaboração remota.",
-  },
-  {
-    name: "Dropbox",
-    status: "enabled",
-    avatarSrc: "/shad.png",
-    avatarFallback: "DB",
-    description:
-      "Serviço de armazenamento em nuvem para arquivos, com sincronização entre dispositivos.",
-  },
-  {
-    name: "Google Drive",
-    status: "disabled",
-    avatarSrc: "/shad.png",
-    avatarFallback: "GD",
-    description:
-      "Serviço de armazenamento em nuvem da Google, com integração com Google Docs e outros apps.",
-  },
-  {
-    name: "Microsoft Teams",
-    status: "enabled",
-    avatarSrc: "/shad.png",
-    avatarFallback: "MT",
-    description:
-      "Plataforma de comunicação e colaboração, parte do Microsoft 365.",
-  },
-  {
-    name: "Adobe XD",
-    status: "disabled",
-    avatarSrc: "/shad.png",
-    avatarFallback: "XD",
-    description:
-      "Ferramenta de design de interfaces e prototipagem, focada em UX/UI.",
-  },
-  {
-    name: "VS Code",
-    status: "enabled",
-    avatarSrc: "/shad.png",
-    avatarFallback: "VS",
-    description:
-      "Editor de código-fonte leve e poderoso, com suporte para várias linguagens de programação.",
-  },
-  {
-    name: "Evernote",
-    status: "disabled",
-    avatarSrc: "/shad.png",
-    avatarFallback: "EV",
-    description:
-      "Aplicativo para organização de notas, tarefas e armazenamento de informações.",
-  },
-  {
-    name: "Skype",
-    status: "disabled",
-    avatarSrc: "/shad.png",
-    avatarFallback: "SK",
-    description:
-      "Aplicativo de comunicação para mensagens, chamadas de voz e vídeo.",
-  },
-];
-
 export default function AppsPage() {
   const [inputValue, setInputValue] = useState("");
   const searchParams = useSearchParams();
@@ -234,11 +111,11 @@ export default function AppsPage() {
           </>
         ) : (
           <section className="grid grid-cols-3 gap-5 py-5">
-            {apps
-              .filter((app) =>
+            {applicationsQuery?.data
+              .filter((app: any) =>
                 app.name.toLowerCase().includes(inputValue.toLowerCase())
               )
-              ?.map((app) => (
+              ?.map((app: any) => (
                 <Link href="/" key={app.name}>
                   <Card>
                     <CardContent className="space-y-3 p-5">

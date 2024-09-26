@@ -35,9 +35,10 @@ export default function AppPage({ params }: { params: { slug: string } }) {
     },
   });
 
-  const alreadyEnabled =
-    (applicationsQuery?.data?.find((app: any) => app._id === params.slug))
-      .status === "enabled";
+  const application = applicationsQuery?.data?.find(
+    (app: any) => app._id === params.slug
+  );
+  const alreadyEnabled = application.status === "enabled";
 
   return (
     <div className="flex flex-col items-center p-10">
@@ -51,14 +52,13 @@ export default function AppPage({ params }: { params: { slug: string } }) {
         </Link>
         <section className="flex gap-3">
           <Avatar className="size-14">
-            <AvatarImage src="/shad.png" />
+            <AvatarImage src={application.avatarSrc || "/shad.png"} />
             <AvatarFallback>GH</AvatarFallback>
           </Avatar>
           <div className="flex flex-col">
-            <span>GitHub</span>
+            <span>{application.name}</span>
             <span className="text-sm text-muted-foreground">
-              Plataforma de hospedagem de código para controle de versão e
-              colaboração.
+              {application.cta}
             </span>
           </div>
         </section>
@@ -81,15 +81,7 @@ export default function AppPage({ params }: { params: { slug: string } }) {
           <div className="space-y-5">
             <div className="space-y-2">
               <span>Visão geral</span>
-              <p className="text-muted-foreground">
-                This powerful GitLab integration keeps your work in sync in both
-                applications. It links issues to Merge Requests so that issues
-                update automatically from In Progress to Done as the MR moves
-                from drafted to merged – there is no need to update the issue in
-                Linear at all. Move even faster by using a keyboard shortcut
-                that creates the issue&apos;s git branch name, assigns the issue
-                and moves the issue to In Progress in one step.
-              </p>
+              <p className="text-muted-foreground">{application.description}</p>
             </div>
           </div>
         </section>
