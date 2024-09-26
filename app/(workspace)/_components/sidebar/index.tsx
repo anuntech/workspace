@@ -13,6 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 export function Sidebar() {
   const urlParams = useSearchParams();
   const workspace = urlParams.get("workspace");
+  const router = useRouter();
 
   const roleQuery = useQuery({
     queryKey: ["workspace/role"],
@@ -30,6 +31,16 @@ export function Sidebar() {
       return res.json();
     },
   });
+
+  const data = useQuery({
+    queryKey: ["workspace"],
+    queryFn: () => fetch("/api/workspace").then((res) => res.json()),
+  });
+
+  if (!workspace) {
+    router.push(`/?workspace=${data.data[0].id}`);
+    return;
+  }
 
   if (roleQuery.isPending || applicationsQuery.isPending) {
     return (
