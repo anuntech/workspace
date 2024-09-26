@@ -13,12 +13,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 export function Sidebar() {
   const urlParams = useSearchParams();
   const workspace = urlParams.get("workspace");
-  const router = useRouter();
-
-  const workspacesQuery = useQuery({
-    queryKey: ["workspace"],
-    queryFn: () => fetch("/api/workspace").then((res) => res.json()),
-  });
 
   const roleQuery = useQuery({
     queryKey: ["workspace/role"],
@@ -37,11 +31,7 @@ export function Sidebar() {
     },
   });
 
-  if (
-    roleQuery.isPending ||
-    applicationsQuery.isPending ||
-    workspacesQuery.isPending
-  ) {
+  if (roleQuery.isPending || applicationsQuery.isPending) {
     return (
       <div className="space-y-2">
         <Skeleton className="h-10" />
@@ -66,7 +56,7 @@ export function Sidebar() {
       </section>
       <Separator />
       <nav className="flex flex-1 flex-col gap-1">
-        <NavLink href={`/?workspace=${workspacesQuery.data[0]?.id}`}>
+        <NavLink href={`/?workspace=${workspace}`}>
           <House className="mr-3 size-5" />
           Home
         </NavLink>
