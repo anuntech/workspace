@@ -9,6 +9,7 @@ export interface IApplications extends Document {
   avatarFallback: string;
   description: string;
   cta: string;
+  applicationUrl: string;
 }
 
 const applicationSchema = new mongoose.Schema<IApplications>(
@@ -21,6 +22,11 @@ const applicationSchema = new mongoose.Schema<IApplications>(
     cta: {
       type: String,
       trim: true,
+    },
+    applicationUrl: {
+      type: String,
+      trim: true,
+      required: true,
     },
     avatarSrc: {
       type: String,
