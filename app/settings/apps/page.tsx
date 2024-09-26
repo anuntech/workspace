@@ -172,7 +172,10 @@ export default function AppsPage() {
                 {applicationsQuery?.data
                   ?.filter((app: any) => app.status === "enabled")
                   .map((app: any) => (
-                    <Link href="/" key={app.name}>
+                    <Link
+                      href={`/settings/apps/${app._id}?workspace=${workspace}`}
+                      key={app.name}
+                    >
                       <Card>
                         <CardContent className="flex items-center gap-3 p-5">
                           <Avatar>

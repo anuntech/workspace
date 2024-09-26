@@ -5,11 +5,39 @@ import { ChevronLeft, CirclePlus } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useSearchParams } from "next/navigation";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 export default function AppPage({ params }: { params: { slug: string } }) {
   const searchParams = useSearchParams();
 
   const workspace = searchParams.get("workspace");
+
+  const applicationsQuery = useQuery({
+    queryKey: ["applications"],
+    queryFn: async () => {
+      const res = await fetch(`/api/applications/${workspace}`);
+      return res.json();
+    },
+  });
+
+  const getApplicationMutation = useMutation({
+    mutationFn: async () => {
+      const res = await fetch(`/api/applications/${workspace}/allow`, {
+        body: JSON.stringify({
+          applicationId: params.slug,
+        }),
+        method: "POST",
+      });
+      return res.json();
+    },
+    onSuccess: () => {
+      applicationsQuery.refetch();
+    },
+  });
+
+  const alreadyEnabled =
+    (applicationsQuery?.data?.find((app: any) => app._id === params.slug))
+      .status === "enabled";
 
   return (
     <div className="flex flex-col items-center p-10">
@@ -37,7 +65,11 @@ export default function AppPage({ params }: { params: { slug: string } }) {
         <section className="space-y-5 rounded-md border p-5">
           <header className="flex justify-between">
             <div></div>
-            <Button type="button">
+            <Button
+              type="button"
+              onClick={() => getApplicationMutation.mutate()}
+              disabled={applicationsQuery.isPending || alreadyEnabled}
+            >
               <CirclePlus className="mr-2 size-5" />
               Habilitar
             </Button>

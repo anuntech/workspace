@@ -31,12 +31,12 @@ export async function GET(
       applications.map(async (app) => {
         const allowedApplicationsId = (
           await MyApplications.findOne({
-            workspaceId: params.workspaceId,
+            workspaceId: new mongoose.Types.ObjectId(params.workspaceId),
           })
         )?.allowedApplicationsId;
 
         const isEnabled = allowedApplicationsId?.includes(
-          new mongoose.Schema.Types.ObjectId(app._id.toString())
+          new mongoose.Types.ObjectId(app._id.toString()) as any
         );
 
         return {
