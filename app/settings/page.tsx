@@ -22,7 +22,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
@@ -79,11 +79,12 @@ export default function SettingsPage() {
           "Content-Type": "application/json",
         },
       }),
-    onSuccess: () => {
-      queryClient.refetchQueries({
+    onSuccess: async () => {
+      await queryClient.refetchQueries({
         queryKey: ["workspace"],
         type: "active",
       });
+      router.push("/");
     },
   });
 
@@ -108,6 +109,8 @@ export default function SettingsPage() {
 
     mutation.mutate(data);
   };
+
+  const router = useRouter();
 
   return (
     <form action="POST" onSubmit={handleSubmit(onSubmit)}>
@@ -190,11 +193,11 @@ export default function SettingsPage() {
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancelar</AlertDialogCancel>
                     <AlertDialogAction
-                      onClick={() =>
+                      onClick={() => {
                         deleteWorkspaceMutation.mutate({
                           workspaceId: workspace,
-                        })
-                      }
+                        });
+                      }}
                     >
                       Continuar
                     </AlertDialogAction>
