@@ -66,3 +66,61 @@ export async function POST(
     return NextResponse.json({ error: e?.message }, { status: 500 });
   }
 }
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: { workspaceId: string } }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+
+    await connectMongo();
+
+    const workspace = await Workspace.findById(params.workspaceId);
+
+    if (!workspace) {
+      return NextResponse.json(
+        { error: "Workspace not found" },
+        { status: 404 }
+      );
+    }
+
+    const memberRole = workspace.members.find(
+      (member) => member.memberId.toString() === session.user.id.toString()
+    )?.role;
+
+    if (
+      memberRole !== "admin" &&
+      workspace.owner.toString() !== session.user.id
+    ) {
+      return NextResponse.json(
+        { error: "You do not have permission to uninstall this application" },
+        { status: 403 }
+      );
+    }
+
+    const myApplications = await MyApplications.findOne({
+      workspaceId: params.workspaceId,
+    });
+    const body = await request.json();
+
+    console.log(body);
+
+    if (myApplications) {
+      myApplications.allowedApplicationsId.splice(
+        myApplications.allowedApplicationsId.indexOf(
+          new mongoose.Types.ObjectId(body.applicationId) as any
+        ),
+        1
+      );
+      await myApplications.save();
+
+      return NextResponse.json(myApplications);
+    }
+
+    return NextResponse.json(myApplications);
+  } catch (e) {
+    console.error(e);
+    return NextResponse.json({ error: e?.message }, { status: 500 });
+  }
+}

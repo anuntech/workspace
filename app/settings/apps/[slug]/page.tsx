@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronLeft, CirclePlus } from "lucide-react";
+import { ChevronLeft, CircleMinus, CirclePlus } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useSearchParams } from "next/navigation";
@@ -27,6 +27,21 @@ export default function AppPage({ params }: { params: { slug: string } }) {
           applicationId: params.slug,
         }),
         method: "POST",
+      });
+      return res.json();
+    },
+    onSuccess: () => {
+      applicationsQuery.refetch();
+    },
+  });
+
+  const deleteApplicationMutation = useMutation({
+    mutationFn: async () => {
+      const res = await fetch(`/api/applications/${workspace}/allow`, {
+        body: JSON.stringify({
+          applicationId: params.slug,
+        }),
+        method: "DELETE",
       });
       return res.json();
     },
@@ -65,14 +80,26 @@ export default function AppPage({ params }: { params: { slug: string } }) {
         <section className="space-y-5 rounded-md border p-5">
           <header className="flex justify-between">
             <div></div>
-            <Button
-              type="button"
-              onClick={() => getApplicationMutation.mutate()}
-              disabled={applicationsQuery.isPending || alreadyEnabled}
-            >
-              <CirclePlus className="mr-2 size-5" />
-              Habilitar
-            </Button>
+            {alreadyEnabled ? (
+              <Button
+                type="button"
+                onClick={() => deleteApplicationMutation.mutate()}
+                variant="destructive"
+                disabled={deleteApplicationMutation.isPending}
+              >
+                <CircleMinus className="mr-2 size-5" onClick={() => {}} />
+                Desinstalar
+              </Button>
+            ) : (
+              <Button
+                type="button"
+                onClick={() => getApplicationMutation.mutate()}
+                disabled={getApplicationMutation.isPending}
+              >
+                <CirclePlus className="mr-2 size-5" />
+                Instalar
+              </Button>
+            )}
           </header>
           <div className="grid grid-cols-2 gap-4">
             <div className="h-52 rounded-md bg-zinc-300" />

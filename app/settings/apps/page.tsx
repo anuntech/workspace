@@ -44,7 +44,7 @@ export default function AppsPage() {
         {!inputValue.length ? (
           <>
             <section className="space-y-4 py-5">
-              <span className="text-sm text-muted-foreground">Habilitados</span>
+              <span className="text-sm text-muted-foreground">Instalados</span>
               <div className="grid grid-cols-3 gap-5">
                 {applicationsQuery?.data
                   ?.filter((app: any) => app.status === "enabled")
@@ -64,7 +64,7 @@ export default function AppsPage() {
                           <div className="flex flex-col">
                             <span>{app.name}</span>
                             <span className="text-xs text-muted-foreground">
-                              Habilitado
+                              Instalado
                             </span>
                           </div>
                         </CardContent>
@@ -76,7 +76,7 @@ export default function AppsPage() {
             <Separator />
             <section className="space-y-4 py-5">
               <span className="text-sm text-muted-foreground">
-                Desabilitados
+                Desinstalados
               </span>
               <div className="grid grid-cols-3 gap-5">
                 {applicationsQuery?.data
@@ -128,7 +128,7 @@ export default function AppsPage() {
                           <span>{app.name}</span>
                           {app.status === "enabled" && (
                             <span className="text-xs text-muted-foreground">
-                              Habilitado
+                              Instalado
                             </span>
                           )}
                         </div>
