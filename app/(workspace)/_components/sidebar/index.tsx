@@ -5,18 +5,59 @@ import { House, Rocket, Settings } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { UserNav } from "./user-nav";
 import { NavLink } from "./nav-link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function Sidebar() {
   const urlParams = useSearchParams();
   const workspace = urlParams.get("workspace");
+  const router = useRouter();
+
+  const workspacesQuery = useQuery({
+    queryKey: ["workspace"],
+    queryFn: () => fetch("/api/workspace").then((res) => res.json()),
+  });
 
   const roleQuery = useQuery({
     queryKey: ["workspace/role"],
     queryFn: () =>
-      fetch(`/api/workspace/role/${workspace}`).then((res) => res.json()),
+      fetch(`/api/workspace/role/${workspace}`).then(async (res) => ({
+        data: await res.json(),
+        status: res.status,
+      })),
   });
+
+  const applicationsQuery = useQuery({
+    queryKey: ["applications"],
+    queryFn: async () => {
+      const res = await fetch(`/api/applications/${workspace}`);
+      return res.json();
+    },
+  });
+
+  if (
+    roleQuery.isPending ||
+    applicationsQuery.isPending ||
+    workspacesQuery.isPending
+  ) {
+    return (
+      <div className="space-y-2">
+        <Skeleton className="h-10" />
+        <Skeleton className="h-10" />
+        <Skeleton className="h-10" />
+        <Skeleton className="h-10" />
+        <Skeleton className="h-10" />
+        <Skeleton className="h-10" />
+        <Skeleton className="h-10" />
+      </div>
+    );
+  }
+
+  const enabledApplications = applicationsQuery.data?.filter(
+    (app: any) => app.status === "enabled"
+  );
 
   return (
     <aside className="flex flex-col gap-3 rounded-md px-2">
@@ -25,12 +66,20 @@ export function Sidebar() {
       </section>
       <Separator />
       <nav className="flex flex-1 flex-col gap-1">
-        <NavLink href="/">
+        <NavLink href={`/?workspace=${workspacesQuery.data[0]?.id}`}>
           <House className="mr-3 size-5" />
           Home
         </NavLink>
-
-        {roleQuery.data?.role !== "member" && !roleQuery.isPending && (
+        {enabledApplications.map((data: any) => (
+          <NavLink href={`/service/${data._id}?workspace=${workspace}`}>
+            <Avatar className="mr-3 size-5">
+              <AvatarImage src={data.avatarSrc} />
+              <AvatarFallback>{data.avatarFallback}</AvatarFallback>
+            </Avatar>
+            {data.name}
+          </NavLink>
+        ))}
+        {roleQuery.data?.data?.role !== "member" && !roleQuery.isPending && (
           <NavLink href={`/settings?workspace=${workspace}`}>
             <Settings className="mr-3 size-5" />
             Configurações

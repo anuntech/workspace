@@ -50,6 +50,10 @@ export default function AppPage({ params }: { params: { slug: string } }) {
     },
   });
 
+  if (applicationsQuery.isLoading) {
+    return <div>Carregando...</div>;
+  }
+
   const application = applicationsQuery?.data?.find(
     (app: any) => app._id === params.slug
   );
@@ -68,7 +72,7 @@ export default function AppPage({ params }: { params: { slug: string } }) {
         <section className="flex gap-3">
           <Avatar className="size-14">
             <AvatarImage src={application.avatarSrc || "/shad.png"} />
-            <AvatarFallback>GH</AvatarFallback>
+            <AvatarFallback>{application.avatarFallback}</AvatarFallback>
           </Avatar>
           <div className="flex flex-col">
             <span>{application.name}</span>
