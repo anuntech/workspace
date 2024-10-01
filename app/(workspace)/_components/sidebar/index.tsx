@@ -44,7 +44,7 @@ export function Sidebar() {
 
   if (roleQuery.isPending || applicationsQuery.isPending) {
     return (
-      <div className="space-y-2">
+      <div className="space-y-2 mx-3 h-full flex flex-col">
         <Skeleton className="h-10" />
         <Skeleton className="h-10" />
         <Skeleton className="h-10" />
@@ -52,6 +52,11 @@ export function Sidebar() {
         <Skeleton className="h-10" />
         <Skeleton className="h-10" />
         <Skeleton className="h-10" />
+        <div className="flex-grow mt-auto flex flex-col justify-end gap-2">
+          <Skeleton className="h-10" />
+          <Separator />
+          <Skeleton className="h-10" />
+        </div>
       </div>
     );
   }
