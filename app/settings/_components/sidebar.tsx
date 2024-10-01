@@ -5,6 +5,9 @@ import { Building, ChevronLeft, CircleUser } from "lucide-react";
 import { NavLink } from "@/app/(workspace)/_components/sidebar/nav-link";
 import { Separator } from "@/components/ui/separator";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
+import { Skeleton } from "@/components/ui/skeleton";
+import config from "@/config";
 
 export function Sidebar() {
   const urlParams = useSearchParams();
@@ -14,6 +17,44 @@ export function Sidebar() {
   if (!workspace) {
     router.push(`/`);
   }
+
+  const userQuery = useQuery({
+    queryKey: ["user"],
+    queryFn: () => fetch("/api/user").then((res) => res.json()),
+  });
+
+  if (userQuery.isPending) {
+    return (
+      <div className="space-y-2 mx-3 h-full flex flex-col">
+        <Link
+          href={`/?workspace=${workspace}`}
+          className="flex w-max items-center gap-2"
+        >
+          <ChevronLeft className="size-4" />
+          Voltar
+        </Link>
+        <Separator />
+
+        <Skeleton className="h-9" />
+        <Skeleton className="h-9" />
+        <Skeleton className="h-9" />
+        <Skeleton className="h-9" />
+        <Skeleton className="h-9" />
+        <Skeleton className="h-9" />
+        <Skeleton className="h-9" />
+        <Skeleton className="h-9" />
+        <Skeleton className="h-9" />
+        <Skeleton className="h-9" />
+        <div className="flex-grow mt-auto flex flex-col justify-end gap-2">
+          <Skeleton className="h-9" />
+          <Separator />
+          <Skeleton className="h-9" />
+        </div>
+      </div>
+    );
+  }
+
+  const emailDomain = userQuery.data.email.split("@")[1];
 
   return (
     <aside className="flex flex-col gap-4 rounded-md px-2">
@@ -79,6 +120,13 @@ export function Sidebar() {
               >
                 Workspaces
               </NavLink>
+            </li>
+            <li>
+              {emailDomain == config.domainName && (
+                <NavLink href={`/settings/account/workspaces`}>
+                  Painel administrativo
+                </NavLink>
+              )}
             </li>
           </ul>
         </div>
