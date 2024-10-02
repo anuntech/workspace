@@ -21,7 +21,7 @@ export default function ServicePage({ params }: { params: { id: string } }) {
     },
   });
 
-  if (applicationsQuery.isLoading) {
+  if (applicationsQuery.isPending) {
     return <div>Carregando...</div>;
   }
 

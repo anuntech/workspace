@@ -50,7 +50,7 @@ export default function AppPage({ params }: { params: { slug: string } }) {
     },
   });
 
-  if (applicationsQuery.isLoading) {
+  if (applicationsQuery.isPending) {
     return <div>Carregando...</div>;
   }
 
