@@ -19,11 +19,11 @@ export default function AppsPage() {
     queryKey: ["applications"],
     queryFn: async () => {
       const res = await fetch(`/api/applications/${workspace}`);
-      return res.json();
+      return { data: await res.json(), status: res.status };
     },
   });
 
-  if (applicationsQuery.isPending) {
+  if (applicationsQuery.isPending || applicationsQuery.data.status !== 200) {
     return <div>Carregando...</div>;
   }
 
@@ -46,8 +46,8 @@ export default function AppsPage() {
             <section className="space-y-4 py-5">
               <span className="text-sm text-muted-foreground">Instalados</span>
               <div className="grid grid-cols-3 gap-5">
-                {applicationsQuery?.data
-                  ?.filter((app: any) => app.status === "enabled")
+                {applicationsQuery.data.data
+                  .filter((app: any) => app.status === "enabled")
                   .map((app: any) => (
                     <Link
                       href={`/settings/apps/${app._id}?workspace=${workspace}`}
@@ -79,7 +79,7 @@ export default function AppsPage() {
                 Desinstalados
               </span>
               <div className="grid grid-cols-3 gap-5">
-                {applicationsQuery?.data
+                {applicationsQuery?.data.data
                   .filter((app: any) => app.status === "disabled")
                   ?.map((app: any) => (
                     <Link
@@ -111,7 +111,7 @@ export default function AppsPage() {
           </>
         ) : (
           <section className="grid grid-cols-3 gap-5 py-5">
-            {applicationsQuery?.data
+            {applicationsQuery.data.data
               .filter((app: any) =>
                 app.name.toLowerCase().includes(inputValue.toLowerCase())
               )
