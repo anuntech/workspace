@@ -37,12 +37,7 @@ export function Sidebar() {
     queryFn: () => fetch("/api/workspace").then((res) => res.json()),
   });
 
-  if (!workspace) {
-    router.push(`/?workspace=${data.data[0].id}`);
-    return;
-  }
-
-  if (roleQuery.isPending || applicationsQuery.isPending) {
+  if (roleQuery.isPending || applicationsQuery.isPending || data.isPending) {
     return (
       <div className="space-y-2 mx-3 h-full flex flex-col">
         <Skeleton className="h-10" />
@@ -59,6 +54,11 @@ export function Sidebar() {
         </div>
       </div>
     );
+  }
+
+  if (!workspace) {
+    router.push(`/?workspace=${data.data[0].id}`);
+    return;
   }
 
   const enabledApplications = applicationsQuery.data?.filter(
