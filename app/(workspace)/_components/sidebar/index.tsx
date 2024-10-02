@@ -28,7 +28,7 @@ export function Sidebar() {
     queryKey: ["applications"],
     queryFn: async () => {
       const res = await fetch(`/api/applications/${workspace}`);
-      return res.json();
+      return { data: await res.json(), status: res.status };
     },
   });
 
@@ -61,9 +61,13 @@ export function Sidebar() {
     return;
   }
 
-  const enabledApplications = applicationsQuery.data?.filter(
-    (app: any) => app.status === "enabled"
-  );
+  let enabledApplications;
+
+  if (applicationsQuery.data.data && applicationsQuery.data.status === 200) {
+    enabledApplications = applicationsQuery.data.data?.filter(
+      (app: any) => app.status === "enabled"
+    );
+  }
 
   return (
     <aside className="flex flex-col gap-3 rounded-md px-2">
@@ -76,7 +80,7 @@ export function Sidebar() {
           <House className="mr-3 size-5" />
           Home
         </NavLink>
-        {enabledApplications.map((data: any) => (
+        {enabledApplications?.map((data: any) => (
           <NavLink href={`/service/${data._id}?workspace=${workspace}`}>
             <Avatar className="mr-3 size-5">
               <AvatarImage src={data.avatarSrc} />

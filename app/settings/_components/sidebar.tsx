@@ -11,12 +11,7 @@ import config from "@/config";
 
 export function Sidebar() {
   const urlParams = useSearchParams();
-  const workspace = urlParams.get("workspace");
-  const router = useRouter();
-
-  if (!workspace) {
-    router.push(`/`);
-  }
+  const workspace = urlParams.get("workspace") || "";
 
   const userQuery = useQuery({
     queryKey: ["user"],
@@ -67,42 +62,44 @@ export function Sidebar() {
       </Link>
       <Separator />
       <nav className="space-y-5">
-        <div className="space-y-2">
-          <span className="flex items-center gap-2 text-sm text-zinc-600">
-            <Building className="size-4" />
-            Workspace
-          </span>
-          <ul className="space-y-1 text-sm">
-            <li>
-              <NavLink href={`/settings?workspace=${workspace}`}>
-                Visão geral
-              </NavLink>
-            </li>
-            <li>
-              <NavLink href={`/settings/apps?workspace=${workspace}`}>
-                Loja de aplicativos
-              </NavLink>
-            </li>
-            <li>
-              <NavLink href={`/settings/members?workspace=${workspace}`}>
-                Membros
-              </NavLink>
-            </li>
-            {/* <li>
+        {workspace != "" && (
+          <div className="space-y-2">
+            <span className="flex items-center gap-2 text-sm text-zinc-600">
+              <Building className="size-4" />
+              Workspace
+            </span>
+            <ul className="space-y-1 text-sm">
+              <li>
+                <NavLink href={`/settings?workspace=${workspace}`}>
+                  Visão geral
+                </NavLink>
+              </li>
+              <li>
+                <NavLink href={`/settings/apps?workspace=${workspace}`}>
+                  Loja de aplicativos
+                </NavLink>
+              </li>
+              <li>
+                <NavLink href={`/settings/members?workspace=${workspace}`}>
+                  Membros
+                </NavLink>
+              </li>
+              {/* <li>
               <NavLink href="/settings/roles">Cargos</NavLink>
             </li> */}
-            <li>
-              <NavLink href={`/settings/plans?workspace=${workspace}`}>
-                Planos
-              </NavLink>
-            </li>
-            <li>
-              <NavLink href="https://billing.stripe.com/p/login/test_00gg2ObKK5nm0lq8ww">
-                Faturas
-              </NavLink>
-            </li>
-          </ul>
-        </div>
+              <li>
+                <NavLink href={`/settings/plans?workspace=${workspace}`}>
+                  Planos
+                </NavLink>
+              </li>
+              <li>
+                <NavLink href="https://billing.stripe.com/p/login/test_00gg2ObKK5nm0lq8ww">
+                  Faturas
+                </NavLink>
+              </li>
+            </ul>
+          </div>
+        )}
         <div className="space-y-2">
           <span className="flex items-center gap-2 text-sm text-zinc-600">
             <CircleUser className="size-4" />
@@ -123,7 +120,9 @@ export function Sidebar() {
             </li>
             <li>
               {emailDomain == config.domainName && (
-                <NavLink href={`/settings/account/workspaces`}>
+                <NavLink
+                  href={`/settings/account/admin?workspace=${workspace}`}
+                >
                   Painel administrativo
                 </NavLink>
               )}
