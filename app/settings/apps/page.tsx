@@ -23,7 +23,7 @@ export default function AppsPage() {
     },
   });
 
-  if (applicationsQuery.isLoading) {
+  if (applicationsQuery.isPending) {
     return <div>Carregando...</div>;
   }
 
