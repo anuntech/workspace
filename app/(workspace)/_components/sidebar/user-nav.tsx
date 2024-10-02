@@ -63,7 +63,7 @@ export function UserNav() {
         <DropdownMenuGroup>
           <DropdownMenuItem>
             <Link
-              href={`/settings/account?workspace=${workspace}`}
+              href={`/settings/account`}
               className="flex w-full items-center gap-2"
             >
               <CircleUser className="size-4" />
