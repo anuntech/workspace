@@ -84,6 +84,7 @@ export async function POST(
       name: body.name,
       cta: body.cta,
       description: body.description,
+      descriptionTitle: body.descriptionTitle,
       avatarSrc: body.avatarSrc,
       avatarFallback: body.avatarFallback,
       applicationUrl: body.applicationUrl,

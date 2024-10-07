@@ -13,7 +13,7 @@ export default function AppPage({ params }: { params: { slug: string } }) {
   const workspace = searchParams.get("workspace");
 
   const applicationsQuery = useQuery({
-    queryKey: ["applications"],
+    queryKey: ["applications1"],
     queryFn: async () => {
       const res = await fetch(`/api/applications/${workspace}`);
       return res.json();
@@ -50,7 +50,7 @@ export default function AppPage({ params }: { params: { slug: string } }) {
     },
   });
 
-  if (applicationsQuery.isPending) {
+  if (applicationsQuery.isPending || applicationsQuery.isLoading) {
     return <div>Carregando...</div>;
   }
 
