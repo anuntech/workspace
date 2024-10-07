@@ -1,12 +1,12 @@
 import { Inter } from "next/font/google";
 import { cn } from "@/lib/utils";
-import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 import PlausibleProvider from "next-plausible";
 import config from "@/config";
 import ClientLayout from "@/components/LayoutClient";
 import { getSEOTags } from "@/libs/seo";
 import { MakeQueryClientProvider } from "@/libs/query-client";
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 

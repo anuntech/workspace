@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
+import { toast } from "@/hooks/use-toast";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
@@ -24,12 +26,49 @@ export default function AdminPage() {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { isSubmitting },
   } = useForm<Input>();
   const [sharedWith, setSharedWith] = useState<string[]>([]);
   const [currentInput, setCurrentInput] = useState("");
+  const queryClient = useQueryClient();
 
-  const onSubmit: SubmitHandler<Input> = async (data) => {};
+  const saveApplicationMutation = useMutation({
+    mutationFn: (data: Input) =>
+      fetch("/api/applications", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }),
+    onSuccess: async (data) => {
+      if (data.ok) {
+        reset();
+        setSharedWith([]);
+        queryClient.refetchQueries({
+          queryKey: ["workspace"],
+          type: "all",
+        });
+        toast({
+          description: "Application saved successfully.",
+          duration: 5000,
+        });
+        return;
+      }
+
+      toast({
+        description: "Something went wrong.",
+        duration: 5000,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const onSubmit: SubmitHandler<Input> = async (data) => {
+    const payload = { ...data, workspacesAllowed: sharedWith };
+    saveApplicationMutation.mutate(payload);
+  };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter" && currentInput.trim() !== "") {
