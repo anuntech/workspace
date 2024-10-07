@@ -47,7 +47,14 @@ export async function GET(
       })
     );
 
-    return NextResponse.json(applicationsEnabledOrDisabled);
+    const removeApplicationsWithoutPermission =
+      applicationsEnabledOrDisabled.filter((app) =>
+        app.workspacesAllowed.length > 0
+          ? app.workspacesAllowed.find((id) => id.toString() === workspace.id)
+          : true
+      );
+
+    return NextResponse.json(removeApplicationsWithoutPermission);
   } catch (e) {
     console.error(e);
     return NextResponse.json({ error: e?.message }, { status: 500 });
