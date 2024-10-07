@@ -16,7 +16,7 @@ export default function AppsPage() {
   const workspace = searchParams.get("workspace");
 
   const applicationsQuery = useQuery({
-    queryKey: ["applications"],
+    queryKey: ["applications2"],
     queryFn: async () => {
       const res = await fetch(`/api/applications/${workspace}`);
       return { data: await res.json(), status: res.status };
