@@ -10,6 +10,7 @@ export interface IApplications extends Document {
   description: string;
   cta: string;
   applicationUrl: string;
+  workspacesAllowed: mongoose.Schema.Types.ObjectId[];
 }
 
 const applicationSchema = new mongoose.Schema<IApplications>(
@@ -40,6 +41,10 @@ const applicationSchema = new mongoose.Schema<IApplications>(
     },
     description: {
       type: String,
+      trim: true,
+    },
+    workspacesAllowed: {
+      type: [mongoose.Schema.Types.ObjectId],
       trim: true,
     },
   },
