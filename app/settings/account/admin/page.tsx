@@ -1,9 +1,11 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
+import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 type Input = {
@@ -17,18 +19,31 @@ export default function AdminPage() {
   const {
     register,
     handleSubmit,
-    setValue,
     formState: { isSubmitting },
   } = useForm<Input>();
+  const [sharedWith, setSharedWith] = useState<string[]>([]);
+  const [currentInput, setCurrentInput] = useState("");
 
   const onSubmit: SubmitHandler<Input> = async (data) => {};
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter" && currentInput.trim() !== "") {
+      event.preventDefault();
+      setSharedWith((prev) => [...prev, currentInput.trim()]);
+      setCurrentInput("");
+    }
+  };
+
+  const handleRemoveBadge = (index: number) => {
+    setSharedWith((prev) => prev.filter((_, i) => i !== index));
+  };
 
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
       className="flex flex-col  p-10 space-y-5"
     >
-      <h1 className="text-2xl">Geral</h1>
+      <h1 className="text-2xl">Adicionar produto</h1>
 
       <section className="grid grid-cols-2 gap-8 py-5">
         <div>
@@ -69,7 +84,9 @@ export default function AdminPage() {
       <Separator />
       <section className="grid grid-cols-2 gap-8 py-5">
         <div>
-          <p>Nome da aplicação</p>
+          <p>
+            Nome da aplicação <span className="text-red-400">*</span>
+          </p>
           <span className="text-sm text-muted-foreground">
             Digite o nome que será mostrado publicamente como identificação do
             seu workspace em todas as interações na plataforma.
@@ -86,7 +103,9 @@ export default function AdminPage() {
       <Separator />
       <section className="grid grid-cols-2 gap-8 py-5">
         <div>
-          <p>Cta da aplicação</p>
+          <p>
+            Cta da aplicação <span className="text-red-400">*</span>
+          </p>
           <span className="text-sm text-muted-foreground">
             Digite o nome que será mostrado publicamente como identificação do
             seu workspace em todas as interações na plataforma.
@@ -103,7 +122,9 @@ export default function AdminPage() {
       <Separator />
       <section className="grid grid-cols-2 gap-8 py-5">
         <div>
-          <p>Título da descrição</p>
+          <p>
+            Título da descrição <span className="text-red-400">*</span>
+          </p>
           <span className="text-sm text-muted-foreground">
             Digite o nome que será mostrado publicamente como identificação do
             seu workspace em todas as interações na plataforma.
@@ -120,7 +141,9 @@ export default function AdminPage() {
       <Separator />
       <section className="grid grid-cols-2 gap-8 py-5">
         <div>
-          <p>Título da descrição</p>
+          <p>
+            Título da descrição <span className="text-red-400">*</span>
+          </p>
           <span className="text-sm text-muted-foreground">
             Digite o nome que será mostrado publicamente como identificação do
             seu workspace em todas as interações na plataforma.
@@ -138,7 +161,9 @@ export default function AdminPage() {
       <Separator />
       <section className="grid grid-cols-2 gap-8 py-5">
         <div>
-          <p>URL para Iframe</p>
+          <p>
+            URL para Iframe <span className="text-red-400">*</span>
+          </p>
           <span className="text-sm text-muted-foreground">
             Digite o nome que será mostrado publicamente como identificação do
             seu workspace em todas as interações na plataforma.
@@ -157,16 +182,31 @@ export default function AdminPage() {
         <div>
           <p>Compartilhar com</p>
           <span className="text-sm text-muted-foreground">
-            Digite o nome que será mostrado publicamente como identificação do
-            seu workspace em todas as interações na plataforma.
+            Digite o e-mail ou nome e pressione Enter para adicionar à lista.
           </span>
         </div>
-        <div className="flex justify-end">
+        <div className="flex flex-col items-end">
           <Input
-            placeholder="Cta..."
-            {...register("name", { required: true })}
+            placeholder="Digite e pressione Enter..."
+            value={currentInput}
+            onChange={(e) => setCurrentInput(e.target.value)}
+            onKeyDown={handleKeyDown}
             disabled={isSubmitting}
           />
+          <div className="mt-2 flex flex-wrap">
+            {sharedWith.map((value, index) => (
+              <Badge key={index} className="mr-2 mb-2">
+                {value}
+                <button
+                  type="button"
+                  onClick={() => handleRemoveBadge(index)}
+                  className="ml-1 text-white"
+                >
+                  &times;
+                </button>
+              </Badge>
+            ))}
+          </div>
         </div>
       </section>
 
