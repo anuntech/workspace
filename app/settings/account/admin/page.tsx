@@ -13,6 +13,11 @@ type Input = {
   cta: string;
   title: string;
   file: string;
+  iframeUrl: string;
+  description: string;
+  titleDescription: string;
+  profilePhoto: string;
+  galeryPhotos: string;
 };
 
 export default function AdminPage() {
@@ -55,9 +60,10 @@ export default function AdminPage() {
         </div>
         <div className="flex justify-end">
           <Input
+            className="cursor-pointer"
             placeholder="Nome..."
             type="file"
-            {...register("file", { required: true })}
+            {...register("profilePhoto")}
             disabled={isSubmitting}
           />
         </div>
@@ -71,12 +77,13 @@ export default function AdminPage() {
             seu workspace em todas as interações na plataforma.
           </span>
         </div>
-        <div className="flex justify-end">
+        <div className="flex justify-end ">
           <Input
+            className="cursor-pointer"
             placeholder="Nome..."
             type="file"
             multiple
-            {...register("file", { required: true })}
+            {...register("galeryPhotos")}
             disabled={isSubmitting}
           />
         </div>
@@ -114,7 +121,27 @@ export default function AdminPage() {
         <div className="flex justify-end">
           <Input
             placeholder="Cta..."
-            {...register("name", { required: true })}
+            {...register("cta", { required: true })}
+            disabled={isSubmitting}
+          />
+        </div>
+      </section>
+      <Separator />
+      <section className="grid grid-cols-2 gap-8 py-5">
+        <div>
+          <p>
+            Descrição da aplicação <span className="text-red-400">*</span>
+          </p>
+          <span className="text-sm text-muted-foreground">
+            Digite o nome que será mostrado publicamente como identificação do
+            seu workspace em todas as interações na plataforma.
+          </span>
+        </div>
+        <div className="flex justify-end">
+          <Textarea
+            placeholder="Descrição da aplicação..."
+            className="resize-none"
+            {...register("description", { required: true })}
             disabled={isSubmitting}
           />
         </div>
@@ -132,28 +159,8 @@ export default function AdminPage() {
         </div>
         <div className="flex justify-end">
           <Input
-            placeholder="Cta..."
-            {...register("name", { required: true })}
-            disabled={isSubmitting}
-          />
-        </div>
-      </section>
-      <Separator />
-      <section className="grid grid-cols-2 gap-8 py-5">
-        <div>
-          <p>
-            Título da descrição <span className="text-red-400">*</span>
-          </p>
-          <span className="text-sm text-muted-foreground">
-            Digite o nome que será mostrado publicamente como identificação do
-            seu workspace em todas as interações na plataforma.
-          </span>
-        </div>
-        <div className="flex justify-end">
-          <Textarea
-            placeholder="Cta..."
-            className="resize-none"
-            {...register("name", { required: true })}
+            placeholder="Título da descrição..."
+            {...register("titleDescription", { required: true })}
             disabled={isSubmitting}
           />
         </div>
@@ -171,8 +178,8 @@ export default function AdminPage() {
         </div>
         <div className="flex justify-end">
           <Input
-            placeholder="Cta..."
-            {...register("name", { required: true })}
+            placeholder="URL para Iframe..."
+            {...register("iframeUrl", { required: true })}
             disabled={isSubmitting}
           />
         </div>
@@ -182,7 +189,7 @@ export default function AdminPage() {
         <div>
           <p>Compartilhar com</p>
           <span className="text-sm text-muted-foreground">
-            Digite o e-mail ou nome e pressione Enter para adicionar à lista.
+            Digite o id do workspace e pressione Enter para adicionar à lista.
           </span>
         </div>
         <div className="flex flex-col items-end">
