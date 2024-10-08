@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
+import { api } from "@/libs/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -34,29 +35,20 @@ export default function AdminPage() {
   const queryClient = useQueryClient();
 
   const saveApplicationMutation = useMutation({
-    mutationFn: (data: Input) =>
-      fetch("/api/applications", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      }),
+    mutationFn: async (data: FormData) => api.post("/api/applications", data),
     onSuccess: async (data) => {
-      if (data.ok) {
-        reset();
-        setSharedWith([]);
-        queryClient.refetchQueries({
-          queryKey: ["workspace"],
-          type: "all",
-        });
-        toast({
-          description: "Application saved successfully.",
-          duration: 5000,
-        });
-        return;
-      }
-
+      reset();
+      setSharedWith([]);
+      queryClient.refetchQueries({
+        queryKey: ["workspace"],
+        type: "all",
+      });
+      toast({
+        description: "Application saved successfully.",
+        duration: 5000,
+      });
+    },
+    onError: () => {
       toast({
         description: "Something went wrong.",
         duration: 5000,
@@ -67,13 +59,28 @@ export default function AdminPage() {
 
   const onSubmit: SubmitHandler<Input> = async (data) => {
     const formData = new FormData();
-    formData.append("profilePhoto", data.profilePhoto as string);
-    const payload = {
-      ...data,
-      profilePhoto: formData,
-      workspacesAllowed: sharedWith,
-    };
-    saveApplicationMutation.mutate(payload);
+
+    formData.append("name", data.name);
+    formData.append("cta", data.cta);
+    formData.append("title", data.title);
+    formData.append("iframeUrl", data.iframeUrl);
+    formData.append("description", data.description);
+    formData.append("titleDescription", data.titleDescription);
+    formData.append("workspacesAllowed", JSON.stringify(sharedWith));
+
+    const profilePhoto = data.profilePhoto as unknown as FileList;
+    if (profilePhoto && profilePhoto.length > 0) {
+      formData.append("profilePhoto", profilePhoto[0]);
+    }
+
+    const galeryPhotos = data.galeryPhotos as unknown as FileList;
+    if (galeryPhotos && galeryPhotos.length > 0) {
+      Array.from(galeryPhotos).forEach((file) => {
+        formData.append("galeryPhotos", file);
+      });
+    }
+
+    saveApplicationMutation.mutate(formData);
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
