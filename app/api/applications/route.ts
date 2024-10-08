@@ -9,12 +9,6 @@ import mongoose from "mongoose";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
-
 export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions);
@@ -66,8 +60,6 @@ export async function POST(request: Request) {
       const command = new PutObjectCommand(form);
       await s3Client.send(command);
     }
-
-    console.log(galleryPhotosIds);
 
     const application = await Applications.create({
       name: body.get("name"),
