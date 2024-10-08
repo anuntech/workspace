@@ -35,7 +35,7 @@ export default function AppPage({ params }: { params: { slug: string } }) {
     onSuccess: async () => {
       await queryClient.refetchQueries({
         queryKey: ["applications"],
-        type: "active",
+        type: "all",
       });
     },
   });
