@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useSearchParams } from "next/navigation";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { api } from "@/libs/api";
+import { getEc3Image } from "@/libs/s3-client";
 
 export default function AppPage({ params }: { params: { slug: string } }) {
   const searchParams = useSearchParams();
@@ -69,7 +70,9 @@ export default function AppPage({ params }: { params: { slug: string } }) {
         </Link>
         <section className="flex gap-3">
           <Avatar className="size-14">
-            <AvatarImage src={application.avatarSrc || "/shad.png"} />
+            <AvatarImage
+              src={getEc3Image(application.avatarSrc) || "/shad.png"}
+            />
             <AvatarFallback>{application.avatarFallback}</AvatarFallback>
           </Avatar>
           <div className="flex flex-col">

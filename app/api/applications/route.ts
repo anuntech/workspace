@@ -36,7 +36,7 @@ export async function POST(request: Request) {
 
     if (profilePhoto) {
       const form = {
-        Bucket: process.env.HETZNER_BUCKET_NAME!,
+        Bucket: process.env.NEXT_PUBLIC_HETZNER_BUCKET_NAME!,
         Key: profilePhotoId,
         Body: Buffer.from(await profilePhoto.arrayBuffer()),
         ContentType: profilePhoto.type,
@@ -44,8 +44,7 @@ export async function POST(request: Request) {
       } as PutObjectCommandInput;
 
       const command = new PutObjectCommand(form);
-      const data = await s3Client.send(command);
-      console.log(data);
+      await s3Client.send(command);
     }
 
     const application = await Applications.create({
@@ -53,8 +52,8 @@ export async function POST(request: Request) {
       cta: body.get("cta"),
       description: body.get("description"),
       descriptionTitle: body.get("descriptionTitle"),
-      avatarSrc: profilePhoto ? profilePhotoId : "/shad.png",
-      avatarFallback: body.get("name").slice(0, 1),
+      avatarSrc: profilePhoto ? profilePhotoId : null,
+      avatarFallback: body.get("name").slice(0, 2),
       applicationUrl: body.get("iframeUrl"),
       workspacesAllowed: JSON.parse(
         body.get("workspacesAllowed") as string

@@ -33,7 +33,6 @@ const applicationSchema = new mongoose.Schema<IApplications>(
     avatarSrc: {
       type: String,
       trim: true,
-      required: true,
     },
     avatarFallback: {
       type: String,
