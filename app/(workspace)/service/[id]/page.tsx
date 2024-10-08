@@ -1,5 +1,6 @@
 "use client";
 
+import { api } from "@/libs/api";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -16,8 +17,7 @@ export default function ServicePage({ params }: { params: { id: string } }) {
   const applicationsQuery = useQuery({
     queryKey: ["applications"],
     queryFn: async () => {
-      const res = await fetch(`/api/applications/${workspace}`);
-      return res.json();
+      return await api.get(`/api/applications/${workspace}`);
     },
   });
 
@@ -25,7 +25,9 @@ export default function ServicePage({ params }: { params: { id: string } }) {
     return <div>Carregando...</div>;
   }
 
-  const app = applicationsQuery.data.find((app: any) => app._id === params.id);
+  const app = applicationsQuery.data.data.find(
+    (app: any) => app._id === params.id
+  );
   return (
     <iframe
       src={app.applicationUrl}

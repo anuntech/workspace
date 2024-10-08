@@ -9,6 +9,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
+import { api } from "@/libs/api";
 
 export function Sidebar() {
   const urlParams = useSearchParams();
@@ -25,11 +26,8 @@ export function Sidebar() {
   });
 
   const applicationsQuery = useQuery({
-    queryKey: ["applications2"],
-    queryFn: async () => {
-      const res = await fetch(`/api/applications/${workspace}`);
-      return { data: await res.json(), status: res.status };
-    },
+    queryKey: ["applications"],
+    queryFn: async () => api.get(`/api/applications/${workspace}`),
   });
 
   const data = useQuery({
@@ -63,7 +61,7 @@ export function Sidebar() {
 
   let enabledApplications;
 
-  if (applicationsQuery.data.data && applicationsQuery.data.status === 200) {
+  if (applicationsQuery?.data?.data && applicationsQuery.data.status === 200) {
     enabledApplications = applicationsQuery.data.data?.filter(
       (app: any) => app.status === "enabled"
     );

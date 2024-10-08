@@ -9,6 +9,7 @@ import { Search } from "lucide-react";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
+import { api } from "@/libs/api";
 
 export default function AppsPage() {
   const [inputValue, setInputValue] = useState("");
@@ -16,11 +17,8 @@ export default function AppsPage() {
   const workspace = searchParams.get("workspace");
 
   const applicationsQuery = useQuery({
-    queryKey: ["applications2"],
-    queryFn: async () => {
-      const res = await fetch(`/api/applications/${workspace}`);
-      return { data: await res.json(), status: res.status };
-    },
+    queryKey: ["applications"],
+    queryFn: async () => await api.get(`/api/applications/${workspace}`),
   });
 
   if (applicationsQuery.isPending || applicationsQuery.data.status !== 200) {

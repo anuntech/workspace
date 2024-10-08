@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useSearchParams } from "next/navigation";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { api } from "@/libs/api";
 
 export default function AppPage({ params }: { params: { slug: string } }) {
   const searchParams = useSearchParams();
@@ -14,10 +15,7 @@ export default function AppPage({ params }: { params: { slug: string } }) {
 
   const applicationsQuery = useQuery({
     queryKey: ["applications1"],
-    queryFn: async () => {
-      const res = await fetch(`/api/applications/${workspace}`);
-      return res.json();
-    },
+    queryFn: async () => await api.get(`/api/applications/${workspace}`),
   });
 
   const getApplicationMutation = useMutation({
@@ -54,7 +52,7 @@ export default function AppPage({ params }: { params: { slug: string } }) {
     return <div>Carregando...</div>;
   }
 
-  const application = applicationsQuery?.data?.find(
+  const application = applicationsQuery?.data?.data.find(
     (app: any) => app._id === params.slug
   );
   const alreadyEnabled = application.status === "enabled";
