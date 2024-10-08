@@ -108,7 +108,7 @@ export default function AppPage({ params }: { params: { slug: string } }) {
             )}
           </header>
           <div className="w-full flex justify-center items-center">
-            <AppGalleryCarousel />
+            <AppGalleryCarousel application={application} />
           </div>
           <div className="space-y-5">
             <div className="space-y-2">

@@ -12,6 +12,7 @@ export interface IApplications extends Document {
   applicationUrl: string;
   descriptionTitle: string;
   workspacesAllowed: mongoose.Schema.Types.ObjectId[];
+  galleryPhotos: string[];
 }
 
 const applicationSchema = new mongoose.Schema<IApplications>(
@@ -32,6 +33,10 @@ const applicationSchema = new mongoose.Schema<IApplications>(
     },
     avatarSrc: {
       type: String,
+      trim: true,
+    },
+    galleryPhotos: {
+      type: [String],
       trim: true,
     },
     avatarFallback: {

@@ -271,7 +271,10 @@ export default function AdminPage() {
         </section>
 
         <div className="flex justify-end max-w-3xl items-center mt-20 w-full">
-          <Button type="submit" disabled={isSubmitting}>
+          <Button
+            type="submit"
+            disabled={isSubmitting || saveApplicationMutation.isPending}
+          >
             Publicar
           </Button>
         </div>
