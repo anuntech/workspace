@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import { useSearchParams } from "next/navigation";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { api } from "@/libs/api";
-import { getEc3Image } from "@/libs/s3-client";
+import { getS3Image } from "@/libs/s3-client";
+import AppGalleryCarousel from "./_components/carousel";
 
 export default function AppPage({ params }: { params: { slug: string } }) {
   const searchParams = useSearchParams();
@@ -71,7 +72,7 @@ export default function AppPage({ params }: { params: { slug: string } }) {
         <section className="flex gap-3">
           <Avatar className="size-14">
             <AvatarImage
-              src={getEc3Image(application.avatarSrc) || "/shad.png"}
+              src={getS3Image(application.avatarSrc) || "/shad.png"}
             />
             <AvatarFallback>{application.avatarFallback}</AvatarFallback>
           </Avatar>
@@ -106,9 +107,8 @@ export default function AppPage({ params }: { params: { slug: string } }) {
               </Button>
             )}
           </header>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="h-52 rounded-md bg-zinc-300" />
-            <div className="h-52 rounded-md bg-zinc-300" />
+          <div className="w-full flex justify-center items-center">
+            <AppGalleryCarousel />
           </div>
           <div className="space-y-5">
             <div className="space-y-2">

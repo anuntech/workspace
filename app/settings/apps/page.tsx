@@ -10,7 +10,7 @@ import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import { api } from "@/libs/api";
-import { getEc3Image } from "@/libs/s3-client";
+import { getS3Image } from "@/libs/s3-client";
 
 export default function AppsPage() {
   const [inputValue, setInputValue] = useState("");
@@ -89,7 +89,7 @@ export default function AppsPage() {
                         <CardContent className="space-y-3 p-5">
                           <div className="flex items-center gap-3">
                             <Avatar>
-                              <AvatarImage src={getEc3Image(app.avatarSrc)} />
+                              <AvatarImage src={getS3Image(app.avatarSrc)} />
                               <AvatarFallback>
                                 {app.avatarFallback}
                               </AvatarFallback>
@@ -120,7 +120,7 @@ export default function AppsPage() {
                     <CardContent className="space-y-3 p-5">
                       <div className="flex items-center gap-3">
                         <Avatar>
-                          <AvatarImage src={getEc3Image(app.avatarSrc)} />
+                          <AvatarImage src={getS3Image(app.avatarSrc)} />
                           <AvatarFallback>{app.avatarFallback}</AvatarFallback>
                         </Avatar>
                         <div className="flex flex-col">

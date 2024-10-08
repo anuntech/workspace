@@ -10,7 +10,7 @@ export const s3Client = new S3Client({
   },
 });
 
-export const getEc3Image = (uuid: string) => {
+export const getS3Image = (uuid: string) => {
   return (
     process.env.NEXT_PUBLIC_HETZNER_S3_ENDPOINT +
     "/" +
