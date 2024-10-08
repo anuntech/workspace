@@ -11,24 +11,26 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { ImageManager } from "./image-manager";
+import { IApplications } from "@/models/Applications";
+import { getS3Image } from "@/libs/s3-client";
 
 export default function AppGalleryCarousel({
   application,
 }: {
-  application: any;
+  application: IApplications;
 }) {
   return (
     <Carousel
       opts={{
         align: "center",
       }}
-      className="w-full max-w-sm"
+      className="w-full max-w-[600px]"
     >
       <CarouselContent>
-        {Array.from({ length: 5 }).map((_, index) => (
+        {application.galleryPhotos.map((src, index) => (
           <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/2">
             <div className="p-1">
-              <ImageManager href={index.toString()} />
+              <ImageManager href={getS3Image(src)} />
             </div>
           </CarouselItem>
         ))}

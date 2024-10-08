@@ -11,6 +11,7 @@ const nextConfig = {
       "pbs.twimg.com",
       "images.unsplash.com",
       "logos-world.net",
+      "anuntech.fsn1.your-objectstorage.com",
     ],
   },
 };

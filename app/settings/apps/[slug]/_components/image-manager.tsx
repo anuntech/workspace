@@ -9,6 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Skeleton } from "@/components/ui/skeleton";
 import { getS3Image } from "@/libs/s3-client";
 import {
   LoaderCircle,
@@ -58,13 +59,18 @@ export function ImageManager({ href }: { href: string }) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button
-          size="icon"
-          variant="ghost"
-          aria-label="Abrir visualização do comprovante"
-        >
-          image
-        </Button>
+        <Image
+          src={href}
+          alt="Image Preview"
+          width={500}
+          height={500}
+          onLoad={handleImageLoad}
+          className="cursor-pointer"
+          style={{
+            transform: `rotate(${rotation}deg) scale(${zoom})`,
+            transition: "transform 0.3s ease",
+          }}
+        />
       </DialogTrigger>
       <DialogContent className="flex max-h-[90vh] flex-col overflow-y-auto sm:max-w-[425px]">
         <DialogHeader>
@@ -85,7 +91,7 @@ export function ImageManager({ href }: { href: string }) {
           >
             <Image
               className={`h-[50vh] rounded-lg object-contain`}
-              src={getS3Image(href)}
+              src={href}
               alt="Comprovante de pagamento"
               width={500}
               height={500}
