@@ -3,7 +3,7 @@ import connectMongo from "@/libs/mongoose";
 import { authOptions } from "@/libs/next-auth";
 import { s3Client } from "@/libs/s3-client";
 import Applications from "@/models/Applications";
-import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { PutObjectCommand, PutObjectCommandInput } from "@aws-sdk/client-s3";
 import { randomUUID } from "crypto";
 import mongoose from "mongoose";
 import { getServerSession } from "next-auth";
@@ -31,31 +31,35 @@ export async function POST(request: Request) {
 
     const body = await request.formData();
 
+    const profilePhoto = body.get("profilePhoto") as File;
+    const profilePhotoId = randomUUID().toString();
+
+    if (profilePhoto) {
+      const form = {
+        Bucket: process.env.HETZNER_BUCKET_NAME!,
+        Key: profilePhotoId,
+        Body: Buffer.from(await profilePhoto.arrayBuffer()),
+        ContentType: profilePhoto.type,
+        ACL: "public-read",
+      } as PutObjectCommandInput;
+
+      const command = new PutObjectCommand(form);
+      const data = await s3Client.send(command);
+      console.log(data);
+    }
+
     const application = await Applications.create({
       name: body.get("name"),
       cta: body.get("cta"),
       description: body.get("description"),
       descriptionTitle: body.get("descriptionTitle"),
-      avatarSrc: "/shad.png",
+      avatarSrc: profilePhoto ? profilePhotoId : "/shad.png",
       avatarFallback: body.get("name").slice(0, 1),
       applicationUrl: body.get("iframeUrl"),
       workspacesAllowed: JSON.parse(
         body.get("workspacesAllowed") as string
       ).map((id: string) => new mongoose.Types.ObjectId(id)),
     });
-    const profilePhoto = body.get("profilePhoto") as File;
-
-    if (profilePhoto) {
-      const form = {
-        Bucket: process.env.HETZNER_BUCKET_NAME!,
-        Key: randomUUID().toString(),
-        Body: Buffer.from(await profilePhoto.arrayBuffer()),
-        ContentType: profilePhoto.type,
-      };
-
-      const command = new PutObjectCommand(form);
-      await s3Client.send(command);
-    }
 
     return NextResponse.json(application);
   } catch (e) {

@@ -9,3 +9,13 @@ export const s3Client = new S3Client({
     secretAccessKey: process.env.HETZNER_S3_SECRET_ACCESS_KEY!,
   },
 });
+
+export const getImage = (uuid: string) => {
+  return (
+    process.env.HETZNER_S3_ENDPOINT +
+    "/" +
+    process.env.HETZNER_BUCKET_NAME +
+    "/" +
+    uuid
+  );
+};
