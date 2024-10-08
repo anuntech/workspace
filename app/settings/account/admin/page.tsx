@@ -18,7 +18,7 @@ type Input = {
   iframeUrl: string;
   description: string;
   titleDescription: string;
-  profilePhoto: string;
+  profilePhoto: FormData | string;
   galeryPhotos: string;
 };
 
@@ -66,7 +66,13 @@ export default function AdminPage() {
   });
 
   const onSubmit: SubmitHandler<Input> = async (data) => {
-    const payload = { ...data, workspacesAllowed: sharedWith };
+    const formData = new FormData();
+    formData.append("profilePhoto", data.profilePhoto as string);
+    const payload = {
+      ...data,
+      profilePhoto: formData,
+      workspacesAllowed: sharedWith,
+    };
     saveApplicationMutation.mutate(payload);
   };
 
