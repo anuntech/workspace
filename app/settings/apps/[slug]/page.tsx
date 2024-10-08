@@ -5,7 +5,7 @@ import { ChevronLeft, CircleMinus, CirclePlus } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useSearchParams } from "next/navigation";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/libs/api";
 import { getS3Image } from "@/libs/s3-client";
 import AppGalleryCarousel from "./_components/carousel";
@@ -16,9 +16,11 @@ export default function AppPage({ params }: { params: { slug: string } }) {
   const workspace = searchParams.get("workspace");
 
   const applicationsQuery = useQuery({
-    queryKey: ["applications1"],
+    queryKey: ["applications"],
     queryFn: async () => await api.get(`/api/applications/${workspace}`),
   });
+
+  const queryClient = useQueryClient();
 
   const getApplicationMutation = useMutation({
     mutationFn: async () => {
@@ -30,8 +32,11 @@ export default function AppPage({ params }: { params: { slug: string } }) {
       });
       return res.json();
     },
-    onSuccess: () => {
-      applicationsQuery.refetch();
+    onSuccess: async () => {
+      await queryClient.refetchQueries({
+        queryKey: ["applications"],
+        type: "active",
+      });
     },
   });
 
