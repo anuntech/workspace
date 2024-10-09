@@ -10,6 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/libs/api";
+import { getS3Image } from "@/libs/s3-client";
 
 export function Sidebar() {
   const urlParams = useSearchParams();
@@ -81,7 +82,7 @@ export function Sidebar() {
         {enabledApplications?.map((data: any) => (
           <NavLink href={`/service/${data._id}?workspace=${workspace}`}>
             <Avatar className="mr-3 size-5">
-              <AvatarImage src={data.avatarSrc} />
+              <AvatarImage src={getS3Image(data.avatarSrc)} />
               <AvatarFallback>{data.avatarFallback}</AvatarFallback>
             </Avatar>
             {data.name}

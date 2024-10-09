@@ -55,7 +55,7 @@ export default function AppsPage() {
                       <Card>
                         <CardContent className="flex items-center gap-3 p-5">
                           <Avatar>
-                            <AvatarImage src={app.avatarSrc} />
+                            <AvatarImage src={getS3Image(app.avatarSrc)} />
                             <AvatarFallback>
                               {app.avatarFallback}
                             </AvatarFallback>
