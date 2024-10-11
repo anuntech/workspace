@@ -23,10 +23,11 @@ export function CreateWorkspaceForm() {
       }),
     onSuccess: async (data) => {
       if (data.status == 201) {
-        queryClient.refetchQueries({
+        await queryClient.refetchQueries({
           queryKey: ["workspace"],
           type: "all",
         });
+
         router.push(`/?workspace=${(await data.json()).id}`);
       }
     },
