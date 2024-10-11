@@ -115,7 +115,10 @@ export default function AppsPage() {
                 app.name.toLowerCase().includes(inputValue.toLowerCase())
               )
               ?.map((app: any) => (
-                <Link href="/" key={app.name}>
+                <Link
+                  href={`/settings/apps/${app._id}?workspace=${workspace}`}
+                  key={app.name}
+                >
                   <Card>
                     <CardContent className="space-y-3 p-5">
                       <div className="flex items-center gap-3">
