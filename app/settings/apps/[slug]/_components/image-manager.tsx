@@ -148,8 +148,8 @@ export function ImageManager({ href }: { href: string }) {
         />
       </DialogTrigger>
       <DialogContent
-        className="flex flex-col items-center justify-center sm:max-w-[90vw] sm:max-h-[90vh] p-4"
-        style={{ width: "auto", height: "auto" }}
+        className="flex flex-col items-center justify-center sm:max-h-[90vh] p-4"
+        style={{ width: "auto", height: "450px" }}
       >
         <DialogHeader>
           <DialogTitle>Comprovante</DialogTitle>
