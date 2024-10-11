@@ -112,9 +112,16 @@ export default function AppPage({ params }: { params: { slug: string } }) {
               </Button>
             )}
           </header>
-          <div className="w-full flex justify-center items-center">
-            <AppGalleryCarousel application={application} />
-          </div>
+          {application.galleryPhotos.length == 0 ? (
+            <div className="grid grid-cols-2 gap-4">
+              <div className="h-52 rounded-md bg-zinc-300" />
+              <div className="h-52 rounded-md bg-zinc-300" />
+            </div>
+          ) : (
+            <div className="flex justify-center items-center">
+              <AppGalleryCarousel application={application} />
+            </div>
+          )}
           <div className="space-y-5">
             <div className="space-y-2">
               <span>Visão geral</span>
