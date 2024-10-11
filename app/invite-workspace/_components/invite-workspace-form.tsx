@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -52,6 +52,7 @@ export function InviteWorkspaceForm() {
     router.push("/");
   }
 
+  const queryClient = useQueryClient();
   const acceptInviteMutation = useMutation({
     mutationFn: (data: { invite: string }) =>
       fetch("/api/workspace/invite/accept", {
@@ -61,8 +62,12 @@ export function InviteWorkspaceForm() {
         },
         body: JSON.stringify(data),
       }),
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       if (data.status == 200) {
+        await queryClient.refetchQueries({
+          queryKey: ["workspace"],
+          type: "all",
+        });
         router.push(`/?workspace=${response?.data?.workspaceId}`);
       }
     },
