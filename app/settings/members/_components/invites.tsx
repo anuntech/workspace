@@ -14,6 +14,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { toast } from "@/hooks/use-toast";
 import { Separator } from "@radix-ui/react-dropdown-menu";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Trash2 } from "lucide-react";
@@ -71,10 +72,15 @@ export function Invites() {
         },
         body: JSON.stringify(data),
       }),
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       if (data.status == 200) {
-        queryClient.refetchQueries({
+        await queryClient.refetchQueries({
           queryKey: ["workspace/invite"],
+        });
+
+        toast({
+          description: "Convite enviado com sucesso!",
+          duration: 7000,
         });
 
         reset();
