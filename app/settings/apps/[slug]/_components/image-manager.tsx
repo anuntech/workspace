@@ -9,8 +9,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Skeleton } from "@/components/ui/skeleton";
-import { getS3Image } from "@/libs/s3-client";
 import {
   LoaderCircle,
   RotateCcw,
@@ -19,12 +17,18 @@ import {
   ZoomOut,
 } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 export function ImageManager({ href }: { href: string }) {
   const [loading, setLoading] = useState(true);
   const [rotation, setRotation] = useState(0);
   const [zoom, setZoom] = useState(1);
+
+  const [translateX, setTranslateX] = useState(0);
+  const [translateY, setTranslateY] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const lastPosition = useRef({ x: 0, y: 0 });
 
   const MAX_ZOOM = 3;
 
@@ -33,27 +37,101 @@ export function ImageManager({ href }: { href: string }) {
   }
 
   function rotateLeft() {
-    setRotation(rotation - 90);
+    setRotation((prevRotation) => prevRotation - 90);
   }
 
   function rotateRight() {
-    setRotation(rotation + 90);
+    setRotation((prevRotation) => prevRotation + 90);
   }
 
   function zoomIn() {
-    setZoom((prevZoom: any) => Math.min(prevZoom + 0.4, MAX_ZOOM));
+    setZoom((prevZoom) => Math.min(prevZoom + 0.4, MAX_ZOOM));
   }
 
   function zoomOut() {
-    setZoom((prevZoom: any) => Math.max(prevZoom - 0.4, 1));
+    setZoom((prevZoom) => {
+      const newZoom = Math.max(prevZoom - 0.4, 1);
+      if (newZoom === 1) {
+        setTranslateX(0);
+        setTranslateY(0);
+      }
+      return newZoom;
+    });
   }
 
-  function handleWheel(event: any) {
+  function handleWheel(event: React.WheelEvent) {
+    event.preventDefault();
     if (event.deltaY > 0) {
       zoomOut();
     } else {
       zoomIn();
     }
+  }
+
+  function handleMouseDown(event: React.MouseEvent) {
+    if (zoom <= 1) return;
+    event.preventDefault();
+    setIsDragging(true);
+    lastPosition.current = { x: event.clientX, y: event.clientY };
+  }
+
+  function handleMouseMove(event: React.MouseEvent) {
+    if (!isDragging) return;
+    event.preventDefault();
+
+    const deltaX = event.clientX - lastPosition.current.x;
+    const deltaY = event.clientY - lastPosition.current.y;
+
+    setTranslateX((prev) => prev + deltaX);
+    setTranslateY((prev) => prev + deltaY);
+
+    lastPosition.current = { x: event.clientX, y: event.clientY };
+  }
+
+  function handleMouseUp(event: React.MouseEvent) {
+    if (!isDragging) return;
+    event.preventDefault();
+    setIsDragging(false);
+  }
+
+  function handleMouseLeave(event: React.MouseEvent) {
+    if (!isDragging) return;
+    event.preventDefault();
+    setIsDragging(false);
+  }
+
+  function handleTouchStart(event: React.TouchEvent) {
+    if (zoom <= 1) return;
+    if (event.touches.length === 1) {
+      event.preventDefault();
+      setIsDragging(true);
+      lastPosition.current = {
+        x: event.touches[0].clientX,
+        y: event.touches[0].clientY,
+      };
+    }
+  }
+
+  function handleTouchMove(event: React.TouchEvent) {
+    if (!isDragging || event.touches.length !== 1) return;
+    event.preventDefault();
+
+    const deltaX = event.touches[0].clientX - lastPosition.current.x;
+    const deltaY = event.touches[0].clientY - lastPosition.current.y;
+
+    setTranslateX((prev) => prev + deltaX);
+    setTranslateY((prev) => prev + deltaY);
+
+    lastPosition.current = {
+      x: event.touches[0].clientX,
+      y: event.touches[0].clientY,
+    };
+  }
+
+  function handleTouchEnd(event: React.TouchEvent) {
+    if (!isDragging) return;
+    event.preventDefault();
+    setIsDragging(false);
   }
 
   return (
@@ -66,13 +144,13 @@ export function ImageManager({ href }: { href: string }) {
           height={500}
           onLoad={handleImageLoad}
           className="cursor-pointer"
-          style={{
-            transform: `rotate(${rotation}deg) scale(${zoom})`,
-            transition: "transform 0.3s ease",
-          }}
+          draggable={false}
         />
       </DialogTrigger>
-      <DialogContent className="flex max-h-[90vh] flex-col overflow-y-auto sm:max-w-[425px]">
+      <DialogContent
+        className="flex flex-col items-center justify-center sm:max-w-[90vw] sm:max-h-[90vh] p-4"
+        style={{ width: "auto", height: "auto" }}
+      >
         <DialogHeader>
           <DialogTitle>Comprovante</DialogTitle>
           <DialogDescription>
@@ -82,32 +160,49 @@ export function ImageManager({ href }: { href: string }) {
         <div className="relative flex flex-col items-center justify-center gap-5">
           {loading && (
             <div className="absolute inset-0 flex items-center justify-center">
-              <LoaderCircle className="size-8 animate-spin" />
+              <LoaderCircle className="h-8 w-8 animate-spin" />
             </div>
           )}
           <div
-            className="max-h-[50vh] overflow-hidden rounded-lg hover:cursor-zoom-in"
+            className="relative overflow-hidden rounded-lg"
             onWheel={handleWheel}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseLeave}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            style={{
+              cursor: zoom > 1 ? (isDragging ? "grabbing" : "grab") : "default",
+              width: "100%",
+              height: "auto",
+              maxWidth: "80vw",
+              maxHeight: "80vh",
+            }}
           >
             <Image
-              className={`h-[50vh] rounded-lg object-contain`}
+              className="rounded-lg object-contain select-none touch-none"
               src={href}
               alt="Comprovante de pagamento"
               width={500}
               height={500}
               onLoad={handleImageLoad}
+              draggable={false}
               style={{
-                transform: `rotate(${rotation}deg) scale(${zoom})`,
-                transition: "transform 0.3s ease",
+                transform: `translate(${translateX}px, ${translateY}px) rotate(${rotation}deg) scale(${zoom})`,
+                transition: isDragging ? "none" : "transform 0.3s ease",
+                maxWidth: "100%",
+                maxHeight: "80vh",
               }}
             />
           </div>
           <div className="space-x-2">
             <Button size="icon" variant="secondary" onClick={rotateLeft}>
-              <RotateCcw className="size-4" />
+              <RotateCcw className="h-4 w-4" />
             </Button>
             <Button size="icon" variant="secondary" onClick={rotateRight}>
-              <RotateCw className="size-4" />
+              <RotateCw className="h-4 w-4" />
             </Button>
             <Button
               size="icon"
@@ -115,7 +210,7 @@ export function ImageManager({ href }: { href: string }) {
               onClick={zoomOut}
               disabled={zoom <= 1}
             >
-              <ZoomOut className="size-4" />
+              <ZoomOut className="h-4 w-4" />
             </Button>
             <Button
               size="icon"
@@ -123,7 +218,7 @@ export function ImageManager({ href }: { href: string }) {
               onClick={zoomIn}
               disabled={zoom >= MAX_ZOOM}
             >
-              <ZoomIn className="size-4" />
+              <ZoomIn className="h-4 w-4" />
             </Button>
           </div>
         </div>

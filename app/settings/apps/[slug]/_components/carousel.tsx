@@ -24,7 +24,7 @@ export default function AppGalleryCarousel({
       opts={{
         align: "center",
       }}
-      className="w-full max-w-[600px]"
+      className="w-full max-w-[600px] max-h-[170px]"
     >
       <CarouselContent>
         {application.galleryPhotos.map((src, index) => (
