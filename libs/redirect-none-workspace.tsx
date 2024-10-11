@@ -38,7 +38,8 @@ export function RedirectNoneWorkspace({
   };
 
   if (!workspacesQuery.isPending && !searchParams.get("workspace")) {
-    router.push(`/?workspace=${workspacesQuery.data[0].id}`);
+    console.log(workspacesQuery.data);
+    router.push(`/?workspace=${workspacesQuery?.data[0]?.id}`);
   }
 
   verifyWorkspaceQuantity();
