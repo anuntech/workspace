@@ -6,6 +6,10 @@ import { Badge } from "@/components/ui/badge";
 import { MoreHorizontal } from "lucide-react"; // ícone para o botão de opções
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
+import api from "@/libs/api";
+import { getS3Image } from "@/libs/s3-client";
+import { ApplicationsDropdown } from "./_components/applications-dropdown";
 
 export default function AppsAdminPage() {
   const events = [
@@ -48,6 +52,16 @@ export default function AppsAdminPage() {
   ];
 
   const searchParams = useSearchParams();
+  const allAppsQuery = useQuery({
+    queryKey: ["allApplications"],
+    queryFn: async () => await api.get(`/api/applications`),
+  });
+
+  if (allAppsQuery.isPending) {
+    return <p>Loading</p>;
+  }
+  console.log(allAppsQuery.data.data);
+
   const workspace = searchParams.get("workspace");
 
   return (
@@ -64,35 +78,21 @@ export default function AppsAdminPage() {
         </div>
 
         <div className="space-y-5">
-          {events.map((event, index) => (
+          {allAppsQuery.data?.data.map((event: any, index: number) => (
             <div
               key={index}
               className="flex items-center space-x-4 p-4 border-b"
             >
               <img
-                src={event.imageUrl}
-                alt={event.title}
+                src={getS3Image(event.avatarSrc)}
+                alt={event.name}
                 className="w-20 h-20 object-cover rounded-md"
               />
               <div className="flex flex-col flex-grow">
-                <h2 className="text-lg font-semibold">{event.title}</h2>
-                <p className="text-sm text-gray-500">
-                  {event.date} - {event.location}
-                </p>
-                <p className="text-sm text-gray-500">{event.ticketsSold}</p>
+                <h2 className="text-lg font-semibold">{event.name}</h2>
+                <p className="text-sm text-gray-500">{event.description}</p>
               </div>
-              <Badge
-                className={`px-2 py-1 ${
-                  event.statusColor === "green"
-                    ? "bg-green-100 text-green-600"
-                    : "bg-gray-100 text-gray-600"
-                }`}
-              >
-                {event.status}
-              </Badge>
-              <Button variant="ghost">
-                <MoreHorizontal className="w-5 h-5" />
-              </Button>
+              <ApplicationsDropdown />
             </div>
           ))}
         </div>

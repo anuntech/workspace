@@ -81,3 +81,26 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: e?.message }, { status: 500 });
   }
 }
+
+export async function GET(request: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+
+    console.log(session.user.email.split("@"), conf.domainName);
+    // if (session.user.email.split("@")[1] !== config.domainName) {
+    //   return NextResponse.json(
+    //     { error: "You have no permission" },
+    //     { status: 403 }
+    //   );
+    // }
+
+    await connectMongo();
+
+    const applications = await Applications.find();
+
+    return NextResponse.json(applications);
+  } catch (e) {
+    console.error(e);
+    return NextResponse.json({ error: e?.message }, { status: 500 });
+  }
+}
