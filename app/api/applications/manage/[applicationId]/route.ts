@@ -105,3 +105,39 @@ export async function PATCH(
     return NextResponse.json({ error: e?.message }, { status: 500 });
   }
 }
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: { applicationId: string } }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+
+    console.log(session.user.email.split("@"), conf.domainName);
+    // if (session.user.email.split("@")[1] !== config.domainName) {
+    //   return NextResponse.json(
+    //     { error: "You have no permission" },
+    //     { status: 403 }
+    //   );
+    // }
+
+    await connectMongo();
+
+    const { applicationId } = params;
+
+    const application = await Applications.findById(applicationId);
+    if (!application) {
+      return NextResponse.json(
+        { error: "Application not found" },
+        { status: 404 }
+      );
+    }
+
+    await application.deleteOne();
+
+    return NextResponse.json(application);
+  } catch (e: any) {
+    console.error(e);
+    return NextResponse.json({ error: e?.message }, { status: 500 });
+  }
+}

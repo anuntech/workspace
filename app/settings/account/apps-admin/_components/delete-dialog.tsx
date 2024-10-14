@@ -27,7 +27,8 @@ export function DeleteDialog({
   const queryClient = useQueryClient();
 
   const deleteApplicationMutation = useMutation({
-    mutationFn: async (data: any) => api.delete(`/api/applications/${data.id}`),
+    mutationFn: async (data: any) =>
+      api.delete(`/api/applications/manage/${data.id}`),
     onSuccess: async () => {
       await queryClient.refetchQueries({
         queryKey: ["allApplications"],
