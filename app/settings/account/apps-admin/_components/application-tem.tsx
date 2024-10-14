@@ -43,11 +43,13 @@ export function ApplicationItem({ application }: ApplicationItemProps) {
     <div className="flex items-center space-x-4 p-4 border-b">
       <div className="relative w-20 h-20 group">
         {application.avatarSrc ? (
-          <img
-            src={getS3Image(application.avatarSrc)}
-            alt={application.name}
-            className="w-full h-full object-cover rounded-md"
-          />
+          <div className="w-20 h-20 flex items-center justify-center">
+            <img
+              src={getS3Image(application.avatarSrc)}
+              alt={application.name}
+              className="object-cover rounded-md"
+            />
+          </div>
         ) : (
           <div className="bg-zinc-300 w-20 h-20 rounded-[10px] flex items-center justify-center text-[1.5rem]">
             ?
