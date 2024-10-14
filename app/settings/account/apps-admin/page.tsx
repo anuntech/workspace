@@ -2,8 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { MoreHorizontal } from "lucide-react"; // ícone para o botão de opções
+import { MoreHorizontal, Pencil } from "lucide-react"; // ícone para o botão de opções
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
@@ -13,42 +12,7 @@ import { ApplicationsDropdown } from "./_components/applications-dropdown";
 
 export default function AppsAdminPage() {
   const events = [
-    {
-      title: "Bear Hug: Live in Concert",
-      date: "May 20, 2024 at 10 PM",
-      location: "Harmony Theater, Winnipeg, MB",
-      ticketsSold: "350/500 tickets sold",
-      status: "On Sale",
-      statusColor: "green",
-      imageUrl: "/images/bear-hug.jpg",
-    },
-    {
-      title: "Six Fingers — DJ Set",
-      date: "Jun 2, 2024 at 8 PM",
-      location: "Moonbeam Arena, Uxbridge, ON",
-      ticketsSold: "72/150 tickets sold",
-      status: "On Sale",
-      statusColor: "green",
-      imageUrl: "/images/six-fingers.jpg",
-    },
-    {
-      title: "We All Look The Same",
-      date: "Aug 5, 2024 at 4 PM",
-      location: "Electric Coliseum, New York, NY",
-      ticketsSold: "275/275 tickets sold",
-      status: "Closed",
-      statusColor: "gray",
-      imageUrl: "/images/we-all-look.jpg",
-    },
-    {
-      title: "Viking People",
-      date: "Dec 31, 2024 at 8 PM",
-      location: "Tapestry Hall, Cambridge, ON",
-      ticketsSold: "6/40 tickets sold",
-      status: "On Sale",
-      statusColor: "green",
-      imageUrl: "/images/viking-people.jpg",
-    },
+    // ... (eventos de exemplo)
   ];
 
   const searchParams = useSearchParams();
@@ -86,17 +50,29 @@ export default function AppsAdminPage() {
               key={index}
               className="flex items-center space-x-4 p-4 border-b"
             >
-              {application.avatarSrc ? (
-                <img
-                  src={getS3Image(application.avatarSrc)}
-                  alt={application.name}
-                  className="w-20 h-20 object-cover rounded-md"
-                />
-              ) : (
-                <div className="bg-zinc-300 w-20 h-20 rounded-[10] flex items-center justify-center text-[1.5rem]">
-                  ?
+              <div className="relative w-20 h-20">
+                {application.avatarSrc ? (
+                  <img
+                    src={getS3Image(application.avatarSrc)}
+                    alt={application.name}
+                    className="w-full h-full object-cover rounded-md"
+                  />
+                ) : (
+                  <div className="bg-zinc-300 w-full h-full rounded-[10px] flex items-center justify-center text-[1.5rem]">
+                    ?
+                  </div>
+                )}
+
+                <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 hover:opacity-100 rounded-md transition-opacity duration-300">
+                  <Button
+                    variant="ghost"
+                    className="p-2 text-white hover:text-black"
+                  >
+                    <Pencil className="w-6 h-6" />
+                  </Button>
                 </div>
-              )}
+              </div>
+
               <div className="flex flex-col flex-grow">
                 <h2 className="text-lg font-semibold">{application.name}</h2>
                 <p className="text-sm text-gray-500">
