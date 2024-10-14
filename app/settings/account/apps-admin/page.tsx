@@ -78,21 +78,23 @@ export default function AppsAdminPage() {
         </div>
 
         <div className="space-y-5">
-          {allAppsQuery.data?.data.map((event: any, index: number) => (
+          {allAppsQuery.data?.data.map((application: any, index: number) => (
             <div
               key={index}
               className="flex items-center space-x-4 p-4 border-b"
             >
               <img
-                src={getS3Image(event.avatarSrc)}
-                alt={event.name}
+                src={getS3Image(application.avatarSrc)}
+                alt={application.name}
                 className="w-20 h-20 object-cover rounded-md"
               />
               <div className="flex flex-col flex-grow">
-                <h2 className="text-lg font-semibold">{event.name}</h2>
-                <p className="text-sm text-gray-500">{event.description}</p>
+                <h2 className="text-lg font-semibold">{application.name}</h2>
+                <p className="text-sm text-gray-500">
+                  {application.description}
+                </p>
               </div>
-              <ApplicationsDropdown />
+              <ApplicationsDropdown application={application} />
             </div>
           ))}
         </div>
