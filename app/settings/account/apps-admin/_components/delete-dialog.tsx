@@ -33,7 +33,7 @@ export function DeleteDialog({
         queryKey: ["allApplications"],
         type: "all",
       });
-      setOpen(false); // Fechar o dialog após sucesso
+      setOpen(false);
     },
   });
 

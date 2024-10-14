@@ -60,7 +60,6 @@ export default function AppsAdminPage() {
   if (allAppsQuery.isPending) {
     return <p>Loading</p>;
   }
-  console.log(allAppsQuery.data.data);
 
   const workspace = searchParams.get("workspace");
 
@@ -69,10 +68,14 @@ export default function AppsAdminPage() {
       <div className="w-full max-w-3xl space-y-5">
         <h1 className="text-2xl">Aplicações</h1>
         <div className="flex justify-between items-center">
-          <Input type="text" placeholder="Search events..." className="w-2/3" />
+          <Input
+            type="text"
+            placeholder="Procurar aplicativos..."
+            className="w-2/3"
+          />
           <Button className="ml-4">
             <Link href={`/settings/account/admin?workspace=${workspace}`}>
-              Create event
+              Criar aplicativo
             </Link>
           </Button>
         </div>
@@ -83,11 +86,17 @@ export default function AppsAdminPage() {
               key={index}
               className="flex items-center space-x-4 p-4 border-b"
             >
-              <img
-                src={getS3Image(application.avatarSrc)}
-                alt={application.name}
-                className="w-20 h-20 object-cover rounded-md"
-              />
+              {application.avatarSrc ? (
+                <img
+                  src={getS3Image(application.avatarSrc)}
+                  alt={application.name}
+                  className="w-20 h-20 object-cover rounded-md"
+                />
+              ) : (
+                <div className="bg-zinc-300 w-20 h-20 rounded-[10] flex items-center justify-center text-[1.5rem]">
+                  ?
+                </div>
+              )}
               <div className="flex flex-col flex-grow">
                 <h2 className="text-lg font-semibold">{application.name}</h2>
                 <p className="text-sm text-gray-500">
