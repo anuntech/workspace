@@ -9,23 +9,23 @@ import { useQuery } from "@tanstack/react-query";
 import api from "@/libs/api";
 import { getS3Image } from "@/libs/s3-client";
 import { ApplicationsDropdown } from "./_components/applications-dropdown";
+import { useRef } from "react";
+import { ApplicationItem } from "./_components/application-tem";
 
 export default function AppsAdminPage() {
-  const events = [
-    // ... (eventos de exemplo)
-  ];
-
   const searchParams = useSearchParams();
   const allAppsQuery = useQuery({
     queryKey: ["allApplications"],
     queryFn: async () => await api.get(`/api/applications`),
   });
 
-  if (allAppsQuery.isPending) {
-    return <p>Loading</p>;
-  }
-
   const workspace = searchParams.get("workspace");
+
+  const handleFileChange = (applicationId: string, file: File | null) => {
+    if (!file) return;
+    console.log(`Carregando nova imagem para o aplicativo ${applicationId}`);
+    console.log(applicationId);
+  };
 
   return (
     <div className="flex flex-col items-center p-10">
@@ -46,41 +46,7 @@ export default function AppsAdminPage() {
 
         <div className="space-y-5">
           {allAppsQuery.data?.data.map((application: any, index: number) => (
-            <div
-              key={index}
-              className="flex items-center space-x-4 p-4 border-b"
-            >
-              <div className="relative w-20 h-20">
-                {application.avatarSrc ? (
-                  <img
-                    src={getS3Image(application.avatarSrc)}
-                    alt={application.name}
-                    className="w-full h-full object-cover rounded-md"
-                  />
-                ) : (
-                  <div className="bg-zinc-300 w-full h-full rounded-[10px] flex items-center justify-center text-[1.5rem]">
-                    ?
-                  </div>
-                )}
-
-                <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 hover:opacity-100 rounded-md transition-opacity duration-300">
-                  <Button
-                    variant="ghost"
-                    className="p-2 text-white hover:text-black"
-                  >
-                    <Pencil className="w-6 h-6" />
-                  </Button>
-                </div>
-              </div>
-
-              <div className="flex flex-col flex-grow">
-                <h2 className="text-lg font-semibold">{application.name}</h2>
-                <p className="text-sm text-gray-500">
-                  {application.description}
-                </p>
-              </div>
-              <ApplicationsDropdown application={application} />
-            </div>
+            <ApplicationItem application={application} key={index} />
           ))}
         </div>
       </div>
