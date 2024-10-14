@@ -12,9 +12,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { DeleteDialog } from "./delete-dialog";
 import { useState } from "react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
 export function ApplicationsDropdown({ application }: { application: any }) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const workspace = useSearchParams().get("workspace");
 
   return (
     <>
@@ -26,10 +29,14 @@ export function ApplicationsDropdown({ application }: { application: any }) {
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuGroup>
-            <DropdownMenuItem>
-              <Pencil className="mr-2 h-4 w-4" />
-              <span>Editar</span>
-            </DropdownMenuItem>
+            <Link
+              href={`/settings/account/admin?edit=${application.id}&&workspace=${workspace}`}
+            >
+              <DropdownMenuItem>
+                <Pencil className="mr-2 h-4 w-4" />
+                <span>Editar</span>
+              </DropdownMenuItem>
+            </Link>
             <DropdownMenuItem
               onClick={() => {
                 setDeleteDialogOpen(true);
