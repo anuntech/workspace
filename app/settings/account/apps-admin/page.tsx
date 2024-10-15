@@ -7,6 +7,7 @@ import { useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import api from "@/libs/api";
 import { ApplicationItem } from "./_components/application-tem";
+import { useState } from "react";
 
 export default function AppsAdminPage() {
   const searchParams = useSearchParams();
@@ -14,6 +15,7 @@ export default function AppsAdminPage() {
     queryKey: ["allApplications"],
     queryFn: async () => await api.get(`/api/applications`),
   });
+  const [search, setSearch] = useState("");
 
   const workspace = searchParams.get("workspace");
 
@@ -26,6 +28,8 @@ export default function AppsAdminPage() {
             type="text"
             placeholder="Procurar aplicativos..."
             className="w-2/3"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
           />
           <Button className="ml-4">
             <Link href={`/settings/account/admin?workspace=${workspace}`}>
@@ -35,9 +39,17 @@ export default function AppsAdminPage() {
         </div>
 
         <div className="space-y-5">
-          {allAppsQuery.data?.data.map((application: any, index: number) => (
-            <ApplicationItem application={application} key={index} />
-          ))}
+          {search == ""
+            ? allAppsQuery.data?.data.map((application: any, index: number) => (
+                <ApplicationItem application={application} key={index} />
+              ))
+            : allAppsQuery.data?.data
+                .filter((application: any) =>
+                  application.name.toLowerCase().includes(search.toLowerCase())
+                )
+                .map((application: any, index: number) => (
+                  <ApplicationItem application={application} key={index} />
+                ))}
         </div>
       </div>
     </div>
