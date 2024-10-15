@@ -82,6 +82,7 @@ export async function PATCH(
     application.cta = body.get("cta")?.toString() || application.cta;
     application.description =
       body.get("description")?.toString() || application.description;
+    console.log(body.get("descriptionTitle"));
     application.descriptionTitle =
       body.get("descriptionTitle")?.toString() || application.descriptionTitle;
     application.avatarSrc = profilePhotoId;

@@ -30,7 +30,7 @@ export function ApplicationsDropdown({ application }: { application: any }) {
         <DropdownMenuContent>
           <DropdownMenuGroup>
             <Link
-              href={`/settings/account/admin?edit=${application.id}&&workspace=${workspace}`}
+              href={`/settings/account/admin-edit?edit=${application.id}&&workspace=${workspace}`}
             >
               <DropdownMenuItem>
                 <Pencil className="mr-2 h-4 w-4" />
