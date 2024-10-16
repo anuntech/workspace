@@ -12,19 +12,13 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { AvatarSelector } from "./_components/avatar-selector";
 
 type Workspace = {
   name?: string;
@@ -127,21 +121,7 @@ export default function SettingsPage() {
               </span>
             </div>
             <div className="flex justify-end pr-12">
-              <Carousel className="w-full max-w-52" opts={{ loop: true }}>
-                <CarouselContent>
-                  {Array.from({ length: 5 }).map((_, index) => (
-                    <CarouselItem key={index}>
-                      <div className="flex aspect-square items-center justify-center rounded-md border p-6">
-                        <span className="text-4xl font-semibold">
-                          {index + 1}
-                        </span>
-                      </div>
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-                <CarouselPrevious />
-                <CarouselNext />
-              </Carousel>
+              <AvatarSelector />
             </div>
           </section>
           <Separator />

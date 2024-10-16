@@ -22,9 +22,10 @@ export default function AppsPage() {
     queryFn: async () => await api.get(`/api/applications/${workspace}`),
   });
 
-  if (applicationsQuery.isPending || applicationsQuery.data.status !== 200) {
+  if (applicationsQuery.isPending) {
     return <div>Carregando...</div>;
   }
+  console.log(applicationsQuery.data.data);
 
   return (
     <div className="flex flex-col items-center p-10">
