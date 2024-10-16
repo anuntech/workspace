@@ -12,6 +12,8 @@ import Picker from "@emoji-mart/react";
 import emojiData from "@emoji-mart/data";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Image from "next/image";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import api from "@/libs/api";
 
 export function AvatarPopover() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -27,8 +29,31 @@ export function AvatarPopover() {
     }
   };
 
+  const queryClient = useQueryClient();
+  const [open, setOpen] = useState(false);
+
+  const changeWorkspaceAvatarMutation = useMutation({
+    mutationFn: async (data: any) => api.patch(`/api/workspace/icon`, data),
+    onSuccess: async () => {
+      await queryClient.refetchQueries({
+        queryKey: ["workspace"],
+        type: "all",
+      });
+      setOpen(false);
+    },
+  });
+
+  const handleSaveImage = async () => {
+    if (selectedImage) {
+      const formData = new FormData();
+      formData.append("icon", selectedImage);
+
+      changeWorkspaceAvatarMutation.mutate(formData);
+    }
+  };
+
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
           variant="ghost"
@@ -90,7 +115,10 @@ export function AvatarPopover() {
                       onChange={handleFileChange}
                     />
                   </label>
-                  <Button className="px-6 py-2 rounded-lg shadow-lg transition-all duration-300">
+                  <Button
+                    onClick={() => handleSaveImage()}
+                    className="px-6 py-2 rounded-lg shadow-lg transition-all duration-300"
+                  >
                     Salvar
                   </Button>
                 </div>

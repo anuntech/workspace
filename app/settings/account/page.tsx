@@ -152,7 +152,7 @@ export default function AccountPage() {
                 placeholder="E-mail..."
                 {...register("email", { required: true })}
                 onChange={() => setIsChanged(true)}
-                disabled={isPending || isSubmitting || user?.isGoogle}
+                disabled={true}
               />
             </div>
           </section>

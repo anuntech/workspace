@@ -58,7 +58,6 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
         },
         message: "duplicated email",
       },
-
       default: [],
     },
   },

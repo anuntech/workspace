@@ -39,13 +39,13 @@ export async function PATCH(request: Request) {
     const body = await request.json();
 
     const accountsCollection = mongoose.connection.collection("accounts");
-    const account = await accountsCollection.findOne({
-      userId: new mongoose.Types.ObjectId(session?.user?.id),
-    });
+    // const account = await accountsCollection.findOne({
+    //   userId: new mongoose.Types.ObjectId(session?.user?.id),
+    // });
 
-    if (account?.provider == "google" && body.email && body.email != "") {
+    if (body.email && body.email != "") {
       return NextResponse.json(
-        { error: "Google account email can't be changed" },
+        { error: "Email can't be changed" },
         { status: 400 }
       );
     }
