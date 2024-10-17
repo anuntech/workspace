@@ -77,9 +77,9 @@ export function RenderWorkspaces() {
       >
         <div className="flex items-center space-x-4">
           <Avatar>
-            {workspace.icon ? (
+            {workspace.icon.type == "emoji" ? (
               <div className="flex items-center justify-center w-full h-full">
-                {workspace.icon}
+                {workspace.icon.value}
               </div>
             ) : (
               <AvatarFallback>OM</AvatarFallback>

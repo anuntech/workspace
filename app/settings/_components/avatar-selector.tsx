@@ -20,7 +20,6 @@ export function AvatarSelector() {
   const workspace = workspaceQuery.data.data.find(
     (workspace: any) => workspace.id === searchParams.get("workspace")
   );
-  console.log(workspace);
   return (
     <div className="flex items-center space-x-4">
       <div className="relative w-52 h-52 group">

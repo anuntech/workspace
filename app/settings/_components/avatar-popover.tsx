@@ -13,6 +13,7 @@ import Image from "next/image";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/libs/api";
 import { useSearchParams } from "next/navigation";
+import { toast } from "@/hooks/use-toast";
 
 export function AvatarPopover() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -39,6 +40,11 @@ export function AvatarPopover() {
       await queryClient.refetchQueries({
         queryKey: ["workspace"],
         type: "all",
+      });
+      toast({
+        title: "Avatar atualizado",
+        description: "O avatar do workspace foi alterado com sucesso.",
+        duration: 5000,
       });
       setOpen(false);
     },
