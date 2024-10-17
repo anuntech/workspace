@@ -23,9 +23,9 @@ export function AvatarSelector() {
   return (
     <div className="flex items-center space-x-4">
       <div className="relative w-52 h-52 group">
-        {false ? (
-          <div className="w-52 h-52 flex items-center justify-center">
-            <img src={""} alt={"Avatar"} className="object-cover rounded-md" />
+        {workspace.icon ? (
+          <div className="w-52 h-52 flex items-center justify-center text-[7rem]">
+            {workspace.icon.value}
           </div>
         ) : (
           <div className="bg-zinc-300 w-52 h-52 rounded-[10px] flex items-center justify-center text-[1.5rem]">

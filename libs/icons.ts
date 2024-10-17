@@ -1,1 +1,1 @@
-export const initialWorkspaceIcons = ["🖱", "📦", "🧿", "📃"];
+export const initialWorkspaceIcons = ["🖱", "📦", "📘", "📃"];
