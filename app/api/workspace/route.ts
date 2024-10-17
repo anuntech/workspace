@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import connectMongo from "@/libs/mongoose";
 import Workspace from "@/models/Workspace";
 import mongoose from "mongoose";
+import { isValidEmoji } from "@/libs/icons";
 
 export async function POST(request: Request) {
   try {
@@ -11,6 +12,10 @@ export async function POST(request: Request) {
     const body = await request.json();
 
     await connectMongo();
+
+    if (!isValidEmoji(body.icon.value)) {
+      return NextResponse.json({ error: "Invalid emoji" }, { status: 400 });
+    }
 
     const user = new Workspace({
       name: body.name,
