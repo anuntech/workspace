@@ -17,6 +17,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid emoji" }, { status: 400 });
     }
 
+    if (body.icon.type != "emoji" && body.icon.type != "image") {
+      return NextResponse.json({ error: "Invalid icon type" }, { status: 400 });
+    }
+
     const user = new Workspace({
       name: body.name,
       icon: body.icon,
