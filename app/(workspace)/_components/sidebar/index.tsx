@@ -33,7 +33,7 @@ export function Sidebar() {
 
   const data = useQuery({
     queryKey: ["workspace"],
-    queryFn: () => fetch("/api/workspace").then((res) => res.json()),
+    queryFn: async () => api.get("/api/workspace"),
   });
 
   if (roleQuery.isPending || applicationsQuery.isPending || data.isPending) {
@@ -56,7 +56,7 @@ export function Sidebar() {
   }
 
   if (!workspace) {
-    router.push(`/?workspace=${data.data[0].id}`);
+    router.push(`/?workspace=${data.data.data[0].id}`);
     return;
   }
 

@@ -1,6 +1,25 @@
+"use client";
+
+import { useQuery } from "@tanstack/react-query";
 import { AvatarPopover } from "./avatar-popover";
+import { useSearchParams } from "next/navigation";
+import api from "@/libs/api";
 
 export function AvatarSelector() {
+  const workspaceQuery = useQuery({
+    queryKey: ["workspace"],
+    queryFn: async () => api.get("/api/workspace"),
+  });
+
+  const searchParams = useSearchParams();
+
+  if (workspaceQuery.isPending) {
+    return <p>Carregando...</p>;
+  }
+
+  const workspace = workspaceQuery.data.data.find(
+    (workspace: any) => workspace.id === searchParams.get("workspace")
+  );
   return (
     <div className="flex items-center space-x-4">
       <div className="relative w-52 h-52 group">

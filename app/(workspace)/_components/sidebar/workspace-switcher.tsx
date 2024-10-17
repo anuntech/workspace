@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
+import api from "@/libs/api";
 
 type Workspace = {
   name: string;
@@ -24,11 +25,10 @@ export function WorkspaceSwitcher() {
   const urlParams = useSearchParams();
   const router = useRouter();
 
-  const { isPending, data, isSuccess } = useQuery<Workspace[]>({
+  const { isPending, data, isSuccess } = useQuery({
     queryKey: ["workspace"],
-    queryFn: () => fetch("/api/workspace").then((res) => res.json()),
+    queryFn: async () => api.get("/api/workspace"),
   });
-
   const selectedWorkspace = urlParams.get("workspace");
 
   useEffect(() => {
@@ -36,8 +36,8 @@ export function WorkspaceSwitcher() {
 
     const urlWorkspace = urlParams.get("workspace");
 
-    if (!urlWorkspace && data.length > 0) {
-      const firstWorkspaceId = data[0]?.id;
+    if (!urlWorkspace && data.data.length > 0) {
+      const firstWorkspaceId = data.data[0]?.id;
       router.push(`/?workspace=${firstWorkspaceId}`);
       return;
     }
@@ -51,15 +51,20 @@ export function WorkspaceSwitcher() {
         <Button variant="outline" className="w-full gap-2">
           <p>
             {
-              data?.find((workspace) => workspace.id === selectedWorkspace)
-                ?.icon.value
+              data?.data.find(
+                (workspace: any) => workspace.id === selectedWorkspace
+              )?.icon.value
             }
           </p>
-          {data?.find((workspace) => workspace.id === selectedWorkspace)?.name}
+          {
+            data?.data.find(
+              (workspace: any) => workspace.id === selectedWorkspace
+            )?.name
+          }
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-44" defaultValue={selectedWorkspace}>
-        {data?.map((workspace) => (
+        {data?.data.map((workspace: any) => (
           <DropdownMenuGroup key={workspace.id}>
             <DropdownMenuItem>
               <a href={`/?workspace=${workspace.id}`} className="flex gap-3">

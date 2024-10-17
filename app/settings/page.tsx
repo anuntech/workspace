@@ -19,6 +19,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { AvatarSelector } from "./_components/avatar-selector";
+import api from "@/libs/api";
 
 type Workspace = {
   name?: string;
@@ -29,9 +30,9 @@ type Workspace = {
 };
 
 export default function SettingsPage() {
-  const { isPending, data, isSuccess } = useQuery<Workspace[]>({
+  const { isPending, data, isSuccess } = useQuery({
     queryKey: ["workspace"],
-    queryFn: () => fetch("/api/workspace").then((res) => res.json()),
+    queryFn: async () => api.get("/api/workspace"),
   });
 
   const searchParams = useSearchParams();
@@ -47,8 +48,8 @@ export default function SettingsPage() {
 
   useEffect(() => {
     if (!isSuccess) return;
-    const workspace = data?.find(
-      (workspace) => workspace.id === searchParams.get("workspace")
+    const workspace = data?.data.find(
+      (workspace: any) => workspace.id === searchParams.get("workspace")
     );
 
     setValue("name", workspace?.name);

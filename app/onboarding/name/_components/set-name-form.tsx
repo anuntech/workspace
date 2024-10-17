@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useEffect } from "react";
+import api from "@/libs/api";
 
 type Inputs = {
   name: string;
@@ -21,10 +22,9 @@ export function SetNameForm() {
 
   const workspaces = useQuery({
     queryKey: ["workspace"],
-    queryFn: () => fetch("/api/workspace").then((res) => res.json()),
+    queryFn: async () => api.get("/api/workspace"),
   });
-
-  if (workspaces?.data?.length > 0) {
+  if (workspaces?.data?.data.length > 0) {
     router.push("/");
   }
 

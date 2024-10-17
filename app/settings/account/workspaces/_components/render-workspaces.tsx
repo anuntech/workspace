@@ -14,7 +14,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getWorkspaceIcon } from "@/libs/icons";
+import api from "@/libs/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { LogOut, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -22,7 +22,7 @@ import { useRouter } from "next/navigation";
 export function RenderWorkspaces() {
   const workspaceQuery = useQuery({
     queryKey: ["workspace"],
-    queryFn: () => fetch("/api/workspace").then((res) => res.json()),
+    queryFn: async () => api.get("/api/workspace"),
   });
 
   const userQuery = useQuery({
@@ -70,16 +70,16 @@ export function RenderWorkspaces() {
       <Skeleton className="h-11 w-full justify-start gap-2 px-3 text-start" />
     </div>
   ) : (
-    workspaceQuery.data?.map((workspace: any) => (
+    workspaceQuery.data?.data.map((workspace: any) => (
       <div
         className="flex items-center justify-between space-x-4"
         key={workspace.id}
       >
         <div className="flex items-center space-x-4">
           <Avatar>
-            {getWorkspaceIcon(workspace.icon) ? (
+            {workspace.icon ? (
               <div className="flex items-center justify-center w-full h-full">
-                {getWorkspaceIcon(workspace.icon)}
+                {workspace.icon}
               </div>
             ) : (
               <AvatarFallback>OM</AvatarFallback>
