@@ -1,7 +1,5 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Popover,
   PopoverContent,
@@ -14,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Image from "next/image";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/libs/api";
+import { useSearchParams } from "next/navigation";
 
 export function AvatarPopover() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -28,6 +27,8 @@ export function AvatarPopover() {
       reader.readAsDataURL(file);
     }
   };
+
+  const workspaceId = useSearchParams().get("workspace");
 
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
@@ -45,11 +46,16 @@ export function AvatarPopover() {
 
   const handleSaveImage = async () => {
     if (selectedImage) {
-      const formData = new FormData();
-      formData.append("icon", selectedImage);
-
-      changeWorkspaceAvatarMutation.mutate(formData);
     }
+  };
+
+  const handleSaveEmoji = (e: any) => {
+    console.log(e);
+    const formData = new FormData();
+    formData.append("icon", e.native);
+    formData.append("iconType", "emoji");
+    formData.append("workspaceId", workspaceId);
+    changeWorkspaceAvatarMutation.mutate(formData);
   };
 
   return (
@@ -86,7 +92,7 @@ export function AvatarPopover() {
               <TabsContent value="emojis" className="pt-4">
                 <Picker
                   data={emojiData}
-                  onEmojiSelect={(e: any) => console.log(e)}
+                  onEmojiSelect={(e: any) => handleSaveEmoji(e)}
                   theme="light"
                 />
               </TabsContent>

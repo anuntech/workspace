@@ -20,10 +20,11 @@ export function AvatarSelector() {
   const workspace = workspaceQuery.data.data.find(
     (workspace: any) => workspace.id === searchParams.get("workspace")
   );
+  console.log(workspace);
   return (
     <div className="flex items-center space-x-4">
       <div className="relative w-52 h-52 group">
-        {workspace.icon ? (
+        {workspace.icon.type == "emoji" ? (
           <div className="w-52 h-52 flex items-center justify-center text-[7rem]">
             {workspace.icon.value}
           </div>
