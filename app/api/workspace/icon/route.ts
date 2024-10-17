@@ -3,6 +3,7 @@ import { authOptions } from "@/libs/next-auth";
 import { NextResponse } from "next/server";
 import connectMongo from "@/libs/mongoose";
 import Workspace from "@/models/Workspace";
+import { isValidEmoji } from "@/libs/icons";
 
 export async function PATCH(request: Request) {
   try {
@@ -43,12 +44,25 @@ export async function PATCH(request: Request) {
 
     const iconType = body.get("iconType");
 
-    if (iconType == "image") {
-      workspace.icon.type = "image";
-      workspace.icon.value = body.get("icon") as string;
-    } else if (iconType == "emoji") {
-      workspace.icon.type = "emoji";
-      workspace.icon.value = body.get("icon") as string;
+    switch (iconType) {
+      case "image":
+        workspace.icon.type = "image";
+        workspace.icon.value = body.get("icon") as string;
+        break;
+      case "emoji":
+        const isValid = isValidEmoji(body.get("icon") as string);
+        if (!isValid) {
+          return NextResponse.json({ error: "Invalid emoji" }, { status: 400 });
+        }
+
+        workspace.icon.type = "emoji";
+        workspace.icon.value = body.get("icon") as string;
+        break;
+      default:
+        return NextResponse.json(
+          { error: "Invalid icon type" },
+          { status: 400 }
+        );
     }
 
     await workspace.save();
