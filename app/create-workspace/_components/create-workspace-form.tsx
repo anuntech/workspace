@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { workspaceIcons } from "@/libs/icons";
+import { initialWorkspaceIcons } from "@/libs/icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export function CreateWorkspaceForm() {
@@ -13,7 +13,7 @@ export function CreateWorkspaceForm() {
   const queryClient = useQueryClient();
 
   const sendCreateWorkspaceEmail = useMutation({
-    mutationFn: (data: { name: string; icon: string }) =>
+    mutationFn: (data: any) =>
       fetch("/api/workspace", {
         method: "POST",
         headers: {
@@ -35,12 +35,13 @@ export function CreateWorkspaceForm() {
 
   const handleCreateWorkspace = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const workspaceIconsList = Object.keys(workspaceIcons);
     const randomIcon =
-      workspaceIconsList[Math.floor(Math.random() * workspaceIconsList.length)];
+      initialWorkspaceIcons[
+        Math.floor(Math.random() * initialWorkspaceIcons.length)
+      ];
     const data = {
       name,
-      icon: randomIcon,
+      icon: { type: "emoji", value: randomIcon },
     };
 
     sendCreateWorkspaceEmail.mutate(data);

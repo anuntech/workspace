@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { useRouter, useSearchParams } from "next/navigation";
-import { getWorkspaceIcon } from "@/libs/icons";
 import { useQuery } from "@tanstack/react-query";
 
 type Workspace = {
@@ -50,9 +49,12 @@ export function WorkspaceSwitcher() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" className="w-full gap-2">
-          {getWorkspaceIcon(
-            data?.find((workspace) => workspace.id === selectedWorkspace)?.icon
-          )}
+          <p>
+            {
+              data?.find((workspace) => workspace.id === selectedWorkspace)
+                ?.icon.value
+            }
+          </p>
           {data?.find((workspace) => workspace.id === selectedWorkspace)?.name}
         </Button>
       </DropdownMenuTrigger>
@@ -61,7 +63,7 @@ export function WorkspaceSwitcher() {
           <DropdownMenuGroup key={workspace.id}>
             <DropdownMenuItem>
               <a href={`/?workspace=${workspace.id}`} className="flex gap-3">
-                {getWorkspaceIcon(workspace.icon)}
+                <p>{workspace.icon.value}</p>
                 {workspace.name}
               </a>
             </DropdownMenuItem>
