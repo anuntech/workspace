@@ -7,6 +7,9 @@ import { isValidEmoji } from "@/libs/icons";
 import { randomUUID } from "crypto";
 import { PutObjectCommand, PutObjectCommandInput } from "@aws-sdk/client-s3";
 import { s3Client } from "@/libs/s3-client";
+import mongoose from "mongoose";
+import imageType from "image-type";
+import sharp from "sharp";
 
 export async function PATCH(request: Request) {
   try {
@@ -23,7 +26,15 @@ export async function PATCH(request: Request) {
 
     const body = await request.formData();
 
-    const workspace = await Workspace.findById(body.get("workspaceId"));
+    const workspaceId = body.get("workspaceId") as string;
+    if (!mongoose.Types.ObjectId.isValid(workspaceId)) {
+      return NextResponse.json(
+        { error: "Invalid workspace ID" },
+        { status: 400 }
+      );
+    }
+
+    const workspace = await Workspace.findById(workspaceId);
 
     if (!workspace) {
       return NextResponse.json(
@@ -32,28 +43,47 @@ export async function PATCH(request: Request) {
       );
     }
 
-    const admin =
-      workspace.members.find(
-        (val) => val.memberId.toString() === session.user.id.toString()
-      )?.role == "admin";
-    const owner = workspace.owner.toString() == session.user.id.toString();
+    const userId = session.user.id.toString();
+    const member = workspace.members.find(
+      (val) => val.memberId.toString() === userId
+    );
 
-    if (!admin && !owner) {
+    const isAdmin = member?.role === "admin";
+    const isOwner = workspace.owner.toString() === userId;
+
+    if (!isAdmin && !isOwner) {
       return NextResponse.json(
         { error: "You are not authorized to perform this action" },
         { status: 403 }
       );
     }
 
-    const iconType = body.get("iconType");
+    const iconType = body.get("iconType") as string;
+    const allowedIconTypes = ["image", "emoji"];
+    if (!allowedIconTypes.includes(iconType)) {
+      return NextResponse.json({ error: "Invalid icon type" }, { status: 400 });
+    }
 
     switch (iconType) {
-      case "image":
+      case "image": {
         const file = body.get("icon") as File;
 
         if (!file) {
           return NextResponse.json(
             { error: "No file uploaded" },
+            { status: 400 }
+          );
+        }
+
+        const allowedMimeTypes = [
+          "image/jpeg",
+          "image/png",
+          "image/gif",
+          "image/webp",
+        ];
+        if (!allowedMimeTypes.includes(file.type)) {
+          return NextResponse.json(
+            { error: "Unsupported file type" },
             { status: 400 }
           );
         }
@@ -65,31 +95,47 @@ export async function PATCH(request: Request) {
           );
         }
 
-        const id = randomUUID().toString();
+        const arrayBuffer = await file.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+        const type = await imageType(buffer);
+
+        if (!type || !allowedMimeTypes.includes(type.mime)) {
+          return NextResponse.json(
+            { error: "Invalid image file" },
+            { status: 400 }
+          );
+        }
+
+        const resizedImage = await sharp(buffer)
+          .resize({ width: 1024, height: 1024, fit: "inside" })
+          .toBuffer();
+
+        const uniqueId = `${workspaceId}-${randomUUID()}`;
 
         const form = {
-          Bucket: process.env.NEXT_PUBLIC_HETZNER_BUCKET_NAME!,
-          Key: id,
-          Body: Buffer.from(await file.arrayBuffer()),
+          Bucket: process.env.HETZNER_BUCKET_NAME!,
+          Key: uniqueId,
+          Body: resizedImage,
           ContentType: file.type,
-          ACL: "public-read",
         } as PutObjectCommandInput;
 
         const command = new PutObjectCommand(form);
         await s3Client.send(command);
 
         workspace.icon.type = "image";
-        workspace.icon.value = id;
+        workspace.icon.value = uniqueId;
         break;
-      case "emoji":
-        const isValid = isValidEmoji(body.get("icon") as string);
-        if (!isValid) {
+      }
+      case "emoji": {
+        const icon = body.get("icon") as string;
+        if (!icon || !isValidEmoji(icon)) {
           return NextResponse.json({ error: "Invalid emoji" }, { status: 400 });
         }
 
         workspace.icon.type = "emoji";
-        workspace.icon.value = body.get("icon") as string;
+        workspace.icon.value = icon;
         break;
+      }
       default:
         return NextResponse.json(
           { error: "Invalid icon type" },
@@ -102,6 +148,9 @@ export async function PATCH(request: Request) {
     return NextResponse.json(workspace);
   } catch (e) {
     console.error(e);
-    return NextResponse.json({ error: e?.message }, { status: 500 });
+    return NextResponse.json(
+      { error: "An unexpected error occurred" },
+      { status: 500 }
+    );
   }
 }
