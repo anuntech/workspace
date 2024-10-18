@@ -14,6 +14,8 @@ import { Button } from "@/components/ui/button";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import api from "@/libs/api";
+import { getS3Image } from "@/libs/s3-client";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 type Workspace = {
   name: string;
@@ -50,11 +52,25 @@ export function WorkspaceSwitcher() {
       <DropdownMenuTrigger asChild>
         <Button variant="outline" className="w-full gap-2">
           <p>
-            {
+            {data?.data.find(
+              (workspace: any) => workspace.id === selectedWorkspace
+            )?.icon.type == "emoji" ? (
               data?.data.find(
                 (workspace: any) => workspace.id === selectedWorkspace
               )?.icon.value
-            }
+            ) : (
+              <Avatar className="w-7 h-7">
+                <AvatarImage
+                  src={getS3Image(
+                    data?.data.find(
+                      (workspace: any) => workspace.id === selectedWorkspace
+                    )?.icon.value
+                  )}
+                  alt="@shadcn"
+                />
+                <AvatarFallback>CN</AvatarFallback>
+              </Avatar>
+            )}
           </p>
           {
             data?.data.find(
@@ -68,7 +84,19 @@ export function WorkspaceSwitcher() {
           <DropdownMenuGroup key={workspace.id}>
             <DropdownMenuItem>
               <a href={`/?workspace=${workspace.id}`} className="flex gap-3">
-                <p>{workspace.icon.value}</p>
+                <p className="w-5 h-5 flex items-center justify-center">
+                  {workspace.icon.type == "emoji" ? (
+                    workspace.icon.value
+                  ) : (
+                    <Avatar className="w-5 h-5 flex items-center justify-center">
+                      <AvatarImage
+                        src={getS3Image(workspace.icon.value)}
+                        alt="@shadcn"
+                      />
+                      <AvatarFallback>CN</AvatarFallback>
+                    </Avatar>
+                  )}
+                </p>
                 {workspace.name}
               </a>
             </DropdownMenuItem>

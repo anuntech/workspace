@@ -15,6 +15,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import api from "@/libs/api";
+import { getS3Image } from "@/libs/s3-client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { LogOut, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -76,13 +77,19 @@ export function RenderWorkspaces() {
         key={workspace.id}
       >
         <div className="flex items-center space-x-4">
-          <Avatar>
+          <Avatar className="w-10 h-10 flex items-center justify-center">
             {workspace.icon.type == "emoji" ? (
               <div className="flex items-center justify-center w-full h-full">
                 {workspace.icon.value}
               </div>
             ) : (
-              <AvatarFallback>OM</AvatarFallback>
+              <>
+                <AvatarImage
+                  src={getS3Image(workspace.icon.value)}
+                  alt="@shadcn"
+                />
+                <AvatarFallback>OM</AvatarFallback>
+              </>
             )}
           </Avatar>
           <div>
