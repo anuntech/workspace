@@ -17,12 +17,6 @@ import api from "@/libs/api";
 import { getS3Image } from "@/libs/s3-client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-type Workspace = {
-  name: string;
-  id: string;
-  icon: any;
-};
-
 export function WorkspaceSwitcher() {
   const urlParams = useSearchParams();
   const router = useRouter();
@@ -59,8 +53,9 @@ export function WorkspaceSwitcher() {
                 (workspace: any) => workspace.id === selectedWorkspace
               )?.icon.value
             ) : (
-              <Avatar className="w-7 h-7">
-                <AvatarImage
+              <div className="w-5 h-5 ">
+                <img
+                  className="rounded-sm"
                   src={getS3Image(
                     data?.data.find(
                       (workspace: any) => workspace.id === selectedWorkspace
@@ -68,8 +63,7 @@ export function WorkspaceSwitcher() {
                   )}
                   alt="@shadcn"
                 />
-                <AvatarFallback>CN</AvatarFallback>
-              </Avatar>
+              </div>
             )}
           </p>
           {
@@ -88,13 +82,13 @@ export function WorkspaceSwitcher() {
                   {workspace.icon.type == "emoji" ? (
                     workspace.icon.value
                   ) : (
-                    <Avatar className="w-5 h-5 flex items-center justify-center">
-                      <AvatarImage
+                    <div className="w-5 h-5 flex items-center justify-center">
+                      <img
+                        className="rounded-sm"
                         src={getS3Image(workspace.icon.value)}
                         alt="@shadcn"
                       />
-                      <AvatarFallback>CN</AvatarFallback>
-                    </Avatar>
+                    </div>
                   )}
                 </p>
                 {workspace.name}
