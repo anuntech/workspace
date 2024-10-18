@@ -45,7 +45,7 @@ export async function PATCH(
       galleryPhotosIds = [];
 
       for (const file of Array.from(galleryPhotos) as File[]) {
-        const id = randomUUID().toString();
+        const id = `${applicationId}-${randomUUID()}`;
         galleryPhotosIds.push(id);
         const form = {
           Bucket: process.env.NEXT_PUBLIC_HETZNER_BUCKET_NAME!,
@@ -64,7 +64,7 @@ export async function PATCH(
     let profilePhotoId = application.avatarSrc;
 
     if (profilePhoto) {
-      profilePhotoId = randomUUID().toString();
+      profilePhotoId = `${applicationId}-${randomUUID()}`;
 
       const form = {
         Bucket: process.env.NEXT_PUBLIC_HETZNER_BUCKET_NAME!,
