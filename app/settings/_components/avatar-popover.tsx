@@ -72,11 +72,10 @@ export function AvatarPopover() {
     },
   });
 
-  // Função para salvar a imagem recortada
   const handleSaveCroppedImage = (croppedImage: Blob) => {
-    setCroppedImageBlob(croppedImage); // Salvando a imagem recortada como Blob
-    const croppedImageUrl = URL.createObjectURL(croppedImage); // Criando URL temporário da imagem recortada
-    setCroppedImageUrl(croppedImageUrl); // Armazenando URL para exibição
+    setCroppedImageBlob(croppedImage);
+    const croppedImageUrl = URL.createObjectURL(croppedImage);
+    setCroppedImageUrl(croppedImageUrl);
   };
 
   const handleSaveImage = async () => {
@@ -98,8 +97,17 @@ export function AvatarPopover() {
     changeWorkspaceAvatarMutation.mutate(formData);
   };
 
+  const handleSetOpen = () => {
+    setOpen(!open);
+    if (open) {
+      setCroppedImageBlob(null);
+      setCroppedImageUrl(null);
+      setSelectedImage(null);
+    }
+  };
+
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={handleSetOpen}>
       <PopoverTrigger asChild>
         <Button
           variant="ghost"
