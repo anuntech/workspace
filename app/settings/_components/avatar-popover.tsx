@@ -54,6 +54,9 @@ export function AvatarPopover() {
         duration: 5000,
       });
       setOpen(false);
+      setCroppedImageBlob(null);
+      setCroppedImageUrl(null);
+      setSelectedImage(null);
     },
     onError: async (error) => {
       toast({
@@ -63,6 +66,9 @@ export function AvatarPopover() {
         duration: 5000,
         variant: "destructive",
       });
+      setCroppedImageBlob(null);
+      setCroppedImageUrl(null);
+      setSelectedImage(null);
     },
   });
 
@@ -80,9 +86,6 @@ export function AvatarPopover() {
       formData.append("iconType", "image");
       formData.append("workspaceId", workspaceId);
       changeWorkspaceAvatarMutation.mutate(formData);
-      setCroppedImageBlob(null);
-      setCroppedImageUrl(null);
-      setSelectedImage(null);
     }
   };
 
