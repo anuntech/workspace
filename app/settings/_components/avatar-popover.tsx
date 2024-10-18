@@ -17,10 +17,13 @@ import { toast } from "@/hooks/use-toast";
 
 export function AvatarPopover() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
+      setSelectedImageFile(file);
+
       const reader = new FileReader();
       reader.onload = (e) => {
         setSelectedImage(e.target?.result as string);
@@ -51,7 +54,12 @@ export function AvatarPopover() {
   });
 
   const handleSaveImage = async () => {
-    if (selectedImage) {
+    if (selectedImageFile) {
+      const formData = new FormData();
+      formData.append("icon", selectedImageFile); // Envia o objeto File
+      formData.append("iconType", "image");
+      formData.append("workspaceId", workspaceId);
+      changeWorkspaceAvatarMutation.mutate(formData);
     }
   };
 

@@ -4,6 +4,9 @@ import { NextResponse } from "next/server";
 import connectMongo from "@/libs/mongoose";
 import Workspace from "@/models/Workspace";
 import { isValidEmoji } from "@/libs/icons";
+import { randomUUID } from "crypto";
+import { PutObjectCommand, PutObjectCommandInput } from "@aws-sdk/client-s3";
+import { s3Client } from "@/libs/s3-client";
 
 export async function PATCH(request: Request) {
   try {
@@ -46,8 +49,37 @@ export async function PATCH(request: Request) {
 
     switch (iconType) {
       case "image":
+        const file = body.get("icon") as File;
+
+        if (!file) {
+          return NextResponse.json(
+            { error: "No file uploaded" },
+            { status: 400 }
+          );
+        }
+
+        if (file.size > 10 * 1024 * 1024) {
+          return NextResponse.json(
+            { error: "File size exceeds 10MB" },
+            { status: 400 }
+          );
+        }
+
+        const id = randomUUID().toString();
+
+        const form = {
+          Bucket: process.env.NEXT_PUBLIC_HETZNER_BUCKET_NAME!,
+          Key: id,
+          Body: Buffer.from(await file.arrayBuffer()),
+          ContentType: file.type,
+          ACL: "public-read",
+        } as PutObjectCommandInput;
+
+        const command = new PutObjectCommand(form);
+        await s3Client.send(command);
+
         workspace.icon.type = "image";
-        workspace.icon.value = body.get("icon") as string;
+        workspace.icon.value = id;
         break;
       case "emoji":
         const isValid = isValidEmoji(body.get("icon") as string);
