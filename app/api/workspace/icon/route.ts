@@ -113,13 +113,15 @@ export async function PATCH(request: Request) {
         const uniqueId = `${workspaceId}-${randomUUID()}`;
 
         const form = {
-          Bucket: process.env.HETZNER_BUCKET_NAME!,
+          Bucket: process.env.NEXT_PUBLIC_HETZNER_BUCKET_NAME!,
           Key: uniqueId,
           Body: resizedImage,
           ContentType: file.type,
+          ACL: "public-read",
         } as PutObjectCommandInput;
 
         const command = new PutObjectCommand(form);
+        console.log("aaaa");
         await s3Client.send(command);
 
         workspace.icon.type = "image";
