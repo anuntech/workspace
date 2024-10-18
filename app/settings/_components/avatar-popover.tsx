@@ -51,6 +51,15 @@ export function AvatarPopover() {
       });
       setOpen(false);
     },
+    onError: async (error) => {
+      toast({
+        title: "Erro ao atualizar avatar",
+        description:
+          "Ocorreu um erro ao atualizar o avatar do workspace. O limite do arquivo é de 10MB.",
+        duration: 5000,
+        variant: "destructive",
+      });
+    },
   });
 
   const handleSaveImage = async () => {
@@ -137,6 +146,7 @@ export function AvatarPopover() {
                   </label>
                   <Button
                     onClick={() => handleSaveImage()}
+                    disabled={changeWorkspaceAvatarMutation.isPending}
                     className="px-6 py-2 rounded-lg shadow-lg transition-all duration-300"
                   >
                     Salvar
