@@ -106,16 +106,12 @@ export async function PATCH(request: Request) {
           );
         }
 
-        const resizedImage = await sharp(buffer)
-          .resize({ width: 1024, height: 1024, fit: "inside" })
-          .toBuffer();
-
         const uniqueId = `${workspaceId}-${randomUUID()}`;
 
         const form = {
           Bucket: process.env.NEXT_PUBLIC_HETZNER_BUCKET_NAME!,
           Key: uniqueId,
-          Body: resizedImage,
+          Body: buffer,
           ContentType: file.type,
           ACL: "public-read",
         } as PutObjectCommandInput;

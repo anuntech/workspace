@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -14,9 +14,13 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/libs/api";
 import { useSearchParams } from "next/navigation";
 import { toast } from "@/hooks/use-toast";
+import ImageEditor from "@/components/image-crop";
+import { cn } from "@/lib/utils";
 
 export function AvatarPopover() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [croppedImageBlob, setCroppedImageBlob] = useState<Blob | null>(null); // Para armazenar a imagem recortada
+  const [croppedImageUrl, setCroppedImageUrl] = useState<string | null>(null); // Para armazenar o URL da imagem recortada
   const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,7 +30,7 @@ export function AvatarPopover() {
 
       const reader = new FileReader();
       reader.onload = (e) => {
-        setSelectedImage(e.target?.result as string);
+        setSelectedImage(e.target?.result as string); // Definindo o src da imagem selecionada
       };
       reader.readAsDataURL(file);
     }
@@ -62,13 +66,23 @@ export function AvatarPopover() {
     },
   });
 
+  // Função para salvar a imagem recortada
+  const handleSaveCroppedImage = (croppedImage: Blob) => {
+    setCroppedImageBlob(croppedImage); // Salvando a imagem recortada como Blob
+    const croppedImageUrl = URL.createObjectURL(croppedImage); // Criando URL temporário da imagem recortada
+    setCroppedImageUrl(croppedImageUrl); // Armazenando URL para exibição
+  };
+
   const handleSaveImage = async () => {
-    if (selectedImageFile) {
+    if (croppedImageBlob) {
       const formData = new FormData();
-      formData.append("icon", selectedImageFile); // Envia o objeto File
+      formData.append("icon", croppedImageBlob, "avatar.jpeg");
       formData.append("iconType", "image");
       formData.append("workspaceId", workspaceId);
       changeWorkspaceAvatarMutation.mutate(formData);
+      setCroppedImageBlob(null);
+      setCroppedImageUrl(null);
+      setSelectedImage(null);
     }
   };
 
@@ -122,32 +136,51 @@ export function AvatarPopover() {
               <TabsContent value="upload" className="pt-4">
                 <div className="flex flex-col items-center gap-6">
                   <label className="relative group cursor-pointer">
-                    {selectedImage ? (
-                      <Image
-                        src={selectedImage}
-                        alt="Avatar preview"
-                        width={200}
-                        height={200}
-                        className="rounded-full shadow-md hover:grayscale hover:opacity-80 transition-all duration-300"
-                      />
-                    ) : (
-                      <div className="flex items-center justify-center w-48 h-48 border-2 border-dashed border-gray-300 rounded-full group-hover:bg-gray-100 transition-all">
-                        <span className="text-sm text-gray-500 group-hover:text-gray-700">
-                          Selecione uma imagem
-                        </span>
+                    {selectedImage && !croppedImageBlob ? (
+                      <div className="h-72 w-72">
+                        <ImageEditor
+                          imageSrc={selectedImage}
+                          onCropComplete={handleSaveCroppedImage}
+                        />
                       </div>
+                    ) : croppedImageBlob ? (
+                      <div className="h-72 w-72">
+                        <Image
+                          src={croppedImageUrl!} // Exibe a imagem recortada
+                          alt="Cropped Image"
+                          width={288}
+                          height={288}
+                          className="rounded-[10px] shadow-lg"
+                          onClick={() => {
+                            setCroppedImageBlob(null);
+                            setCroppedImageUrl(null);
+                            setSelectedImage(null);
+                          }}
+                        />
+                      </div>
+                    ) : (
+                      <>
+                        <div className="flex items-center justify-center w-48 h-48 border-2 border-dashed border-gray-300 rounded-full group-hover:bg-gray-100 transition-all">
+                          <span className="text-sm text-gray-500 group-hover:text-gray-700">
+                            Selecione uma imagem
+                          </span>
+                        </div>
+                        <input
+                          type="file"
+                          className="hidden"
+                          accept="image/*"
+                          onChange={handleFileChange}
+                        />
+                      </>
                     )}
-                    <input
-                      type="file"
-                      className="hidden"
-                      accept="image/*"
-                      onChange={handleFileChange}
-                    />
                   </label>
                   <Button
-                    onClick={() => handleSaveImage()}
-                    disabled={changeWorkspaceAvatarMutation.isPending}
-                    className="px-6 py-2 rounded-lg shadow-lg transition-all duration-300"
+                    onClick={handleSaveImage}
+                    disabled={changeWorkspaceAvatarMutation.isPending} // Habilita o botão apenas se houver uma imagem recortada
+                    className={cn(
+                      "px-6 py-2 rounded-lg shadow-lg transition-all duration-300",
+                      selectedImage && !croppedImageBlob && "hidden"
+                    )}
                   >
                     Salvar
                   </Button>
