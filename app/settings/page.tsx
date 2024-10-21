@@ -20,6 +20,8 @@ import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { AvatarSelector } from "./_components/avatar-selector";
 import api from "@/libs/api";
+import { toast } from "@/hooks/use-toast";
+import { base64ToBlob } from "@/lib/utils";
 
 type Workspace = {
   name?: string;
@@ -83,6 +85,52 @@ export default function SettingsPage() {
     },
   });
 
+  const changeWorkspaceAvatarMutation = useMutation({
+    mutationFn: async (data: any) => api.patch("/api/workspace/icon", data),
+    onSuccess: async () => {
+      await queryClient.refetchQueries({
+        queryKey: ["workspace"],
+        type: "all",
+      });
+      toast({
+        title: "Avatar atualizado",
+        description: "O avatar do workspace foi alterado com sucesso.",
+        duration: 5000,
+      });
+    },
+    onError: async (error) => {
+      toast({
+        title: "Erro ao atualizar avatar",
+        description:
+          "Ocorreu um erro ao atualizar o avatar do workspace. O limite do arquivo é de 10MB.",
+        duration: 5000,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleAvatarChange = (avatar: {
+    value: string;
+    type: "image" | "emoji";
+  }) => {
+    const formData = new FormData();
+
+    switch (avatar.type) {
+      case "image":
+        formData.append("icon", base64ToBlob(avatar.value), "avatar.jpeg");
+        formData.append("iconType", avatar.type);
+        formData.append("workspaceId", workspace);
+        break;
+      case "emoji":
+        formData.append("icon", avatar.value);
+        formData.append("iconType", avatar.type);
+        formData.append("workspaceId", workspace);
+        break;
+    }
+
+    changeWorkspaceAvatarMutation.mutate(formData);
+  };
+
   const mutation = useMutation({
     mutationFn: (data: Workspace) =>
       fetch("/api/workspace", {
@@ -122,7 +170,7 @@ export default function SettingsPage() {
               </span>
             </div>
             <div className="flex justify-end pr-12">
-              <AvatarSelector />
+              <AvatarSelector onAvatarChange={handleAvatarChange} />
             </div>
           </section>
           <Separator />

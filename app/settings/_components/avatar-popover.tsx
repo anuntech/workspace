@@ -11,17 +11,21 @@ import emojiData from "@emoji-mart/data";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Image from "next/image";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import api from "@/libs/api";
-import { useSearchParams } from "next/navigation";
 import { toast } from "@/hooks/use-toast";
 import ImageEditor from "@/components/image-crop";
 import { cn } from "@/lib/utils";
 
-export function AvatarPopover() {
+interface AvatarPopoverProps {
+  onAvatarChange: (avatar: { value: string; type: "image" | "emoji" }) => void;
+}
+
+export function AvatarPopover({ onAvatarChange }: AvatarPopoverProps) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [croppedImageBlob, setCroppedImageBlob] = useState<Blob | null>(null); // Para armazenar a imagem recortada
-  const [croppedImageUrl, setCroppedImageUrl] = useState<string | null>(null); // Para armazenar o URL da imagem recortada
+  const [croppedImageBlob, setCroppedImageBlob] = useState<Blob | null>(null);
+  const [croppedImageUrl, setCroppedImageUrl] = useState<string | null>(null);
   const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
+
+  const [open, setOpen] = useState(false);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -30,47 +34,11 @@ export function AvatarPopover() {
 
       const reader = new FileReader();
       reader.onload = (e) => {
-        setSelectedImage(e.target?.result as string); // Definindo o src da imagem selecionada
+        setSelectedImage(e.target?.result as string);
       };
       reader.readAsDataURL(file);
     }
   };
-
-  const workspaceId = useSearchParams().get("workspace");
-
-  const queryClient = useQueryClient();
-  const [open, setOpen] = useState(false);
-
-  const changeWorkspaceAvatarMutation = useMutation({
-    mutationFn: async (data: any) => api.patch(`/api/workspace/icon`, data),
-    onSuccess: async () => {
-      await queryClient.refetchQueries({
-        queryKey: ["workspace"],
-        type: "all",
-      });
-      toast({
-        title: "Avatar atualizado",
-        description: "O avatar do workspace foi alterado com sucesso.",
-        duration: 5000,
-      });
-      setOpen(false);
-      setCroppedImageBlob(null);
-      setCroppedImageUrl(null);
-      setSelectedImage(null);
-    },
-    onError: async (error) => {
-      toast({
-        title: "Erro ao atualizar avatar",
-        description:
-          "Ocorreu um erro ao atualizar o avatar do workspace. O limite do arquivo é de 10MB.",
-        duration: 5000,
-        variant: "destructive",
-      });
-      setCroppedImageBlob(null);
-      setCroppedImageUrl(null);
-      setSelectedImage(null);
-    },
-  });
 
   const handleSaveCroppedImage = (croppedImage: Blob) => {
     setCroppedImageBlob(croppedImage);
@@ -82,19 +50,22 @@ export function AvatarPopover() {
     if (croppedImageBlob) {
       const formData = new FormData();
       formData.append("icon", croppedImageBlob, "avatar.jpeg");
-      formData.append("iconType", "image");
-      formData.append("workspaceId", workspaceId);
-      changeWorkspaceAvatarMutation.mutate(formData);
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        onAvatarChange({
+          value: reader.result as string,
+          type: "image",
+        });
+        setOpen(false);
+      };
+      reader.readAsDataURL(croppedImageBlob);
     }
   };
 
-  const handleSaveEmoji = (e: any) => {
-    console.log(e);
-    const formData = new FormData();
-    formData.append("icon", e.native);
-    formData.append("iconType", "emoji");
-    formData.append("workspaceId", workspaceId);
-    changeWorkspaceAvatarMutation.mutate(formData);
+  const handleSaveEmoji = (emoji: any) => {
+    onAvatarChange({ value: emoji.native, type: "emoji" });
+    setOpen(false);
   };
 
   const handleSetOpen = () => {
@@ -140,7 +111,7 @@ export function AvatarPopover() {
               <TabsContent value="emojis" className="pt-4">
                 <Picker
                   data={emojiData}
-                  onEmojiSelect={(e: any) => handleSaveEmoji(e)}
+                  onEmojiSelect={handleSaveEmoji}
                   theme="light"
                 />
               </TabsContent>
@@ -157,7 +128,7 @@ export function AvatarPopover() {
                     ) : croppedImageBlob ? (
                       <div className="h-72 w-72">
                         <Image
-                          src={croppedImageUrl!} // Exibe a imagem recortada
+                          src={croppedImageUrl!}
                           alt="Cropped Image"
                           width={288}
                           height={288}
@@ -187,7 +158,7 @@ export function AvatarPopover() {
                   </label>
                   <Button
                     onClick={handleSaveImage}
-                    disabled={changeWorkspaceAvatarMutation.isPending} // Habilita o botão apenas se houver uma imagem recortada
+                    disabled={!croppedImageBlob}
                     className={cn(
                       "px-6 py-2 rounded-lg shadow-lg transition-all duration-300",
                       selectedImage && !croppedImageBlob && "hidden"
