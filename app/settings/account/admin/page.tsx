@@ -1,11 +1,13 @@
 "use client";
 
+import { AvatarSelector } from "@/components/avatar-selector";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
+import { base64ToBlob } from "@/lib/utils";
 import { api } from "@/libs/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -33,6 +35,9 @@ export default function AdminPage() {
   const [sharedWith, setSharedWith] = useState<string[]>([]);
   const [currentInput, setCurrentInput] = useState("");
   const queryClient = useQueryClient();
+  const [icon, setIcon] = useState<FormData>(null);
+  const [imageUrlWithoutS3, setImageUrlWithoutS3] = useState<string>("");
+  const [emojiAvatar, setEmojiAvatar] = useState<string>("");
 
   const saveApplicationMutation = useMutation({
     mutationFn: async (data: FormData) => api.post("/api/applications", data),
@@ -67,11 +72,8 @@ export default function AdminPage() {
     formData.append("description", data.description);
     formData.append("titleDescription", data.titleDescription);
     formData.append("workspacesAllowed", JSON.stringify(sharedWith));
-
-    const profilePhoto = data.profilePhoto as unknown as FileList;
-    if (profilePhoto && profilePhoto.length > 0) {
-      formData.append("profilePhoto", profilePhoto[0]);
-    }
+    formData.append("icon", icon.get("icon") as File);
+    formData.append("iconType", icon.get("iconType") as string);
 
     const galeryPhotos = data.galeryPhotos as unknown as FileList;
     if (galeryPhotos && galeryPhotos.length > 0) {
@@ -95,6 +97,34 @@ export default function AdminPage() {
     setSharedWith((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const handleAvatarChange = (avatar: {
+    value: string;
+    type: "image" | "emoji";
+  }) => {
+    const formData = new FormData();
+
+    switch (avatar.type) {
+      case "image":
+        const blob = base64ToBlob(avatar.value);
+        formData.append("icon", blob, "avatar.jpeg");
+        formData.append("iconType", avatar.type);
+
+        const imageUrl = URL.createObjectURL(blob);
+        setImageUrlWithoutS3(imageUrl);
+        setEmojiAvatar(null);
+        break;
+
+      case "emoji":
+        formData.append("icon", avatar.value);
+        formData.append("iconType", avatar.type);
+        setImageUrlWithoutS3(null);
+        setEmojiAvatar(avatar.value);
+        break;
+    }
+
+    setIcon(formData);
+  };
+
   return (
     <div className="flex flex-col  items-center p-10">
       <form
@@ -112,12 +142,17 @@ export default function AdminPage() {
             </span>
           </div>
           <div className="flex justify-end">
-            <Input
+            {/* <Input
               className="cursor-pointer"
               placeholder="Nome..."
               type="file"
               {...register("profilePhoto")}
               disabled={isSubmitting}
+            /> */}
+            <AvatarSelector
+              data={emojiAvatar ? { value: emojiAvatar, type: "emoji" } : null}
+              imageUrlWithoutS3={imageUrlWithoutS3 ? imageUrlWithoutS3 : null}
+              onAvatarChange={handleAvatarChange}
             />
           </div>
         </section>

@@ -45,7 +45,7 @@ export async function POST(request: Request) {
       }
     }
 
-    const profilePhoto = body.get("profilePhoto") as File;
+    const profilePhoto = body.get("icon") as File;
     const profilePhotoId = randomUUID().toString();
 
     if (profilePhoto) {
@@ -61,6 +61,20 @@ export async function POST(request: Request) {
       await s3Client.send(command);
     }
 
+    let icon;
+
+    if (body.get("iconType") == "image") {
+      icon = {
+        type: body.get("iconType"),
+        value: profilePhotoId,
+      };
+    } else {
+      icon = {
+        type: body.get("iconType"),
+        value: body.get("icon"),
+      };
+    }
+
     const application = await Applications.create({
       name: body.get("name"),
       cta: body.get("cta"),
@@ -68,6 +82,7 @@ export async function POST(request: Request) {
       descriptionTitle: body.get("descriptionTitle"),
       avatarSrc: profilePhoto ? profilePhotoId : null,
       avatarFallback: body.get("name").slice(0, 2),
+      icon,
       applicationUrl: body.get("iframeUrl"),
       workspacesAllowed: JSON.parse(
         body.get("workspacesAllowed") as string

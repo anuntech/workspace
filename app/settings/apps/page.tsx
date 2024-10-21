@@ -25,7 +25,6 @@ export default function AppsPage() {
   if (applicationsQuery.isPending) {
     return <div>Carregando...</div>;
   }
-  console.log(applicationsQuery.data.data);
 
   return (
     <div className="flex flex-col items-center p-10">
@@ -55,12 +54,15 @@ export default function AppsPage() {
                     >
                       <Card>
                         <CardContent className="flex items-center gap-3 p-5">
-                          <Avatar>
-                            <AvatarImage src={getS3Image(app.avatarSrc)} />
-                            <AvatarFallback>
-                              {app.avatarFallback}
-                            </AvatarFallback>
-                          </Avatar>
+                          {app.icon.type == "emoji" && <p>{app.icon.value}</p>}
+                          {app.icon.type == "image" && (
+                            <Avatar>
+                              <AvatarImage src={getS3Image(app.avatarSrc)} />
+                              <AvatarFallback>
+                                {app.avatarFallback}
+                              </AvatarFallback>
+                            </Avatar>
+                          )}
                           <div className="flex flex-col">
                             <span>{app.name}</span>
                             <span className="text-xs text-muted-foreground">
@@ -89,12 +91,17 @@ export default function AppsPage() {
                       <Card>
                         <CardContent className="space-y-3 p-5">
                           <div className="flex items-center gap-3">
-                            <Avatar>
-                              <AvatarImage src={getS3Image(app.avatarSrc)} />
-                              <AvatarFallback>
-                                {app.avatarFallback}
-                              </AvatarFallback>
-                            </Avatar>
+                            {app.icon?.type == "emoji" && (
+                              <p>{app.icon.value}</p>
+                            )}
+                            {app.icon?.type == "image" && (
+                              <Avatar>
+                                <AvatarImage src={getS3Image(app.avatarSrc)} />
+                                <AvatarFallback>
+                                  {app.avatarFallback}
+                                </AvatarFallback>
+                              </Avatar>
+                            )}
                             <div className="flex flex-col">
                               <span>{app.name}</span>
                             </div>

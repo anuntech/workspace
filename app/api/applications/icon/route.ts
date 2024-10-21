@@ -2,7 +2,6 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/libs/next-auth";
 import { NextResponse } from "next/server";
 import connectMongo from "@/libs/mongoose";
-import Workspace from "@/models/Workspace";
 import { isValidEmoji } from "@/libs/icons";
 import { randomUUID } from "crypto";
 import { PutObjectCommand, PutObjectCommandInput } from "@aws-sdk/client-s3";
