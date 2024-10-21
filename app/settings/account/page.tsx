@@ -145,7 +145,7 @@ export default function AccountPage() {
             <div className="flex justify-end pr-12">
               <AvatarSelector
                 data={user?.icon}
-                imageUrlWithoutS3={user?.image}
+                imageUrlWithoutS3={!user?.icon ? user?.image : undefined}
                 onAvatarChange={handleAvatarChange}
               />
             </div>
