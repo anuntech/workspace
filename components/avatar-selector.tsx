@@ -2,16 +2,18 @@
 
 import { AvatarPopover } from "./avatar-popover";
 import { getS3Image } from "@/libs/s3-client";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 
 interface AvatarSelectorProps {
   onAvatarChange: (avatar: { value: string; type: "image" | "emoji" }) => void;
-  initialAvatar?: { value: string; type: "image" | "emoji" }; // Inicializar com valor existente
+  initialAvatar?: { value: string; type: "image" | "emoji" };
+  setOnLoad?: Dispatch<SetStateAction<boolean>>;
 }
 
 export function AvatarSelector({
   onAvatarChange,
   initialAvatar,
+  setOnLoad,
 }: AvatarSelectorProps) {
   const [changed, setChanged] = useState(false);
 
@@ -31,7 +33,11 @@ export function AvatarSelector({
             {initialAvatar.value}
           </div>
         ) : (
-          <img src={getS3Image(initialAvatar.value)} alt="" />
+          <img
+            onLoad={() => setOnLoad(true)}
+            src={getS3Image(initialAvatar.value)}
+            alt=""
+          />
         )}
         <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 rounded-md transition-opacity duration-300">
           <AvatarPopover onAvatarChange={handleAvatarChange} />

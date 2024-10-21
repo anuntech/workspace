@@ -38,6 +38,8 @@ export default function SettingsPage() {
     queryFn: async () => api.get("/api/workspace"),
   });
 
+  const [onLoad, setOnLoad] = useState(false);
+
   const searchParams = useSearchParams();
   const workspace = searchParams.get("workspace");
 
@@ -99,7 +101,7 @@ export default function SettingsPage() {
         duration: 5000,
       });
     },
-    onError: async (error) => {
+    onError: async () => {
       toast({
         title: "Erro ao atualizar avatar",
         description:
@@ -181,10 +183,12 @@ export default function SettingsPage() {
             </div>
             <div className="flex justify-end pr-12">
               {workspaceQuery.isPending ||
-              changeWorkspaceAvatarMutation.isPending ? (
+              changeWorkspaceAvatarMutation.isPending ||
+              !onLoad ? (
                 <Skeleton className="w-52 h-52" />
               ) : (
                 <AvatarSelector
+                  setOnLoad={setOnLoad}
                   initialAvatar={selectedWorkspace?.icon}
                   onAvatarChange={handleAvatarChange}
                 />
