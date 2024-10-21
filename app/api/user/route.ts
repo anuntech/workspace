@@ -50,6 +50,13 @@ export async function PATCH(request: Request) {
       );
     }
 
+    if (body.icon && body.icon != "") {
+      return NextResponse.json(
+        { error: "Icon can't be changed" },
+        { status: 400 }
+      );
+    }
+
     const updatedUser = await User.findByIdAndUpdate(session.user.id, body, {
       new: true,
       runValidators: true,

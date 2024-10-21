@@ -11,8 +11,10 @@ import {
 } from "@/components/ui/carousel";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { toast } from "@/hooks/use-toast";
 import { base64ToBlob } from "@/lib/utils";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import api from "@/libs/api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -76,6 +78,32 @@ export default function AccountPage() {
     mutation.mutate(data);
   };
 
+  const queryClient = useQueryClient();
+
+  const changeUserAvatarMutation = useMutation({
+    mutationFn: async (data: any) => api.patch("/api/user/icon", data),
+    onSuccess: async () => {
+      await queryClient.refetchQueries({
+        queryKey: ["user"],
+        type: "all",
+      });
+      toast({
+        title: "Avatar atualizado",
+        description: "O avatar do usuário foi alterado com sucesso.",
+        duration: 5000,
+      });
+    },
+    onError: async () => {
+      toast({
+        title: "Erro ao atualizar avatar",
+        description:
+          "Ocorreu um erro ao atualizar o avatar do usuário. O limite do arquivo é de 10MB.",
+        duration: 5000,
+        variant: "destructive",
+      });
+    },
+  });
+
   const searchParams = useSearchParams();
   const workspace = searchParams.get("workspace");
 
@@ -98,9 +126,7 @@ export default function AccountPage() {
         break;
     }
 
-    console.log(avatar);
-
-    // changeWorkspaceAvatarMutation.mutate(formData);
+    changeUserAvatarMutation.mutate(formData);
   };
 
   return (
@@ -118,11 +144,8 @@ export default function AccountPage() {
             </div>
             <div className="flex justify-end pr-12">
               <AvatarSelector
-                data={{
-                  type: "image",
-                  value: user.image,
-                }}
-                imageUrlWithoutS3={user.image}
+                data={user?.icon}
+                imageUrlWithoutS3={user?.image}
                 onAvatarChange={handleAvatarChange}
               />
             </div>
