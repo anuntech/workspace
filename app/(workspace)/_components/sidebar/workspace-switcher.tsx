@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus } from "lucide-react";
+import { ChevronDown, Plus } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -43,33 +43,39 @@ export function WorkspaceSwitcher() {
   ) : (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="w-full gap-2">
-          <p>
-            {data?.data.find(
-              (workspace: any) => workspace.id === selectedWorkspace
-            )?.icon.type == "emoji" ? (
+        <Button
+          variant="outline"
+          className="w-full justify-between items-center"
+        >
+          <div className="flex gap-2">
+            <p>
+              {data?.data.find(
+                (workspace: any) => workspace.id === selectedWorkspace
+              )?.icon.type == "emoji" ? (
+                data?.data.find(
+                  (workspace: any) => workspace.id === selectedWorkspace
+                )?.icon.value
+              ) : (
+                <div className="w-5 h-5 ">
+                  <img
+                    className="rounded-sm"
+                    src={getS3Image(
+                      data?.data.find(
+                        (workspace: any) => workspace.id === selectedWorkspace
+                      )?.icon.value
+                    )}
+                    alt="@shadcn"
+                  />
+                </div>
+              )}
+            </p>
+            {
               data?.data.find(
                 (workspace: any) => workspace.id === selectedWorkspace
-              )?.icon.value
-            ) : (
-              <div className="w-5 h-5 ">
-                <img
-                  className="rounded-sm"
-                  src={getS3Image(
-                    data?.data.find(
-                      (workspace: any) => workspace.id === selectedWorkspace
-                    )?.icon.value
-                  )}
-                  alt="@shadcn"
-                />
-              </div>
-            )}
-          </p>
-          {
-            data?.data.find(
-              (workspace: any) => workspace.id === selectedWorkspace
-            )?.name
-          }
+              )?.name
+            }
+          </div>
+          <ChevronDown size={16} />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-44" defaultValue={selectedWorkspace}>

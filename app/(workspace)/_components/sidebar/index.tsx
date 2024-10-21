@@ -70,7 +70,7 @@ export function Sidebar() {
 
   return (
     <aside className="flex flex-col gap-3 rounded-md px-2">
-      <section className="flex items-center justify-center">
+      <section>
         <WorkspaceSwitcher />
       </section>
       <Separator />
