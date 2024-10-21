@@ -22,6 +22,7 @@ import { AvatarSelector } from "../../components/avatar-selector";
 import api from "@/libs/api";
 import { toast } from "@/hooks/use-toast";
 import { base64ToBlob } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type Workspace = {
   name?: string;
@@ -155,6 +156,15 @@ export default function SettingsPage() {
 
   const router = useRouter();
 
+  const workspaceQuery = useQuery({
+    queryKey: ["workspace"],
+    queryFn: async () => api.get("/api/workspace"),
+  });
+
+  const selectedWorkspace = workspaceQuery.data?.data?.find(
+    (workspace: any) => workspace.id === searchParams.get("workspace")
+  );
+
   return (
     <form action="POST" onSubmit={handleSubmit(onSubmit)}>
       <div className="flex flex-col  items-center p-10">
@@ -170,7 +180,15 @@ export default function SettingsPage() {
               </span>
             </div>
             <div className="flex justify-end pr-12">
-              <AvatarSelector onAvatarChange={handleAvatarChange} />
+              {workspaceQuery.isPending ||
+              changeWorkspaceAvatarMutation.isPending ? (
+                <Skeleton className="w-52 h-52" />
+              ) : (
+                <AvatarSelector
+                  initialAvatar={selectedWorkspace?.icon}
+                  onAvatarChange={handleAvatarChange}
+                />
+              )}
             </div>
           </section>
           <Separator />
