@@ -10,9 +10,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getS3Image } from "@/libs/s3-client";
 import { useQuery } from "@tanstack/react-query";
 import { CircleHelp, CircleUser, LogOut } from "lucide-react";
 import { signOut } from "next-auth/react";
+import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
@@ -34,10 +36,27 @@ export function UserNav() {
           variant="ghost"
           className="relative h-11 w-full justify-start gap-2 px-3 text-start"
         >
-          <Avatar className="size-10">
-            <AvatarImage src={data?.image || "/shad.png"} alt="@shadcn" />
-            <AvatarFallback>SC</AvatarFallback>
-          </Avatar>
+          {data.icon && (
+            <div className="text-[1.3rem]">
+              {data.icon.type == "emoji" ? (
+                data.icon.value
+              ) : (
+                <Image
+                  className="rounded-full"
+                  width={54}
+                  height={54}
+                  src={getS3Image(data.icon.value)}
+                  alt=""
+                />
+              )}
+            </div>
+          )}
+          {!data.icon && (
+            <Avatar className="size-10">
+              <AvatarImage src={data?.image || "/shad.png"} alt="@shadcn" />
+              <AvatarFallback>SC</AvatarFallback>
+            </Avatar>
+          )}
           <span className="flex flex-col w-full overflow-hidden">
             <span className="text-ellipsis overflow-hidden whitespace-nowrap">
               {data?.name}
