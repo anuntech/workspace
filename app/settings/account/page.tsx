@@ -120,8 +120,9 @@ export default function AccountPage() {
               <AvatarSelector
                 data={{
                   type: "image",
-                  value: "aaa",
+                  value: user.image,
                 }}
+                imageUrlWithoutS3={user.image}
                 onAvatarChange={handleAvatarChange}
               />
             </div>

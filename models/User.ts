@@ -35,6 +35,14 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    icon: {
+      type: {
+        type: String,
+        enum: ["image", "emoji"],
+        required: true,
+      },
+      value: String,
+    },
   },
   {
     timestamps: true,
