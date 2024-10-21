@@ -1,5 +1,6 @@
 "use client";
 
+import { AvatarSelector } from "@/components/avatar-selector";
 import { Button } from "@/components/ui/button";
 import {
   Carousel,
@@ -10,7 +11,9 @@ import {
 } from "@/components/ui/carousel";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { base64ToBlob } from "@/lib/utils";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
@@ -73,6 +76,33 @@ export default function AccountPage() {
     mutation.mutate(data);
   };
 
+  const searchParams = useSearchParams();
+  const workspace = searchParams.get("workspace");
+
+  const handleAvatarChange = (avatar: {
+    value: string;
+    type: "image" | "emoji";
+  }) => {
+    const formData = new FormData();
+
+    switch (avatar.type) {
+      case "image":
+        formData.append("icon", base64ToBlob(avatar.value), "avatar.jpeg");
+        formData.append("iconType", avatar.type);
+        formData.append("workspaceId", workspace);
+        break;
+      case "emoji":
+        formData.append("icon", avatar.value);
+        formData.append("iconType", avatar.type);
+        formData.append("workspaceId", workspace);
+        break;
+    }
+
+    console.log(avatar);
+
+    // changeWorkspaceAvatarMutation.mutate(formData);
+  };
+
   return (
     <div className="flex flex-col items-center p-10">
       <div className="w-full max-w-3xl space-y-5">
@@ -87,21 +117,13 @@ export default function AccountPage() {
               </span>
             </div>
             <div className="flex justify-end pr-12">
-              <Carousel className="w-full max-w-52" opts={{ loop: true }}>
-                <CarouselContent>
-                  {Array.from({ length: 5 }).map((_, index) => (
-                    <CarouselItem key={index}>
-                      <div className="flex aspect-square items-center justify-center rounded-md border p-6">
-                        <span className="text-4xl font-semibold">
-                          {index + 1}
-                        </span>
-                      </div>
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-                <CarouselPrevious />
-                <CarouselNext />
-              </Carousel>
+              <AvatarSelector
+                data={{
+                  type: "image",
+                  value: "aaa",
+                }}
+                onAvatarChange={handleAvatarChange}
+              />
             </div>
           </section>
           <Separator />

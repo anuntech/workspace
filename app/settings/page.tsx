@@ -183,13 +183,11 @@ export default function SettingsPage() {
             </div>
             <div className="flex justify-end pr-12">
               {workspaceQuery.isPending ||
-              changeWorkspaceAvatarMutation.isPending ||
-              !onLoad ? (
+              changeWorkspaceAvatarMutation.isPending ? (
                 <Skeleton className="w-52 h-52" />
               ) : (
                 <AvatarSelector
-                  setOnLoad={setOnLoad}
-                  initialAvatar={selectedWorkspace?.icon}
+                  data={selectedWorkspace?.icon}
                   onAvatarChange={handleAvatarChange}
                 />
               )}
