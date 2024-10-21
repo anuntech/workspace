@@ -13,6 +13,10 @@ export interface IApplications extends Document {
   descriptionTitle: string;
   workspacesAllowed: mongoose.Schema.Types.ObjectId[];
   galleryPhotos: string[];
+  icon: {
+    type: "image" | "emoji";
+    value: string;
+  };
 }
 
 const applicationSchema = new mongoose.Schema<IApplications>(
@@ -34,6 +38,14 @@ const applicationSchema = new mongoose.Schema<IApplications>(
     avatarSrc: {
       type: String,
       trim: true,
+    },
+    icon: {
+      type: {
+        type: String,
+        enum: ["image", "emoji"],
+        required: true,
+      },
+      value: String,
     },
     galleryPhotos: {
       type: [String],
