@@ -18,7 +18,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { AvatarSelector } from "./_components/avatar-selector";
+import { AvatarSelector } from "../../components/avatar-selector";
 import api from "@/libs/api";
 import { toast } from "@/hooks/use-toast";
 import { base64ToBlob } from "@/lib/utils";
