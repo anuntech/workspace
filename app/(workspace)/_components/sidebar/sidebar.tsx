@@ -127,27 +127,31 @@ export function AppSidebar() {
               )}
           </SidebarGroupContent>
           {enabledApplications.length > 0 && (
-            <SidebarGroupLabel>Aplicações</SidebarGroupLabel>
+            <SidebarGroupLabel>Aplicativos</SidebarGroupLabel>
           )}
           <SidebarGroupContent>
-            {enabledApplications?.map((data: any) => (
-              <NavLink href={`/service/${data._id}?workspace=${workspace}`}>
-                <div className="flex justify-center gap-1 items-center">
-                  {data.icon?.type == "emoji" && (
-                    <p className="mr-3 size-5">{data.icon.value}</p>
-                  )}
-                  {(data.icon?.type == "image" || !data.icon) && (
-                    <Avatar className="mr-2 size-5">
-                      <AvatarImage
-                        src={getS3Image(data.icon?.value || data.avatarSrc)}
-                      />
-                      <AvatarFallback>{data.avatarFallback}</AvatarFallback>
-                    </Avatar>
-                  )}
-                  {data.name}
-                </div>
-              </NavLink>
-            ))}
+            <SidebarMenu>
+              {enabledApplications?.map((data: any) => (
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild>
+                    <a href={`/service/${data._id}?workspace=${workspace}`}>
+                      {data.icon?.type == "emoji" && (
+                        <p className="size-5">{data.icon.value}</p>
+                      )}
+                      {(data.icon?.type == "image" || !data.icon) && (
+                        <Avatar className="size-5">
+                          <AvatarImage
+                            src={getS3Image(data.icon?.value || data.avatarSrc)}
+                          />
+                          <AvatarFallback>{data.avatarFallback}</AvatarFallback>
+                        </Avatar>
+                      )}
+                      <span>{data.name}</span>
+                    </a>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
           </SidebarGroupContent>
         </SidebarContent>
         <SidebarFooter>
