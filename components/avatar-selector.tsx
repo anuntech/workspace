@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import { AvatarPopover } from "./avatar-popover";
 import { getS3Image } from "@/libs/s3-client";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
@@ -9,13 +10,14 @@ interface AvatarSelectorProps {
   data: { value: string; type: "image" | "emoji" };
   setOnLoad?: Dispatch<SetStateAction<boolean>>;
   imageUrlWithoutS3?: string;
+  emojiSize?: string; // px rem ...
 }
 
 export function AvatarSelector({
   onAvatarChange,
   data,
-  setOnLoad,
   imageUrlWithoutS3,
+  emojiSize,
 }: AvatarSelectorProps) {
   const handleAvatarChange = (newAvatar: {
     value: string;
@@ -26,9 +28,12 @@ export function AvatarSelector({
 
   return (
     <div className="flex items-center space-x-4">
-      <div className="relative w-52 h-52 group flex items-center justify-center">
+      <div className="relative w-full h-full group flex items-center justify-center">
         {data?.type === "emoji" ? (
-          <div className="w-52 h-52 flex items-center justify-center text-[7rem]">
+          <div
+            className="w-full h-full flex items-center justify-center"
+            style={{ fontSize: emojiSize || "7rem" }}
+          >
             {data?.value}
           </div>
         ) : !imageUrlWithoutS3 ? (

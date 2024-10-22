@@ -5,10 +5,12 @@
 import { Button } from "@/components/ui/button";
 import { Pencil } from "lucide-react";
 import { getS3Image } from "@/libs/s3-client";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { ApplicationsDropdown } from "./applications-dropdown";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/libs/api";
+import { AvatarSelector } from "@/components/avatar-selector";
+import { base64ToBlob } from "@/lib/utils";
 
 interface ApplicationItemProps {
   application: any;
@@ -17,10 +19,12 @@ interface ApplicationItemProps {
 export function ApplicationItem({ application }: ApplicationItemProps) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const queryClient = useQueryClient();
+  const [icon, setIcon] = useState<FormData>(null);
+  const [imageUrlWithoutS3, setImageUrlWithoutS3] = useState<string>("");
+  const [emojiAvatar, setEmojiAvatar] = useState<string>("");
 
   const editAvatarMutation = useMutation({
-    mutationFn: async (data: any) =>
-      api.patch(`/api/applications/manage/${application.id}`, data),
+    mutationFn: async (data: any) => api.patch(`/api/applications/icon`, data),
     onSuccess: async () => {
       await queryClient.refetchQueries({
         queryKey: ["allApplications"],
@@ -29,20 +33,43 @@ export function ApplicationItem({ application }: ApplicationItemProps) {
     },
   });
 
-  const handleFileChange = (file: File | null) => {
-    if (!file) return;
-    console.log(`Carregando nova imagem para o aplicativo ${application.id}`);
+  const handleAvatarChange = (avatar: {
+    value: string;
+    type: "image" | "emoji";
+  }) => {
     const formData = new FormData();
 
-    formData.append("profilePhoto", file);
+    switch (avatar.type) {
+      case "image":
+        const blob = base64ToBlob(avatar.value);
+        formData.append("icon", blob, "avatar.jpeg");
+        formData.append("iconType", avatar.type);
+        formData.append("applicationId", application.id);
+
+        const imageUrl = URL.createObjectURL(blob);
+        setImageUrlWithoutS3(imageUrl);
+        setEmojiAvatar(null);
+        break;
+
+      case "emoji":
+        formData.append("icon", avatar.value);
+        formData.append("iconType", avatar.type);
+        formData.append("applicationId", application.id);
+
+        setImageUrlWithoutS3(null);
+        setEmojiAvatar(avatar.value);
+        break;
+    }
 
     editAvatarMutation.mutate(formData);
+
+    setIcon(formData);
   };
 
   return (
     <div className="flex items-center space-x-4 p-4 border-b">
       <div className="relative w-20 h-20 group">
-        {application.avatarSrc ? (
+        {/* {application.avatarSrc ? (
           <div className="w-20 h-20 flex items-center justify-center">
             <img
               src={getS3Image(application.avatarSrc)}
@@ -54,24 +81,22 @@ export function ApplicationItem({ application }: ApplicationItemProps) {
           <div className="bg-zinc-300 w-20 h-20 rounded-[10px] flex items-center justify-center text-[1.5rem]">
             ?
           </div>
-        )}
+        )} */}
 
-        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 rounded-md transition-opacity duration-300">
-          <Button
-            variant="ghost"
-            className="p-2 bg-white rounded-full shadow-lg text-black hover:bg-gray-100 transition-all duration-300"
-            onClick={() => fileInputRef.current?.click()} // Simula o clique no input file
-          >
-            <Pencil className="w-6 h-6" />
-          </Button>
+        <div className="w-20 h-20 flex items-center justify-center">
+          <AvatarSelector
+            data={
+              application?.icon
+                ? application?.icon
+                : {
+                    type: "image",
+                    value: application.avatarSrc,
+                  }
+            }
+            onAvatarChange={handleAvatarChange}
+            emojiSize="70px"
+          />
         </div>
-
-        <input
-          ref={fileInputRef}
-          type="file"
-          className="hidden"
-          onChange={(e) => handleFileChange(e.target.files?.[0] || null)}
-        />
       </div>
 
       <div className="flex flex-col flex-grow">
