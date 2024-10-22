@@ -79,7 +79,7 @@ export function WorkspaceSwitcher() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        className="w-[239px]"
+        className="w-[224px]"
         defaultValue={selectedWorkspace}
       >
         {data?.data.map((workspace: any) => (
