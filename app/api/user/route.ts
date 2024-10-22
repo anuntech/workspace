@@ -43,7 +43,9 @@ export async function PATCH(request: Request) {
     //   userId: new mongoose.Types.ObjectId(session?.user?.id),
     // });
 
-    if (body.email && body.email != "") {
+    const user = await User.findById(session.user.id);
+
+    if (body.email && body.email != user.email) {
       return NextResponse.json(
         { error: "Email can't be changed" },
         { status: 400 }
