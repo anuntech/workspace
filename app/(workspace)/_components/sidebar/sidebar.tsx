@@ -110,11 +110,9 @@ export function AppSidebar() {
                 </a>
               </SidebarMenuButton>
             </SidebarMenuItem>
-          </SidebarMenu>
-          <SidebarGroupContent>
-            {roleQuery.data?.data?.role !== "member" &&
-              !roleQuery.isPending && (
-                <SidebarMenu>
+            <SidebarGroupContent>
+              {roleQuery.data?.data?.role !== "member" &&
+                !roleQuery.isPending && (
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
                       <a href={`/settings?workspace=${workspace}`}>
@@ -123,9 +121,9 @@ export function AppSidebar() {
                       </a>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-                </SidebarMenu>
-              )}
-          </SidebarGroupContent>
+                )}
+            </SidebarGroupContent>
+          </SidebarMenu>
           {enabledApplications.length > 0 && (
             <SidebarGroupLabel>Aplicativos</SidebarGroupLabel>
           )}
