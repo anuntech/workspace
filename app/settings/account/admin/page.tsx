@@ -52,6 +52,8 @@ export default function AdminPage() {
         description: "Application saved successfully.",
         duration: 5000,
       });
+      setImageUrlWithoutS3(null);
+      setEmojiAvatar(null);
     },
     onError: () => {
       toast({
