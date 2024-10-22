@@ -78,9 +78,12 @@ export function WorkspaceSwitcher() {
           <ChevronDown size={16} />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-44" defaultValue={selectedWorkspace}>
+      <DropdownMenuContent
+        className="w-[239px]"
+        defaultValue={selectedWorkspace}
+      >
         {data?.data.map((workspace: any) => (
-          <DropdownMenuGroup key={workspace.id}>
+          <DropdownMenuGroup key={workspace.id} className="w-full">
             <DropdownMenuItem>
               <a href={`/?workspace=${workspace.id}`} className="flex gap-3">
                 <p className="w-5 h-5 flex items-center justify-center">

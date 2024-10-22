@@ -34,7 +34,7 @@ export async function PATCH(request: Request) {
     const applicationId = body.get("applicationId") as string;
     if (!mongoose.Types.ObjectId.isValid(applicationId)) {
       return NextResponse.json(
-        { error: "Invalid workspace ID" },
+        { error: "Invalid application ID" },
         { status: 400 }
       );
     }

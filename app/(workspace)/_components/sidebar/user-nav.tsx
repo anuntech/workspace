@@ -34,7 +34,7 @@ export function UserNav() {
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          className="relative h-11 w-full justify-start gap-2 px-3 text-start"
+          className="relative h-11 w-full px-0 justify-start gap-2 text-start"
         >
           {data?.icon && (
             <div className="text-[1.3rem]">
