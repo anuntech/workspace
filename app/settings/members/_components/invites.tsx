@@ -15,9 +15,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
+import { getS3Image } from "@/libs/s3-client";
 import { Separator } from "@radix-ui/react-dropdown-menu";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Trash2 } from "lucide-react";
+import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
 
@@ -33,6 +35,10 @@ type User = {
   customerId: string;
   priceId: string;
   hasAccess: boolean;
+  icon?: {
+    type: "image" | "emoji";
+    value: string;
+  };
 };
 
 export function Invites() {
@@ -143,10 +149,27 @@ export function Invites() {
             className="flex items-center justify-between space-x-4"
           >
             <div className="flex items-center space-x-4">
-              <Avatar>
-                <AvatarImage src={user.image || "/shad.png"} />
-                <AvatarFallback>OM</AvatarFallback>
-              </Avatar>
+              {user.icon && (
+                <div className="text-[1.3rem]">
+                  {user.icon.type == "emoji" ? (
+                    user.icon.value
+                  ) : (
+                    <Image
+                      className="rounded-full"
+                      width={54}
+                      height={54}
+                      src={getS3Image(user.icon.value)}
+                      alt=""
+                    />
+                  )}
+                </div>
+              )}
+              {!user.icon && (
+                <Avatar className="size-10">
+                  <AvatarImage src={user?.image || "/shad.png"} alt="@shadcn" />
+                  <AvatarFallback>SC</AvatarFallback>
+                </Avatar>
+              )}
               <div>
                 <p className="text-sm font-medium leading-none">{user.name}</p>
                 <p className="text-sm text-muted-foreground">{user.email}</p>

@@ -22,10 +22,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getS3Image } from "@/libs/s3-client";
 import { Separator } from "@radix-ui/react-dropdown-menu";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import clsx from "clsx";
 import { Trash2 } from "lucide-react";
+import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 
@@ -152,10 +154,30 @@ export function Members() {
         <>
           <div className="flex items-center justify-between space-x-4">
             <div className="flex items-center space-x-4">
-              <Avatar>
-                <AvatarImage src={ownerQuery.data?.image || "/shad.png"} />
-                <AvatarFallback>OM</AvatarFallback>
-              </Avatar>
+              {ownerQuery.data.icon && (
+                <div className="text-[1.3rem]">
+                  {ownerQuery.data.icon.type == "emoji" ? (
+                    ownerQuery.data.icon.value
+                  ) : (
+                    <Image
+                      className="rounded-full"
+                      width={54}
+                      height={54}
+                      src={getS3Image(ownerQuery.data.icon.value)}
+                      alt=""
+                    />
+                  )}
+                </div>
+              )}
+              {!ownerQuery.data.icon && (
+                <Avatar className="size-10">
+                  <AvatarImage
+                    src={ownerQuery.data?.image || "/shad.png"}
+                    alt="@shadcn"
+                  />
+                  <AvatarFallback>SC</AvatarFallback>
+                </Avatar>
+              )}
               <div>
                 <p className="text-sm font-medium leading-none">
                   {ownerQuery.data?.name}
@@ -172,10 +194,30 @@ export function Members() {
               className="flex items-center justify-between space-x-4"
             >
               <div className="flex items-center space-x-4">
-                <Avatar>
-                  <AvatarImage src={member.image || "/shad.png"} />
-                  <AvatarFallback>OM</AvatarFallback>
-                </Avatar>
+                {member.icon && (
+                  <div className="text-[1.3rem]">
+                    {member.icon.type == "emoji" ? (
+                      member.icon.value
+                    ) : (
+                      <Image
+                        className="rounded-full"
+                        width={54}
+                        height={54}
+                        src={getS3Image(member.icon.value)}
+                        alt=""
+                      />
+                    )}
+                  </div>
+                )}
+                {!member.icon && (
+                  <Avatar className="size-10">
+                    <AvatarImage
+                      src={member?.image || "/shad.png"}
+                      alt="@shadcn"
+                    />
+                    <AvatarFallback>SC</AvatarFallback>
+                  </Avatar>
+                )}
                 <div>
                   <p className="text-sm font-medium leading-none">
                     {member.name}
