@@ -85,15 +85,14 @@ export function Sidebar() {
               {data.icon?.type == "emoji" && (
                 <p className="mr-3 size-5">{data.icon.value}</p>
               )}
-              {data.icon?.type == "image" ||
-                (!data.icon && (
-                  <Avatar className="mr-2 size-5">
-                    <AvatarImage
-                      src={getS3Image(data.icon?.value || data.avatarSrc)}
-                    />
-                    <AvatarFallback>{data.avatarFallback}</AvatarFallback>
-                  </Avatar>
-                ))}
+              {(data.icon?.type == "image" || !data.icon) && (
+                <Avatar className="mr-2 size-5">
+                  <AvatarImage
+                    src={getS3Image(data.icon?.value || data.avatarSrc)}
+                  />
+                  <AvatarFallback>{data.avatarFallback}</AvatarFallback>
+                </Avatar>
+              )}
               {data.name}
             </div>
           </NavLink>

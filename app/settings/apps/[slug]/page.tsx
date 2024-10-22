@@ -75,18 +75,19 @@ export default function AppPage({ params }: { params: { slug: string } }) {
           Loja de aplicativos
         </Link>
         <section className="flex gap-3">
-          {application.icon?.type == "emoji" && <p>{application.icon.value}</p>}
-          {application.icon?.type == "image" ||
-            (!application.icon && (
-              <Avatar>
-                <AvatarImage
-                  src={getS3Image(
-                    application.icon?.value || application.avatarSrc
-                  )}
-                />
-                <AvatarFallback>{application.avatarFallback}</AvatarFallback>
-              </Avatar>
-            ))}
+          {application.icon?.type == "emoji" && (
+            <p className="text-[2rem]">{application.icon.value}</p>
+          )}
+          {(application.icon?.type == "image" || !application.icon) && (
+            <Avatar>
+              <AvatarImage
+                src={getS3Image(
+                  application.icon?.value || application.avatarSrc
+                )}
+              />
+              <AvatarFallback>{application.avatarFallback}</AvatarFallback>
+            </Avatar>
+          )}
           <div className="flex flex-col">
             <span>{application.name}</span>
             <span className="text-sm text-muted-foreground">
