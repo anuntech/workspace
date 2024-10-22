@@ -81,11 +81,21 @@ export function Sidebar() {
         </NavLink>
         {enabledApplications?.map((data: any) => (
           <NavLink href={`/service/${data._id}?workspace=${workspace}`}>
-            <Avatar className="mr-3 size-5">
-              <AvatarImage src={getS3Image(data.avatarSrc)} />
-              <AvatarFallback>{data.avatarFallback}</AvatarFallback>
-            </Avatar>
-            {data.name}
+            <div className="flex justify-center gap-1 items-center">
+              {data.icon?.type == "emoji" && (
+                <p className="mr-3 size-5">{data.icon.value}</p>
+              )}
+              {data.icon?.type == "image" ||
+                (!data.icon && (
+                  <Avatar className="mr-2 size-5">
+                    <AvatarImage
+                      src={getS3Image(data.icon?.value || data.avatarSrc)}
+                    />
+                    <AvatarFallback>{data.avatarFallback}</AvatarFallback>
+                  </Avatar>
+                ))}
+              {data.name}
+            </div>
           </NavLink>
         ))}
         {roleQuery.data?.data?.role !== "member" && !roleQuery.isPending && (

@@ -49,7 +49,7 @@ export function Sidebar() {
     );
   }
 
-  const emailDomain = userQuery.data.email.split("@")[1];
+  const emailDomain = userQuery.data?.email?.split("@")[1];
 
   return (
     <aside className="flex flex-col gap-4 rounded-md px-2">

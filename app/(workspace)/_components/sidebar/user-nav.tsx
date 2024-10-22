@@ -36,7 +36,7 @@ export function UserNav() {
           variant="ghost"
           className="relative h-11 w-full justify-start gap-2 px-3 text-start"
         >
-          {data.icon && (
+          {data?.icon && (
             <div className="text-[1.3rem]">
               {data.icon.type == "emoji" ? (
                 data.icon.value
@@ -51,7 +51,7 @@ export function UserNav() {
               )}
             </div>
           )}
-          {!data.icon && (
+          {!data?.icon && (
             <Avatar className="size-10">
               <AvatarImage src={data?.image || "/shad.png"} alt="@shadcn" />
               <AvatarFallback>SC</AvatarFallback>
