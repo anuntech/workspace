@@ -143,12 +143,14 @@ export default function AccountPage() {
               </span>
             </div>
             <div className="flex justify-center w-full">
-              <AvatarSelector
-                emojiSize="80px"
-                data={user?.icon}
-                imageUrlWithoutS3={!user?.icon ? user?.image : undefined}
-                onAvatarChange={handleAvatarChange}
-              />
+              <div className="flex justify-center w-28 h-28">
+                <AvatarSelector
+                  emojiSize="70px"
+                  data={user?.icon}
+                  imageUrlWithoutS3={!user?.icon ? user?.image : undefined}
+                  onAvatarChange={handleAvatarChange}
+                />
+              </div>
             </div>
           </section>
           <Separator />

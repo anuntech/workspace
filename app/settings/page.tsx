@@ -186,13 +186,13 @@ export default function SettingsPage() {
               </span>
             </div>
             <div className="flex justify-center items-center w-full">
-              <div className="flex justify-end w-28 h-28">
+              <div className="flex justify-center w-28 h-28">
                 {workspaceQuery.isPending ||
                 changeWorkspaceAvatarMutation.isPending ? (
                   <Skeleton className="w-full h-full" />
                 ) : (
                   <AvatarSelector
-                    emojiSize="28px"
+                    emojiSize="70px"
                     data={selectedWorkspace?.icon}
                     onAvatarChange={handleAvatarChange}
                   />

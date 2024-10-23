@@ -27,7 +27,7 @@ export function AvatarSelector({
   };
 
   return (
-    <div className="flex items-center space-x-4">
+    <div className="flex items-center space-x-4 w-full h-full">
       <div className="relative w-full h-full group flex items-center justify-center">
         {data?.type === "emoji" ? (
           <div
