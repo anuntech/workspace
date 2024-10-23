@@ -142,8 +142,9 @@ export default function AccountPage() {
                 Isso será exibido no seu perfil público.
               </span>
             </div>
-            <div className="flex justify-end pr-12">
+            <div className="flex justify-center w-full">
               <AvatarSelector
+                emojiSize="80px"
                 data={user?.icon}
                 imageUrlWithoutS3={!user?.icon ? user?.image : undefined}
                 onAvatarChange={handleAvatarChange}

@@ -181,16 +181,19 @@ export default function SettingsPage() {
                 identidade digital.
               </span>
             </div>
-            <div className="flex justify-end pr-12">
-              {workspaceQuery.isPending ||
-              changeWorkspaceAvatarMutation.isPending ? (
-                <Skeleton className="w-52 h-52" />
-              ) : (
-                <AvatarSelector
-                  data={selectedWorkspace?.icon}
-                  onAvatarChange={handleAvatarChange}
-                />
-              )}
+            <div className="flex justify-center items-center w-full">
+              <div className="flex justify-end w-28 h-28">
+                {workspaceQuery.isPending ||
+                changeWorkspaceAvatarMutation.isPending ? (
+                  <Skeleton className="w-full h-full" />
+                ) : (
+                  <AvatarSelector
+                    emojiSize="28px"
+                    data={selectedWorkspace?.icon}
+                    onAvatarChange={handleAvatarChange}
+                  />
+                )}
+              </div>
             </div>
           </section>
           <Separator />
