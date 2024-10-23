@@ -65,6 +65,7 @@ export async function PATCH(request: Request) {
     }
 
     switch (iconType) {
+      // No servidor (API Handler)
       case "image": {
         const file = body.get("icon") as File;
 
@@ -97,16 +98,13 @@ export async function PATCH(request: Request) {
 
         const arrayBuffer = await file.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
-        const type = await imageType(buffer);
 
-        if (!type || !allowedMimeTypes.includes(type.mime)) {
-          return NextResponse.json(
-            { error: "Invalid image file" },
-            { status: 400 }
-          );
-        }
+        // Remova o uso desnecessário de imageType se não for necessário
+        // const type = await imageType(buffer);
 
-        const uniqueId = `${workspaceId}-${randomUUID()}`;
+        // Gere um nome de arquivo único com a extensão correta
+        const extension = file.type.split("/")[1]; // "png", "jpeg", etc.
+        const uniqueId = `${workspaceId}-${randomUUID()}.${extension}`;
 
         const form = {
           Bucket: process.env.NEXT_PUBLIC_HETZNER_BUCKET_NAME!,
@@ -117,7 +115,6 @@ export async function PATCH(request: Request) {
         } as PutObjectCommandInput;
 
         const command = new PutObjectCommand(form);
-        console.log("aaaa");
         await s3Client.send(command);
 
         workspace.icon.type = "image";

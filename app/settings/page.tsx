@@ -119,11 +119,15 @@ export default function SettingsPage() {
     const formData = new FormData();
 
     switch (avatar.type) {
-      case "image":
-        formData.append("icon", base64ToBlob(avatar.value), "avatar.jpeg");
+      case "image": {
+        const blob = base64ToBlob(avatar.value);
+        const mimeType = blob.type;
+        const extension = mimeType.split("/")[1]; // "png", "jpeg", etc.
+        formData.append("icon", blob, `avatar.${extension}`);
         formData.append("iconType", avatar.type);
         formData.append("workspaceId", workspace);
         break;
+      }
       case "emoji":
         formData.append("icon", avatar.value);
         formData.append("iconType", avatar.type);

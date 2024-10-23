@@ -5,14 +5,17 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const base64ToBlob = (
-  base64Data: string,
-  contentType: string = "image/jpeg"
-): Blob => {
-  const byteCharacters = atob(base64Data.split(",")[1]);
-  const byteNumbers = new Array(byteCharacters.length)
-    .fill(0)
-    .map((_, i) => byteCharacters.charCodeAt(i));
-  const byteArray = new Uint8Array(byteNumbers);
-  return new Blob([byteArray], { type: contentType });
-};
+export function base64ToBlob(base64Data: string, contentType = "") {
+  const parts = base64Data.split(",");
+  const byteString = atob(parts[1]);
+  const mimeString = contentType || parts[0].match(/:(.*?);/)[1];
+
+  const ab = new ArrayBuffer(byteString.length);
+  const ia = new Uint8Array(ab);
+
+  for (let i = 0; i < byteString.length; i++) {
+    ia[i] = byteString.charCodeAt(i);
+  }
+
+  return new Blob([ab], { type: mimeString });
+}
