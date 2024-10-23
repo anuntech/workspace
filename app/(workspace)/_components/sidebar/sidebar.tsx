@@ -32,6 +32,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/libs/api";
 import { getS3Image } from "@/libs/s3-client";
+import { TeamSwitcher } from "@/components/team-switcher";
 
 export function AppSidebar() {
   const urlParams = useSearchParams();
@@ -90,72 +91,70 @@ export function AppSidebar() {
   }
 
   return (
-    <SidebarProvider>
-      <Sidebar variant="inset" className="rounded-r-md w-100px">
-        <SidebarHeader>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <WorkspaceSwitcher />
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarHeader>
-        <SidebarContent>
-          <SidebarGroupLabel>Plataforma</SidebarGroupLabel>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <a href={`/?workspace=${workspace}`}>
-                  <House />
-                  <span>Home</span>
-                </a>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarGroupContent>
-              {roleQuery.data?.data?.role !== "member" &&
-                !roleQuery.isPending && (
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <a href={`/settings?workspace=${workspace}`}>
-                        <Settings />
-                        <span>Configurações</span>
-                      </a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                )}
-            </SidebarGroupContent>
-          </SidebarMenu>
-          {enabledApplications.length > 0 && (
-            <SidebarGroupLabel>Aplicativos</SidebarGroupLabel>
-          )}
+    <Sidebar
+      collapsible="icon"
+      variant="inset"
+      className="rounded-r-md w-100px"
+    >
+      <SidebarHeader>
+        <TeamSwitcher />
+      </SidebarHeader>
+      <SidebarContent>
+        <SidebarGroupLabel>Plataforma</SidebarGroupLabel>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild>
+              <a href={`/?workspace=${workspace}`}>
+                <House />
+                <span>Home</span>
+              </a>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
           <SidebarGroupContent>
-            <SidebarMenu>
-              {enabledApplications?.map((data: any) => (
+            {roleQuery.data?.data?.role !== "member" &&
+              !roleQuery.isPending && (
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
-                    <a href={`/service/${data._id}?workspace=${workspace}`}>
-                      {data.icon?.type == "emoji" && (
-                        <p className="size-5">{data.icon.value}</p>
-                      )}
-                      {(data.icon?.type == "image" || !data.icon) && (
-                        <Avatar className="size-5">
-                          <AvatarImage
-                            src={getS3Image(data.icon?.value || data.avatarSrc)}
-                          />
-                          <AvatarFallback>{data.avatarFallback}</AvatarFallback>
-                        </Avatar>
-                      )}
-                      <span>{data.name}</span>
+                    <a href={`/settings?workspace=${workspace}`}>
+                      <Settings />
+                      <span>Configurações</span>
                     </a>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
+              )}
           </SidebarGroupContent>
-        </SidebarContent>
-        <SidebarFooter>
-          <UserNav />
-        </SidebarFooter>
-      </Sidebar>
-    </SidebarProvider>
+        </SidebarMenu>
+        {enabledApplications.length > 0 && (
+          <SidebarGroupLabel>Aplicativos</SidebarGroupLabel>
+        )}
+        <SidebarGroupContent>
+          <SidebarMenu>
+            {enabledApplications?.map((data: any) => (
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <a href={`/service/${data._id}?workspace=${workspace}`}>
+                    {data.icon?.type == "emoji" && (
+                      <p className="size-5">{data.icon.value}</p>
+                    )}
+                    {(data.icon?.type == "image" || !data.icon) && (
+                      <Avatar className="size-5">
+                        <AvatarImage
+                          src={getS3Image(data.icon?.value || data.avatarSrc)}
+                        />
+                        <AvatarFallback>{data.avatarFallback}</AvatarFallback>
+                      </Avatar>
+                    )}
+                    <span>{data.name}</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </SidebarGroupContent>
+      </SidebarContent>
+      <SidebarFooter>
+        <UserNav />
+      </SidebarFooter>
+    </Sidebar>
   );
 }
