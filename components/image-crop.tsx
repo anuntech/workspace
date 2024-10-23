@@ -67,9 +67,13 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
           croppedAreaPixels.height
         );
 
-        canvas.toBlob((blob) => {
-          if (blob) resolve(blob);
-        }, "image/jpeg");
+        canvas.toBlob(
+          (blob) => {
+            if (blob) resolve(blob);
+          },
+          "image/png",
+          1
+        );
       };
     });
   };
