@@ -88,7 +88,9 @@ export function WorkspaceSwitcher() {
               <a href={`/?workspace=${workspace.id}`} className="flex gap-3">
                 <p className="w-5 h-5 flex items-center justify-center">
                   {workspace.icon.type == "emoji" ? (
-                    workspace.icon.value
+                    <p className="flex size-6 items-center justify-center rounded-sm border">
+                      {workspace.icon.value}
+                    </p>
                   ) : (
                     <div className="w-5 h-5 flex items-center justify-center">
                       <img

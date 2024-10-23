@@ -66,9 +66,9 @@ export function TeamSwitcher() {
               {actualWorkspace?.icon.type == "emoji" ? (
                 <p className="text-[25px]">{actualWorkspace?.icon.value}</p>
               ) : (
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg  text-sidebar-primary-foreground bg-sidebar-primary">
+                <div className="flex aspect-square size-7 items-center justify-center rounded-lg  text-sidebar-primary-foreground bg-sidebar-primary">
                   <img
-                    className="rounded-sm"
+                    className="rounded-lg"
                     src={getS3Image(actualWorkspace?.icon.value)}
                     alt="@shadcn"
                   />
@@ -87,23 +87,31 @@ export function TeamSwitcher() {
             align="start"
             side={isMobile ? "bottom" : "right"}
             sideOffset={4}
+            defaultValue={selectedWorkspace}
           >
             <DropdownMenuLabel className="text-xs text-muted-foreground">
-              Teams
+              Workspaces
             </DropdownMenuLabel>
-            {/* {teams.map((team, index) => (
-              <DropdownMenuItem
-                key={team.name}
-                onClick={() => setActiveTeam(team)}
-                className="gap-2 p-2"
-              >
-                <div className="flex size-6 items-center justify-center rounded-sm border">
-                  <team.logo className="size-4 shrink-0" />
-                </div>
-                {team.name}
-                <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
+            {data?.data.map((team: any, index: number) => (
+              <DropdownMenuItem key={index} className="gap-2 p-2">
+                <a href={`/?workspace=${team.id}`} className="flex gap-3">
+                  <div className="flex size-6 items-center justify-center rounded-sm border">
+                    {team.icon.type == "emoji" ? (
+                      team.icon.value
+                    ) : (
+                      <div className="w-5 h-5 flex items-center justify-center">
+                        <img
+                          className="rounded-sm"
+                          src={getS3Image(team.icon.value)}
+                          alt="@shadcn"
+                        />
+                      </div>
+                    )}
+                  </div>
+                  {team.name}
+                </a>
               </DropdownMenuItem>
-            ))} */}
+            ))}
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() => router.push("/create-workspace")}
