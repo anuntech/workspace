@@ -33,6 +33,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/libs/api";
 import { getS3Image } from "@/libs/s3-client";
 import { TeamSwitcher } from "@/components/team-switcher";
+import { NavUser } from "@/components/nav-user";
 
 export function AppSidebar() {
   const urlParams = useSearchParams();
@@ -153,7 +154,7 @@ export function AppSidebar() {
         </SidebarGroupContent>
       </SidebarContent>
       <SidebarFooter>
-        <UserNav />
+        <NavUser />
       </SidebarFooter>
     </Sidebar>
   );
