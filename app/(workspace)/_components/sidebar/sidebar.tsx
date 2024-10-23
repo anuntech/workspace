@@ -100,7 +100,7 @@ export function AppSidebar() {
       <SidebarHeader>
         <TeamSwitcher />
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className="pl-2">
         <SidebarGroupLabel>Plataforma</SidebarGroupLabel>
         <SidebarMenu>
           <SidebarMenuItem>

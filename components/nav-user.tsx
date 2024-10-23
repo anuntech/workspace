@@ -26,9 +26,11 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { useQuery } from "@tanstack/react-query";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { getS3Image } from "@/libs/s3-client";
+import { signOut } from "next-auth/react";
+import Link from "next/link";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
@@ -39,6 +41,7 @@ export function NavUser() {
 
   const searchParams = useSearchParams();
   const workspace = searchParams.get("workspace");
+  const router = useRouter();
 
   return (
     <SidebarMenu>
@@ -126,9 +129,11 @@ export function NavUser() {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => router.push("/settings/account")}
+              >
                 <BadgeCheck />
-                Account
+                Perfil
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <CreditCard />
@@ -140,9 +145,9 @@ export function NavUser() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => signOut()}>
               <LogOut />
-              Log out
+              Sair
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
