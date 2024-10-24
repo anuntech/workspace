@@ -22,7 +22,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import api from "@/libs/api";
 import { getS3Image } from "@/libs/s3-client";
-import { Input } from "./ui/input";
+import { Input } from "../../../../components/ui/input";
 
 export function TeamSwitcher() {
   const { isMobile } = useSidebar();

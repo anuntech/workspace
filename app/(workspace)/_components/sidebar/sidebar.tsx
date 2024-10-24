@@ -22,7 +22,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ChevronDown, LifeBuoy, Sparkles } from "lucide-react";
-import { UserNav } from "./user-nav";
 import { House, Rocket, Settings } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { NavLink } from "./nav-link";
@@ -32,8 +31,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/libs/api";
 import { getS3Image } from "@/libs/s3-client";
-import { TeamSwitcher } from "@/components/team-switcher";
-import { NavUser } from "@/components/nav-user";
+import { TeamSwitcher } from "@/app/(workspace)/_components/sidebar/team-switcher";
+import { NavUser } from "@/app/(workspace)/_components/sidebar/nav-user";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
