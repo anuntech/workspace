@@ -51,7 +51,7 @@ export function TeamSwitcher() {
   }, [data]);
 
   if (isPending) {
-    return <Skeleton className="h-10" />;
+    return <Skeleton className="h-11" />;
   }
 
   const actualWorkspace = data.data.find(
