@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { ChevronsUpDown, Plus } from "lucide-react";
+import { ChevronsUpDown, Plus, Search } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -25,11 +25,14 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import api from "@/libs/api";
 import { getS3Image } from "@/libs/s3-client";
+import { Input } from "./ui/input";
 
 export function TeamSwitcher() {
   const { isMobile } = useSidebar();
   const urlParams = useSearchParams();
   const router = useRouter();
+
+  const [filter, setFilter] = useState("");
 
   const { isPending, data, isSuccess } = useQuery({
     queryKey: ["workspace"],
@@ -89,29 +92,42 @@ export function TeamSwitcher() {
             sideOffset={4}
             defaultValue={selectedWorkspace}
           >
+            <div className="flex items-center">
+              <Search className="h-4" />
+              <Input
+                className="h-7  border-none"
+                placeholder="Procurar workspace..."
+                onChange={(e) => setFilter(e.target.value)}
+              />
+            </div>
+            <DropdownMenuSeparator />
             <DropdownMenuLabel className="text-xs text-muted-foreground">
               Workspaces
             </DropdownMenuLabel>
-            {data?.data.map((team: any, index: number) => (
-              <DropdownMenuItem key={index} className="gap-2 p-2">
-                <a href={`/?workspace=${team.id}`} className="flex gap-3">
-                  <div className="flex size-6 items-center justify-center rounded-sm border">
-                    {team.icon.type == "emoji" ? (
-                      team.icon.value
-                    ) : (
-                      <div className="w-5 h-5 flex items-center justify-center">
-                        <img
-                          className="rounded-sm"
-                          src={getS3Image(team.icon.value)}
-                          alt="@shadcn"
-                        />
-                      </div>
-                    )}
-                  </div>
-                  {team.name}
-                </a>
-              </DropdownMenuItem>
-            ))}
+            {data?.data
+              .filter((team: any) =>
+                team.name.toLowerCase().includes(filter.toLowerCase())
+              )
+              .map((team: any, index: number) => (
+                <DropdownMenuItem key={index} className="gap-2 p-2">
+                  <a href={`/?workspace=${team.id}`} className="flex gap-3">
+                    <div className="flex size-6 items-center justify-center rounded-sm border">
+                      {team.icon.type == "emoji" ? (
+                        team.icon.value
+                      ) : (
+                        <div className="w-5 h-5 flex items-center justify-center">
+                          <img
+                            className="rounded-sm"
+                            src={getS3Image(team.icon.value)}
+                            alt="@shadcn"
+                          />
+                        </div>
+                      )}
+                    </div>
+                    {team.name}
+                  </a>
+                </DropdownMenuItem>
+              ))}
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() => router.push("/create-workspace")}
