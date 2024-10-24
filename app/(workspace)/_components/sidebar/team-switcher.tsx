@@ -23,6 +23,7 @@ import { useQuery } from "@tanstack/react-query";
 import api from "@/libs/api";
 import { getS3Image } from "@/libs/s3-client";
 import { Input } from "../../../../components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function TeamSwitcher() {
   const { isMobile } = useSidebar();
@@ -31,7 +32,7 @@ export function TeamSwitcher() {
 
   const [filter, setFilter] = useState("");
 
-  const { data, isSuccess } = useQuery({
+  const { data, isSuccess, isPending } = useQuery({
     queryKey: ["workspace"],
     queryFn: async () => api.get("/api/workspace"),
   });
@@ -48,6 +49,10 @@ export function TeamSwitcher() {
       return;
     }
   }, [data]);
+
+  if (isPending) {
+    return <Skeleton className="h-10" />;
+  }
 
   const actualWorkspace = data.data.find(
     (v: any) => v.id === selectedWorkspace
