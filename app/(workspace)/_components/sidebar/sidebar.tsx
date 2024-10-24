@@ -21,7 +21,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, LifeBuoy, Sparkles } from "lucide-react";
 import { UserNav } from "./user-nav";
 import { House, Rocket, Settings } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
@@ -35,6 +35,7 @@ import { getS3Image } from "@/libs/s3-client";
 import { TeamSwitcher } from "@/components/team-switcher";
 import { NavUser } from "@/components/nav-user";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export function AppSidebar() {
   const urlParams = useSearchParams();
@@ -108,7 +109,7 @@ export function AppSidebar() {
             <SidebarMenuButton asChild>
               <a href={`/?workspace=${workspace}`}>
                 <House />
-                <span>Home</span>
+                <span>Dashboard</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -158,6 +159,24 @@ export function AppSidebar() {
         </SidebarGroupContent>
       </SidebarContent>
       <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild>
+              <a href={`/?workspace=${workspace}`} className="text-[0.8rem]">
+                <Sparkles className="text-[0.8rem]" />
+                Upgrade
+              </a>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild>
+              <a href={`/?workspace=${workspace}`} className="text-[0.8rem]">
+                <LifeBuoy className="text-[0.8rem]" />
+                Suporte
+              </a>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
         <NavUser />
       </SidebarFooter>
     </Sidebar>
