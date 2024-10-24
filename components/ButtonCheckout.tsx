@@ -21,17 +21,14 @@ const ButtonCheckout = ({
     setIsLoading(true);
 
     try {
-      const { url }: { url: string } = await apiClient.post(
-        "/stripe/create-checkout",
-        {
-          priceId,
-          successUrl: window.location.href,
-          cancelUrl: window.location.href,
-          mode,
-        }
-      );
+      const { data } = await apiClient.post("/api/stripe/create-checkout", {
+        priceId,
+        successUrl: window.location.href,
+        cancelUrl: window.location.href,
+        mode,
+      });
 
-      window.location.href = url;
+      window.location.href = data.url;
     } catch (e) {
       console.error(e);
     }

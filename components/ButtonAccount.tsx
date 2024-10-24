@@ -23,14 +23,11 @@ const ButtonAccount = () => {
     setIsLoading(true);
 
     try {
-      const { url }: { url: string } = await apiClient.post(
-        "/stripe/create-portal",
-        {
-          returnUrl: window.location.href,
-        }
-      );
+      const { data } = await apiClient.post("/api/stripe/create-portal", {
+        returnUrl: window.location.href,
+      });
 
-      window.location.href = url;
+      window.location.href = data.url;
     } catch (e) {
       console.error(e);
     }

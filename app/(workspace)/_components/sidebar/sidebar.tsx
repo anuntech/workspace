@@ -34,6 +34,7 @@ import { api } from "@/libs/api";
 import { getS3Image } from "@/libs/s3-client";
 import { TeamSwitcher } from "@/components/team-switcher";
 import { NavUser } from "@/components/nav-user";
+import Link from "next/link";
 
 export function AppSidebar() {
   const urlParams = useSearchParams();
@@ -133,7 +134,10 @@ export function AppSidebar() {
             {enabledApplications?.map((data: any) => (
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <a href={`/service/${data._id}?workspace=${workspace}`}>
+                  <Link
+                    href={`/service/${data._id}?workspace=${workspace}`}
+                    passHref
+                  >
                     {data.icon?.type == "emoji" && (
                       <p className="size-5">{data.icon.value}</p>
                     )}
@@ -146,7 +150,7 @@ export function AppSidebar() {
                       </Avatar>
                     )}
                     <span>{data.name}</span>
-                  </a>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}
