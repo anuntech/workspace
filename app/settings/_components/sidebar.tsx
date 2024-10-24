@@ -121,15 +121,6 @@ export function Sidebar() {
             <li>
               {emailDomain == config.domainName && (
                 <NavLink
-                  href={`/settings/account/admin?workspace=${workspace}`}
-                >
-                  Painel administrativo
-                </NavLink>
-              )}
-            </li>
-            <li>
-              {emailDomain == config.domainName && (
-                <NavLink
                   href={`/settings/account/apps-admin?workspace=${workspace}`}
                 >
                   Administração de aplicativos
