@@ -96,39 +96,41 @@ export function TeamSwitcher() {
                 onChange={(e) => setFilter(e.target.value)}
               />
             </div>
-            <DropdownMenuSeparator />
-            <DropdownMenuLabel className="text-xs text-muted-foreground">
-              Workspaces
-            </DropdownMenuLabel>
-            {data?.data
-              .filter((team: any) =>
-                team.name.toLowerCase().includes(filter.toLowerCase())
-              )
-              .map((team: any, index: number) => (
-                <DropdownMenuItem key={index} className="gap-2 p-2">
-                  <a
-                    href={`/?workspace=${team.id}`}
-                    className="flex items-center gap-3"
-                  >
-                    <div className="flex size-6 items-center justify-center rounded-sm border">
-                      {team.icon.type == "emoji" ? (
-                        team.icon.value
-                      ) : (
-                        <div className="w-5 h-5 flex items-center justify-center">
-                          <img
-                            className="rounded-sm"
-                            src={getS3Image(team.icon.value)}
-                            alt="@shadcn"
-                          />
-                        </div>
-                      )}
-                    </div>
-                    <div className="grid flex-1 text-left text-sm leading-tight">
-                      <span className="truncate">{team.name}</span>
-                    </div>
-                  </a>
-                </DropdownMenuItem>
-              ))}
+            <div className="max-h-80 overflow-y-auto overflow-x-hidden">
+              <DropdownMenuSeparator />
+              <DropdownMenuLabel className="text-xs text-muted-foreground">
+                Workspaces
+              </DropdownMenuLabel>
+              {data?.data
+                .filter((team: any) =>
+                  team.name.toLowerCase().includes(filter.toLowerCase())
+                )
+                .map((team: any, index: number) => (
+                  <DropdownMenuItem key={index} className="gap-2 p-2">
+                    <a
+                      href={`/?workspace=${team.id}`}
+                      className="flex items-center gap-3"
+                    >
+                      <div className="flex size-6 items-center justify-center rounded-sm border">
+                        {team.icon.type == "emoji" ? (
+                          team.icon.value
+                        ) : (
+                          <div className="w-5 h-5 flex items-center justify-center">
+                            <img
+                              className="rounded-sm"
+                              src={getS3Image(team.icon.value)}
+                              alt="@shadcn"
+                            />
+                          </div>
+                        )}
+                      </div>
+                      <div className="grid flex-1 text-left text-sm leading-tight">
+                        <span className="truncate">{team.name}</span>
+                      </div>
+                    </a>
+                  </DropdownMenuItem>
+                ))}
+            </div>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() => router.push("/create-workspace")}
