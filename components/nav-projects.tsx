@@ -24,65 +24,67 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { useQuery } from "@tanstack/react-query";
+import api from "@/libs/api";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Skeleton } from "./ui/skeleton";
+import Link from "next/link";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { getS3Image } from "@/libs/s3-client";
 
-export function NavProjects({
-  projects,
-}: {
-  projects: {
-    name: string;
-    url: string;
-    icon: LucideIcon;
-  }[];
-}) {
+export function NavProjects() {
   const { isMobile } = useSidebar();
+  const urlParams = useSearchParams();
+  const workspace = urlParams.get("workspace");
+  const router = useRouter();
+
+  const applicationsQuery = useQuery({
+    queryKey: ["applications"],
+    queryFn: async () => api.get(`/api/applications/${workspace}`),
+  });
+
+  if (applicationsQuery.isPending) {
+    return <Skeleton className="h-7 mx-2" />;
+  }
+
+  let enabledApplications;
+
+  if (applicationsQuery?.data?.data && applicationsQuery.data.status === 200) {
+    enabledApplications = applicationsQuery.data.data?.filter(
+      (app: any) => app.status === "enabled"
+    );
+  }
 
   return (
-    <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      <SidebarGroupLabel>Aplicativos</SidebarGroupLabel>
+    // <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+    <SidebarGroup>
+      {enabledApplications.length > 0 && (
+        <SidebarGroupLabel>Aplicativos</SidebarGroupLabel>
+      )}
       <SidebarMenu>
-        {projects.map((item) => (
-          <SidebarMenuItem key={item.name}>
+        {enabledApplications.map((data: any) => (
+          <SidebarMenuItem key={data.name}>
             <SidebarMenuButton asChild>
-              <a href={item.url}>
-                <item.icon />
-                <span>{item.name}</span>
-              </a>
-            </SidebarMenuButton>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuAction showOnHover>
-                  <MoreHorizontal />
-                  <span className="sr-only">More</span>
-                </SidebarMenuAction>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                className="w-48 rounded-lg"
-                side={isMobile ? "bottom" : "right"}
-                align={isMobile ? "end" : "start"}
+              <Link
+                href={`/service/${data._id}?workspace=${workspace}`}
+                passHref
               >
-                <DropdownMenuItem>
-                  <Folder className="text-muted-foreground" />
-                  <span>View Project</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Forward className="text-muted-foreground" />
-                  <span>Share Project</span>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <Trash2 className="text-muted-foreground" />
-                  <span>Delete Project</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                {data.icon?.type == "emoji" && (
+                  <p className="size-5">{data.icon.value}</p>
+                )}
+                {(data.icon?.type == "image" || !data.icon) && (
+                  <Avatar className="size-5">
+                    <AvatarImage
+                      src={getS3Image(data.icon?.value || data.avatarSrc)}
+                    />
+                    <AvatarFallback>{data.avatarFallback}</AvatarFallback>
+                  </Avatar>
+                )}
+                <span>{data.name}</span>
+              </Link>
+            </SidebarMenuButton>
           </SidebarMenuItem>
         ))}
-        <SidebarMenuItem>
-          <SidebarMenuButton className="text-sidebar-foreground/70">
-            <MoreHorizontal className="text-sidebar-foreground/70" />
-            <span>More</span>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
       </SidebarMenu>
     </SidebarGroup>
   );

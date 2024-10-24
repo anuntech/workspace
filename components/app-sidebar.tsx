@@ -28,6 +28,7 @@ import {
 import { WorkspaceSwitcher } from "@/app/(workspace)/_components/sidebar/workspace-switcher";
 import { TeamSwitcher } from "@/app/(workspace)/_components/sidebar/team-switcher";
 import { NavUser } from "@/app/(workspace)/_components/sidebar/nav-user";
+import { NavFooterOptions } from "./nav-footer-options";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
@@ -37,9 +38,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain />
-        {/* <NavProjects projects={data.projects} /> */}
+        <NavProjects />
       </SidebarContent>
       <SidebarFooter>
+        <NavFooterOptions />
         <NavUser />
       </SidebarFooter>
       <SidebarRail />
