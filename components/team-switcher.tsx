@@ -91,7 +91,7 @@ export function TeamSwitcher() {
             <div className="flex items-center">
               <Search className="h-4" />
               <Input
-                className="h-7 border-none"
+                className="h-7 border-none focus-visible:ring-0 focus-visible:outline-none"
                 placeholder="Procurar workspace..."
                 onChange={(e) => setFilter(e.target.value)}
               />
