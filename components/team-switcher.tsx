@@ -66,7 +66,7 @@ export function TeamSwitcher() {
               {actualWorkspace?.icon.type == "emoji" ? (
                 <p className="text-[25px]">{actualWorkspace?.icon.value}</p>
               ) : (
-                <div className="flex aspect-square size-7 items-center justify-center rounded-lg  text-sidebar-primary-foreground bg-sidebar-primary">
+                <div className="flex aspect-square size-7 items-center justify-center rounded-lg">
                   <img
                     className="rounded-lg"
                     src={getS3Image(actualWorkspace?.icon.value)}
