@@ -96,8 +96,8 @@ export function TeamSwitcher() {
                 onChange={(e) => setFilter(e.target.value)}
               />
             </div>
+            <DropdownMenuSeparator />
             <div className="max-h-80 overflow-y-auto overflow-x-hidden">
-              <DropdownMenuSeparator />
               <DropdownMenuLabel className="text-xs text-muted-foreground">
                 Workspaces
               </DropdownMenuLabel>
