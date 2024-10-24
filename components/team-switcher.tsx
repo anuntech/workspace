@@ -9,7 +9,6 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -19,8 +18,6 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { useEffect, useState } from "react";
-import { ChevronDown } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import api from "@/libs/api";
@@ -34,7 +31,7 @@ export function TeamSwitcher() {
 
   const [filter, setFilter] = useState("");
 
-  const { isPending, data, isSuccess } = useQuery({
+  const { data, isSuccess } = useQuery({
     queryKey: ["workspace"],
     queryFn: async () => api.get("/api/workspace"),
   });
@@ -55,7 +52,6 @@ export function TeamSwitcher() {
   const actualWorkspace = data.data.find(
     (v: any) => v.id === selectedWorkspace
   );
-  console.log(actualWorkspace);
 
   return (
     <SidebarMenu>
@@ -95,7 +91,7 @@ export function TeamSwitcher() {
             <div className="flex items-center">
               <Search className="h-4" />
               <Input
-                className="h-7  border-none"
+                className="h-7 border-none"
                 placeholder="Procurar workspace..."
                 onChange={(e) => setFilter(e.target.value)}
               />
@@ -110,7 +106,10 @@ export function TeamSwitcher() {
               )
               .map((team: any, index: number) => (
                 <DropdownMenuItem key={index} className="gap-2 p-2">
-                  <a href={`/?workspace=${team.id}`} className="flex gap-3">
+                  <a
+                    href={`/?workspace=${team.id}`}
+                    className="flex items-center gap-3"
+                  >
                     <div className="flex size-6 items-center justify-center rounded-sm border">
                       {team.icon.type == "emoji" ? (
                         team.icon.value
@@ -124,7 +123,9 @@ export function TeamSwitcher() {
                         </div>
                       )}
                     </div>
-                    {team.name}
+                    <div className="grid flex-1 text-left text-sm leading-tight">
+                      <span className="truncate">{team.name}</span>
+                    </div>
                   </a>
                 </DropdownMenuItem>
               ))}
