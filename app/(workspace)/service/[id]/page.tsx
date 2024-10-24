@@ -39,7 +39,7 @@ export default function ServicePage({ params }: { params: { id: string } }) {
     <>
       {isIframeLoading && (
         <div className="h-[100vh] flex justify-center items-center">
-          <LoaderCircle className="m-auto animate-spin" />
+          <LoaderCircle className="m-auto animate-spin text-[#3b82f6]" />
         </div>
       )}
       <iframe
