@@ -20,11 +20,11 @@ import {
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "./ui/skeleton";
+import Link from "next/link";
 
 export function NavMain() {
   const urlParams = useSearchParams();
   const workspace = urlParams.get("workspace");
-  const router = useRouter();
 
   const roleQuery = useQuery({
     queryKey: ["workspace/role"],
@@ -41,12 +41,12 @@ export function NavMain() {
       <SidebarMenu>
         <Collapsible asChild className="group/collapsible">
           <SidebarMenuItem>
-            <CollapsibleTrigger asChild>
-              <SidebarMenuButton tooltip={"Dashboard"}>
+            <SidebarMenuButton asChild tooltip={"Dashboard"}>
+              <a href={`/?workspace=${workspace}`}>
                 <House />
                 <span>Dashboard</span>
-              </SidebarMenuButton>
-            </CollapsibleTrigger>
+              </a>
+            </SidebarMenuButton>
           </SidebarMenuItem>
         </Collapsible>
         {roleQuery.isPending ? (
@@ -56,12 +56,15 @@ export function NavMain() {
           !roleQuery.isPending && (
             <Collapsible asChild className="group/collapsible">
               <SidebarMenuItem>
-                <CollapsibleTrigger asChild>
-                  <SidebarMenuButton tooltip={"Configurações"}>
+                <SidebarMenuButton asChild tooltip={"Configurações"}>
+                  <a
+                    href={`/settings?workspace=${workspace}`}
+                    className="w-full"
+                  >
                     <Settings />
                     <span>Configurações</span>
-                  </SidebarMenuButton>
-                </CollapsibleTrigger>
+                  </a>
+                </SidebarMenuButton>
               </SidebarMenuItem>
             </Collapsible>
           )

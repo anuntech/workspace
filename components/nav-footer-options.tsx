@@ -2,19 +2,23 @@
 
 import { LifeBuoy, Sparkles } from "lucide-react";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "./ui/sidebar";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Collapsible } from "./ui/collapsible";
 
 export function NavFooterOptions() {
   const urlParams = useSearchParams();
   const workspace = urlParams.get("workspace");
+  const router = useRouter();
 
   return (
     <SidebarMenu>
       <Collapsible asChild className="group/collapsible">
         <SidebarMenuItem>
           <SidebarMenuButton asChild>
-            <a href={`/?workspace=${workspace}`} className="text-[0.8rem]">
+            <a
+              href={`/settings/plans?workspace=${workspace}`}
+              className="text-[0.8rem]"
+            >
               <Sparkles className="text-[0.8rem]" />
               Upgrade
             </a>
