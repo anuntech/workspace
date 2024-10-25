@@ -1,9 +1,9 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { AvatarPopover } from "./avatar-popover";
 import { getS3Image } from "@/libs/s3-client";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { AvatarPopover } from "./avatar-popover";
 
 interface AvatarSelectorProps {
   onAvatarChange: (avatar: { value: string; type: "image" | "emoji" }) => void;
