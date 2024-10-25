@@ -54,6 +54,11 @@ export function TeamSwitcher() {
     return <Skeleton className="h-11" />;
   }
 
+  if (!selectedWorkspace) {
+    router.push(`/?workspace=${data.data[0].id}`);
+    return;
+  }
+
   const actualWorkspace = data.data.find(
     (v: any) => v.id === selectedWorkspace
   );
