@@ -47,38 +47,36 @@ export default function ServicePage({ params }: { params: { id: string } }) {
   );
   return (
     <>
-      <>
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator orientation="vertical" className="mr-2 h-4" />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">Aplicativos</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>{app.name}</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-          </div>
-        </header>
-        {isIframeLoading && (
-          <div className="h-[100vh] flex justify-center items-center">
-            <LoaderCircle className="m-auto animate-spin text-[#3b82f6]" />
-          </div>
-        )}
-        <iframe
-          src={app.applicationUrl}
-          width="100%"
-          height="100%"
-          style={{ border: "none" }}
-          title="Roteiro Digital"
-          onLoad={() => setIsIframeLoading(false)}
-        />
-      </>
+      <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+        <div className="flex items-center gap-2">
+          <SidebarTrigger className="-ml-1" />
+          <Separator orientation="vertical" className="mr-2 h-4" />
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem className="hidden md:block">
+                <BreadcrumbLink href="#">Aplicativos</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator className="hidden md:block" />
+              <BreadcrumbItem>
+                <BreadcrumbPage>{app.name}</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </div>
+      </header>
+      {isIframeLoading && (
+        <div className="h-[100vh] flex justify-center items-center">
+          <LoaderCircle className="m-auto animate-spin text-[#3b82f6]" />
+        </div>
+      )}
+      <iframe
+        src={app.applicationUrl}
+        width="100%"
+        height="100%"
+        style={{ border: "none" }}
+        title="Roteiro Digital"
+        onLoad={() => setIsIframeLoading(false)}
+      />
     </>
   );
 }

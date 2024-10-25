@@ -32,7 +32,7 @@ export default async function WorkspaceLayout({
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">{children}</div>
+        <div className="flex flex-1 flex-col p-4 pt-0">{children}</div>
       </SidebarInset>
     </SidebarProvider>
   );
