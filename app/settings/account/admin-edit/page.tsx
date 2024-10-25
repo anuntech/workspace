@@ -1,9 +1,18 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { api } from "@/libs/api";
@@ -117,175 +126,195 @@ export default function AdminEditPage() {
     setSharedWith((prev) => prev.filter((_, i) => i !== index));
   };
   return (
-    <div className="flex flex-col  items-center p-10">
-      <form
-        className="w-full max-w-3xl space-y-5"
-        onSubmit={handleSubmit(onSubmit)}
-      >
-        <h1 className="text-2xl">Editar produto</h1>
-        <Separator />
-        <section className="grid grid-cols-2 gap-8 py-5">
-          <div>
-            <p>Fotos galeria do app</p>
-            <span className="text-sm text-muted-foreground">
-              Digite o nome que será mostrado publicamente como identificação do
-              seu workspace em todas as interações na plataforma.
-            </span>
-          </div>
-          <div className="flex justify-end ">
-            <Input
-              className="cursor-pointer"
-              placeholder="Nome..."
-              type="file"
-              multiple
-              {...register("galeryPhotos")}
-              disabled={isSubmitting}
-            />
-          </div>
-        </section>
-        <Separator />
-        <section className="grid grid-cols-2 gap-8 py-5">
-          <div>
-            <p>
-              Nome da aplicação <span className="text-red-400">*</span>
-            </p>
-            <span className="text-sm text-muted-foreground">
-              Digite o nome que será mostrado publicamente como identificação do
-              seu workspace em todas as interações na plataforma.
-            </span>
-          </div>
-          <div className="flex justify-end">
-            <Input
-              placeholder="Nome..."
-              defaultValue={application?.name}
-              {...register("name", { required: true })}
-              disabled={isSubmitting}
-            />
-          </div>
-        </section>
-        <Separator />
-        <section className="grid grid-cols-2 gap-8 py-5">
-          <div>
-            <p>
-              Cta da aplicação <span className="text-red-400">*</span>
-            </p>
-            <span className="text-sm text-muted-foreground">
-              Digite o nome que será mostrado publicamente como identificação do
-              seu workspace em todas as interações na plataforma.
-            </span>
-          </div>
-          <div className="flex justify-end">
-            <Input
-              placeholder="Cta..."
-              {...register("cta", { required: true })}
-              disabled={isSubmitting}
-              defaultValue={application?.cta}
-            />
-          </div>
-        </section>
-        <Separator />
-        <section className="grid grid-cols-2 gap-8 py-5">
-          <div>
-            <p>
-              Descrição da aplicação <span className="text-red-400">*</span>
-            </p>
-            <span className="text-sm text-muted-foreground">
-              Digite o nome que será mostrado publicamente como identificação do
-              seu workspace em todas as interações na plataforma.
-            </span>
-          </div>
-          <div className="flex justify-end">
-            <Textarea
-              placeholder="Descrição da aplicação..."
-              className="resize-none"
-              {...register("description", { required: true })}
-              disabled={isSubmitting}
-              defaultValue={application?.description}
-            />
-          </div>
-        </section>
-        <Separator />
-        <section className="grid grid-cols-2 gap-8 py-5">
-          <div>
-            <p>
-              Título da descrição <span className="text-red-400">*</span>
-            </p>
-            <span className="text-sm text-muted-foreground">
-              Digite o nome que será mostrado publicamente como identificação do
-              seu workspace em todas as interações na plataforma.
-            </span>
-          </div>
-          <div className="flex justify-end">
-            <Input
-              placeholder="Título da descrição..."
-              {...register("titleDescription", { required: true })}
-              defaultValue={application?.descriptionTitle}
-              disabled={isSubmitting}
-            />
-          </div>
-        </section>
-        <Separator />
-        <section className="grid grid-cols-2 gap-8 py-5">
-          <div>
-            <p>
-              URL para Iframe <span className="text-red-400">*</span>
-            </p>
-            <span className="text-sm text-muted-foreground">
-              Digite o nome que será mostrado publicamente como identificação do
-              seu workspace em todas as interações na plataforma.
-            </span>
-          </div>
-          <div className="flex justify-end">
-            <Input
-              placeholder="URL para Iframe..."
-              {...register("iframeUrl", { required: true })}
-              defaultValue={application.applicationUrl}
-              disabled={isSubmitting}
-            />
-          </div>
-        </section>
-        <Separator />
-        <section className="grid grid-cols-2 gap-8 py-5">
-          <div>
-            <p>Compartilhar com</p>
-            <span className="text-sm text-muted-foreground">
-              Digite o id do workspace e pressione Enter para adicionar à lista.
-            </span>
-          </div>
-          <div className="flex flex-col items-end">
-            <Input
-              placeholder="Digite e pressione Enter..."
-              value={currentInput}
-              onChange={(e) => setCurrentInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-              disabled={isSubmitting}
-            />
-            <div className="mt-2 flex flex-wrap">
-              {sharedWith?.map((value, index) => (
-                <Badge key={index} className="mr-2 mb-2">
-                  {value}
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveBadge(index)}
-                    className="ml-1 text-white"
-                  >
-                    &times;
-                  </button>
-                </Badge>
-              ))}
+    <>
+      <header className="flex sticky top-0 bg-background h-16 shrink-0 items-center gap-2 px-4">
+        <SidebarTrigger className="-ml-1" />
+        <Separator orientation="vertical" className="mr-2 h-4" />
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem className="hidden md:block">
+              <BreadcrumbLink href="#">
+                Building Your Application
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator className="hidden md:block" />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Data Fetching</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+      </header>
+      <div className="flex flex-col  items-center p-10">
+        <form
+          className="w-full max-w-3xl space-y-5"
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <h1 className="text-2xl">Editar produto</h1>
+          <Separator />
+          <section className="grid grid-cols-2 gap-8 py-5">
+            <div>
+              <p>Fotos galeria do app</p>
+              <span className="text-sm text-muted-foreground">
+                Digite o nome que será mostrado publicamente como identificação
+                do seu workspace em todas as interações na plataforma.
+              </span>
             </div>
-          </div>
-        </section>
+            <div className="flex justify-end ">
+              <Input
+                className="cursor-pointer"
+                placeholder="Nome..."
+                type="file"
+                multiple
+                {...register("galeryPhotos")}
+                disabled={isSubmitting}
+              />
+            </div>
+          </section>
+          <Separator />
+          <section className="grid grid-cols-2 gap-8 py-5">
+            <div>
+              <p>
+                Nome da aplicação <span className="text-red-400">*</span>
+              </p>
+              <span className="text-sm text-muted-foreground">
+                Digite o nome que será mostrado publicamente como identificação
+                do seu workspace em todas as interações na plataforma.
+              </span>
+            </div>
+            <div className="flex justify-end">
+              <Input
+                placeholder="Nome..."
+                defaultValue={application?.name}
+                {...register("name", { required: true })}
+                disabled={isSubmitting}
+              />
+            </div>
+          </section>
+          <Separator />
+          <section className="grid grid-cols-2 gap-8 py-5">
+            <div>
+              <p>
+                Cta da aplicação <span className="text-red-400">*</span>
+              </p>
+              <span className="text-sm text-muted-foreground">
+                Digite o nome que será mostrado publicamente como identificação
+                do seu workspace em todas as interações na plataforma.
+              </span>
+            </div>
+            <div className="flex justify-end">
+              <Input
+                placeholder="Cta..."
+                {...register("cta", { required: true })}
+                disabled={isSubmitting}
+                defaultValue={application?.cta}
+              />
+            </div>
+          </section>
+          <Separator />
+          <section className="grid grid-cols-2 gap-8 py-5">
+            <div>
+              <p>
+                Descrição da aplicação <span className="text-red-400">*</span>
+              </p>
+              <span className="text-sm text-muted-foreground">
+                Digite o nome que será mostrado publicamente como identificação
+                do seu workspace em todas as interações na plataforma.
+              </span>
+            </div>
+            <div className="flex justify-end">
+              <Textarea
+                placeholder="Descrição da aplicação..."
+                className="resize-none"
+                {...register("description", { required: true })}
+                disabled={isSubmitting}
+                defaultValue={application?.description}
+              />
+            </div>
+          </section>
+          <Separator />
+          <section className="grid grid-cols-2 gap-8 py-5">
+            <div>
+              <p>
+                Título da descrição <span className="text-red-400">*</span>
+              </p>
+              <span className="text-sm text-muted-foreground">
+                Digite o nome que será mostrado publicamente como identificação
+                do seu workspace em todas as interações na plataforma.
+              </span>
+            </div>
+            <div className="flex justify-end">
+              <Input
+                placeholder="Título da descrição..."
+                {...register("titleDescription", { required: true })}
+                defaultValue={application?.descriptionTitle}
+                disabled={isSubmitting}
+              />
+            </div>
+          </section>
+          <Separator />
+          <section className="grid grid-cols-2 gap-8 py-5">
+            <div>
+              <p>
+                URL para Iframe <span className="text-red-400">*</span>
+              </p>
+              <span className="text-sm text-muted-foreground">
+                Digite o nome que será mostrado publicamente como identificação
+                do seu workspace em todas as interações na plataforma.
+              </span>
+            </div>
+            <div className="flex justify-end">
+              <Input
+                placeholder="URL para Iframe..."
+                {...register("iframeUrl", { required: true })}
+                defaultValue={application.applicationUrl}
+                disabled={isSubmitting}
+              />
+            </div>
+          </section>
+          <Separator />
+          <section className="grid grid-cols-2 gap-8 py-5">
+            <div>
+              <p>Compartilhar com</p>
+              <span className="text-sm text-muted-foreground">
+                Digite o id do workspace e pressione Enter para adicionar à
+                lista.
+              </span>
+            </div>
+            <div className="flex flex-col items-end">
+              <Input
+                placeholder="Digite e pressione Enter..."
+                value={currentInput}
+                onChange={(e) => setCurrentInput(e.target.value)}
+                onKeyDown={handleKeyDown}
+                disabled={isSubmitting}
+              />
+              <div className="mt-2 flex flex-wrap">
+                {sharedWith?.map((value, index) => (
+                  <Badge key={index} className="mr-2 mb-2">
+                    {value}
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveBadge(index)}
+                      className="ml-1 text-white"
+                    >
+                      &times;
+                    </button>
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          </section>
 
-        <div className="flex justify-end max-w-3xl items-center mt-20 w-full">
-          <Button
-            type="submit"
-            disabled={isSubmitting || editApplicationMutation.isPending}
-          >
-            Salvar
-          </Button>
-        </div>
-      </form>
-    </div>
+          <div className="flex justify-end max-w-3xl items-center mt-20 w-full">
+            <Button
+              type="submit"
+              disabled={isSubmitting || editApplicationMutation.isPending}
+            >
+              Salvar
+            </Button>
+          </div>
+        </form>
+      </div>
+    </>
   );
 }

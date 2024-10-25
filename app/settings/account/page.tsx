@@ -1,6 +1,14 @@
 "use client";
 
 import { AvatarSelector } from "@/components/avatar-selector";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import {
   Carousel,
@@ -11,6 +19,7 @@ import {
 } from "@/components/ui/carousel";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import { toast } from "@/hooks/use-toast";
 import { base64ToBlob } from "@/lib/utils";
 import api from "@/libs/api";
@@ -130,47 +139,65 @@ export default function AccountPage() {
   };
 
   return (
-    <div className="flex flex-col items-center p-10">
-      <div className="w-full max-w-3xl space-y-5">
-        <form action="POST" onSubmit={handleSubmit(onSubmit)}>
-          <h1 className="text-2xl">Minhas configurações</h1>
-          <Separator />
-          <section className="grid grid-cols-2 gap-8 py-5">
-            <div>
-              <p>Avatar</p>
-              <span className="text-sm text-muted-foreground">
-                Isso será exibido no seu perfil público.
-              </span>
-            </div>
-            <div className="flex justify-center w-full">
-              <div className="flex justify-center w-28 h-28">
-                <AvatarSelector
-                  emojiSize="70px"
-                  data={user?.icon}
-                  imageUrlWithoutS3={!user?.icon ? user?.image : undefined}
-                  onAvatarChange={handleAvatarChange}
+    <>
+      <header className="flex sticky top-0 bg-background h-16 shrink-0 items-center gap-2 px-4">
+        <SidebarTrigger className="-ml-1" />
+        <Separator orientation="vertical" className="mr-2 h-4" />
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem className="hidden md:block">
+              <BreadcrumbLink href="#">
+                Building Your Application
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator className="hidden md:block" />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Data Fetching</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+      </header>
+      <div className="flex flex-col items-center p-10">
+        <div className="w-full max-w-3xl space-y-5">
+          <form action="POST" onSubmit={handleSubmit(onSubmit)}>
+            <h1 className="text-2xl">Minhas configurações</h1>
+            <Separator />
+            <section className="grid grid-cols-2 gap-8 py-5">
+              <div>
+                <p>Avatar</p>
+                <span className="text-sm text-muted-foreground">
+                  Isso será exibido no seu perfil público.
+                </span>
+              </div>
+              <div className="flex justify-center w-full">
+                <div className="flex justify-center w-28 h-28">
+                  <AvatarSelector
+                    emojiSize="70px"
+                    data={user?.icon}
+                    imageUrlWithoutS3={!user?.icon ? user?.image : undefined}
+                    onAvatarChange={handleAvatarChange}
+                  />
+                </div>
+              </div>
+            </section>
+            <Separator />
+            <section className="grid grid-cols-2 gap-8 py-5">
+              <div>
+                <p>Nome</p>
+                <span className="text-sm text-muted-foreground">
+                  Isso será exibido no seu perfil público.
+                </span>
+              </div>
+              <div className="flex justify-end">
+                <Input
+                  placeholder="Nome..."
+                  {...register("name", { required: true })}
+                  onChange={() => setIsChanged(true)}
+                  disabled={isPending || isSubmitting}
                 />
               </div>
-            </div>
-          </section>
-          <Separator />
-          <section className="grid grid-cols-2 gap-8 py-5">
-            <div>
-              <p>Nome</p>
-              <span className="text-sm text-muted-foreground">
-                Isso será exibido no seu perfil público.
-              </span>
-            </div>
-            <div className="flex justify-end">
-              <Input
-                placeholder="Nome..."
-                {...register("name", { required: true })}
-                onChange={() => setIsChanged(true)}
-                disabled={isPending || isSubmitting}
-              />
-            </div>
-          </section>
-          {/* <Separator />
+            </section>
+            {/* <Separator />
           <section className="grid grid-cols-2 gap-8 py-5">
             <div>
               <p>Nome de usuário</p>
@@ -187,46 +214,47 @@ export default function AccountPage() {
               />
             </div>
           </section> */}
-          <Separator />
-          <section className="grid grid-cols-2 gap-8 py-5">
-            <div>
-              <p>E-mail</p>
-              <span className="text-sm text-muted-foreground">
-                Seu e-mail é usado para entrar na sua conta e para nós enviarmos
-                comunicações importantes.
-              </span>
-            </div>
-            <div className="flex justify-end">
-              <Input
-                placeholder="E-mail..."
-                {...register("email", { required: true })}
-                onChange={() => setIsChanged(true)}
-                disabled={true}
-              />
-            </div>
-          </section>
-          <Separator />
-          <section className="grid grid-cols-2 gap-8 py-5">
-            <div>
-              <p className="text-red-500">Deletar conta</p>
-              <span className="text-sm text-muted-foreground">
-                Essa ação é irreversível e resultará na perda de todos os seus
-                dados e acessos.
-              </span>
-            </div>
-            <div className="flex justify-end">
-              <Button type="button" variant="destructive">
-                Deletar conta
+            <Separator />
+            <section className="grid grid-cols-2 gap-8 py-5">
+              <div>
+                <p>E-mail</p>
+                <span className="text-sm text-muted-foreground">
+                  Seu e-mail é usado para entrar na sua conta e para nós
+                  enviarmos comunicações importantes.
+                </span>
+              </div>
+              <div className="flex justify-end">
+                <Input
+                  placeholder="E-mail..."
+                  {...register("email", { required: true })}
+                  onChange={() => setIsChanged(true)}
+                  disabled={true}
+                />
+              </div>
+            </section>
+            <Separator />
+            <section className="grid grid-cols-2 gap-8 py-5">
+              <div>
+                <p className="text-red-500">Deletar conta</p>
+                <span className="text-sm text-muted-foreground">
+                  Essa ação é irreversível e resultará na perda de todos os seus
+                  dados e acessos.
+                </span>
+              </div>
+              <div className="flex justify-end">
+                <Button type="button" variant="destructive">
+                  Deletar conta
+                </Button>
+              </div>
+            </section>
+            <div className="flex justify-end max-w-3xl items-center mt-20 w-full">
+              <Button type="submit" disabled={!isChanged || isSubmitting}>
+                Salvar as alterações
               </Button>
             </div>
-          </section>
-          <div className="flex justify-end max-w-3xl items-center mt-20 w-full">
-            <Button type="submit" disabled={!isChanged || isSubmitting}>
-              Salvar as alterações
-            </Button>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
