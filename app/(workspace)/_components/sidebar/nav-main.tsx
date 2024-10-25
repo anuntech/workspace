@@ -60,10 +60,14 @@ export function NavMain() {
           !roleQuery.isPending && (
             <Collapsible asChild className="group/collapsible">
               <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip={"Configurações"}>
+                <SidebarMenuButton
+                  className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
+                  asChild
+                  tooltip={"Configurações"}
+                >
                   <a
                     href={`/settings?workspace=${workspace}`}
-                    className="w-full hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
+                    className="w-full"
                   >
                     <Settings />
                     <span>Configurações</span>
