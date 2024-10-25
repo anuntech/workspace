@@ -23,6 +23,15 @@ import api from "@/libs/api";
 import { toast } from "@/hooks/use-toast";
 import { base64ToBlob } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 type Workspace = {
   name?: string;
@@ -172,103 +181,123 @@ export default function SettingsPage() {
   );
 
   return (
-    <form action="POST" onSubmit={handleSubmit(onSubmit)}>
-      <div className="flex flex-col  items-center p-10">
-        <div className="w-full max-w-3xl space-y-5">
-          <h1 className="text-2xl">Geral</h1>
-          <Separator />
-          <section className="grid grid-cols-2 gap-8 py-5">
-            <div>
-              <p>Avatar do workspace</p>
-              <span className="text-sm text-muted-foreground">
-                Escolha um avatar que será visível para todos e representará sua
-                identidade digital.
-              </span>
-            </div>
-            <div className="flex justify-center items-center w-full">
-              <div className="flex justify-center w-28 h-28">
-                {workspaceQuery.isPending ||
-                changeWorkspaceAvatarMutation.isPending ? (
-                  <Skeleton className="w-full h-full" />
-                ) : (
-                  <AvatarSelector
-                    emojiSize="70px"
-                    data={selectedWorkspace?.icon}
-                    onAvatarChange={handleAvatarChange}
-                  />
-                )}
+    <>
+      <header className="flex sticky top-0 bg-background h-16 shrink-0 items-center gap-2 px-4">
+        <SidebarTrigger className="-ml-1" />
+        <Separator orientation="vertical" className="mr-2 h-4" />
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem className="hidden md:block">
+              <BreadcrumbLink href="#">
+                Building Your Application
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator className="hidden md:block" />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Data Fetching</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+      </header>
+      <form action="POST" onSubmit={handleSubmit(onSubmit)}>
+        <div className="flex flex-col  items-center p-10">
+          <div className="w-full max-w-3xl space-y-5">
+            <h1 className="text-2xl">Geral</h1>
+            <Separator />
+            <section className="grid grid-cols-2 gap-8 py-5">
+              <div>
+                <p>Avatar do workspace</p>
+                <span className="text-sm text-muted-foreground">
+                  Escolha um avatar que será visível para todos e representará
+                  sua identidade digital.
+                </span>
               </div>
-            </div>
-          </section>
-          <Separator />
-          <section className="grid grid-cols-2 gap-8 py-5">
-            <div>
-              <p>Nome do workspace</p>
-              <span className="text-sm text-muted-foreground">
-                Digite o nome que será mostrado publicamente como identificação
-                do seu workspace em todas as interações na plataforma.
-              </span>
-            </div>
-            <div className="flex justify-end">
-              <Input
-                placeholder="Nome..."
-                {...register("name", { required: true })}
-                onChange={() => setIsChanged(true)}
-                disabled={isPending || isSubmitting}
-              />
-            </div>
-          </section>
-          <Separator />
-          <section className="grid grid-cols-2 gap-8 py-5">
-            <div>
-              <p className="text-red-500">Deletar workspace</p>
-              <span className="text-sm text-muted-foreground">
-                Cuidado! Deletar seu workspace é uma ação permanente que
-                removerá todos os dados, configurações e históricos associados,
-                sem possibilidade de recuperação.
-              </span>
-            </div>
-            <div className="flex justify-end">
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button
-                    variant="destructive"
-                    disabled={roleQuery.data?.role != "owner"}
-                  >
-                    Deletar workspace
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Esta ação não pode ser desfeita. Isso excluirá
-                      permanentemente o seu workspace.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                    <AlertDialogAction
-                      onClick={() => {
-                        deleteWorkspaceMutation.mutate({
-                          workspaceId: workspace,
-                        });
-                      }}
+              <div className="flex justify-center items-center w-full">
+                <div className="flex justify-center w-28 h-28">
+                  {workspaceQuery.isPending ||
+                  changeWorkspaceAvatarMutation.isPending ? (
+                    <Skeleton className="w-full h-full" />
+                  ) : (
+                    <AvatarSelector
+                      emojiSize="70px"
+                      data={selectedWorkspace?.icon}
+                      onAvatarChange={handleAvatarChange}
+                    />
+                  )}
+                </div>
+              </div>
+            </section>
+            <Separator />
+            <section className="grid grid-cols-2 gap-8 py-5">
+              <div>
+                <p>Nome do workspace</p>
+                <span className="text-sm text-muted-foreground">
+                  Digite o nome que será mostrado publicamente como
+                  identificação do seu workspace em todas as interações na
+                  plataforma.
+                </span>
+              </div>
+              <div className="flex justify-end">
+                <Input
+                  placeholder="Nome..."
+                  {...register("name", { required: true })}
+                  onChange={() => setIsChanged(true)}
+                  disabled={isPending || isSubmitting}
+                />
+              </div>
+            </section>
+            <Separator />
+            <section className="grid grid-cols-2 gap-8 py-5">
+              <div>
+                <p className="text-red-500">Deletar workspace</p>
+                <span className="text-sm text-muted-foreground">
+                  Cuidado! Deletar seu workspace é uma ação permanente que
+                  removerá todos os dados, configurações e históricos
+                  associados, sem possibilidade de recuperação.
+                </span>
+              </div>
+              <div className="flex justify-end">
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="destructive"
+                      disabled={roleQuery.data?.role != "owner"}
                     >
-                      Continuar
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </div>
-          </section>
+                      Deletar workspace
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Esta ação não pode ser desfeita. Isso excluirá
+                        permanentemente o seu workspace.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => {
+                          deleteWorkspaceMutation.mutate({
+                            workspaceId: workspace,
+                          });
+                        }}
+                      >
+                        Continuar
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+            </section>
+          </div>
+          <div className="flex justify-end max-w-3xl items-center mt-20 w-full">
+            <Button type="submit" disabled={!isChanged || isSubmitting}>
+              Salvar as alterações
+            </Button>
+          </div>
         </div>
-        <div className="flex justify-end max-w-3xl items-center mt-20 w-full">
-          <Button type="submit" disabled={!isChanged || isSubmitting}>
-            Salvar as alterações
-          </Button>
-        </div>
-      </div>
-    </form>
+      </form>
+    </>
   );
 }

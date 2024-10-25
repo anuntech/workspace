@@ -100,9 +100,12 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar {...props}>
+    <Sidebar
+      {...props}
+      className="bg-[#F4F4F5] border-none" // Add your custom background color here
+    >
       <SidebarHeader>
-        <SearchForm />
+        <SearchForm className="mt-6" />
       </SidebarHeader>
       <SidebarContent className="gap-0">
         {/* We create a collapsible SidebarGroup for each parent. */}
