@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -21,94 +23,58 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-
-// This is sample data.
-const data = {
-  versions: ["1.0.1", "1.1.0-alpha", "2.0.0-beta1"],
-  navMain: [
-    {
-      title: "Getting Started",
-      url: "#",
-      items: [
-        {
-          title: "Installation",
-          url: "#",
-        },
-        {
-          title: "Project Structure",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Building Your Application",
-      url: "#",
-      items: [
-        {
-          title: "Routing",
-          url: "#",
-        },
-        {
-          title: "Data Fetching",
-          url: "#",
-          isActive: true,
-        },
-        {
-          title: "Rendering",
-          url: "#",
-        },
-        {
-          title: "Caching",
-          url: "#",
-        },
-        {
-          title: "Styling",
-          url: "#",
-        },
-        {
-          title: "Optimizing",
-          url: "#",
-        },
-        {
-          title: "Configuring",
-          url: "#",
-        },
-        {
-          title: "Testing",
-          url: "#",
-        },
-        {
-          title: "Authentication",
-          url: "#",
-        },
-        {
-          title: "Deploying",
-          url: "#",
-        },
-        {
-          title: "Upgrading",
-          url: "#",
-        },
-        {
-          title: "Examples",
-          url: "#",
-        },
-      ],
-    },
-  ],
-};
+import { useSearchParams } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
+import { Skeleton } from "./ui/skeleton";
+import { Separator } from "./ui/separator";
+import Link from "next/link";
+import config from "@/config";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const urlParams = useSearchParams();
+  const workspace = urlParams.get("workspace") || "";
+
+  const userQuery = useQuery({
+    queryKey: ["user"],
+    queryFn: () => fetch("/api/user").then((res) => res.json()),
+  });
+
+  // if (userQuery.isPending) {
+  //   return (
+  //     // <div className="space-y-2 mx-3 h-full flex flex-col">
+  //     //   <Skeleton className="h-9" />
+  //     //   <Skeleton className="h-9" />
+  //     //   <Skeleton className="h-9" />
+  //     //   <Skeleton className="h-9" />
+  //     //   <Skeleton className="h-9" />
+  //     //   <Skeleton className="h-9" />
+  //     //   <Skeleton className="h-9" />
+  //     //   <Skeleton className="h-9" />
+  //     //   <Skeleton className="h-9" />
+  //     //   <Skeleton className="h-9" />
+  //     //   <div className="flex-grow mt-auto flex flex-col justify-end gap-2">
+  //     //     <Skeleton className="h-9" />
+  //     //     <Separator />
+  //     //     <Skeleton className="h-9" />
+  //     //   </div>
+  //     // </div>
+  //     // );
+  //   );
+  // }
+
+  const emailDomain = userQuery.data?.email?.split("@")[1];
+
   return (
     <Sidebar
       {...props}
       className="bg-[#F4F4F5] border-none" // Add your custom background color here
+      defaultChecked={true}
     >
       <SidebarHeader>
         <SearchForm className="mt-6" />
       </SidebarHeader>
       <SidebarContent className="gap-0">
-        {/* We create a collapsible SidebarGroup for each parent. */}
+        {/* We create Link collapsible SidebarGroup for each parent. */}
         <Collapsible
           title="Workspace"
           defaultOpen
@@ -128,28 +94,53 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               <SidebarGroupContent className="font-normal">
                 <SidebarMenu>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <a href="#">Visão geral</a>
+                    <SidebarMenuButton
+                      className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
+                      asChild
+                    >
+                      <Link href={`/settings?workspace=${workspace}`}>
+                        Visão geral
+                      </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <a href="#">Loja de aplicativos</a>
+                    <SidebarMenuButton
+                      className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
+                      asChild
+                    >
+                      <Link href={`/settings/apps?workspace=${workspace}`}>
+                        Loja de aplicativos
+                      </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <a href="#">Membros</a>
+                    <SidebarMenuButton
+                      className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
+                      asChild
+                    >
+                      <Link href={`/settings/members?workspace=${workspace}`}>
+                        Membros
+                      </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <a href="#">Planos</a>
+                    <SidebarMenuButton
+                      className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
+                      asChild
+                    >
+                      <Link href={`/settings/plans?workspace=${workspace}`}>
+                        Planos
+                      </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <a href="#">Faturas</a>
+                    <SidebarMenuButton
+                      className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
+                      asChild
+                    >
+                      <Link href="https://billing.stripe.com/p/login/test_00gg2ObKK5nm0lq8ww">
+                        Faturas
+                      </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 </SidebarMenu>
@@ -176,20 +167,41 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               <SidebarGroupContent className="font-normal">
                 <SidebarMenu>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <a href="#">Meu perfil</a>
+                    <SidebarMenuButton
+                      className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
+                      asChild
+                    >
+                      <Link href={`/settings/account?workspace=${workspace}`}>
+                        Meu perfil
+                      </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <a href="#">Workspaces</a>
+                    <SidebarMenuButton
+                      className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
+                      asChild
+                    >
+                      <Link
+                        href={`/settings/account/workspaces?workspace=${workspace}`}
+                      >
+                        Workspaces
+                      </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <a href="#">Administração de aplicativos</a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
+                  {emailDomain == config.domainName && (
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
+                        asChild
+                      >
+                        <Link
+                          href={`/settings/account/apps-admin?workspace=${workspace}`}
+                        >
+                          Administração de aplicativos
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  )}
                 </SidebarMenu>
               </SidebarGroupContent>
             </CollapsibleContent>
@@ -201,9 +213,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarGroupContent>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton>
-                <ChevronLeft className="size-4" />
-                Voltar
+              <SidebarMenuButton asChild>
+                <Link href={`/?workspace=${workspace}`}>
+                  <ChevronLeft className="size-4" />
+                  Voltar
+                </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
