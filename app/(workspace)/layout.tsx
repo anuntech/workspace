@@ -1,12 +1,21 @@
 import { getServerSession } from "next-auth";
-import { Sidebar } from "./_components/sidebar";
 import { authOptions } from "@/libs/next-auth";
 import { redirect } from "next/navigation";
 import config from "@/config";
 import { env } from "process";
 import { RedirectNoneWorkspace } from "@/libs/redirect-none-workspace";
-import { AppSidebar } from "./_components/sidebar/sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/app-sidebar";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { Separator } from "@/components/ui/separator";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 
 export default async function WorkspaceLayout({
   children,
@@ -20,15 +29,11 @@ export default async function WorkspaceLayout({
   }
 
   return (
-    <div className="grid h-screen grid-cols-[230px_1fr] overflow-hidden bg-zinc-50 py-3 pr-3">
-      <RedirectNoneWorkspace>
-        <SidebarProvider>
-          <AppSidebar />
-        </SidebarProvider>
-        <main className="overflow-auto ml-5 rounded-md border bg-white w-full">
-          {children}
-        </main>
-      </RedirectNoneWorkspace>
-    </div>
+    <SidebarProvider>
+      <AppSidebar />
+      <SidebarInset>
+        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">{children}</div>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }
