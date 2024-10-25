@@ -70,7 +70,10 @@ export function NavProjects() {
       <SidebarMenu>
         {enabledApplications.map((data: any) => (
           <SidebarMenuItem key={data.name}>
-            <SidebarMenuButton asChild>
+            <SidebarMenuButton
+              asChild
+              className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
+            >
               <Link
                 href={`/service/${data._id}?workspace=${workspace}`}
                 passHref

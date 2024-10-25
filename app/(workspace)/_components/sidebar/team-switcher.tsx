@@ -71,7 +71,7 @@ export function TeamSwitcher() {
             <SidebarMenuButton
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground
-              group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:justify-center"
+              group-data-[collapsible=icon]:flex hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150 group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:justify-center"
             >
               {actualWorkspace?.icon.type == "emoji" ? (
                 <p className="text-[25px]">{actualWorkspace?.icon.value}</p>

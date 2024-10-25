@@ -33,7 +33,11 @@ import { Separator } from "@/components/ui/separator";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar collapsible="icon" className="border-none" {...props}>
+    <Sidebar
+      collapsible="icon"
+      className="bg-[#F4F4F5] border-none" // Add your custom background color here
+      {...props}
+    >
       <SidebarHeader>
         <TeamSwitcher />
       </SidebarHeader>

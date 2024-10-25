@@ -31,8 +31,8 @@ export default async function WorkspaceLayout({
   return (
     <SidebarProvider>
       <AppSidebar />
-      <SidebarInset>
-        <div className="flex flex-1 flex-col m-1 p-4 pt-0 bg-[#F4F4F5] h-[98vh] rounded-md">
+      <SidebarInset className="bg-[#F4F4F5]">
+        <div className="flex flex-1 bg-white flex-col my-4 mr-4 p-4 pt-0 h-[98vh] rounded-2xl">
           {children}
         </div>
       </SidebarInset>

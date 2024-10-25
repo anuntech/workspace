@@ -18,7 +18,10 @@ export function NavFooterOptions() {
     <SidebarMenu>
       <Collapsible asChild className="group/collapsible">
         <SidebarMenuItem>
-          <SidebarMenuButton asChild>
+          <SidebarMenuButton
+            asChild
+            className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
+          >
             <a
               href={`/settings/plans?workspace=${workspace}`}
               className="text-[0.8rem]"
@@ -31,7 +34,10 @@ export function NavFooterOptions() {
       </Collapsible>
       <Collapsible asChild className="group/collapsible">
         <SidebarMenuItem>
-          <SidebarMenuButton asChild>
+          <SidebarMenuButton
+            asChild
+            className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
+          >
             <a href={`/?workspace=${workspace}`} className="text-[0.8rem]">
               <LifeBuoy className="text-[0.8rem]" />
               Suporte

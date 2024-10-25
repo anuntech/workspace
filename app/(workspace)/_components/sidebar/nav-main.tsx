@@ -41,7 +41,11 @@ export function NavMain() {
       <SidebarMenu>
         <Collapsible asChild className="group/collapsible">
           <SidebarMenuItem>
-            <SidebarMenuButton asChild tooltip={"Dashboard"}>
+            <SidebarMenuButton
+              className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
+              asChild
+              tooltip={"Dashboard"}
+            >
               <a href={`/?workspace=${workspace}`}>
                 <House />
                 <span>Dashboard</span>
@@ -59,7 +63,7 @@ export function NavMain() {
                 <SidebarMenuButton asChild tooltip={"Configurações"}>
                   <a
                     href={`/settings?workspace=${workspace}`}
-                    className="w-full"
+                    className="w-full hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
                   >
                     <Settings />
                     <span>Configurações</span>

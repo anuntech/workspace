@@ -101,14 +101,14 @@ main::-webkit-scrollbar-thumb {
 
 @layer base {
   :root {
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: #f4f4f5; /* Light gray background */
+    --sidebar-foreground: #1a1a1a; /* Darker text for contrast */
+    --sidebar-primary: #1f2937; /* Darker primary color for icons */
+    --sidebar-primary-foreground: #ffffff; /* Light text on primary items */
+    --sidebar-accent: #e5e7eb; /* Accent color (subtle light gray) */
+    --sidebar-accent-foreground: #111827; /* Darker text for accent items */
+    --sidebar-border: #d1d5db; /* Border around sidebar and elements */
+    --sidebar-ring: #3b82f6; /* A blue ring around active items (focus state) */
   }
 
   .dark {

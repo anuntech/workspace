@@ -50,7 +50,7 @@ export function NavUser() {
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground pl-[4px]"
+              className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150 data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground pl-[4px]"
             >
               {data?.icon && (
                 <div className="text-[1.3rem]">
