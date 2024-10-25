@@ -1,9 +1,13 @@
 "use client";
 
 import { LifeBuoy, Sparkles } from "lucide-react";
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "./ui/sidebar";
+import {
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@/components/ui/sidebar";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Collapsible } from "./ui/collapsible";
+import { Collapsible } from "@/components/ui/collapsible";
 
 export function NavFooterOptions() {
   const urlParams = useSearchParams();

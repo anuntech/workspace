@@ -5,7 +5,6 @@ import config from "@/config";
 import { env } from "process";
 import { RedirectNoneWorkspace } from "@/libs/redirect-none-workspace";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/app-sidebar";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -16,6 +15,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "./_components/sidebar/app-sidebar";
 
 export default async function WorkspaceLayout({
   children,
@@ -32,7 +32,9 @@ export default async function WorkspaceLayout({
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <div className="flex flex-1 flex-col p-4 pt-0">{children}</div>
+        <div className="flex flex-1 flex-col m-1 p-4 pt-0 bg-[#F4F4F5] h-[98vh] rounded-md">
+          {children}
+        </div>
       </SidebarInset>
     </SidebarProvider>
   );
