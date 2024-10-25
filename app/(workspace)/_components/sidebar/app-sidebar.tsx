@@ -1,20 +1,6 @@
 "use client";
 
 import * as React from "react";
-import {
-  AudioWaveform,
-  BookOpen,
-  Bot,
-  Command,
-  Frame,
-  GalleryVerticalEnd,
-  House,
-  Map,
-  PieChart,
-  Settings,
-  Settings2,
-  SquareTerminal,
-} from "lucide-react";
 
 import { NavMain } from "@/app/(workspace)/_components/sidebar/nav-main";
 import { NavProjects } from "@/app/(workspace)/_components/sidebar/nav-projects";

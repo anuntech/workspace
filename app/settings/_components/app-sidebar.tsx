@@ -210,7 +210,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarGroupContent>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild>
+              <SidebarMenuButton
+                asChild
+                className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
+              >
                 <Link href={`/?workspace=${workspace}`}>
                   <ChevronLeft className="size-4" />
                   Voltar
