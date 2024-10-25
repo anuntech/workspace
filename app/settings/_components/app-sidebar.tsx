@@ -4,7 +4,6 @@ import * as React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { SearchForm } from "@/components/search-form";
-import { VersionSwitcher } from "@/components/version-switcher";
 import {
   Collapsible,
   CollapsibleContent,
@@ -25,8 +24,6 @@ import {
 } from "@/components/ui/sidebar";
 import { useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { Skeleton } from "./ui/skeleton";
-import { Separator } from "./ui/separator";
 import Link from "next/link";
 import config from "@/config";
 

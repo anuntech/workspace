@@ -1,11 +1,10 @@
 import { getServerSession } from "next-auth";
-import { Sidebar } from "./_components/sidebar";
 import { authOptions } from "@/libs/next-auth";
 import config from "@/config";
 import { redirect } from "next/navigation";
 import { RedirectNoneWorkspace } from "@/libs/redirect-none-workspace";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/app-sidebar";
+import { AppSidebar } from "./_components/app-sidebar";
 
 export default async function SettingsLayout({
   children,
