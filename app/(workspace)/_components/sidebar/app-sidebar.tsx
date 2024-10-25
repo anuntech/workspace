@@ -16,8 +16,8 @@ import {
   SquareTerminal,
 } from "lucide-react";
 
-import { NavMain } from "@/components/nav-main";
-import { NavProjects } from "@/components/nav-projects";
+import { NavMain } from "@/app/(workspace)/_components/sidebar/nav-main";
+import { NavProjects } from "@/app/(workspace)/_components/sidebar/nav-projects";
 import {
   Sidebar,
   SidebarContent,
@@ -29,6 +29,7 @@ import { WorkspaceSwitcher } from "@/app/(workspace)/_components/sidebar/workspa
 import { TeamSwitcher } from "@/app/(workspace)/_components/sidebar/team-switcher";
 import { NavUser } from "@/app/(workspace)/_components/sidebar/nav-user";
 import { NavFooterOptions } from "./nav-footer-options";
+import { Separator } from "@/components/ui/separator";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
@@ -38,6 +39,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain />
+        <Separator className="mx-2 hidden group-data-[collapsible=icon]:block" />
         <NavProjects />
       </SidebarContent>
       <SidebarFooter>

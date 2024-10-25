@@ -27,9 +27,13 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import api from "@/libs/api";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Skeleton } from "./ui/skeleton";
+import { Skeleton } from "../../../../components/ui/skeleton";
 import Link from "next/link";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "../../../../components/ui/avatar";
 import { getS3Image } from "@/libs/s3-client";
 
 export function NavProjects() {
@@ -59,7 +63,9 @@ export function NavProjects() {
     // <SidebarGroup className="group-data-[collapsible=icon]:hidden">
     <SidebarGroup>
       {enabledApplications.length > 0 && (
-        <SidebarGroupLabel>Aplicativos</SidebarGroupLabel>
+        <SidebarGroupLabel className="group-data-[collapsible=icon]:hidden">
+          Aplicativos
+        </SidebarGroupLabel>
       )}
       <SidebarMenu>
         {enabledApplications.map((data: any) => (
