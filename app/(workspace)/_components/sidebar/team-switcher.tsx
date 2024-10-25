@@ -72,6 +72,7 @@ export function TeamSwitcher() {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground
               group-data-[collapsible=icon]:flex hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150 group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:justify-center"
+              tooltip={"Workspaces"}
             >
               {actualWorkspace?.icon.type == "emoji" ? (
                 <p className="text-[25px]">{actualWorkspace?.icon.value}</p>

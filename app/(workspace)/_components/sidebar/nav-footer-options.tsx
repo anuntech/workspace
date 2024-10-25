@@ -21,6 +21,7 @@ export function NavFooterOptions() {
           <SidebarMenuButton
             asChild
             className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
+            tooltip={"Upgrade"}
           >
             <a
               href={`/settings/plans?workspace=${workspace}`}
@@ -37,6 +38,7 @@ export function NavFooterOptions() {
           <SidebarMenuButton
             asChild
             className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
+            tooltip={"Suporte"}
           >
             <a href={`/?workspace=${workspace}`} className="text-[0.8rem]">
               <LifeBuoy className="text-[0.8rem]" />

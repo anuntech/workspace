@@ -73,6 +73,7 @@ export function NavProjects() {
             <SidebarMenuButton
               asChild
               className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
+              tooltip={data.name}
             >
               <Link
                 href={`/service/${data._id}?workspace=${workspace}`}
