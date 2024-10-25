@@ -2,7 +2,6 @@ import { AppSidebar } from "@/app/settings/_components/app-sidebar";
 import {
   Breadcrumb,
   BreadcrumbItem,
-  BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
@@ -28,7 +27,7 @@ export default function Page() {
               <BreadcrumbItem className="hidden md:block">
                 <BreadcrumbLink href="#">
                   Building Your Application
-                </BreadcrumbLink>
+                </BreadcrumbPage>
               </BreadcrumbItem>
               <BreadcrumbSeparator className="hidden md:block" />
               <BreadcrumbItem>
