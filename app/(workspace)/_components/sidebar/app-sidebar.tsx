@@ -32,7 +32,7 @@ import { NavFooterOptions } from "./nav-footer-options";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar collapsible="icon" variant="inset" {...props}>
+    <Sidebar collapsible="icon" className="border-none" {...props}>
       <SidebarHeader>
         <TeamSwitcher />
       </SidebarHeader>
