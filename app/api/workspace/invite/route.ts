@@ -1,6 +1,7 @@
 import connectMongo from "@/libs/mongoose";
 import { authOptions } from "@/libs/next-auth";
 import { sendInviteWorkspaceEmail } from "@/libs/workspace-invite";
+import Plans from "@/models/Plans";
 import User from "@/models/User";
 import Workspace from "@/models/Workspace";
 import { getServerSession } from "next-auth";
@@ -30,12 +31,11 @@ export async function POST(request: Request) {
       );
     }
 
-    if (
-      worksPace.members.length >= 4 &&
-      (worksPace.plan == "free" || !worksPace.plan)
-    ) {
+    const plan = await Plans.findOne({ name: worksPace.plan || "free" });
+
+    if (worksPace.members.length >= plan.membersLimit) {
       return NextResponse.json(
-        { error: "Esse workspace está cheio" },
+        { error: "This workspace is full" },
         { status: 403 }
       );
     }

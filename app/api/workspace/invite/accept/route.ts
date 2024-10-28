@@ -1,6 +1,7 @@
 import connectMongo from "@/libs/mongoose";
 import { authOptions } from "@/libs/next-auth";
 import { verifyWorkspaceInviteToken } from "@/libs/workspace-invite";
+import Plans from "@/models/Plans";
 import User from "@/models/User";
 import Workspace from "@/models/Workspace";
 import mongoose from "mongoose";
@@ -26,6 +27,15 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { error: "Workspace not found" },
         { status: 404 }
+      );
+    }
+
+    const plan = await Plans.findOne({ name: worksPace.plan || "free" });
+
+    if (worksPace.members.length >= plan.membersLimit) {
+      return NextResponse.json(
+        { error: "This workspace is full" },
+        { status: 403 }
       );
     }
 
