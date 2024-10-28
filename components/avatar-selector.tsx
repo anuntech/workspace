@@ -11,6 +11,7 @@ interface AvatarSelectorProps {
   setOnLoad?: Dispatch<SetStateAction<boolean>>;
   imageUrlWithoutS3?: string;
   emojiSize?: string; // px rem ...
+  className?: string;
 }
 
 export function AvatarSelector({
@@ -18,6 +19,7 @@ export function AvatarSelector({
   data,
   imageUrlWithoutS3,
   emojiSize,
+  className,
 }: AvatarSelectorProps) {
   const handleAvatarChange = (newAvatar: {
     value: string;
@@ -27,7 +29,7 @@ export function AvatarSelector({
   };
 
   return (
-    <div className="flex items-center space-x-4 w-full h-full">
+    <div className={cn("flex items-center space-x-4 w-full h-full", className)}>
       <div className="relative w-full h-full group flex items-center justify-center">
         {data?.type === "emoji" ? (
           <div

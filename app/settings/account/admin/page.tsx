@@ -143,19 +143,17 @@ export default function AdminPage() {
         <Separator orientation="vertical" className="mr-2 h-4" />
         <Breadcrumb>
           <BreadcrumbList>
-            <Breadcrumb>
-              <BreadcrumbItem className="hidden md:block">
-                <BreadcrumbLink href="#">Minha conta</BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator className="hidden md:block" />
-              <BreadcrumbItem>
-                <BreadcrumbPage>Administração de aplicativos</BreadcrumbPage>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator className="hidden md:block" />
-              <BreadcrumbItem>
-                <BreadcrumbPage>Criar produto</BreadcrumbPage>
-              </BreadcrumbItem>
-            </Breadcrumb>
+            <BreadcrumbItem className="hidden md:block">
+              <BreadcrumbLink href="#">Minha conta</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator className="hidden md:block" />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Administração de aplicativos</BreadcrumbPage>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator className="hidden md:block" />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Criar produto</BreadcrumbPage>
+            </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
       </header>
@@ -186,6 +184,8 @@ export default function AdminPage() {
                 data={
                   emojiAvatar ? { value: emojiAvatar, type: "emoji" } : null
                 }
+                className="w-[100px]"
+                emojiSize="4rem"
                 imageUrlWithoutS3={imageUrlWithoutS3 ? imageUrlWithoutS3 : null}
                 onAvatarChange={handleAvatarChange}
               />
