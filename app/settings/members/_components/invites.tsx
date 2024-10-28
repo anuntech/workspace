@@ -19,6 +19,7 @@ import api from "@/libs/api";
 import { getS3Image } from "@/libs/s3-client";
 import { Separator } from "@radix-ui/react-dropdown-menu";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import { Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
@@ -80,9 +81,17 @@ export function Invites() {
 
       toast({
         description: "Convite enviado com sucesso!",
-        duration: 7000,
+        duration: 5000,
       });
 
+      reset();
+    },
+    onError: (data: AxiosError) => {
+      toast({
+        description: (data.response.data as any).error,
+        duration: 5000,
+        variant: "destructive",
+      });
       reset();
     },
   });

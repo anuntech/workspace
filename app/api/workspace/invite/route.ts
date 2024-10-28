@@ -25,21 +25,21 @@ export async function POST(request: Request) {
 
     if (worksPace.owner.toString() !== session.user.id) {
       return NextResponse.json(
-        { error: "You do not have permission to invite users" },
+        { error: "Você não possui permissão para convidar usuários" },
         { status: 403 }
       );
     }
 
     if (worksPace.members.length >= 4 && worksPace.plan == "free") {
       return NextResponse.json(
-        { error: "This workspace is full" },
+        { error: "Esse workspace está cheio" },
         { status: 403 }
       );
     }
 
     if (worksPace.invitedMembersEmail.length >= 30) {
       return NextResponse.json(
-        { error: "This workspace has reached the maximum number of invites" },
+        { error: "O limite de convites foi atingido" },
         { status: 403 }
       );
     }
@@ -57,7 +57,7 @@ export async function POST(request: Request) {
     if (alreadyIn || alreadyInvited) {
       return NextResponse.json(
         {
-          error: "This user is already in or already invited in this workspace",
+          error: "Esse usuário já está no workspace ou já foi convidado",
         },
         { status: 403 }
       );
