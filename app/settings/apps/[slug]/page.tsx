@@ -9,6 +9,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/libs/api";
 import { getS3Image } from "@/libs/s3-client";
 import AppGalleryCarousel from "./_components/carousel";
+import { toast } from "@/hooks/use-toast";
+import { AxiosError } from "axios";
 
 export default function AppPage({ params }: { params: { slug: string } }) {
   const searchParams = useSearchParams();
@@ -23,19 +25,21 @@ export default function AppPage({ params }: { params: { slug: string } }) {
   const queryClient = useQueryClient();
 
   const getApplicationMutation = useMutation({
-    mutationFn: async () => {
-      const res = await fetch(`/api/applications/${workspace}/allow`, {
-        body: JSON.stringify({
-          applicationId: params.slug,
-        }),
-        method: "POST",
-      });
-      return res.json();
-    },
+    mutationFn: async () =>
+      await api.post(`/api/applications/${workspace}/allow`, {
+        applicationId: params.slug,
+      }),
     onSuccess: async () => {
       await queryClient.refetchQueries({
         queryKey: ["applications"],
         type: "all",
+      });
+    },
+    onError: (err: AxiosError) => {
+      toast({
+        description: (err.response.data as any).error,
+        duration: 5000,
+        variant: "destructive",
       });
     },
   });
