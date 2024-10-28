@@ -15,6 +15,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
+import api from "@/libs/api";
 import { getS3Image } from "@/libs/s3-client";
 import { Separator } from "@radix-ui/react-dropdown-menu";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -70,27 +71,19 @@ export function Invites() {
   });
 
   const inviteMutation = useMutation({
-    mutationFn: (data: { email: string; workspaceId: string }) =>
-      fetch("/api/workspace/invite", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      }),
+    mutationFn: async (data: { email: string; workspaceId: string }) =>
+      await api.post("/api/workspace/invite", data),
     onSuccess: async (data) => {
-      if (data.status == 200) {
-        await queryClient.refetchQueries({
-          queryKey: ["workspace/invite"],
-        });
+      await queryClient.refetchQueries({
+        queryKey: ["workspace/invite"],
+      });
 
-        toast({
-          description: "Convite enviado com sucesso!",
-          duration: 7000,
-        });
+      toast({
+        description: "Convite enviado com sucesso!",
+        duration: 7000,
+      });
 
-        reset();
-      }
+      reset();
     },
   });
 
