@@ -9,6 +9,8 @@ import { s3Client } from "@/libs/s3-client";
 import mongoose from "mongoose";
 import imageType from "image-type";
 import Applications from "@/models/Applications";
+import User from "@/models/User";
+import config from "@/config";
 
 export async function PATCH(request: Request) {
   try {
@@ -22,12 +24,13 @@ export async function PATCH(request: Request) {
     }
 
     await connectMongo();
-    // if (session.user.email.split("@")[1] !== config.domainName) {
-    //   return NextResponse.json(
-    //     { error: "You have no permission" },
-    //     { status: 403 }
-    //   );
-    // }
+    const user = await User.findOne({ email: session.user.email });
+    if (user.email.split("@")[1] !== config.domainName) {
+      return NextResponse.json(
+        { error: "You have no permission" },
+        { status: 403 }
+      );
+    }
 
     const body = await request.formData();
 

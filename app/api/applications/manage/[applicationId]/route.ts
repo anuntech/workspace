@@ -1,8 +1,10 @@
+import config from "@/config";
 import conf from "@/config";
 import connectMongo from "@/libs/mongoose";
 import { authOptions } from "@/libs/next-auth";
 import { s3Client } from "@/libs/s3-client";
 import Applications from "@/models/Applications";
+import User from "@/models/User";
 import { PutObjectCommand, PutObjectCommandInput } from "@aws-sdk/client-s3";
 import { randomUUID } from "crypto";
 import mongoose from "mongoose";
@@ -16,14 +18,13 @@ export async function PATCH(
   try {
     const session = await getServerSession(authOptions);
 
-    console.log(session.user.email.split("@"), conf.domainName);
-    // if (session.user.email.split("@")[1] !== config.domainName) {
-    //   return NextResponse.json(
-    //     { error: "You have no permission" },
-    //     { status: 403 }
-    //   );
-    // }
-
+    const user = await User.findOne({ email: session.user.email });
+    if (user.email.split("@")[1] !== config.domainName) {
+      return NextResponse.json(
+        { error: "You have no permission" },
+        { status: 403 }
+      );
+    }
     await connectMongo();
 
     const { applicationId } = params;
@@ -114,13 +115,13 @@ export async function DELETE(
   try {
     const session = await getServerSession(authOptions);
 
-    console.log(session.user.email.split("@"), conf.domainName);
-    // if (session.user.email.split("@")[1] !== config.domainName) {
-    //   return NextResponse.json(
-    //     { error: "You have no permission" },
-    //     { status: 403 }
-    //   );
-    // }
+    const user = await User.findOne({ email: session.user.email });
+    if (user.email.split("@")[1] !== config.domainName) {
+      return NextResponse.json(
+        { error: "You have no permission" },
+        { status: 403 }
+      );
+    }
 
     await connectMongo();
 
