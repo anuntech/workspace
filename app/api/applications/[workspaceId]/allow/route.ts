@@ -2,6 +2,7 @@ import connectMongo from "@/libs/mongoose";
 import { authOptions } from "@/libs/next-auth";
 import Applications from "@/models/Applications";
 import MyApplications from "@/models/MyApplications";
+import Plans from "@/models/Plans";
 import Workspace from "@/models/Workspace";
 import mongoose from "mongoose";
 import { getServerSession } from "next-auth";
@@ -42,14 +43,22 @@ export async function POST(
     const myApplications = await MyApplications.findOne({
       workspaceId: params.workspaceId,
     });
+
     const body = await request.json();
 
-    console.log(body);
-
     if (myApplications) {
+      const plan = await Plans.findOne({ name: workspace.plan || "free" });
+      if (myApplications.allowedApplicationsId.length >= plan.appsLimit) {
+        return NextResponse.json(
+          { error: "Atingiu o limite máximo de aplicativos" },
+          { status: 403 }
+        );
+      }
+
       myApplications.allowedApplicationsId.push(
         new mongoose.Types.ObjectId(body.applicationId) as any
       );
+
       await myApplications.save();
 
       return NextResponse.json(myApplications);
