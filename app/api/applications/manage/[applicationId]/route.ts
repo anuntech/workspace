@@ -4,6 +4,7 @@ import connectMongo from "@/libs/mongoose";
 import { authOptions } from "@/libs/next-auth";
 import { s3Client } from "@/libs/s3-client";
 import Applications from "@/models/Applications";
+import MyApplications from "@/models/MyApplications";
 import User from "@/models/User";
 import { PutObjectCommand, PutObjectCommandInput } from "@aws-sdk/client-s3";
 import { randomUUID } from "crypto";
