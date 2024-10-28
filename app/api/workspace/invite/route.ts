@@ -30,7 +30,10 @@ export async function POST(request: Request) {
       );
     }
 
-    if (worksPace.members.length >= 4 && worksPace.plan == "free") {
+    if (
+      worksPace.members.length >= 4 &&
+      (worksPace.plan == "free" || !worksPace.plan)
+    ) {
       return NextResponse.json(
         { error: "Esse workspace está cheio" },
         { status: 403 }
