@@ -142,17 +142,21 @@ export default function AdminPage() {
         <SidebarTrigger className="-ml-1" />
         <Separator orientation="vertical" className="mr-2 h-4" />
         <Breadcrumb>
-          <BreadcrumbItem className="hidden md:block">
-            <BreadcrumbLink href="#">Minha conta</BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator className="hidden md:block" />
-          <BreadcrumbItem>
-            <BreadcrumbPage>Administração de aplicativos</BreadcrumbPage>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator className="hidden md:block" />
-          <BreadcrumbItem>
-            <BreadcrumbPage>Criar produto</BreadcrumbPage>
-          </BreadcrumbItem>
+          <BreadcrumbList>
+            <Breadcrumb>
+              <BreadcrumbItem className="hidden md:block">
+                <BreadcrumbLink href="#">Minha conta</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator className="hidden md:block" />
+              <BreadcrumbItem>
+                <BreadcrumbPage>Administração de aplicativos</BreadcrumbPage>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator className="hidden md:block" />
+              <BreadcrumbItem>
+                <BreadcrumbPage>Criar produto</BreadcrumbPage>
+              </BreadcrumbItem>
+            </Breadcrumb>
+          </BreadcrumbList>
         </Breadcrumb>
       </header>
       <div className="flex flex-col  items-center p-10">
