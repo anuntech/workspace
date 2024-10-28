@@ -73,7 +73,7 @@ export function Invites() {
   const inviteMutation = useMutation({
     mutationFn: async (data: { email: string; workspaceId: string }) =>
       await api.post("/api/workspace/invite", data),
-    onSuccess: async (data) => {
+    onSuccess: async () => {
       await queryClient.refetchQueries({
         queryKey: ["workspace/invite"],
       });

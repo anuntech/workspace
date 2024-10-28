@@ -30,6 +30,20 @@ export async function POST(request: Request) {
       );
     }
 
+    if (worksPace.members.length >= 4 && worksPace.plan == "free") {
+      return NextResponse.json(
+        { error: "This workspace is full" },
+        { status: 403 }
+      );
+    }
+
+    if (worksPace.invitedMembersEmail.length >= 30) {
+      return NextResponse.json(
+        { error: "This workspace has reached the maximum number of invites" },
+        { status: 403 }
+      );
+    }
+
     const user = await User.findOne({ email });
 
     const alreadyIn = worksPace.members?.find(
