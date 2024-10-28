@@ -3,6 +3,7 @@ import { authOptions } from "@/libs/next-auth";
 import { NextResponse } from "next/server";
 import connectMongo from "@/libs/mongoose";
 import Workspace from "@/models/Workspace";
+import MyApplications from "@/models/MyApplications";
 
 export async function DELETE(
   request: Request,
@@ -32,6 +33,7 @@ export async function DELETE(
     }
 
     const deleted = await Workspace.deleteOne({ _id: workspaceId });
+    await MyApplications.deleteMany({ workspaceId: workspaceId });
 
     return NextResponse.json(deleted, { status: 200 });
   } catch (e) {
