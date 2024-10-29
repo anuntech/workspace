@@ -6,7 +6,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Collapsible } from "@/components/ui/collapsible";
 import { useQuery } from "@tanstack/react-query";
 import api from "@/libs/api";

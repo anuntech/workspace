@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { PlanItem } from "./_components/plan-item";
@@ -11,8 +13,25 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { useQuery } from "@tanstack/react-query";
+import api from "@/libs/api";
+import { useSearchParams } from "next/navigation";
 
 export default function PlansPage() {
+  const workspaceQuery = useQuery({
+    queryKey: ["workspace"],
+    queryFn: async () => api.get("/api/workspace"),
+  });
+
+  const searchParams = useSearchParams();
+  const actualWorkspace = workspaceQuery.data?.data?.find(
+    (works: any) => works.id === searchParams.get("workspace")
+  );
+
+  if (workspaceQuery.isPending) {
+    return <div>Carregando...</div>;
+  }
+
   return (
     <>
       <header className="flex sticky top-0 bg-background h-16 shrink-0 items-center gap-2 px-4">
@@ -43,9 +62,13 @@ export default function PlansPage() {
                   <span className="text-xs text-muted-foreground">por mês</span>
                 </div>
                 <div className="flex justify-center">
-                  <Button className="w-full" variant="outline" disabled>
-                    Plano atual
-                  </Button>
+                  {actualWorkspace?.plan != "premium" ? (
+                    <Button className="w-full" variant="outline" disabled>
+                      Plano atual
+                    </Button>
+                  ) : (
+                    <Button className="w-full">Atualizar</Button>
+                  )}
                 </div>
               </div>
               <Separator />

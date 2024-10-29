@@ -5,11 +5,19 @@ import { Button } from "@/components/ui/button";
 import api from "@/libs/api";
 import config from "@/config";
 import { useSearchParams } from "next/navigation";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 export function Plan() {
   const [isPlanAnnual, setIsPlanAnnual] = useState(true);
   const searchParams = useSearchParams();
+  const workspaceQuery = useQuery({
+    queryKey: ["workspace"],
+    queryFn: async () => api.get("/api/workspace"),
+  });
+
+  const actualWorkspace = workspaceQuery.data?.data?.find(
+    (works: any) => works.id === searchParams.get("workspace")
+  );
 
   const paymentMutation = useMutation({
     mutationFn: async () =>
@@ -63,13 +71,19 @@ export function Plan() {
         </span>
       </div>
       <div className="flex justify-center">
-        <Button
-          className="w-full"
-          disabled={paymentMutation.isPending}
-          onClick={handlePayment}
-        >
-          Atualizar
-        </Button>
+        {actualWorkspace?.plan != "premium" ? (
+          <Button
+            className="w-full"
+            disabled={paymentMutation.isPending}
+            onClick={handlePayment}
+          >
+            Atualizar
+          </Button>
+        ) : (
+          <Button className="w-full" variant="outline" disabled>
+            Plano atual
+          </Button>
+        )}
       </div>
     </div>
   );
