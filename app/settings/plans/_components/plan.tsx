@@ -5,14 +5,15 @@ import { Button } from "@/components/ui/button";
 import api from "@/libs/api";
 import config from "@/config";
 import { useSearchParams } from "next/navigation";
+import { useMutation } from "@tanstack/react-query";
 
 export function Plan() {
   const [isPlanAnnual, setIsPlanAnnual] = useState(true);
   const searchParams = useSearchParams();
 
-  const handlePayment = async () => {
-    try {
-      const { data } = await api.post("/api/stripe/create-checkout", {
+  const paymentMutation = useMutation({
+    mutationFn: async () =>
+      await api.post("/api/stripe/create-checkout", {
         priceId: isPlanAnnual
           ? config.stripe.plans[1].priceId
           : config.stripe.plans[0].priceId,
@@ -20,12 +21,14 @@ export function Plan() {
         cancelUrl: window.location.href,
         mode: "subscription",
         workspaceId: searchParams.get("workspace"),
-      });
-
+      }),
+    onSuccess: ({ data }) => {
       window.location.href = data.url;
-    } catch (e) {
-      console.error(e);
-    }
+    },
+  });
+
+  const handlePayment = () => {
+    paymentMutation.mutate();
   };
 
   return (
@@ -60,7 +63,11 @@ export function Plan() {
         </span>
       </div>
       <div className="flex justify-center">
-        <Button className="w-full" onClick={handlePayment}>
+        <Button
+          className="w-full"
+          disabled={paymentMutation.isPending}
+          onClick={handlePayment}
+        >
           Atualizar
         </Button>
       </div>
