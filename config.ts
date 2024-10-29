@@ -23,7 +23,7 @@ const config = {
         priceId:
           process.env.NODE_ENV === "development"
             ? "price_1QDATbDt9rgw0merdExAQP6j"
-            : "price_456",
+            : "price_1QDATbDt9rgw0merdExAQP6j",
         //  REQUIRED - Name of the plan, displayed on the pricing page
         name: "Workspace",
         // A friendly description of the plan, displayed on the pricing page. Tip: explain why this plan and not others
