@@ -4,6 +4,7 @@ import { authOptions } from "@/libs/next-auth";
 import { createCheckout } from "@/libs/stripe";
 import connectMongo from "@/libs/mongoose";
 import User from "@/models/User";
+import Workspace from "@/models/Workspace";
 
 // This function is used to create a Stripe Checkout Session (one-time payment or subscription)
 // It's called by the <ButtonCheckout /> component
@@ -43,6 +44,27 @@ export async function POST(req: NextRequest) {
 
     await connectMongo();
 
+    const workspace = await Workspace.findById(body.workspaceId);
+    if (!workspace)
+      return NextResponse.json(
+        { error: "Workspace not found" },
+        { status: 404 }
+      );
+
+    if (workspace.owner.toString() !== session.user.id) {
+      return NextResponse.json(
+        { error: "You do not have permission to create a subscription" },
+        { status: 403 }
+      );
+    }
+
+    if (workspace.plan == "premium") {
+      return NextResponse.json(
+        { error: "You can't create a subscription for this workspace" },
+        { status: 403 }
+      );
+    }
+
     const user = await User.findById(session?.user?.id);
 
     const { priceId, mode, successUrl, cancelUrl } = body;
@@ -58,7 +80,7 @@ export async function POST(req: NextRequest) {
       user,
       // If you send coupons from the frontend, you can pass it here
       // couponId: body.couponId,
-      workspaceId: body.workspaceId,
+      workspaceId: workspace.id,
     });
 
     console.log(stripeSessionURL);
