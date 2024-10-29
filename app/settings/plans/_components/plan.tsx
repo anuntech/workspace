@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import api from "@/libs/api";
 import config from "@/config";
 import { useSearchParams } from "next/navigation";
@@ -14,7 +13,9 @@ export function Plan() {
   const handlePayment = async () => {
     try {
       const { data } = await api.post("/api/stripe/create-checkout", {
-        priceId: config.stripe.plans[0].priceId,
+        priceId: isPlanAnnual
+          ? config.stripe.plans[1].priceId
+          : config.stripe.plans[0].priceId,
         successUrl: window.location.href,
         cancelUrl: window.location.href,
         mode: "subscription",
