@@ -27,6 +27,8 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import config from "@/config";
 import api from "@/libs/api";
+import { toast } from "@/hooks/use-toast";
+import { AxiosError } from "axios";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const urlParams = useSearchParams();
@@ -45,6 +47,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       }),
     onSuccess: ({ data }) => {
       window.location.href = data.url;
+    },
+    onError: (err: AxiosError) => {
+      toast({
+        title: "Erro ao acessar a fatura",
+        description: (err.response.data as any)?.error,
+        variant: "destructive",
+      });
     },
   });
 

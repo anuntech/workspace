@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json(
           {
             error:
-              "You don't have a billing account yet. Make a purchase first.",
+              "Você não tem uma conta de pagamento associada. Faça a compra de uma assinatura para acessar este recurso.",
           },
           { status: 400 }
         );
