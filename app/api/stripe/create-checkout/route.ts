@@ -29,6 +29,13 @@ export async function POST(req: NextRequest) {
       },
       { status: 400 }
     );
+  } else if (!body.workspaceId) {
+    return NextResponse.json(
+      {
+        error: "Workspace ID is required",
+      },
+      { status: 400 }
+    );
   }
 
   try {
@@ -51,6 +58,7 @@ export async function POST(req: NextRequest) {
       user,
       // If you send coupons from the frontend, you can pass it here
       // couponId: body.couponId,
+      workspaceId: body.workspaceId,
     });
 
     console.log(stripeSessionURL);

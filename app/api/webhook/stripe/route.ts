@@ -5,6 +5,7 @@ import connectMongo from "@/libs/mongoose";
 import configFile from "@/config";
 import User from "@/models/User";
 import { findCheckoutSession } from "@/libs/stripe";
+import Workspace from "@/models/Workspace";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: "2023-08-16",
@@ -51,6 +52,7 @@ export async function POST(req: NextRequest) {
         const priceId = session?.line_items?.data[0]?.price.id;
         const userId = stripeObject.client_reference_id;
         const plan = configFile.stripe.plans.find((p) => p.priceId === priceId);
+        const workspaceId = stripeObject.metadata?.workspaceId;
 
         if (!plan) break;
 
@@ -82,8 +84,14 @@ export async function POST(req: NextRequest) {
         // Update user data + Grant user access to your product. It's a boolean in the database, but could be a number of credits, etc...
         user.priceId = priceId;
         user.customerId = customerId;
-        user.hasAccess = true;
+        // user.hasAccess = true;
         await user.save();
+
+        const workspace = await Workspace.findById(workspaceId);
+
+        workspace.plan = "premium";
+
+        workspace.save();
 
         // Extra: send email with user link, product page, etc...
         // try {
@@ -123,6 +131,14 @@ export async function POST(req: NextRequest) {
         user.hasAccess = false;
         await user.save();
 
+        const workspaceId = stripeObject.metadata?.workspaceId;
+
+        const workspace = await Workspace.findById(workspaceId);
+
+        workspace.plan = "free";
+
+        workspace.save();
+
         break;
       }
 
@@ -144,6 +160,11 @@ export async function POST(req: NextRequest) {
         // Grant user access to your product. It's a boolean in the database, but could be a number of credits, etc...
         user.hasAccess = true;
         await user.save();
+
+        const workspaceId = stripeObject.metadata?.workspaceId;
+        const workspace = await Workspace.findById(workspaceId);
+        workspace.plan = "premium";
+        workspace.save();
 
         break;
       }

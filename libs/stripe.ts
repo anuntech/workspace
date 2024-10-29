@@ -11,6 +11,7 @@ interface CreateCheckoutParams {
     customerId?: string;
     email?: string;
   };
+  workspaceId: string;
 }
 
 interface CreateCustomerPortalParams {
@@ -27,6 +28,7 @@ export const createCheckout = async ({
   cancelUrl,
   priceId,
   couponId,
+  workspaceId,
 }: CreateCheckoutParams): Promise<string> => {
   try {
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
@@ -78,6 +80,9 @@ export const createCheckout = async ({
       success_url: successUrl,
       cancel_url: cancelUrl,
       ...extraParams,
+      metadata: {
+        workspaceId,
+      },
     });
 
     return stripeSession.url;
