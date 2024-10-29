@@ -24,6 +24,7 @@ import api from "@/libs/api";
 import { getS3Image } from "@/libs/s3-client";
 import { Input } from "../../../../components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
 
 export function TeamSwitcher() {
   const { isMobile } = useSidebar();
@@ -90,6 +91,9 @@ export function TeamSwitcher() {
                   {actualWorkspace.name}
                 </span>
               </div>
+              {actualWorkspace.plan == "premium" && (
+                <Badge className=" mr-2">Premium</Badge>
+              )}
               <ChevronsUpDown className="ml-auto group-data-[collapsible=icon]:hidden" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
@@ -121,24 +125,29 @@ export function TeamSwitcher() {
                   <DropdownMenuItem key={index} className="gap-2 p-2">
                     <a
                       href={`/?workspace=${team.id}`}
-                      className="flex items-center gap-3"
+                      className="flex items-center justify-between w-full"
                     >
-                      <div className="flex size-6 items-center justify-center rounded-sm border">
-                        {team.icon.type == "emoji" ? (
-                          team.icon.value
-                        ) : (
-                          <div className="w-5 h-5 flex items-center justify-center">
-                            <img
-                              className="rounded-sm"
-                              src={getS3Image(team.icon.value)}
-                              alt="@shadcn"
-                            />
-                          </div>
-                        )}
+                      <div className="flex items-center gap-3">
+                        <div className="flex size-6 items-center justify-center rounded-sm border">
+                          {team.icon.type == "emoji" ? (
+                            team.icon.value
+                          ) : (
+                            <div className="w-5 h-5 flex items-center justify-center">
+                              <img
+                                className="rounded-sm"
+                                src={getS3Image(team.icon.value)}
+                                alt="@shadcn"
+                              />
+                            </div>
+                          )}
+                        </div>
+                        <div className="grid flex-1 text-left text-sm leading-tight">
+                          <span className="truncate">{team.name}</span>
+                        </div>
                       </div>
-                      <div className="grid flex-1 text-left text-sm leading-tight">
-                        <span className="truncate">{team.name}</span>
-                      </div>
+                      {team.plan == "premium" && (
+                        <Badge className="ml-auto">Premium</Badge>
+                      )}
                     </a>
                   </DropdownMenuItem>
                 ))}
