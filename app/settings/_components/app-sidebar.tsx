@@ -23,9 +23,10 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { useSearchParams } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import config from "@/config";
+import api from "@/libs/api";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const urlParams = useSearchParams();
@@ -36,28 +37,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     queryFn: () => fetch("/api/user").then((res) => res.json()),
   });
 
-  // if (userQuery.isPending) {
-  //   return (
-  //     // <div className="space-y-2 mx-3 h-full flex flex-col">
-  //     //   <Skeleton className="h-9" />
-  //     //   <Skeleton className="h-9" />
-  //     //   <Skeleton className="h-9" />
-  //     //   <Skeleton className="h-9" />
-  //     //   <Skeleton className="h-9" />
-  //     //   <Skeleton className="h-9" />
-  //     //   <Skeleton className="h-9" />
-  //     //   <Skeleton className="h-9" />
-  //     //   <Skeleton className="h-9" />
-  //     //   <Skeleton className="h-9" />
-  //     //   <div className="flex-grow mt-auto flex flex-col justify-end gap-2">
-  //     //     <Skeleton className="h-9" />
-  //     //     <Separator />
-  //     //     <Skeleton className="h-9" />
-  //     //   </div>
-  //     // </div>
-  //     // );
-  //   );
-  // }
+  const createPortalMutation = useMutation({
+    mutationFn: async () =>
+      await api.post("/api/stripe/create-portal", {
+        returnUrl: window.location.href,
+        customerId: userQuery.data?.customerId,
+      }),
+    onSuccess: ({ data }) => {
+      window.location.href = data.url;
+    },
+  });
 
   const emailDomain = userQuery.data?.email?.split("@")[1];
 
@@ -133,11 +122,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <SidebarMenuItem>
                     <SidebarMenuButton
                       className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
-                      asChild
+                      onClick={() => createPortalMutation.mutate()}
                     >
-                      <Link href="https://billing.stripe.com/p/login/test_00gg2ObKK5nm0lq8ww">
-                        Faturas
-                      </Link>
+                      Faturas
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 </SidebarMenu>
