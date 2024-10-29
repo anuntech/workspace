@@ -53,6 +53,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: "Erro ao acessar a fatura",
         description: (err.response.data as any)?.error,
         variant: "destructive",
+        duration: 7000,
       });
     },
   });
