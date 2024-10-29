@@ -92,7 +92,9 @@ export function TeamSwitcher() {
                 </span>
               </div>
               {actualWorkspace.plan == "premium" && (
-                <Badge className=" mr-2">Premium</Badge>
+                <Badge className="group-data-[collapsible=icon]:hidden mr-2">
+                  Premium
+                </Badge>
               )}
               <ChevronsUpDown className="ml-auto group-data-[collapsible=icon]:hidden" />
             </SidebarMenuButton>
