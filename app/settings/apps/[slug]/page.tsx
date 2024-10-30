@@ -17,6 +17,15 @@ export default function AppPage({ params }: { params: { slug: string } }) {
 
   const workspace = searchParams.get("workspace");
 
+  const workspaceQuery = useQuery({
+    queryKey: ["workspace"],
+    queryFn: async () => await api.get(`/api/workspace`),
+  });
+
+  const actualWorkspace = workspaceQuery.data?.data?.find(
+    (v: any) => v.id === workspace
+  );
+
   const applicationsQuery = useQuery({
     queryKey: ["applications"],
     queryFn: async () => await api.get(`/api/applications/${workspace}`),
@@ -100,9 +109,20 @@ export default function AppPage({ params }: { params: { slug: string } }) {
           </div>
         </section>
         <section className="space-y-5 rounded-md border p-5">
-          <header className="flex justify-between">
-            <div></div>
-            {alreadyEnabled ? (
+          <header className="flex justify-end">
+            {application.workspaceAccess == "premium" &&
+            actualWorkspace.plan != "premium" ? (
+              // A button to user to upgrade to premium
+              <Link href={`/settings/plans?workspace=${workspace}`}>
+                <Button
+                  type="button"
+                  className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-semibold px-4 py-2 rounded-lg shadow-lg hover:shadow-xl transform transition-transform duration-300 ease-in-out hover:scale-105"
+                >
+                  <CirclePlus className="mr-2 size-5" />
+                  Upgrade para Premium
+                </Button>
+              </Link>
+            ) : alreadyEnabled ? (
               <Button
                 type="button"
                 onClick={() => deleteApplicationMutation.mutate()}

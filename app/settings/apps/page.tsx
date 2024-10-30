@@ -81,7 +81,7 @@ export default function AppsPage() {
                       >
                         <Card className="relative">
                           {app.workspaceAccess == "premium" && (
-                            <div className="absolute top-0 right-0 bg-blue-500 text-white px-2 py-1 text-xs font-bold transform rotate-12 shadow-md">
+                            <div className="absolute top-0 right-0 bg-black text-white px-2 py-1 text-xs font-bold transform rotate-12 shadow-md">
                               Premium
                             </div>
                           )}
@@ -176,7 +176,7 @@ export default function AppsPage() {
                   >
                     <Card className="relative">
                       {app.isPremium && (
-                        <div className="absolute top-0 right-0 bg-blue-500 text-white px-2 py-1 text-xs font-bold transform rotate-12 shadow-md">
+                        <div className="absolute top-0 right-0 bg-black text-white px-2 py-1 text-xs font-bold transform rotate-12 shadow-md">
                           Premium
                         </div>
                       )}
