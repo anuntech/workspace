@@ -1,14 +1,26 @@
 services:
-  mongodb:
-    image: "mongo:latest"
+  nextjs-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nextjs-container
     ports:
-      - "27017:27017"
-    environment:
-      - MONGO_INITDB_DATABASE=database
-      - MONGODB_DATA_DIR=/data/db
-      - MONDODB_LOG_DIR=/dev/null
+      - "3000:3000"
     volumes:
-      - mongo:/data/db
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=production
 
-volumes:
-  mongo:
+  # db:
+  #   image: postgres:15-alpine
+  #   environment:
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: password
+  #     POSTGRES_DB: mydatabase
+  #   volumes:
+  #     - db_data:/var/lib/postgresql/data
+  #   ports:
+  #     - "5432:5432"
+# volumes:
+#   db_data:
