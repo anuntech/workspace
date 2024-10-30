@@ -79,7 +79,12 @@ export default function AppsPage() {
                         href={`/settings/apps/${app._id}?workspace=${workspace}`}
                         key={app.name}
                       >
-                        <Card>
+                        <Card className="relative">
+                          {app.workspaceAccess == "premium" && (
+                            <div className="absolute top-0 right-0 bg-blue-500 text-white px-2 py-1 text-xs font-bold transform rotate-12 shadow-md">
+                              Premium
+                            </div>
+                          )}
                           <CardContent className="flex items-center gap-3 p-5">
                             {app.icon?.type == "emoji" && (
                               <p className="text-[2rem]">{app.icon.value}</p>
@@ -121,7 +126,12 @@ export default function AppsPage() {
                         href={`/settings/apps/${app._id}?workspace=${workspace}`}
                         key={app.name}
                       >
-                        <Card>
+                        <Card className="relative">
+                          {app.workspaceAccess == "premium" && (
+                            <div className="absolute top-0 right-0 bg-black text-white px-2 py-1 text-xs font-bold transform rotate-12 shadow-md">
+                              Premium
+                            </div>
+                          )}
                           <CardContent className="space-y-3 p-5">
                             <div className="flex items-center gap-3">
                               {app.icon?.type == "emoji" && (
@@ -164,7 +174,12 @@ export default function AppsPage() {
                     href={`/settings/apps/${app._id}?workspace=${workspace}`}
                     key={app.name}
                   >
-                    <Card>
+                    <Card className="relative">
+                      {app.isPremium && (
+                        <div className="absolute top-0 right-0 bg-blue-500 text-white px-2 py-1 text-xs font-bold transform rotate-12 shadow-md">
+                          Premium
+                        </div>
+                      )}
                       <CardContent className="space-y-3 p-5">
                         <div className="flex items-center gap-3">
                           <Avatar>
