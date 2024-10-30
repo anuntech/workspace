@@ -18,6 +18,7 @@ export interface IWorkspace extends Document {
   invitedMembersEmail: string[];
   plan: "premium" | "free";
   priceId: string;
+  workspaceAccess: "free" | "premium";
 }
 
 const workspaceSchema = new mongoose.Schema<IWorkspace>(
@@ -75,6 +76,10 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
     },
     priceId: {
       type: String,
+    },
+    workspaceAccess: {
+      type: String,
+      enum: ["free", "premium"],
     },
   },
   {
