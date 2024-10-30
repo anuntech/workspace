@@ -17,6 +17,7 @@ export interface IApplications extends Document {
     type: "image" | "emoji";
     value: string;
   };
+  workspaceAccess: "free" | "premium";
 }
 
 const applicationSchema = new mongoose.Schema<IApplications>(
@@ -67,6 +68,10 @@ const applicationSchema = new mongoose.Schema<IApplications>(
     workspacesAllowed: {
       type: [mongoose.Schema.Types.ObjectId],
       trim: true,
+    },
+    workspaceAccess: {
+      type: String,
+      enum: ["free", "premium"],
     },
   },
   {

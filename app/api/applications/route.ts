@@ -90,6 +90,7 @@ export async function POST(request: Request) {
         body.get("workspacesAllowed") as string
       ).map((id: string) => new mongoose.Types.ObjectId(id)),
       galleryPhotos: galleryPhotosIds,
+      workspaceAccess: body.get("category"),
     });
 
     return NextResponse.json(application);

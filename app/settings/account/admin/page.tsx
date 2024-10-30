@@ -21,6 +21,7 @@ import { api } from "@/libs/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { WorkspaceAccessRadio } from "./_components/workspace-access-radio";
 
 type Input = {
   name: string;
@@ -47,6 +48,7 @@ export default function AdminPage() {
   const [icon, setIcon] = useState<FormData>(null);
   const [imageUrlWithoutS3, setImageUrlWithoutS3] = useState<string>("");
   const [emojiAvatar, setEmojiAvatar] = useState<string>("");
+  const [category, setCategory] = useState<string>("free");
 
   const saveApplicationMutation = useMutation({
     mutationFn: async (data: FormData) => api.post("/api/applications", data),
@@ -85,6 +87,7 @@ export default function AdminPage() {
     formData.append("workspacesAllowed", JSON.stringify(sharedWith));
     formData.append("icon", icon.get("icon") as File);
     formData.append("iconType", icon.get("iconType") as string);
+    formData.append("category", category);
 
     const galeryPhotos = data.galeryPhotos as unknown as FileList;
     if (galeryPhotos && galeryPhotos.length > 0) {
@@ -172,7 +175,7 @@ export default function AdminPage() {
                 do seu workspace em todas as interações na plataforma.
               </span>
             </div>
-            <div className="flex justify-end">
+            <div className="flex justify-center">
               {/* <Input
               className="cursor-pointer"
               placeholder="Nome..."
@@ -212,6 +215,7 @@ export default function AdminPage() {
             </div>
           </section>
           <Separator />
+
           <section className="grid grid-cols-2 gap-8 py-5">
             <div>
               <p>
@@ -228,6 +232,21 @@ export default function AdminPage() {
                 {...register("name", { required: true })}
                 disabled={isSubmitting}
               />
+            </div>
+          </section>
+          <Separator />
+          <section className="grid grid-cols-2 gap-8 py-5">
+            <div>
+              <p>
+                Categoria<span className="text-red-400">*</span>
+              </p>
+              <span className="text-sm text-muted-foreground">
+                Digite o nome que será mostrado publicamente como identificação
+                do seu workspace em todas as interações na plataforma.
+              </span>
+            </div>
+            <div className="flex">
+              <WorkspaceAccessRadio value={category} setValue={setCategory} />
             </div>
           </section>
           <Separator />
