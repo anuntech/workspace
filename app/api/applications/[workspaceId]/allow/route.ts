@@ -45,6 +45,24 @@ export async function POST(
     });
 
     const body = await request.json();
+    const application = await Applications.findById(body.applicationId);
+
+    if (!application) {
+      return NextResponse.json(
+        { error: "Application do not exists" },
+        { status: 400 }
+      );
+    }
+
+    if (
+      application.workspaceAccess == "premium" &&
+      workspace.plan != "premium"
+    ) {
+      return NextResponse.json(
+        { error: "The workspace is not premium" },
+        { status: 403 }
+      );
+    }
 
     if (myApplications) {
       const plan = await Plans.findOne({ name: workspace.plan || "free" });
@@ -55,9 +73,7 @@ export async function POST(
         );
       }
 
-      myApplications.allowedApplicationsId.push(
-        new mongoose.Types.ObjectId(body.applicationId) as any
-      );
+      myApplications.allowedApplicationsId.push(application.id);
 
       await myApplications.save();
 
