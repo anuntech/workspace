@@ -9,6 +9,8 @@ RUN npm install --production
 
 COPY . .
 
+RUN rm -rf .next
+
 RUN npm run build
 
 EXPOSE 3000
