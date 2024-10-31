@@ -11,6 +11,16 @@ import { getS3Image } from "@/libs/s3-client";
 import AppGalleryCarousel from "./_components/carousel";
 import { toast } from "@/hooks/use-toast";
 import { AxiosError } from "axios";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Separator } from "@/components/ui/separator";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 export default function AppPage({ params }: { params: { slug: string } }) {
   const searchParams = useSearchParams();
@@ -96,99 +106,125 @@ export default function AppPage({ params }: { params: { slug: string } }) {
   const alreadyEnabled = application.status === "enabled";
 
   return (
-    <div className="flex flex-col items-center p-10">
-      <div className="w-full max-w-3xl space-y-5">
-        <Link
-          href={`/settings/apps?workspace=${workspace}`}
-          className="flex w-max items-center gap-2 text-sm"
-        >
-          <ChevronLeft className="size-4" />
-          Loja de aplicativos
-        </Link>
-        <section className="flex gap-3">
-          {application.icon?.type == "emoji" && (
-            <p className="text-[2rem]">{application.icon.value}</p>
-          )}
-          {(application.icon?.type == "image" || !application.icon) && (
-            <Avatar>
-              <AvatarImage
-                src={getS3Image(
-                  application.icon?.value || application.avatarSrc
-                )}
-              />
-              <AvatarFallback>{application.avatarFallback}</AvatarFallback>
-            </Avatar>
-          )}
-          <div className="flex flex-col">
-            <span>{application.name}</span>
-            <span className="text-sm text-muted-foreground">
-              {application.cta}
-            </span>
-          </div>
-        </section>
-        <section className="space-y-5 rounded-md border p-5">
-          <header className="flex justify-end">
-            {application.workspaceAccess == "premium" &&
-            actualWorkspace?.plan != "premium" ? (
-              // A button to user to upgrade to premium
-              <Link href={`/settings/plans?workspace=${workspace}`}>
+    <>
+      <header className="flex sticky top-0 bg-background h-16 shrink-0 items-center gap-2 px-4">
+        <SidebarTrigger className="-ml-1" />
+        <Separator orientation="vertical" className="mr-2 h-4" />
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem className="hidden md:block">
+              <BreadcrumbLink href="#">Workspace</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator className="hidden md:block" />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Loja de aplicativos</BreadcrumbPage>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator className="hidden md:block" />
+            <BreadcrumbItem>
+              <BreadcrumbPage>{application.name}</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+      </header>
+      <div className="flex flex-col items-center p-10">
+        <div className="w-full max-w-3xl space-y-5">
+          <Link
+            href={`/settings/apps?workspace=${workspace}`}
+            className="flex w-max items-center gap-2 text-sm"
+          >
+            <ChevronLeft className="size-4" />
+            Loja de aplicativos
+          </Link>
+          <section className="flex gap-3">
+            {application.icon?.type == "emoji" && (
+              <p className="text-[2rem]">{application.icon.value}</p>
+            )}
+            {(application.icon?.type == "image" || !application.icon) && (
+              <Avatar>
+                <AvatarImage
+                  src={getS3Image(
+                    application.icon?.value || application.avatarSrc
+                  )}
+                />
+                <AvatarFallback>{application.avatarFallback}</AvatarFallback>
+              </Avatar>
+            )}
+            <div className="flex flex-col">
+              <span>{application.name}</span>
+              <span className="text-sm text-muted-foreground">
+                {application.cta}
+              </span>
+            </div>
+          </section>
+          <section className="space-y-5 rounded-md border p-5">
+            <header className="flex justify-end">
+              {application.workspaceAccess == "premium" &&
+              actualWorkspace?.plan != "premium" ? (
+                // A button to user to upgrade to premium
+                <Link href={`/settings/plans?workspace=${workspace}`}>
+                  <Button
+                    type="button"
+                    className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-semibold px-4 py-2 rounded-lg shadow-lg hover:shadow-xl transform transition-transform duration-300 ease-in-out hover:scale-105"
+                  >
+                    <CirclePlus className="mr-2 size-5" />
+                    Upgrade para Premium
+                  </Button>
+                </Link>
+              ) : application.workspaceAccess == "buyable" &&
+                !actualWorkspace.boughtApplications?.find(
+                  (id: any) => id === application._id
+                ) ? (
                 <Button
                   type="button"
-                  className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-semibold px-4 py-2 rounded-lg shadow-lg hover:shadow-xl transform transition-transform duration-300 ease-in-out hover:scale-105"
+                  onClick={() => handlePayment()}
+                  disabled={paymentMutation.isPending}
+                  className="bg-gradient-to-r from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 text-white font-semibold px-4 py-2 rounded-lg shadow-lg hover:shadow-xl transform transition-transform duration-300 ease-in-out hover:scale-105"
                 >
                   <CirclePlus className="mr-2 size-5" />
-                  Upgrade para Premium
+                  Comprar
                 </Button>
-              </Link>
-            ) : application.workspaceAccess == "buyable" ? (
-              <Button
-                type="button"
-                onClick={() => handlePayment()}
-                disabled={paymentMutation.isPending}
-                className="bg-gradient-to-r from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 text-white font-semibold px-4 py-2 rounded-lg shadow-lg hover:shadow-xl transform transition-transform duration-300 ease-in-out hover:scale-105"
-              >
-                <CirclePlus className="mr-2 size-5" />
-                Comprar
-              </Button>
-            ) : alreadyEnabled ? (
-              <Button
-                type="button"
-                onClick={() => deleteApplicationMutation.mutate()}
-                variant="destructive"
-                disabled={deleteApplicationMutation.isPending}
-              >
-                <CircleMinus className="mr-2 size-5" onClick={() => {}} />
-                Desinstalar
-              </Button>
+              ) : alreadyEnabled ? (
+                <Button
+                  type="button"
+                  onClick={() => deleteApplicationMutation.mutate()}
+                  variant="destructive"
+                  disabled={deleteApplicationMutation.isPending}
+                >
+                  <CircleMinus className="mr-2 size-5" onClick={() => {}} />
+                  Desinstalar
+                </Button>
+              ) : (
+                <Button
+                  type="button"
+                  onClick={() => getApplicationMutation.mutate()}
+                  disabled={getApplicationMutation.isPending}
+                >
+                  <CirclePlus className="mr-2 size-5" />
+                  Instalar
+                </Button>
+              )}
+            </header>
+            {application.galleryPhotos.length == 0 ? (
+              <div className="grid grid-cols-2 gap-4">
+                <div className="h-52 rounded-md bg-zinc-300" />
+                <div className="h-52 rounded-md bg-zinc-300" />
+              </div>
             ) : (
-              <Button
-                type="button"
-                onClick={() => getApplicationMutation.mutate()}
-                disabled={getApplicationMutation.isPending}
-              >
-                <CirclePlus className="mr-2 size-5" />
-                Instalar
-              </Button>
+              <div className="flex justify-center items-center">
+                <AppGalleryCarousel application={application} />
+              </div>
             )}
-          </header>
-          {application.galleryPhotos.length == 0 ? (
-            <div className="grid grid-cols-2 gap-4">
-              <div className="h-52 rounded-md bg-zinc-300" />
-              <div className="h-52 rounded-md bg-zinc-300" />
+            <div className="space-y-5">
+              <div className="space-y-2">
+                <span>Visão geral</span>
+                <p className="text-muted-foreground">
+                  {application.description}
+                </p>
+              </div>
             </div>
-          ) : (
-            <div className="flex justify-center items-center">
-              <AppGalleryCarousel application={application} />
-            </div>
-          )}
-          <div className="space-y-5">
-            <div className="space-y-2">
-              <span>Visão geral</span>
-              <p className="text-muted-foreground">{application.description}</p>
-            </div>
-          </div>
-        </section>
+          </section>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
