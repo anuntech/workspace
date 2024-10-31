@@ -45,13 +45,6 @@ export async function POST(req: NextRequest) {
       },
       { status: 400 }
     );
-  } else if (!body.priceId) {
-    return NextResponse.json(
-      {
-        error: "priceId is required",
-      },
-      { status: 400 }
-    );
   }
 
   try {
@@ -106,10 +99,10 @@ export async function POST(req: NextRequest) {
 
     const user = await User.findById(session?.user?.id);
 
-    const { priceId, mode, successUrl, cancelUrl } = body;
+    const { mode, successUrl, cancelUrl } = body;
 
     const stripeSessionURL = await createCheckout({
-      priceId,
+      priceId: application.priceId,
       mode,
       successUrl,
       cancelUrl,
