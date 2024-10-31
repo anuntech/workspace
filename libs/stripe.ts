@@ -12,6 +12,8 @@ interface CreateCheckoutParams {
     email?: string;
   };
   workspaceId: string;
+  applicationId?: string;
+  type?: "premium" | "app";
 }
 
 interface CreateCustomerPortalParams {
@@ -29,6 +31,8 @@ export const createCheckout = async ({
   priceId,
   couponId,
   workspaceId,
+  applicationId,
+  type = "premium",
 }: CreateCheckoutParams): Promise<string> => {
   try {
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
@@ -82,6 +86,8 @@ export const createCheckout = async ({
       ...extraParams,
       metadata: {
         workspaceId,
+        applicationId,
+        type,
       },
     });
 
