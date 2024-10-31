@@ -13,12 +13,7 @@ import Applications from "@/models/Applications";
 export async function POST(req: NextRequest) {
   const body = await req.json();
 
-  if (!body.priceId) {
-    return NextResponse.json(
-      { error: "Price ID is required" },
-      { status: 400 }
-    );
-  } else if (!body.successUrl || !body.cancelUrl) {
+  if (!body.successUrl || !body.cancelUrl) {
     return NextResponse.json(
       { error: "Success and cancel URLs are required" },
       { status: 400 }
@@ -66,9 +61,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (workspace.plan == "premium") {
+    if (
+      workspace.boughtApplications?.find(
+        (id) => id.toString() === application.id.toString()
+      )
+    ) {
       return NextResponse.json(
-        { error: "You can't create a subscription for this workspace" },
+        { error: "You can't create a subscription for this application" },
         { status: 403 }
       );
     }

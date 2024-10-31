@@ -68,6 +68,24 @@ export default function AppPage({ params }: { params: { slug: string } }) {
     },
   });
 
+  const paymentMutation = useMutation({
+    mutationFn: async () =>
+      await api.post("/api/applications/create-checkout", {
+        successUrl: window.location.href,
+        cancelUrl: window.location.href,
+        mode: "subscription",
+        workspaceId: searchParams.get("workspace"),
+        applicationId: params.slug,
+      }),
+    onSuccess: ({ data }) => {
+      window.location.href = data.url;
+    },
+  });
+
+  const handlePayment = () => {
+    paymentMutation.mutate();
+  };
+
   if (applicationsQuery.isPending || applicationsQuery.isLoading) {
     return <div>Carregando...</div>;
   }
@@ -125,8 +143,8 @@ export default function AppPage({ params }: { params: { slug: string } }) {
             ) : application.workspaceAccess == "buyable" ? (
               <Button
                 type="button"
-                onClick={() => getApplicationMutation.mutate()}
-                disabled={getApplicationMutation.isPending}
+                onClick={() => handlePayment()}
+                disabled={paymentMutation.isPending}
                 className="bg-gradient-to-r from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 text-white font-semibold px-4 py-2 rounded-lg shadow-lg hover:shadow-xl transform transition-transform duration-300 ease-in-out hover:scale-105"
               >
                 <CirclePlus className="mr-2 size-5" />
