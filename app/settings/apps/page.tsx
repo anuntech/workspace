@@ -132,6 +132,11 @@ export default function AppsPage() {
                               Premium
                             </div>
                           )}
+                          {app.workspaceAccess == "buyable" && (
+                            <div className="absolute top-0 right-0 bg-green-500 text-white px-2 py-1 text-xs font-bold transform rotate-12 shadow-md">
+                              Comprável
+                            </div>
+                          )}
                           <CardContent className="space-y-3 p-5">
                             <div className="flex items-center gap-3">
                               {app.icon?.type == "emoji" && (
