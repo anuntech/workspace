@@ -18,7 +18,7 @@ export interface IWorkspace extends Document {
   invitedMembersEmail: string[];
   plan: "premium" | "free";
   priceId: string;
-  boughtApplications: mongoose.Schema.Types.ObjectId[];
+  boughtApplications: mongoose.Types.ObjectId[];
 }
 
 const workspaceSchema = new mongoose.Schema<IWorkspace>(

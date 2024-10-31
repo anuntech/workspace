@@ -39,7 +39,6 @@ const userSchema = new mongoose.Schema(
       type: {
         type: String,
         enum: ["image", "emoji"],
-        required: true,
       },
       value: String,
     },

@@ -73,7 +73,7 @@ export default function AppPage({ params }: { params: { slug: string } }) {
       await api.post("/api/applications/create-checkout", {
         successUrl: window.location.href,
         cancelUrl: window.location.href,
-        mode: "subscription",
+        mode: "payment",
         workspaceId: searchParams.get("workspace"),
         applicationId: params.slug,
       }),

@@ -68,7 +68,6 @@ export async function POST(req: NextRequest) {
           user = await User.findById(userId);
         } else if (customer.email) {
           user = await User.findOne({ email: customer.email });
-
           if (!user) {
             user = await User.create({
               email: customer.email,
@@ -85,18 +84,21 @@ export async function POST(req: NextRequest) {
         // Update user data + Grant user access to your product. It's a boolean in the database, but could be a number of credits, etc...
         user.priceId = priceId;
         user.customerId = customerId;
+
+        console.log(user);
         // user.hasAccess = true;
         await user.save();
 
         const type = stripeObject.metadata?.type;
         const applicationId = stripeObject.metadata?.applicationId;
         const workspace = await Workspace.findById(workspaceId);
-
+        console.log("BBBBBBBB");
+        console.log(type);
         if (type == "premium") {
           workspace.plan = "premium";
         } else if (type == "app") {
           workspace.boughtApplications.push(
-            new mongoose.Schema.Types.ObjectId(applicationId)
+            new mongoose.Types.ObjectId(applicationId)
           );
         }
 
@@ -174,12 +176,11 @@ export async function POST(req: NextRequest) {
         const type = stripeObject.metadata?.type;
         const applicationId = stripeObject.metadata?.applicationId;
         const workspace = await Workspace.findById(workspaceId);
-
         if (type == "premium") {
           workspace.plan = "premium";
         } else if (type == "app") {
           workspace.boughtApplications.push(
-            new mongoose.Schema.Types.ObjectId(applicationId)
+            new mongoose.Types.ObjectId(applicationId)
           );
         }
 
