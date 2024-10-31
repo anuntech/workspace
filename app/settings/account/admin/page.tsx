@@ -33,6 +33,7 @@ type Input = {
   titleDescription: string;
   profilePhoto: FormData | string;
   galeryPhotos: string;
+  priceId?: string;
 };
 
 export default function AdminPage() {
@@ -78,6 +79,10 @@ export default function AdminPage() {
   const onSubmit: SubmitHandler<Input> = async (data) => {
     const formData = new FormData();
 
+    if (category != "buyable") {
+      data.priceId = null;
+    }
+
     formData.append("name", data.name);
     formData.append("cta", data.cta);
     formData.append("title", data.title);
@@ -88,6 +93,7 @@ export default function AdminPage() {
     formData.append("icon", icon.get("icon") as File);
     formData.append("iconType", icon.get("iconType") as string);
     formData.append("category", category);
+    formData.append("priceId", data.priceId);
 
     const galeryPhotos = data.galeryPhotos as unknown as FileList;
     if (galeryPhotos && galeryPhotos.length > 0) {
@@ -250,6 +256,31 @@ export default function AdminPage() {
             </div>
           </section>
           <Separator />
+
+          {category == "buyable" && (
+            <>
+              <section className="grid grid-cols-2 gap-8 py-5">
+                <div>
+                  <p>
+                    Price id <span className="text-red-400">*</span>
+                  </p>
+                  <span className="text-sm text-muted-foreground">
+                    Digite o nome que será mostrado publicamente como
+                    identificação do seu workspace em todas as interações na
+                    plataforma.
+                  </span>
+                </div>
+                <div className="flex justify-end">
+                  <Input
+                    placeholder="Price id..."
+                    {...register("priceId", { required: true })}
+                    disabled={isSubmitting}
+                  />
+                </div>
+              </section>
+              <Separator />
+            </>
+          )}
           <section className="grid grid-cols-2 gap-8 py-5">
             <div>
               <p>

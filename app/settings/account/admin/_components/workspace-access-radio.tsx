@@ -15,12 +15,16 @@ export function WorkspaceAccessRadio({ value, setValue }: Props) {
       className="flex items-center space-x-2"
     >
       <div className="flex items-center gap-2">
-        <RadioGroupItem value="free" id="r1" />
+        <RadioGroupItem value="free" />
         <Label htmlFor="r1">Free</Label>
       </div>
       <div className="flex items-center space-x-2">
-        <RadioGroupItem value="premium" id="r2" />
+        <RadioGroupItem value="premium" />
         <Label htmlFor="r2">Premium</Label>
+      </div>
+      <div className="flex items-center space-x-2">
+        <RadioGroupItem value="buyable" />
+        <Label htmlFor="r2">Buyable</Label>
       </div>
     </RadioGroup>
   );
