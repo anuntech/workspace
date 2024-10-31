@@ -171,7 +171,7 @@ export default function AppPage({ params }: { params: { slug: string } }) {
                   </Button>
                 </Link>
               ) : application.workspaceAccess == "buyable" &&
-                !actualWorkspace.boughtApplications?.find(
+                !actualWorkspace?.boughtApplications?.find(
                   (id: any) => id === application._id
                 ) ? (
                 <Button
