@@ -6,6 +6,7 @@ import configFile from "@/config";
 import User from "@/models/User";
 import { findCheckoutSession } from "@/libs/stripe";
 import Workspace from "@/models/Workspace";
+import mongoose from "mongoose";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: "2023-08-16",
@@ -87,9 +88,17 @@ export async function POST(req: NextRequest) {
         // user.hasAccess = true;
         await user.save();
 
+        const type = stripeObject.metadata?.type;
+        const applicationId = stripeObject.metadata?.applicationId;
         const workspace = await Workspace.findById(workspaceId);
 
-        workspace.plan = "premium";
+        if (type == "premium") {
+          workspace.plan = "premium";
+        } else if (type == "app") {
+          workspace.boughtApplications.push(
+            new mongoose.Schema.Types.ObjectId(applicationId)
+          );
+        }
 
         workspace.save();
 
@@ -162,8 +171,18 @@ export async function POST(req: NextRequest) {
         await user.save();
 
         const workspaceId = stripeObject.metadata?.workspaceId;
+        const type = stripeObject.metadata?.type;
+        const applicationId = stripeObject.metadata?.applicationId;
         const workspace = await Workspace.findById(workspaceId);
-        workspace.plan = "premium";
+
+        if (type == "premium") {
+          workspace.plan = "premium";
+        } else if (type == "app") {
+          workspace.boughtApplications.push(
+            new mongoose.Schema.Types.ObjectId(applicationId)
+          );
+        }
+
         workspace.save();
 
         break;
