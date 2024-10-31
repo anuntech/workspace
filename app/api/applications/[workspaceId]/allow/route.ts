@@ -55,6 +55,18 @@ export async function POST(
     }
 
     if (
+      application.workspaceAccess == "buyable" &&
+      !workspace.boughtApplications?.find(
+        (id) => id.toString() === application.id.toString()
+      )
+    ) {
+      return NextResponse.json(
+        { error: "You can't allow this application" },
+        { status: 403 }
+      );
+    }
+
+    if (
       application.workspaceAccess == "premium" &&
       workspace.plan != "premium"
     ) {

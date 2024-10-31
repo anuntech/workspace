@@ -111,7 +111,7 @@ export default function AppPage({ params }: { params: { slug: string } }) {
         <section className="space-y-5 rounded-md border p-5">
           <header className="flex justify-end">
             {application.workspaceAccess == "premium" &&
-            actualWorkspace.plan != "premium" ? (
+            actualWorkspace?.plan != "premium" ? (
               // A button to user to upgrade to premium
               <Link href={`/settings/plans?workspace=${workspace}`}>
                 <Button
