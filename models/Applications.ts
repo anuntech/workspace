@@ -17,7 +17,8 @@ export interface IApplications extends Document {
     type: "image" | "emoji";
     value: string;
   };
-  workspaceAccess: "free" | "premium";
+  workspaceAccess: "free" | "premium" | "buyable";
+  priceId?: string;
 }
 
 const applicationSchema = new mongoose.Schema<IApplications>(
@@ -71,7 +72,11 @@ const applicationSchema = new mongoose.Schema<IApplications>(
     },
     workspaceAccess: {
       type: String,
-      enum: ["free", "premium"],
+      enum: ["free", "premium", "buyable"],
+    },
+    priceId: {
+      type: String,
+      required: false,
     },
   },
   {
