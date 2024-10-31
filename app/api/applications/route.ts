@@ -91,6 +91,7 @@ export async function POST(request: Request) {
       ).map((id: string) => new mongoose.Types.ObjectId(id)),
       galleryPhotos: galleryPhotosIds,
       workspaceAccess: body.get("category"),
+      priceId: body.get("priceId"),
     });
 
     return NextResponse.json(application);

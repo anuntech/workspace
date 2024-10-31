@@ -66,6 +66,7 @@ export default function AdminPage() {
       });
       setImageUrlWithoutS3(null);
       setEmojiAvatar(null);
+      setCategory("free");
     },
     onError: () => {
       toast({
