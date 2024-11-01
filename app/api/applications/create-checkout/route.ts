@@ -79,7 +79,10 @@ export async function POST(req: NextRequest) {
         { status: 404 }
       );
 
-    if (application.workspaceAccess != "buyable") {
+    if (
+      application.workspaceAccess != "buyable" &&
+      application.workspaceAccess != "premium"
+    ) {
       return NextResponse.json(
         { error: "You can't create a subscription for this application" },
         { status: 403 }

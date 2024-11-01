@@ -68,7 +68,10 @@ export async function POST(
 
     if (
       application.workspaceAccess == "premium" &&
-      workspace.plan != "premium"
+      workspace.plan != "premium" &&
+      !workspace.boughtApplications?.find(
+        (a) => a.toString() === application.id.toString()
+      )
     ) {
       return NextResponse.json(
         { error: "The workspace is not premium" },
