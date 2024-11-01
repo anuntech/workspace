@@ -49,7 +49,9 @@ export default function AdminPage() {
   const [icon, setIcon] = useState<FormData>(null);
   const [imageUrlWithoutS3, setImageUrlWithoutS3] = useState<string>("");
   const [emojiAvatar, setEmojiAvatar] = useState<string>("");
-  const [category, setCategory] = useState<string>("free");
+  const [category, setCategory] = useState<"free" | "premium" | "buyable">(
+    "free"
+  );
 
   const saveApplicationMutation = useMutation({
     mutationFn: async (data: FormData) => api.post("/api/applications", data),
@@ -80,7 +82,7 @@ export default function AdminPage() {
   const onSubmit: SubmitHandler<Input> = async (data) => {
     const formData = new FormData();
 
-    if (category != "buyable") {
+    if (category != "buyable" && category != "premium") {
       data.priceId = null;
     }
 
@@ -258,7 +260,7 @@ export default function AdminPage() {
           </section>
           <Separator />
 
-          {category == "buyable" && (
+          {(category == "buyable" || category == "premium") && (
             <>
               <section className="grid grid-cols-2 gap-8 py-5">
                 <div>
