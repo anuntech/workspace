@@ -61,6 +61,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const application = await Applications.findById(body.applicationId);
+
     if (
       workspace.boughtApplications?.find(
         (id) => id.toString() === application.id.toString()
@@ -72,7 +74,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const application = await Applications.findById(body.applicationId);
     if (!application)
       return NextResponse.json(
         { error: "Application not found" },
