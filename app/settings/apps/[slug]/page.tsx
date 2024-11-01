@@ -159,7 +159,8 @@ export default function AppPage({ params }: { params: { slug: string } }) {
           <section className="space-y-5 rounded-md border p-5">
             <header className="flex justify-end">
               {(application.workspaceAccess == "buyable" ||
-                application.workspaceAccess == "premium") &&
+                (application.workspaceAccess == "premium" &&
+                  actualWorkspace.plan != "premium")) &&
               !actualWorkspace?.boughtApplications?.find(
                 (id: any) => id === application._id
               ) ? (
