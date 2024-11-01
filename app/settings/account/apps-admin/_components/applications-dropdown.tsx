@@ -18,10 +18,14 @@ import { useSearchParams } from "next/navigation";
 export function ApplicationsDropdown({ application }: { application: any }) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const workspace = useSearchParams().get("workspace");
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   return (
     <>
-      <DropdownMenu>
+      <DropdownMenu
+        open={dropdownOpen || deleteDialogOpen}
+        onOpenChange={(open) => setDropdownOpen(open)}
+      >
         <DropdownMenuTrigger asChild>
           <Button variant="ghost">
             <MoreHorizontal className="w-5 h-5" />
@@ -50,11 +54,13 @@ export function ApplicationsDropdown({ application }: { application: any }) {
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <DeleteDialog
-        applicationId={application.id}
-        open={deleteDialogOpen}
-        setOpen={setDeleteDialogOpen}
-      />
+      {deleteDialogOpen && (
+        <DeleteDialog
+          applicationId={application.id}
+          open={deleteDialogOpen}
+          setOpen={setDeleteDialogOpen}
+        />
+      )}
     </>
   );
 }
