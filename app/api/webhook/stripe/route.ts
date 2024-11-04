@@ -7,6 +7,8 @@ import User from "@/models/User";
 import { findCheckoutSession } from "@/libs/stripe";
 import Workspace from "@/models/Workspace";
 import mongoose from "mongoose";
+import MyApplications from "@/models/MyApplications";
+import Applications from "@/models/Applications";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: "2023-08-16",
@@ -156,13 +158,21 @@ export async function POST(req: NextRequest) {
 
         const workspaceId = stripeObject.metadata?.workspaceId;
 
-        console.log(workspaceId, "WORKSPACE ID");
-
         const workspace = await Workspace.findById(workspaceId);
 
         workspace.plan = "free";
 
         workspace.save();
+        const premiumApps = await Applications.find({
+          workspaceAccess: "premium",
+        });
+
+        const premiumAppIds = premiumApps.map((app) => app._id);
+
+        await MyApplications.updateOne(
+          { workspaceId },
+          { $pull: { allowedApplicationsId: { $in: premiumAppIds } } }
+        );
 
         break;
       }
