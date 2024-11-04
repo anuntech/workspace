@@ -104,6 +104,18 @@ export async function POST(req: NextRequest) {
 
         workspace.save();
 
+        const subscriptionId = stripeObject.subscription; // ID da assinatura criada
+
+        if (subscriptionId) {
+          await stripe.subscriptions.update(subscriptionId as string, {
+            metadata: {
+              workspaceId: stripeObject.metadata.workspaceId,
+              applicationId: stripeObject.metadata.applicationId,
+              type: stripeObject.metadata.type,
+            },
+          });
+        }
+
         // Extra: send email with user link, product page, etc...
         // try {
         //   await sendEmail(...);
@@ -143,6 +155,8 @@ export async function POST(req: NextRequest) {
         await user.save();
 
         const workspaceId = stripeObject.metadata?.workspaceId;
+
+        console.log(workspaceId, "WORKSPACE ID");
 
         const workspace = await Workspace.findById(workspaceId);
 
