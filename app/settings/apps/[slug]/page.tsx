@@ -164,15 +164,26 @@ export default function AppPage({ params }: { params: { slug: string } }) {
               !actualWorkspace?.boughtApplications?.find(
                 (id: any) => id === application._id
               ) ? (
-                <Button
-                  type="button"
-                  onClick={() => handlePayment()}
-                  disabled={paymentMutation.isPending}
-                  className="bg-gradient-to-r from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 text-white font-semibold px-4 py-2 rounded-lg shadow-lg hover:shadow-xl transform transition-transform duration-300 ease-in-out hover:scale-105"
-                >
-                  <CirclePlus className="mr-2 size-5" />
-                  Comprar
-                </Button>
+                <div className="space-x-2">
+                  <Button
+                    type="button"
+                    onClick={() => handlePayment()}
+                    disabled={paymentMutation.isPending}
+                    className="bg-gradient-to-r from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 text-white font-semibold px-4 py-2 rounded-lg shadow-lg hover:shadow-xl transform transition-transform duration-300 ease-in-out hover:scale-105"
+                  >
+                    <CirclePlus className="mr-2 size-5" />
+                    Comprar
+                  </Button>
+                  <Link href={`/settings/plans?workspace=${workspace}`}>
+                    <Button
+                      type="button"
+                      className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-semibold px-4 py-2 rounded-lg shadow-lg hover:shadow-xl transform transition-transform duration-300 ease-in-out hover:scale-105"
+                    >
+                      <CirclePlus className="mr-2 size-5" />
+                      Upgrade para Premium
+                    </Button>
+                  </Link>
+                </div>
               ) : alreadyEnabled ? (
                 <Button
                   type="button"
