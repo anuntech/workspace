@@ -158,12 +158,26 @@ export default function AppPage({ params }: { params: { slug: string } }) {
           </section>
           <section className="space-y-5 rounded-md border p-5">
             <header className="flex justify-end">
-              {(application.workspaceAccess == "buyable" ||
-                (application.workspaceAccess == "premium" &&
-                  actualWorkspace.plan != "premium")) &&
+              {application.workspaceAccess === "buyable" &&
               !actualWorkspace?.boughtApplications?.find(
                 (id: any) => id === application._id
               ) ? (
+                <div className="space-x-2">
+                  <Button
+                    type="button"
+                    onClick={() => handlePayment()}
+                    disabled={paymentMutation.isPending}
+                    className="bg-gradient-to-r from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 text-white font-semibold px-4 py-2 rounded-lg shadow-lg hover:shadow-xl transform transition-transform duration-300 ease-in-out hover:scale-105"
+                  >
+                    <CirclePlus className="mr-2 size-5" />
+                    Comprar
+                  </Button>
+                </div>
+              ) : application.workspaceAccess === "premium" &&
+                actualWorkspace.plan !== "premium" &&
+                !actualWorkspace?.boughtApplications?.find(
+                  (id: any) => id === application._id
+                ) ? (
                 <div className="space-x-2">
                   <Button
                     type="button"
@@ -191,7 +205,7 @@ export default function AppPage({ params }: { params: { slug: string } }) {
                   variant="destructive"
                   disabled={deleteApplicationMutation.isPending}
                 >
-                  <CircleMinus className="mr-2 size-5" onClick={() => {}} />
+                  <CircleMinus className="mr-2 size-5" />
                   Desinstalar
                 </Button>
               ) : (
@@ -205,6 +219,7 @@ export default function AppPage({ params }: { params: { slug: string } }) {
                 </Button>
               )}
             </header>
+
             {application.galleryPhotos.length == 0 ? (
               <div className="grid grid-cols-2 gap-4">
                 <div className="h-52 rounded-md bg-zinc-300" />
