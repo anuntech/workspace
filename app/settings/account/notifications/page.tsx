@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -10,6 +12,8 @@ import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { useQuery } from "@tanstack/react-query";
+import api from "@/libs/api";
 
 const notifications = [
   {
@@ -50,6 +54,13 @@ const notifications = [
 ];
 
 export default function NotificationsPage() {
+  const notificationsQuery = useQuery({
+    queryKey: ["notifications"],
+    queryFn: async () => api.get("/api/user/notifications"),
+  });
+
+  const notifications = notificationsQuery.data?.data || [];
+
   return (
     <>
       <header className="flex sticky top-0 bg-background h-16 shrink-0 items-center gap-2 px-4">
@@ -89,7 +100,7 @@ export default function NotificationsPage() {
         </div>
 
         <div className="mt-6 space-y-4">
-          {notifications.map((notification) => (
+          {notifications.map((notification: any) => (
             <div
               key={notification.id}
               className={`flex items-start p-4 rounded-lg ${
