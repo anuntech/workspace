@@ -4,10 +4,11 @@ import { Model } from "mongoose";
 
 export interface INotification extends Document {
   userId: mongoose.Schema.Types.ObjectId;
-  message: string;
-  isNew: boolean;
-  isInvite: boolean;
+  message?: string;
+  isNew?: boolean;
+  isInvite?: boolean;
   from?: mongoose.Schema.Types.ObjectId;
+  workspaceId?: mongoose.Schema.Types.ObjectId;
 }
 
 const NotificationSchema = new mongoose.Schema<INotification>(
@@ -24,11 +25,15 @@ const NotificationSchema = new mongoose.Schema<INotification>(
     message: String,
     isNew: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     isInvite: {
       type: Boolean,
       default: false,
+    },
+    workspaceId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Workspace",
     },
   },
   {

@@ -1,5 +1,6 @@
 import connectMongo from "@/libs/mongoose";
 import { authOptions } from "@/libs/next-auth";
+import { sendInviteNotification } from "@/libs/notification";
 import { sendInviteWorkspaceEmail } from "@/libs/workspace-invite";
 import Plans from "@/models/Plans";
 import User from "@/models/User";
@@ -73,6 +74,9 @@ export async function POST(request: Request) {
     });
 
     await sendInviteWorkspaceEmail(email, workspaceId, worksPace.name);
+    if (user) {
+      await sendInviteNotification(user.id, session.user.id, worksPace.id);
+    }
 
     return NextResponse.json(user);
   } catch (e) {
