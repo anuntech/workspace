@@ -182,6 +182,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
+                      asChild
+                    >
+                      <Link
+                        href={`/settings/account/workspaces?workspace=${workspace}`}
+                      >
+                        Notificações
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
                   {emailDomain == config.domainName && (
                     <SidebarMenuItem>
                       <SidebarMenuButton

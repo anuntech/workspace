@@ -19,12 +19,16 @@ export default async function SettingsLayout({
 
   return (
     <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset className="bg-[#F4F4F5]">
-        <div className="flex flex-1 bg-white flex-col my-4 mr-4 p-4 pt-0 h-[98vh] rounded-2xl">
-          <main className="overflow-auto rounded-md  bg-white">{children}</main>
-        </div>
-      </SidebarInset>
+      <RedirectNoneWorkspace>
+        <AppSidebar />
+        <SidebarInset className="bg-[#F4F4F5]">
+          <div className="flex flex-1 bg-white flex-col my-4 mr-4 p-4 pt-0 h-[98vh] rounded-2xl">
+            <main className="overflow-auto rounded-md  bg-white">
+              {children}
+            </main>
+          </div>
+        </SidebarInset>
+      </RedirectNoneWorkspace>
     </SidebarProvider>
   );
 }
