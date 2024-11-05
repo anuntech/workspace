@@ -14,6 +14,8 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 import api from "@/libs/api";
+import { getS3Image } from "@/libs/s3-client";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const notifications = [
   {
@@ -23,33 +25,6 @@ const notifications = [
     time: "2 hours ago",
     avatar: "/path/to/avatar1.png", // replace with the actual path to the avatar image
     isNew: true,
-  },
-  {
-    id: 2,
-    user: "@eleanor_mac",
-    message: "commented on your post",
-    comment:
-      "Love the background on this! Would love to learn how you created the mesh gradient effect.",
-    time: "3 hours ago",
-    avatar: "/path/to/avatar2.png",
-    isNew: true,
-  },
-  {
-    id: 3,
-    user: "@eleanor_mac",
-    message: "liked your post",
-    time: "3 hours ago",
-    avatar: "/path/to/avatar2.png",
-    isNew: true,
-  },
-  {
-    id: 4,
-    user: "@ollie_diggs",
-    message: "invited you to Sisyphus Dashboard",
-    time: "4 hours ago",
-    avatar: "/path/to/avatar3.png",
-    isNew: false,
-    isInvite: true,
   },
 ];
 
@@ -107,13 +82,30 @@ export default function NotificationsPage() {
                 notification.isNew ? "bg-gray-100" : "bg-white"
               }`}
             >
-              <Image
-                src={notification.avatar}
-                alt="User avatar"
-                width={40}
-                height={40}
-                className="rounded-full"
-              />
+              {Object.entries(notification?.icon).length > 0 && (
+                <div className="text-[1.3rem]">
+                  {notification.icon.type == "emoji" ? (
+                    notification.icon.value
+                  ) : (
+                    <Image
+                      className="rounded-full"
+                      width={54}
+                      height={54}
+                      src={getS3Image(notification.icon.value)}
+                      alt=""
+                    />
+                  )}
+                </div>
+              )}
+              {Object.entries(notification?.icon).length == 0 && (
+                <Avatar className="size-10">
+                  <AvatarImage
+                    src={notification?.avatar || "/shad.png"}
+                    alt="@shadcn"
+                  />
+                  <AvatarFallback>SC</AvatarFallback>
+                </Avatar>
+              )}
               <div className="ml-4 flex-1">
                 <p className="text-sm">
                   <span className="font-semibold">{notification.user}</span>{" "}

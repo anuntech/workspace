@@ -6,6 +6,7 @@ import Notifications from "@/models/Notification";
 import User from "@/models/User";
 import Workspace from "@/models/Workspace";
 import { formatDistanceToNow } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 export async function GET(request: Request) {
   try {
@@ -25,11 +26,12 @@ export async function GET(request: Request) {
           user: fromUser?.name,
           avatar: fromUser?.image,
           icon: fromUser?.icon,
-          message: `convidou você para ${workspace.name}`,
+          message: `convidou você para o workspace ${workspace.name}`,
           isNew: v.isNew,
           isInvite: v.isInvite,
           time: formatDistanceToNow(new Date((v as any).updatedAt), {
             addSuffix: true,
+            locale: ptBR,
           }),
         };
       })
