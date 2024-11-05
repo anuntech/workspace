@@ -188,7 +188,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       asChild
                     >
                       <Link
-                        href={`/settings/account/workspaces?workspace=${workspace}`}
+                        href={`/settings/account/notifications?workspace=${workspace}`}
                       >
                         Notificações
                       </Link>
