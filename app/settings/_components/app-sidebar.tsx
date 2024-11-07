@@ -62,8 +62,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   const isThereNewNotificationQuery = useQuery({
     queryKey: ["isThereNewNotification"],
-    queryFn: () =>
-      fetch("/api/user/notifications/is-there-new").then((res) => res.json()),
+    queryFn: () => api.get("/api/user/notifications/is-there-new"),
   });
 
   return (
@@ -198,7 +197,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         className="flex items-center space-x-2 justify-between"
                       >
                         Notificações
-                        {isThereNewNotificationQuery?.data && (
+                        {isThereNewNotificationQuery.data?.data && (
                           <div
                             className="w-2 h-2 mr-1 bg-blue-600 rounded-full"
                             title="Notificação nova"

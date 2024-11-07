@@ -27,10 +27,9 @@ import {
 } from "@/components/ui/sidebar";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
-import Image from "next/image";
 import { getS3Image } from "@/libs/s3-client";
 import { signOut } from "next-auth/react";
-import Link from "next/link";
+import api from "@/libs/api";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
@@ -42,6 +41,11 @@ export function NavUser() {
   const searchParams = useSearchParams();
   const workspace = searchParams.get("workspace");
   const router = useRouter();
+
+  const isThereNewNotificationQuery = useQuery({
+    queryKey: ["isThereNewNotification"],
+    queryFn: () => api.get("/api/user/notifications/is-there-new"),
+  });
 
   return (
     <SidebarMenu>
@@ -128,6 +132,20 @@ export function NavUser() {
               >
                 <BadgeCheck />
                 Perfil
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => router.push("/settings/account/notifications")}
+              >
+                <Bell />
+                <div className="flex items-center w-full  justify-between">
+                  <span>Notifications</span>
+                  {isThereNewNotificationQuery.data?.data && (
+                    <div
+                      className="w-2 h-2 bg-blue-600 rounded-full"
+                      title="Notificação nova"
+                    ></div>
+                  )}
+                </div>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
