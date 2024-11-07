@@ -41,6 +41,21 @@ export default function NotificationsPage() {
     },
   });
 
+  const refuseInviteMutation = useMutation({
+    mutationFn: async (data: {
+      notificationId: string;
+      workspaceId: string;
+    }) => {
+      await api.post("/api/workspace/invite/refuse", {
+        notificationId: data.notificationId,
+        workspaceId: data.workspaceId,
+      });
+    },
+    onSuccess: () => {
+      notificationsQuery.refetch();
+    },
+  });
+
   return (
     <>
       <header className="flex sticky top-0 bg-background h-16 shrink-0 items-center gap-2 px-4">
@@ -128,11 +143,20 @@ export default function NotificationsPage() {
               {notification.isInvite && notification.state == "neutral" && (
                 <div className="flex items-center space-x-2">
                   <Button
+                    onClick={() =>
+                      refuseInviteMutation.mutate({
+                        notificationId: notification.id,
+                        workspaceId: notification.workspaceId,
+                      })
+                    }
                     variant="outline"
                     size="sm"
-                    disabled={acceptInviteMutation.isPending}
+                    disabled={
+                      acceptInviteMutation.isPending ||
+                      refuseInviteMutation.isPending
+                    }
                   >
-                    Decline
+                    Recusar
                   </Button>
                   <Button
                     onClick={() =>
@@ -141,24 +165,27 @@ export default function NotificationsPage() {
                         workspaceId: notification.workspaceId,
                       })
                     }
-                    disabled={acceptInviteMutation.isPending}
+                    disabled={
+                      acceptInviteMutation.isPending ||
+                      refuseInviteMutation.isPending
+                    }
                     variant="default"
                     size="sm"
                   >
-                    Accept
+                    Aceitar
                   </Button>
                 </div>
               )}
 
               {notification.isInvite && notification.state == "accepted" && (
-                <div className="flex items-center space-x-2 px-3 py-1 rounded-lg bg-green-100 text-green-600 h-full text-sm justify-center">
+                <div className="flex items-center space-x-2 px-3 py-1 rounded-lg bg-green-100 text-green-600 h-full text-xs justify-center">
                   <CheckIcon className="h-4 w-4" />
                   <span>Convite aceito</span>
                 </div>
               )}
 
               {notification.isInvite && notification.state == "refused" && (
-                <div className="flex items-center space-x-2 px-3 py-1 rounded-lg bg-red-100 text-red-600 h-full text-sm justify-center">
+                <div className="flex items-center space-x-2 px-3 py-1 rounded-lg bg-red-100 text-red-600 h-full text-xs justify-center">
                   <XIcon className="h-4 w-4" />
                   <span>Convite recusado</span>
                 </div>
