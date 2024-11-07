@@ -58,7 +58,7 @@ export default function NotificationsPage() {
 
   return (
     <>
-      <header className="flex sticky top-0 bg-background h-16 shrink-0 items-center gap-2 px-4">
+      <header className="flex sticky top-0 bg-background h-16 shrink-0 items-center gap-2 px-4 shadow-sm">
         <SidebarTrigger className="-ml-1" />
         <Separator orientation="vertical" className="mr-2 h-4" />
         <Breadcrumb>
@@ -75,22 +75,22 @@ export default function NotificationsPage() {
       </header>
 
       <div className="p-6">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-semibold">Your notifications</h1>
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="text-2xl font-semibold">Suas notificações</h1>
           <Button variant="link" className="text-blue-600 font-medium">
-            Mark all as read
+            Marcar todas como lidas
           </Button>
         </div>
 
         <div className="mt-4 flex gap-4">
           <Button variant="outline" size="sm">
-            View all
+            Todas
           </Button>
           <Button variant="outline" size="sm">
-            Messages
+            Mensagens
           </Button>
           <Button variant="outline" size="sm">
-            Invites
+            Convites
           </Button>
         </div>
 
@@ -98,41 +98,44 @@ export default function NotificationsPage() {
           {notifications.map((notification: any) => (
             <div
               key={notification.id}
-              className={`flex items-center p-4 rounded-lg justify-center ${
-                notification.isNew ? "bg-gray-100" : "bg-white"
+              className={`flex items-start p-4 rounded-lg shadow-sm ${
+                notification.isNew
+                  ? "bg-gray-50 border-l-4 border-blue-500"
+                  : "bg-white"
               }`}
             >
-              {Object.entries(notification?.icon).length > 0 && (
-                <div className="text-[1.3rem]">
-                  {notification.icon.type == "emoji" ? (
-                    notification.icon.value
-                  ) : (
-                    <Image
-                      className="rounded-full"
-                      width={54}
-                      height={54}
-                      src={getS3Image(notification.icon.value)}
-                      alt=""
+              <div className="mr-4">
+                {Object.entries(notification?.icon).length > 0 ? (
+                  <div className="text-[1.3rem]">
+                    {notification.icon.type === "emoji" ? (
+                      notification.icon.value
+                    ) : (
+                      <Image
+                        className="rounded-full"
+                        width={54}
+                        height={54}
+                        src={getS3Image(notification.icon.value)}
+                        alt=""
+                      />
+                    )}
+                  </div>
+                ) : (
+                  <Avatar className="size-10">
+                    <AvatarImage
+                      src={notification?.avatar || "/shad.png"}
+                      alt="@shadcn"
                     />
-                  )}
-                </div>
-              )}
-              {Object.entries(notification?.icon).length == 0 && (
-                <Avatar className="size-10">
-                  <AvatarImage
-                    src={notification?.avatar || "/shad.png"}
-                    alt="@shadcn"
-                  />
-                  <AvatarFallback>SC</AvatarFallback>
-                </Avatar>
-              )}
-              <div className="ml-4 flex-1">
+                    <AvatarFallback>SC</AvatarFallback>
+                  </Avatar>
+                )}
+              </div>
+              <div className="ml-2 flex-1">
                 <p className="text-sm">
                   <span className="font-semibold">{notification.user}</span>{" "}
                   {notification.message}
                 </p>
                 {notification.comment && (
-                  <p className="mt-2 text-sm text-gray-600 border-l-2 border-gray-300 pl-2">
+                  <p className="mt-1 text-sm text-gray-600 border-l-2 border-gray-200 pl-2">
                     {notification.comment}
                   </p>
                 )}
@@ -140,8 +143,9 @@ export default function NotificationsPage() {
                   {notification.time}
                 </p>
               </div>
-              {notification.isInvite && notification.state == "neutral" && (
-                <div className="flex items-center space-x-2">
+
+              {notification.isInvite && notification.state === "neutral" && (
+                <div className="flex items-center space-x-2 ml-4">
                   <Button
                     onClick={() =>
                       refuseInviteMutation.mutate({
@@ -156,6 +160,7 @@ export default function NotificationsPage() {
                       refuseInviteMutation.isPending
                     }
                   >
+                    <XIcon className="w-4 h-4 mr-1" />
                     Recusar
                   </Button>
                   <Button
@@ -172,22 +177,32 @@ export default function NotificationsPage() {
                     variant="default"
                     size="sm"
                   >
+                    <CheckIcon className="w-4 h-4 mr-1" />
                     Aceitar
                   </Button>
                 </div>
               )}
 
-              {notification.isInvite && notification.state == "accepted" && (
-                <div className="flex items-center space-x-2 px-3 py-1 rounded-lg bg-green-100 text-green-600 h-full text-xs justify-center">
+              {notification.isInvite && notification.state === "accepted" && (
+                <div className="flex items-center space-x-2 px-3 py-1 ml-4 rounded-lg bg-green-100 text-green-600 text-xs">
                   <CheckIcon className="h-4 w-4" />
                   <span>Convite aceito</span>
                 </div>
               )}
 
-              {notification.isInvite && notification.state == "refused" && (
-                <div className="flex items-center space-x-2 px-3 py-1 rounded-lg bg-red-100 text-red-600 h-full text-xs justify-center">
+              {notification.isInvite && notification.state === "refused" && (
+                <div className="flex items-center space-x-2 px-3 py-1 ml-4 rounded-lg bg-red-100 text-red-600 text-xs">
                   <XIcon className="h-4 w-4" />
                   <span>Convite recusado</span>
+                </div>
+              )}
+
+              {notification.isNew && (
+                <div className="ml-4 mt-2">
+                  <div
+                    className="w-2 h-2 bg-blue-600 rounded-full"
+                    title="Notificação nova"
+                  ></div>
                 </div>
               )}
             </div>
