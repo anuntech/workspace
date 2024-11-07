@@ -60,6 +60,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   const emailDomain = userQuery.data?.email?.split("@")[1];
 
+  const isThereNewNotificationQuery = useQuery({
+    queryKey: ["isThereNewNotification"],
+    queryFn: () =>
+      fetch("/api/user/notifications/is-there-new").then((res) => res.json()),
+  });
+
   return (
     <Sidebar
       {...props}
@@ -189,8 +195,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     >
                       <Link
                         href={`/settings/account/notifications?workspace=${workspace}`}
+                        className="flex items-center space-x-2 justify-between"
                       >
                         Notificações
+                        {isThereNewNotificationQuery?.data && (
+                          <div
+                            className="w-2 h-2 mr-1 bg-blue-600 rounded-full"
+                            title="Notificação nova"
+                          ></div>
+                        )}
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
