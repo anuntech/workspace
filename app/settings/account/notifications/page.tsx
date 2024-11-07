@@ -75,11 +75,8 @@ export default function NotificationsPage() {
       </header>
 
       <div className="p-6">
-        <div className="flex justify-between items-center mb-4">
+        <div className="flex items-center mb-4">
           <h1 className="text-2xl font-semibold">Suas notificações</h1>
-          <Button variant="link" className="text-blue-600 font-medium">
-            Marcar todas como lidas
-          </Button>
         </div>
 
         <div className="mt-4 flex gap-4">
