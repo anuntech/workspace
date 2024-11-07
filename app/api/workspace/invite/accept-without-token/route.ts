@@ -1,6 +1,7 @@
 import connectMongo from "@/libs/mongoose";
 import { authOptions } from "@/libs/next-auth";
 import { verifyWorkspaceInviteToken } from "@/libs/workspace-invite";
+import Notifications from "@/models/Notification";
 import Plans from "@/models/Plans";
 import User from "@/models/User";
 import Workspace from "@/models/Workspace";
@@ -20,6 +21,14 @@ export async function POST(request: Request) {
     if (!worksPace) {
       return NextResponse.json(
         { error: "Workspace not found" },
+        { status: 404 }
+      );
+    }
+
+    const notification = await Notifications.findById(data.notificationId);
+    if (!notification) {
+      return NextResponse.json(
+        { error: "Notification not found" },
         { status: 404 }
       );
     }
@@ -56,6 +65,8 @@ export async function POST(request: Request) {
         invitedMembersEmail: user.email,
       },
     });
+
+    notification.state = "accepted";
 
     return NextResponse.json(user);
   } catch (e) {

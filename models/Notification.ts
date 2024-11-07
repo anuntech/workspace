@@ -9,6 +9,7 @@ export interface INotification extends Document {
   isInvite?: boolean;
   from?: mongoose.Schema.Types.ObjectId;
   workspaceId?: mongoose.Schema.Types.ObjectId;
+  state?: "refused" | "neutral" | "accepted";
 }
 
 const NotificationSchema = new mongoose.Schema<INotification>(
@@ -34,6 +35,11 @@ const NotificationSchema = new mongoose.Schema<INotification>(
     workspaceId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Workspace",
+    },
+    state: {
+      type: String,
+      enum: ["refused", "neutral", "accepted"],
+      default: "neutral",
     },
   },
   {
