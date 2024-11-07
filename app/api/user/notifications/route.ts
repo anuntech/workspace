@@ -15,7 +15,7 @@ export async function GET(request: Request) {
 
     const notifications = await Notifications.find({
       userId: session.user.id,
-    }).sort({ updatedAt: -1 });
+    }).sort({ createdAt: -1 });
 
     const notificationsMap = await Promise.all(
       notifications.map(async (v) => {

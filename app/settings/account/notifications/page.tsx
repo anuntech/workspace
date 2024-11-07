@@ -17,6 +17,9 @@ import api from "@/libs/api";
 import { getS3Image } from "@/libs/s3-client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { CheckIcon, XIcon } from "lucide-react";
+import { useEffect } from "react";
+import { toast } from "@/hooks/use-toast";
+import { AxiosError } from "axios";
 
 export default function NotificationsPage() {
   const notificationsQuery = useQuery({
@@ -27,17 +30,21 @@ export default function NotificationsPage() {
   const notifications = notificationsQuery.data?.data || [];
 
   const acceptInviteMutation = useMutation({
-    mutationFn: async (data: {
-      notificationId: string;
-      workspaceId: string;
-    }) => {
-      await api.post("/api/workspace/invite/accept-without-token", {
+    mutationFn: async (data: { notificationId: string; workspaceId: string }) =>
+      api.post("/api/workspace/invite/accept-without-token", {
         notificationId: data.notificationId,
         workspaceId: data.workspaceId,
-      });
-    },
+      }),
     onSuccess: () => {
       notificationsQuery.refetch();
+    },
+    onError: (err: AxiosError) => {
+      toast({
+        title: "Erro ao aceitar o convite",
+        description: (err.response.data as any)?.error,
+        variant: "destructive",
+        duration: 7000,
+      });
     },
   });
 
@@ -55,6 +62,16 @@ export default function NotificationsPage() {
       notificationsQuery.refetch();
     },
   });
+
+  const markAsReadMutation = useMutation({
+    mutationFn: async () => {
+      await api.post("/api/user/notifications/mark-as-read");
+    },
+  });
+
+  useEffect(() => {
+    markAsReadMutation.mutate();
+  }, []);
 
   return (
     <>
