@@ -1,14 +1,6 @@
 "use client";
 
-import {
-  BadgeCheck,
-  Bell,
-  ChevronsUpDown,
-  CreditCard,
-  LogOut,
-  Sparkles,
-} from "lucide-react";
-
+import { BadgeCheck, Bell, ChevronsUpDown, LogOut } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -39,13 +31,14 @@ export function NavUser() {
   });
 
   const searchParams = useSearchParams();
-  const workspace = searchParams.get("workspace");
   const router = useRouter();
 
   const isThereNewNotificationQuery = useQuery({
     queryKey: ["isThereNewNotification"],
     queryFn: () => api.get("/api/user/notifications/is-there-new"),
   });
+
+  const hasNewNotification = isThereNewNotificationQuery.data?.data;
 
   return (
     <SidebarMenu>
@@ -54,13 +47,13 @@ export function NavUser() {
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
-              className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150 data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground pl-[4px]"
+              className="relative hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150 data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground pl-[4px]"
               tooltip={"Perfil"}
             >
-              {data?.icon && (
-                <div className="text-[1.3rem]">
-                  {data.icon.type == "emoji" ? (
-                    data.icon.value
+              <div className="relative">
+                {data?.icon ? (
+                  data.icon.type === "emoji" ? (
+                    <span className="text-[1.3rem]">{data.icon.value}</span>
                   ) : (
                     <Avatar className="h-8 w-8 rounded-lg">
                       <AvatarImage
@@ -69,22 +62,30 @@ export function NavUser() {
                       />
                       <AvatarFallback className="rounded-lg">SC</AvatarFallback>
                     </Avatar>
-                  )}
-                </div>
-              )}
-              {!data?.icon && (
-                <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={data?.image || "/shad.png"} alt="@shadcn" />
-                  <AvatarFallback className="rounded-lg">SC</AvatarFallback>
-                </Avatar>
-              )}
-              <div className="grid flex-1 text-left text-sm leading-tight">
+                  )
+                ) : (
+                  <Avatar className="h-8 w-8 rounded-lg">
+                    <AvatarImage
+                      src={data?.image || "/shad.png"}
+                      alt="@shadcn"
+                    />
+                    <AvatarFallback className="rounded-lg">SC</AvatarFallback>
+                  </Avatar>
+                )}
+
+                {/* Indicador de nova notificação */}
+                {hasNewNotification && (
+                  <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-blue-600" />
+                )}
+              </div>
+              <div className="grid flex-1 text-left text-sm leading-tight ml-2">
                 <span className="truncate font-semibold">{data?.name}</span>
                 <span className="truncate text-xs">{data?.email}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
+
           <DropdownMenuContent
             className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
             side={isMobile ? "bottom" : "right"}
@@ -93,24 +94,19 @@ export function NavUser() {
           >
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                {data?.icon && (
-                  <div className="text-[1.3rem]">
-                    {data.icon.type == "emoji" ? (
-                      data.icon.value
-                    ) : (
-                      <Avatar className="h-8 w-8 rounded-lg">
-                        <AvatarImage
-                          src={getS3Image(data.icon.value) || "/shad.png"}
-                          alt="@shadcn"
-                        />
-                        <AvatarFallback className="rounded-lg">
-                          SC
-                        </AvatarFallback>
-                      </Avatar>
-                    )}
-                  </div>
-                )}
-                {!data?.icon && (
+                {data?.icon ? (
+                  data.icon.type === "emoji" ? (
+                    <span className="text-[1.3rem]">{data.icon.value}</span>
+                  ) : (
+                    <Avatar className="h-8 w-8 rounded-lg">
+                      <AvatarImage
+                        src={getS3Image(data.icon.value) || "/shad.png"}
+                        alt="@shadcn"
+                      />
+                      <AvatarFallback className="rounded-lg">SC</AvatarFallback>
+                    </Avatar>
+                  )
+                ) : (
                   <Avatar className="h-8 w-8 rounded-lg">
                     <AvatarImage
                       src={data?.image || "/shad.png"}
@@ -137,9 +133,9 @@ export function NavUser() {
                 onClick={() => router.push("/settings/account/notifications")}
               >
                 <Bell />
-                <div className="flex items-center w-full  justify-between">
-                  <span>Notifications</span>
-                  {isThereNewNotificationQuery.data?.data && (
+                <div className="flex items-center w-full justify-between">
+                  <span>Notificações</span>
+                  {hasNewNotification && (
                     <div
                       className="w-2 h-2 bg-blue-600 rounded-full"
                       title="Notificação nova"
