@@ -27,6 +27,8 @@ export async function GET(request: Request) {
           avatar: fromUser?.image,
           icon: fromUser?.icon,
           message: `convidou você para o workspace ${workspace.name}`,
+          workspaceId: v.workspaceId,
+          state: v.state,
           isNew: v.isNew,
           isInvite: v.isInvite,
           time: formatDistanceToNow(new Date((v as any).updatedAt), {

@@ -68,6 +68,8 @@ export async function POST(request: Request) {
 
     notification.state = "accepted";
 
+    notification.save();
+
     return NextResponse.json(user);
   } catch (e) {
     console.error(e);

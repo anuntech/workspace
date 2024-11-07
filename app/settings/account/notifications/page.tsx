@@ -12,21 +12,11 @@ import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import api from "@/libs/api";
 import { getS3Image } from "@/libs/s3-client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-
-const notifications = [
-  {
-    id: 1,
-    user: "@frankiesullivan",
-    message: "followed you",
-    time: "2 hours ago",
-    avatar: "/path/to/avatar1.png", // replace with the actual path to the avatar image
-    isNew: true,
-  },
-];
+import { CheckIcon, XIcon } from "lucide-react";
 
 export default function NotificationsPage() {
   const notificationsQuery = useQuery({
@@ -35,6 +25,21 @@ export default function NotificationsPage() {
   });
 
   const notifications = notificationsQuery.data?.data || [];
+
+  const acceptInviteMutation = useMutation({
+    mutationFn: async (data: {
+      notificationId: string;
+      workspaceId: string;
+    }) => {
+      await api.post("/api/workspace/invite/accept-without-token", {
+        notificationId: data.notificationId,
+        workspaceId: data.workspaceId,
+      });
+    },
+    onSuccess: () => {
+      notificationsQuery.refetch();
+    },
+  });
 
   return (
     <>
@@ -78,7 +83,7 @@ export default function NotificationsPage() {
           {notifications.map((notification: any) => (
             <div
               key={notification.id}
-              className={`flex items-start p-4 rounded-lg ${
+              className={`flex items-center p-4 rounded-lg justify-center ${
                 notification.isNew ? "bg-gray-100" : "bg-white"
               }`}
             >
@@ -120,20 +125,42 @@ export default function NotificationsPage() {
                   {notification.time}
                 </p>
               </div>
-              {notification.isInvite ? (
+              {notification.isInvite && notification.state == "neutral" && (
                 <div className="flex items-center space-x-2">
-                  <Button variant="outline" size="sm">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={acceptInviteMutation.isPending}
+                  >
                     Decline
                   </Button>
-                  <Button variant="default" size="sm">
+                  <Button
+                    onClick={() =>
+                      acceptInviteMutation.mutate({
+                        notificationId: notification.id,
+                        workspaceId: notification.workspaceId,
+                      })
+                    }
+                    disabled={acceptInviteMutation.isPending}
+                    variant="default"
+                    size="sm"
+                  >
                     Accept
                   </Button>
                 </div>
-              ) : (
-                <div className="mt-2">
-                  {notification.isNew && (
-                    <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
-                  )}
+              )}
+
+              {notification.isInvite && notification.state == "accepted" && (
+                <div className="flex items-center space-x-2 px-3 py-1 rounded-lg bg-green-100 text-green-600 h-full text-sm justify-center">
+                  <CheckIcon className="h-4 w-4" />
+                  <span>Convite aceito</span>
+                </div>
+              )}
+
+              {notification.isInvite && notification.state == "refused" && (
+                <div className="flex items-center space-x-2 px-3 py-1 rounded-lg bg-red-100 text-red-600 h-full text-sm justify-center">
+                  <XIcon className="h-4 w-4" />
+                  <span>Convite recusado</span>
                 </div>
               )}
             </div>
