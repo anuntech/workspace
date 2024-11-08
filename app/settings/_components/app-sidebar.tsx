@@ -76,77 +76,79 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent className="gap-0">
         {/* We create Link collapsible SidebarGroup for each parent. */}
-        <Collapsible
-          title="Workspace"
-          defaultOpen
-          className="group/collapsible"
-        >
-          <SidebarGroup>
-            <SidebarGroupLabel
-              asChild
-              className="group/label text-sm text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-            >
-              <CollapsibleTrigger>
-                Workspace{" "}
-                <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
-              </CollapsibleTrigger>
-            </SidebarGroupLabel>
-            <CollapsibleContent>
-              <SidebarGroupContent className="font-normal">
-                <SidebarMenu>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton
-                      className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
-                      asChild
-                    >
-                      <Link href={`/settings?workspace=${workspace}`}>
-                        Visão geral
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton
-                      className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
-                      asChild
-                    >
-                      <Link href={`/settings/apps?workspace=${workspace}`}>
-                        Loja de aplicativos
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton
-                      className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
-                      asChild
-                    >
-                      <Link href={`/settings/members?workspace=${workspace}`}>
-                        Membros
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton
-                      className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
-                      asChild
-                    >
-                      <Link href={`/settings/plans?workspace=${workspace}`}>
-                        Planos
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton
-                      className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
-                      onClick={() => createPortalMutation.mutate()}
-                    >
-                      Faturas
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </CollapsibleContent>
-          </SidebarGroup>
-        </Collapsible>
+        {workspace.length > 0 && (
+          <Collapsible
+            title="Workspace"
+            defaultOpen
+            className="group/collapsible"
+          >
+            <SidebarGroup>
+              <SidebarGroupLabel
+                asChild
+                className="group/label text-sm text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+              >
+                <CollapsibleTrigger>
+                  Workspace{" "}
+                  <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
+                </CollapsibleTrigger>
+              </SidebarGroupLabel>
+              <CollapsibleContent>
+                <SidebarGroupContent className="font-normal">
+                  <SidebarMenu>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
+                        asChild
+                      >
+                        <Link href={`/settings?workspace=${workspace}`}>
+                          Visão geral
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
+                        asChild
+                      >
+                        <Link href={`/settings/apps?workspace=${workspace}`}>
+                          Loja de aplicativos
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
+                        asChild
+                      >
+                        <Link href={`/settings/members?workspace=${workspace}`}>
+                          Membros
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
+                        asChild
+                      >
+                        <Link href={`/settings/plans?workspace=${workspace}`}>
+                          Planos
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
+                        onClick={() => createPortalMutation.mutate()}
+                      >
+                        Faturas
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </CollapsibleContent>
+            </SidebarGroup>
+          </Collapsible>
+        )}
         <Collapsible
           title="Workspace"
           defaultOpen
