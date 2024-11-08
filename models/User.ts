@@ -55,12 +55,10 @@ const userSchema = new mongoose.Schema(
       type: {
         type: String,
         enum: ["image", "emoji"],
-        default: "image",
       },
       value: {
         type: String,
         trim: true,
-        maxlength: 50,
       },
     },
   },

@@ -28,10 +28,6 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
       trim: true,
       required: true,
       maxlength: 100,
-      validate: {
-        validator: (v: string) => /^[a-zA-Z0-9\s]+$/.test(v),
-        message: "O nome só pode conter letras, números e espaços.",
-      },
     },
     icon: {
       type: {

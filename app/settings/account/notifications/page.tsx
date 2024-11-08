@@ -121,7 +121,7 @@ export default function NotificationsPage() {
                 }`}
               >
                 <div className="mr-4">
-                  {Object.entries(notification?.icon).length > 0 ? (
+                  {notification?.icon?.value ? (
                     <div className="text-[1.3rem]">
                       {notification.icon.type === "emoji" ? (
                         notification.icon.value
