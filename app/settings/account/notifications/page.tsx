@@ -126,13 +126,15 @@ export default function NotificationsPage() {
                       {notification.icon.type === "emoji" ? (
                         notification.icon.value
                       ) : (
-                        <Image
-                          className="rounded-full"
-                          width={54}
-                          height={54}
-                          src={getS3Image(notification.icon.value)}
-                          alt=""
-                        />
+                        <Avatar className="size-10">
+                          <AvatarImage
+                            src={
+                              getS3Image(notification.icon.value) || "/shad.png"
+                            }
+                            alt="@shadcn"
+                          />
+                          <AvatarFallback>SC</AvatarFallback>
+                        </Avatar>
                       )}
                     </div>
                   ) : (
