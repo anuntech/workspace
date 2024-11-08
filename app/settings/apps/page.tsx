@@ -185,7 +185,7 @@ export default function AppsPage() {
                     key={app.name}
                   >
                     <Card className="relative">
-                      {app.isPremium && (
+                      {app.workspaceAccess == "premium" && (
                         <div className="absolute top-0 right-0 bg-black text-white px-2 py-1 text-xs font-bold transform rotate-12 shadow-md">
                           Premium
                         </div>
@@ -197,19 +197,23 @@ export default function AppsPage() {
                       )}
                       <CardContent className="space-y-3 p-5">
                         <div className="flex items-center gap-3">
-                          <Avatar>
-                            <AvatarImage src={getS3Image(app.avatarSrc)} />
-                            <AvatarFallback>
-                              {app.avatarFallback}
-                            </AvatarFallback>
-                          </Avatar>
+                          {app.icon?.type == "emoji" && (
+                            <p className="text-[2rem]">{app.icon.value}</p>
+                          )}
+                          {(app.icon?.type == "image" || !app.icon) && (
+                            <Avatar>
+                              <AvatarImage
+                                src={getS3Image(
+                                  app.icon?.value || app.avatarSrc
+                                )}
+                              />
+                              <AvatarFallback>
+                                {app.avatarFallback}
+                              </AvatarFallback>
+                            </Avatar>
+                          )}
                           <div className="flex flex-col">
                             <span>{app.name}</span>
-                            {app.status === "enabled" && (
-                              <span className="text-xs text-muted-foreground">
-                                Instalado
-                              </span>
-                            )}
                           </div>
                         </div>
                         <p className="text-xs text-muted-foreground">
