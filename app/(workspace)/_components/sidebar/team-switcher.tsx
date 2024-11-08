@@ -25,6 +25,7 @@ import { getS3Image } from "@/libs/s3-client";
 import { Input } from "../../../../components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
 
 export function TeamSwitcher() {
   const { isMobile } = useSidebar();
@@ -124,8 +125,8 @@ export function TeamSwitcher() {
                   team.name.toLowerCase().includes(filter.toLowerCase())
                 )
                 .map((team: any, index: number) => (
-                  <DropdownMenuItem key={index} className="gap-2 p-2">
-                    <a
+                  <DropdownMenuItem key={index} className="gap-2">
+                    <Link
                       href={`/?workspace=${team.id}`}
                       className="flex items-center justify-between w-full"
                     >
@@ -150,7 +151,7 @@ export function TeamSwitcher() {
                       {team.plan == "premium" && (
                         <Badge className="ml-auto">Premium</Badge>
                       )}
-                    </a>
+                    </Link>
                   </DropdownMenuItem>
                 ))}
             </div>
