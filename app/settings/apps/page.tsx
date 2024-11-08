@@ -127,48 +127,7 @@ export default function AppsPage() {
                   {applicationsQuery?.data.data
                     .filter((app: any) => app.status === "disabled")
                     ?.map((app: any) => (
-                      <Link
-                        href={`/settings/apps/${app._id}?workspace=${workspace}`}
-                        key={app.name}
-                      >
-                        <Card className="relative">
-                          {app.workspaceAccess == "premium" && (
-                            <div className="absolute top-0 right-0 bg-black text-white px-2 py-1 text-xs font-bold transform rotate-12 shadow-md">
-                              Premium
-                            </div>
-                          )}
-                          {app.workspaceAccess == "buyable" && (
-                            <div className="absolute top-0 right-0 bg-green-500 text-white px-2 py-1 text-xs font-bold transform rotate-12 shadow-md">
-                              Comprável
-                            </div>
-                          )}
-                          <CardContent className="space-y-3 p-5">
-                            <div className="flex items-center gap-3">
-                              {app.icon?.type == "emoji" && (
-                                <p className="text-[2rem]">{app.icon.value}</p>
-                              )}
-                              {(app.icon?.type == "image" || !app.icon) && (
-                                <Avatar>
-                                  <AvatarImage
-                                    src={getS3Image(
-                                      app.icon?.value || app.avatarSrc
-                                    )}
-                                  />
-                                  <AvatarFallback>
-                                    {app.avatarFallback}
-                                  </AvatarFallback>
-                                </Avatar>
-                              )}
-                              <div className="flex flex-col">
-                                <span>{app.name}</span>
-                              </div>
-                            </div>
-                            <p className="text-xs text-muted-foreground">
-                              {app.description}
-                            </p>
-                          </CardContent>
-                        </Card>
-                      </Link>
+                      <App app={app} workspace={workspace} />
                     ))}
                 </div>
               </section>
@@ -180,53 +139,53 @@ export default function AppsPage() {
                   app.name.toLowerCase().includes(inputValue.toLowerCase())
                 )
                 ?.map((app: any) => (
-                  <Link
-                    href={`/settings/apps/${app._id}?workspace=${workspace}`}
-                    key={app.name}
-                  >
-                    <Card className="relative">
-                      {app.workspaceAccess == "premium" && (
-                        <div className="absolute top-0 right-0 bg-black text-white px-2 py-1 text-xs font-bold transform rotate-12 shadow-md">
-                          Premium
-                        </div>
-                      )}
-                      {app.workspaceAccess == "buyable" && (
-                        <div className="absolute top-0 right-0 bg-green-500 text-white px-2 py-1 text-xs font-bold transform rotate-12 shadow-md">
-                          Comprável
-                        </div>
-                      )}
-                      <CardContent className="space-y-3 p-5">
-                        <div className="flex items-center gap-3">
-                          {app.icon?.type == "emoji" && (
-                            <p className="text-[2rem]">{app.icon.value}</p>
-                          )}
-                          {(app.icon?.type == "image" || !app.icon) && (
-                            <Avatar>
-                              <AvatarImage
-                                src={getS3Image(
-                                  app.icon?.value || app.avatarSrc
-                                )}
-                              />
-                              <AvatarFallback>
-                                {app.avatarFallback}
-                              </AvatarFallback>
-                            </Avatar>
-                          )}
-                          <div className="flex flex-col">
-                            <span>{app.name}</span>
-                          </div>
-                        </div>
-                        <p className="text-xs text-muted-foreground">
-                          {app.description}
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </Link>
+                  <App app={app} workspace={workspace} />
                 ))}
             </section>
           )}
         </div>
       </div>
     </>
+  );
+}
+
+function App({ app, workspace }: { app: any; workspace: string }) {
+  return (
+    <Link
+      href={`/settings/apps/${app._id}?workspace=${workspace}`}
+      key={app.name}
+    >
+      <Card className="relative">
+        {app.workspaceAccess == "premium" && (
+          <div className="absolute top-0 right-0 bg-black text-white px-2 py-1 text-xs font-bold transform rotate-12 shadow-md">
+            Premium
+          </div>
+        )}
+        {app.workspaceAccess == "buyable" && (
+          <div className="absolute top-0 right-0 bg-green-500 text-white px-2 py-1 text-xs font-bold transform rotate-12 shadow-md">
+            Comprável
+          </div>
+        )}
+        <CardContent className="space-y-3 p-5">
+          <div className="flex items-center gap-3">
+            {app.icon?.type == "emoji" && (
+              <p className="text-[2rem]">{app.icon.value}</p>
+            )}
+            {(app.icon?.type == "image" || !app.icon) && (
+              <Avatar>
+                <AvatarImage
+                  src={getS3Image(app.icon?.value || app.avatarSrc)}
+                />
+                <AvatarFallback>{app.avatarFallback}</AvatarFallback>
+              </Avatar>
+            )}
+            <div className="flex flex-col">
+              <span>{app.name}</span>
+            </div>
+          </div>
+          <p className="text-xs text-muted-foreground">{app.description}</p>
+        </CardContent>
+      </Card>
+    </Link>
   );
 }
