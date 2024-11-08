@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import toJSON from "./plugins/toJSON";
 import { Model } from "mongoose";
 
-export interface IApplications extends Document {
+export interface IApplications extends mongoose.Document {
   id: mongoose.Schema.Types.ObjectId;
   name: string;
   avatarSrc: string;
@@ -27,10 +27,16 @@ const applicationSchema = new mongoose.Schema<IApplications>(
       type: String,
       trim: true,
       required: true,
+      maxlength: 100,
+      validate: {
+        validator: (v: string) => /^[a-zA-Z0-9 ]+$/.test(v),
+        message: "O nome só pode conter letras, números e espaços.",
+      },
     },
     cta: {
       type: String,
       trim: true,
+      maxlength: 50,
     },
     applicationUrl: {
       type: String,
@@ -47,24 +53,34 @@ const applicationSchema = new mongoose.Schema<IApplications>(
         enum: ["image", "emoji"],
         required: true,
       },
-      value: String,
+      value: {
+        type: String,
+        trim: true,
+        maxlength: 100,
+      },
     },
     galleryPhotos: {
       type: [String],
-      trim: true,
+      validate: {
+        validator: (v: string[]) => v.length <= 10,
+        message: "Não pode haver mais de 10 imagens.",
+      },
     },
     avatarFallback: {
       type: String,
       trim: true,
       required: true,
+      maxlength: 50,
     },
     description: {
       type: String,
       trim: true,
+      maxlength: 500,
     },
     descriptionTitle: {
       type: String,
       trim: true,
+      maxlength: 100,
     },
     workspacesAllowed: {
       type: [mongoose.Schema.Types.ObjectId],
@@ -76,7 +92,8 @@ const applicationSchema = new mongoose.Schema<IApplications>(
     },
     priceId: {
       type: String,
-      required: false,
+      trim: true,
+      maxlength: 100,
     },
   },
   {
@@ -85,11 +102,16 @@ const applicationSchema = new mongoose.Schema<IApplications>(
   }
 );
 
-// Inside your applicationSchema file
+applicationSchema.pre("save", function (next) {
+  if (this.isModified("name")) {
+    this.name = this.name.trim();
+  }
+  if (this.isModified("description")) {
+    this.description = this.description.trim();
+  }
+  next();
+});
 
-// Inside your applicationSchema file
-
-// Helper function to remove application references
 async function removeApplicationReferences(appId: any) {
   await mongoose
     .model("MyApplications")
@@ -99,7 +121,6 @@ async function removeApplicationReferences(appId: any) {
     );
 }
 
-// Middleware for findOneAndDelete
 applicationSchema.pre("findOneAndDelete", async function (next) {
   try {
     const appToDelete = await this.model.findOne(this.getQuery());
@@ -112,21 +133,6 @@ applicationSchema.pre("findOneAndDelete", async function (next) {
   }
 });
 
-// Middleware for deleteOne
-applicationSchema.pre(
-  "deleteOne",
-  { document: true, query: false },
-  async function (next) {
-    try {
-      await removeApplicationReferences(this._id);
-      next();
-    } catch (error) {
-      next(error);
-    }
-  }
-);
-
-// Middleware for deleteMany
 applicationSchema.pre("deleteMany", async function (next) {
   try {
     const appsToDelete = await this.model.find(this.getQuery());
@@ -146,6 +152,8 @@ applicationSchema.pre("deleteMany", async function (next) {
 });
 
 applicationSchema.plugin(toJSON as any);
+
+applicationSchema.index({ name: 1 }, { unique: true });
 
 const Applications: Model<IApplications> =
   mongoose.models.Applications ||
