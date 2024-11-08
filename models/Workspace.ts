@@ -27,6 +27,11 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
       type: String,
       trim: true,
       required: true,
+      maxlength: 100,
+      validate: {
+        validator: (v: string) => /^[a-zA-Z0-9\s]+$/.test(v),
+        message: "O nome só pode conter letras, números e espaços.",
+      },
     },
     icon: {
       type: {
@@ -34,7 +39,11 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
         enum: ["image", "emoji"],
         required: true,
       },
-      value: String,
+      value: {
+        type: String,
+        trim: true,
+        maxlength: 100,
+      },
     },
     owner: {
       type: mongoose.Schema.Types.ObjectId,
@@ -61,12 +70,23 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
     },
     invitedMembersEmail: {
       type: [String],
-      validate: {
-        validator: function (value: string[]) {
-          return value.length === new Set(value).size;
+      validate: [
+        {
+          validator: (value: string[]) =>
+            value.every((email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)),
+          message: "Um ou mais emails são inválidos.",
         },
-        message: "duplicated email",
-      },
+        {
+          validator: function (value: string[]) {
+            return value.length === new Set(value).size;
+          },
+          message: "Emails duplicados encontrados.",
+        },
+        {
+          validator: (v: string[]) => v.length <= 30,
+          message: "Não pode haver mais de 30 membros convidados.",
+        },
+      ],
       default: [],
     },
     plan: {
@@ -76,6 +96,10 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
     },
     priceId: {
       type: String,
+      validate: {
+        validator: (v: string) => /^price_/.test(v),
+        message: "O priceId deve começar com 'price_'.",
+      },
     },
     boughtApplications: {
       type: [mongoose.Schema.Types.ObjectId],
@@ -87,6 +111,16 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
     timestamps: true,
   }
 );
+
+workspaceSchema.pre("save", function (next) {
+  if (this.isModified("name")) {
+    this.name = this.name.trim();
+  }
+  if (this.isModified("icon.value")) {
+    this.icon.value = this.icon.value.trim();
+  }
+  next();
+});
 
 // Helper function to remove workspace references from Applications
 async function removeWorkspaceFromApplications(
