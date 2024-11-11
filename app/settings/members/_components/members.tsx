@@ -155,9 +155,11 @@ export function Members() {
           <div className="flex items-center justify-between space-x-4">
             <div className="flex items-center space-x-4">
               {ownerQuery.data?.icon?.value ? (
-                <div className="text-[1.3rem]">
+                <div>
                   {ownerQuery.data?.icon.type === "emoji" ? (
-                    ownerQuery.data?.icon.value
+                    <span className="text-[2rem] w-full h-full flex size-10">
+                      {ownerQuery.data?.icon.value}
+                    </span>
                   ) : (
                     <Avatar className="size-10">
                       <AvatarImage
