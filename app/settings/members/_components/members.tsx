@@ -154,22 +154,23 @@ export function Members() {
         <>
           <div className="flex items-center justify-between space-x-4">
             <div className="flex items-center space-x-4">
-              {ownerQuery.data?.icon && (
+              {ownerQuery.data?.icon?.value ? (
                 <div className="text-[1.3rem]">
-                  {ownerQuery.data.icon.type == "emoji" ? (
-                    ownerQuery.data.icon.value
+                  {ownerQuery.data?.icon.type === "emoji" ? (
+                    ownerQuery.data?.icon.value
                   ) : (
-                    <Image
-                      className="rounded-full"
-                      width={54}
-                      height={54}
-                      src={getS3Image(ownerQuery.data.icon.value)}
-                      alt=""
-                    />
+                    <Avatar className="size-10">
+                      <AvatarImage
+                        src={
+                          getS3Image(ownerQuery.data?.icon.value) || "/shad.png"
+                        }
+                        alt="@shadcn"
+                      />
+                      <AvatarFallback>SC</AvatarFallback>
+                    </Avatar>
                   )}
                 </div>
-              )}
-              {!ownerQuery.data?.icon && (
+              ) : (
                 <Avatar className="size-10">
                   <AvatarImage
                     src={ownerQuery.data?.image || "/shad.png"}
