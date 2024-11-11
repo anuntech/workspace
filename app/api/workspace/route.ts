@@ -21,6 +21,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid icon type" }, { status: 400 });
     }
 
+    const userWorkspace = await Workspace.find({ owner: session.user.id });
+
+    if (userWorkspace.length >= 20) {
+      return NextResponse.json(
+        { error: "Você não pode criar mais de 20 workspaces" },
+        { status: 400 }
+      );
+    }
+
     const user = new Workspace({
       name: body.name,
       icon: body.icon,

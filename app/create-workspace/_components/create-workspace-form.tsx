@@ -6,6 +6,9 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { initialWorkspaceIcons } from "@/libs/icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import api from "@/libs/api";
+import { toast } from "@/hooks/use-toast";
+import { AxiosError } from "axios";
 
 export function CreateWorkspaceForm() {
   const [name, setName] = useState("");
@@ -13,23 +16,22 @@ export function CreateWorkspaceForm() {
   const queryClient = useQueryClient();
 
   const sendCreateWorkspaceEmail = useMutation({
-    mutationFn: (data: any) =>
-      fetch("/api/workspace", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      }),
+    mutationFn: (data: any) => api.post("/api/workspace", data),
     onSuccess: async (data) => {
-      if (data.status == 201) {
-        await queryClient.refetchQueries({
-          queryKey: ["workspace"],
-          type: "all",
-        });
+      await queryClient.refetchQueries({
+        queryKey: ["workspace"],
+        type: "all",
+      });
 
-        router.push(`/?workspace=${(await data.json()).id}`);
-      }
+      router.push(`/?workspace=${(await data.data).id}`);
+    },
+    onError: (err: AxiosError) => {
+      toast({
+        title: "Erro ao criar workspace",
+        description: (err.response.data as any)?.error,
+        variant: "destructive",
+        duration: 7000,
+      });
     },
   });
 
