@@ -126,7 +126,7 @@ export function TeamSwitcher() {
                 )
                 .map((team: any, index: number) => (
                   <DropdownMenuItem key={index} className="gap-2">
-                    <Link
+                    <a
                       href={`/?workspace=${team.id}`}
                       className="flex items-center justify-between w-full"
                     >
@@ -151,7 +151,7 @@ export function TeamSwitcher() {
                       {team.plan == "premium" && (
                         <Badge className="ml-auto">Premium</Badge>
                       )}
-                    </Link>
+                    </a>
                   </DropdownMenuItem>
                 ))}
             </div>
