@@ -22,6 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import api from "@/libs/api";
 import { getS3Image } from "@/libs/s3-client";
 import { Separator } from "@radix-ui/react-dropdown-menu";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -45,8 +46,7 @@ export function Members() {
 
   const membersQuery = useQuery({
     queryKey: ["workspace/members"],
-    queryFn: () =>
-      fetch(`/api/workspace/members/${workspace}`).then((res) => res.json()),
+    queryFn: () => api.get(`/api/workspace/members/${workspace}`),
   });
 
   const userQuery = useQuery({
@@ -130,7 +130,7 @@ export function Members() {
     });
   };
 
-  const yourMemberInfo = membersQuery.data?.find(
+  const yourMemberInfo = membersQuery.data?.data?.find(
     (member: any) => member._id.toString() == userQuery.data?._id.toString()
   );
 
@@ -191,7 +191,7 @@ export function Members() {
               </div>
             </div>
           </div>
-          {membersQuery?.data?.map((member: any) => (
+          {membersQuery.data?.data?.map((member: any) => (
             <div
               key={member._id}
               className="flex items-center justify-between space-x-4"

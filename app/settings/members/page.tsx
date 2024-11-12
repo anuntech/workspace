@@ -15,10 +15,37 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import api from "@/libs/api";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function MembersPage() {
   const searchParams = useSearchParams();
   const workspace = searchParams.get("workspace");
+
+  const membersQuery = useQuery({
+    queryKey: ["workspace/members"],
+    queryFn: () => api.get(`/api/workspace/members/${workspace}`),
+  });
+
+  const plansQuery = useQuery({
+    queryKey: ["workspace/plans"],
+    queryFn: () => api.get(`/api/workspace/plans`),
+  });
+
+  const workspaceQuery = useQuery({
+    queryKey: ["workspace"],
+    queryFn: () => api.get(`/api/workspace`),
+  });
+
+  const actualWorkspace = workspaceQuery.data?.data?.find(
+    (v: any) => v.id === workspace
+  );
+
+  const plan = plansQuery.data?.data?.find(
+    (pl: any) => pl.name == actualWorkspace?.plan
+  );
+
+  const membersQuantity = membersQuery.data?.data?.length + 1;
 
   return (
     <>
@@ -39,7 +66,14 @@ export default function MembersPage() {
       </header>
       <main className="flex flex-col items-center p-10">
         <div className="w-full max-w-3xl space-y-5">
-          <h1 className="text-2xl">Membros</h1>
+          <h1 className="text-2xl">
+            Membros{" "}
+            {!membersQuery.isPending ? (
+              `(${membersQuantity}/${plan?.membersLimit})`
+            ) : (
+              <Skeleton className="w-full h-4" />
+            )}
+          </h1>
           <Separator />
           <Tabs defaultValue="members" className="space-y-10">
             <TabsList>
