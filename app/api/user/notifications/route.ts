@@ -24,7 +24,7 @@ export async function GET(request: Request) {
 
         return {
           id: v._id,
-          user: fromUser?.name,
+          user: fromUser?.name || "Unknown User",
           avatar: fromUser?.image,
           icon: fromUser?.icon,
           message: `convidou você para o workspace ${
