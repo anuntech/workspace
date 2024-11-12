@@ -10,6 +10,8 @@ export interface INotification extends Document {
   from?: mongoose.Schema.Types.ObjectId;
   workspaceId?: mongoose.Schema.Types.ObjectId;
   state?: "refused" | "neutral" | "accepted";
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 const NotificationSchema = new mongoose.Schema<INotification>(
