@@ -98,6 +98,26 @@ export function Invites() {
 
   const queryClient = useQueryClient();
 
+  const resendMutation = useMutation({
+    mutationFn: (data: { email: string; workspaceId: string }) =>
+      api.post(`/api/workspace/invite/resend`, data),
+    onSuccess: () => {
+      toast({
+        title: "Convite reenviado",
+        description: "O convite foi reenviado com sucesso.",
+        duration: 5000,
+      });
+    },
+    onError: (err: AxiosError) => {
+      toast({
+        title: "Erro ao reenviar convite",
+        description: (err.response.data as any)?.error,
+        duration: 5000,
+        variant: "destructive",
+      });
+    },
+  });
+
   const {
     register,
     handleSubmit,
@@ -178,7 +198,18 @@ export function Invites() {
               </div>
             </div>
             <div className="space-x-2">
-              <Button title="Reenviar" variant="outline" size="icon">
+              <Button
+                title="Reenviar"
+                variant="outline"
+                size="icon"
+                onClick={() =>
+                  resendMutation.mutate({
+                    email: user.email,
+                    workspaceId: searchParams.get("workspace"),
+                  })
+                }
+                disabled={resendMutation.isPending}
+              >
                 <RotateCcw />
               </Button>
               <AlertDialog>

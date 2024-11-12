@@ -6,7 +6,12 @@ import Notifications from "@/models/Notification";
 import Plans from "@/models/Plans";
 import User from "@/models/User";
 import Workspace from "@/models/Workspace";
-import { addMinutes, differenceInMinutes } from "date-fns";
+import {
+  addMinutes,
+  addSeconds,
+  differenceInMinutes,
+  differenceInSeconds,
+} from "date-fns";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
@@ -64,9 +69,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "User was not invited" });
     }
 
-    const notification = await Notifications.findOne({
+    console.log({
       userId: session.user.id,
       from: user?.id,
+      workspaceId: worksPace.id,
+    });
+    const notification = await Notifications.findOne({
+      userId: user?.id,
+      from: session.user.id,
       workspaceId: worksPace.id,
     });
 
@@ -75,12 +85,12 @@ export async function POST(request: Request) {
     const diffInMinutes = differenceInMinutes(now, updatedAt);
 
     if (diffInMinutes < 2) {
-      const timeToResend = addMinutes(updatedAt, 2);
-      const minutesLeft = differenceInMinutes(timeToResend, now);
+      const timeToResend = addSeconds(updatedAt, 120);
+      const minutesLeft = differenceInSeconds(timeToResend, now);
 
       return NextResponse.json(
         {
-          error: `Você precisa esperar ${minutesLeft} minuto(s) para enviar outro convite.`,
+          error: `Você precisa esperar ${minutesLeft} segundo(s) para enviar outro convite.`,
         },
         { status: 429 }
       );
@@ -90,6 +100,10 @@ export async function POST(request: Request) {
     if (user) {
       await sendInviteNotification(user.id, session.user.id, worksPace.id);
     }
+
+    notification.updatedAt = new Date();
+
+    notification.save();
 
     return NextResponse.json(user);
   } catch (e) {
