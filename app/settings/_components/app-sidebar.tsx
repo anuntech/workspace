@@ -219,20 +219,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-                  {emailDomain == config.domainName && (
-                    <SidebarMenuItem>
-                      <SidebarMenuButton
-                        className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
-                        asChild
-                      >
-                        <Link
-                          href={`/settings/account/apps-admin?workspace=${workspace}`}
-                        >
-                          Administração de aplicativos
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  )}
                 </SidebarMenu>
               </SidebarGroupContent>
             </CollapsibleContent>

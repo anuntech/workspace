@@ -38,7 +38,7 @@ export function AvatarSelector({
           >
             {data?.value}
           </div>
-        ) : !imageUrlWithoutS3 ? (
+        ) : !imageUrlWithoutS3 && data?.value ? (
           <img
             src={getS3Image(data?.value)}
             alt=""
@@ -46,7 +46,7 @@ export function AvatarSelector({
           />
         ) : (
           <img
-            src={imageUrlWithoutS3}
+            src={imageUrlWithoutS3 || "/shad.png"}
             alt=""
             className="w-full rounded-md h-full"
           />
