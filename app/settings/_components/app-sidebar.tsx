@@ -29,6 +29,7 @@ import config from "@/config";
 import api from "@/libs/api";
 import { toast } from "@/hooks/use-toast";
 import { AxiosError } from "axios";
+import { Separator } from "@/components/ui/separator";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const urlParams = useSearchParams();
@@ -72,7 +73,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       defaultChecked={true}
     >
       <SidebarHeader>
-        <SearchForm className="mt-6" />
+        <SidebarMenuButton
+          asChild
+          className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
+        >
+          <Link href={`/?workspace=${workspace}`}>
+            <ChevronLeft className="size-4" />
+            Voltar
+          </Link>
+        </SidebarMenuButton>
+        <Separator />
+        <SearchForm className="" />
       </SidebarHeader>
       <SidebarContent className="gap-0">
         {/* We create Link collapsible SidebarGroup for each parent. */}
@@ -229,7 +240,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </Collapsible>
       </SidebarContent>
       <SidebarRail />
-      <SidebarFooter>
+      {/* <SidebarFooter>
         <SidebarGroupContent>
           <SidebarMenu>
             <SidebarMenuItem>
@@ -245,7 +256,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarGroupContent>
-      </SidebarFooter>
+      </SidebarFooter> */}
     </Sidebar>
   );
 }
