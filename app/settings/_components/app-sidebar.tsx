@@ -238,6 +238,43 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </CollapsibleContent>
           </SidebarGroup>
         </Collapsible>
+        {emailDomain == config.domainName && (
+          <Collapsible
+            title="Workspace"
+            defaultOpen
+            className="group/collapsible"
+          >
+            <SidebarGroup>
+              <SidebarGroupLabel
+                asChild
+                className="group/label text-sm text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+              >
+                <CollapsibleTrigger>
+                  Anuntech
+                  <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
+                </CollapsibleTrigger>
+              </SidebarGroupLabel>
+              <CollapsibleContent>
+                <SidebarGroupContent className="font-normal">
+                  <SidebarMenu>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
+                        asChild
+                      >
+                        <Link
+                          href={`/settings/account/apps-admin?workspace=${workspace}`}
+                        >
+                          Administração de aplicativos
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </CollapsibleContent>
+            </SidebarGroup>
+          </Collapsible>
+        )}
       </SidebarContent>
       <SidebarRail />
       {/* <SidebarFooter>
