@@ -25,6 +25,16 @@ export async function POST(request: Request) {
       );
     }
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return NextResponse.json(
+        {
+          error: "Email inválido",
+        },
+        { status: 404 }
+      );
+    }
+
     if (worksPace.owner.toString() !== session.user.id) {
       return NextResponse.json(
         { error: "Você não possui permissão para convidar usuários" },

@@ -25,6 +25,16 @@ export async function POST(request: Request) {
 
     const worksPace = await Workspace.findById(workspaceId);
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return NextResponse.json(
+        {
+          error: "Email inválido",
+        },
+        { status: 404 }
+      );
+    }
+
     if (!worksPace) {
       return NextResponse.json(
         { error: "Workspace not found" },
@@ -69,35 +79,31 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "User was not invited" });
     }
 
-    const notification = await Notifications.findOne({
-      userId: user?.id,
-      from: session.user.id,
-      workspaceId: worksPace.id,
-    });
+    const invitedAt = worksPace.invitedMembersEmail.find(
+      (e) => e.email === email
+    ).invitedAt;
 
     const now = new Date();
 
-    if (notification) {
-      const updatedAt = new Date(notification.updatedAt);
-      const diffInMinutes = differenceInMinutes(now, updatedAt);
+    const updatedAt = new Date(invitedAt);
+    const diffInMinutes = differenceInMinutes(now, updatedAt);
 
-      if (diffInMinutes < 2) {
-        const timeToResend = addSeconds(updatedAt, 120);
-        const minutesLeft = differenceInSeconds(timeToResend, now);
+    if (diffInMinutes < 2) {
+      const timeToResend = addSeconds(updatedAt, 120);
+      const minutesLeft = differenceInSeconds(timeToResend, now);
 
-        return NextResponse.json(
-          {
-            error: `Você precisa esperar ${minutesLeft} segundo(s) para enviar outro convite.`,
-          },
-          { status: 429 }
-        );
-      }
-
-      notification.updatedAt = new Date();
-
-      notification.save();
-    } else {
+      return NextResponse.json(
+        {
+          error: `Você precisa esperar ${minutesLeft} segundo(s) para enviar outro convite.`,
+        },
+        { status: 429 }
+      );
     }
+
+    worksPace.invitedMembersEmail.find((e) => e.email === email).invitedAt =
+      new Date();
+
+    worksPace.save();
 
     await sendInviteWorkspaceEmail(email, worksPace.id, worksPace.name);
     if (user) {
