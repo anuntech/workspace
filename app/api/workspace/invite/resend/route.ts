@@ -61,19 +61,14 @@ export async function POST(request: Request) {
       (member) => member.memberId.toString() === user?.id
     );
 
-    const alreadyInvited = worksPace.invitedMembersEmail?.find(
-      (invitedId) => invitedId === email
-    );
+    const alreadyInvited = worksPace.invitedMembersEmail
+      .map((a) => a.email)
+      ?.find((invitedId) => invitedId === email);
 
     if (!alreadyIn && !alreadyInvited) {
       return NextResponse.json({ error: "User was not invited" });
     }
 
-    console.log({
-      userId: session.user.id,
-      from: user?.id,
-      workspaceId: worksPace.id,
-    });
     const notification = await Notifications.findOne({
       userId: user?.id,
       from: session.user.id,
@@ -81,29 +76,33 @@ export async function POST(request: Request) {
     });
 
     const now = new Date();
-    const updatedAt = new Date(notification.updatedAt);
-    const diffInMinutes = differenceInMinutes(now, updatedAt);
 
-    if (diffInMinutes < 2) {
-      const timeToResend = addSeconds(updatedAt, 120);
-      const minutesLeft = differenceInSeconds(timeToResend, now);
+    if (notification) {
+      const updatedAt = new Date(notification.updatedAt);
+      const diffInMinutes = differenceInMinutes(now, updatedAt);
 
-      return NextResponse.json(
-        {
-          error: `Você precisa esperar ${minutesLeft} segundo(s) para enviar outro convite.`,
-        },
-        { status: 429 }
-      );
+      if (diffInMinutes < 2) {
+        const timeToResend = addSeconds(updatedAt, 120);
+        const minutesLeft = differenceInSeconds(timeToResend, now);
+
+        return NextResponse.json(
+          {
+            error: `Você precisa esperar ${minutesLeft} segundo(s) para enviar outro convite.`,
+          },
+          { status: 429 }
+        );
+      }
+
+      notification.updatedAt = new Date();
+
+      notification.save();
+    } else {
     }
 
     await sendInviteWorkspaceEmail(email, worksPace.id, worksPace.name);
     if (user) {
       await sendInviteNotification(user.id, session.user.id, worksPace.id);
     }
-
-    notification.updatedAt = new Date();
-
-    notification.save();
 
     return NextResponse.json(user);
   } catch (e) {

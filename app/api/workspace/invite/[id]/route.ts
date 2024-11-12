@@ -40,13 +40,12 @@ export async function GET(
     }
 
     const invitedUsers = await User.find({
-      email: { $in: worksPace.invitedMembersEmail },
+      email: { $in: worksPace.invitedMembersEmail.map((a) => a.email) },
     }).select("name email image");
 
-    const usersWithoutAccounst = worksPace.invitedMembersEmail.filter(
-      (email) => !invitedUsers.find((user) => user.email == email)
-    );
-
+    const usersWithoutAccounst = worksPace.invitedMembersEmail
+      .map((c) => c.email)
+      .filter((email) => !invitedUsers.find((user) => user.email == email));
     invitedUsers.push(
       ...usersWithoutAccounst.map((email) => ({
         email,

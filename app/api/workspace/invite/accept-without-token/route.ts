@@ -47,7 +47,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    if (!worksPace.invitedMembersEmail.includes(user.email)) {
+    if (
+      !worksPace.invitedMembersEmail.map((a) => a.email).includes(user.email)
+    ) {
       return NextResponse.json(
         { error: "You are not invited to this workspace" },
         { status: 403 }
@@ -62,7 +64,7 @@ export async function POST(request: Request) {
         },
       },
       $pull: {
-        invitedMembersEmail: user.email,
+        invitedMembersEmail: { email: user.email },
       },
     });
 

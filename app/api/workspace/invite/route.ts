@@ -48,6 +48,14 @@ export async function POST(request: Request) {
       );
     }
 
+    const sameEmail = await User.findById(session.user.id);
+    if (sameEmail.email == email) {
+      return NextResponse.json(
+        { error: "Você não pode convidar para o workspace a si mesmo" },
+        { status: 403 }
+      );
+    }
+
     const user = await User.findOne({ email });
 
     const alreadyIn = worksPace.members?.find(
@@ -55,7 +63,7 @@ export async function POST(request: Request) {
     );
 
     const alreadyInvited = worksPace.invitedMembersEmail?.find(
-      (invitedId) => invitedId === email
+      (invited) => invited.email === email
     );
 
     if (alreadyIn || alreadyInvited) {
@@ -69,7 +77,7 @@ export async function POST(request: Request) {
 
     await Workspace.findByIdAndUpdate(workspaceId, {
       $push: {
-        invitedMembersEmail: email,
+        invitedMembersEmail: { email, invitedAt: new Date() },
       },
     });
 
@@ -111,7 +119,7 @@ export async function DELETE(request: Request) {
 
     await Workspace.findByIdAndUpdate(workspaceId, {
       $pull: {
-        invitedMembersEmail: email,
+        invitedMembersEmail: { email },
       },
     });
 

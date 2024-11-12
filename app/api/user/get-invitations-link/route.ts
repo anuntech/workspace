@@ -13,9 +13,7 @@ export async function GET(request: Request) {
     await connectMongo();
 
     const workspace = await Workspace.find({
-      invitedMembersEmail: {
-        $in: [session.user.email],
-      },
+      invitedMembersEmail: { $elemMatch: { email: session.user.email } },
     });
 
     if (!workspace.length) {

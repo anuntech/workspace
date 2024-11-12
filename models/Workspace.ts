@@ -15,7 +15,10 @@ export interface IWorkspace extends Document {
   };
   owner: mongoose.Schema.Types.ObjectId;
   members: members[];
-  invitedMembersEmail: string[];
+  invitedMembersEmail: {
+    invitedAt: Date;
+    email: string;
+  }[];
   plan: "premium" | "free";
   priceId: string;
   boughtApplications: mongoose.Types.ObjectId[];
@@ -65,22 +68,21 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
       default: [],
     },
     invitedMembersEmail: {
-      type: [String],
-      validate: [
+      type: [
         {
-          validator: (value: string[]) =>
-            value.every((email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)),
-          message: "Um ou mais emails são inválidos.",
-        },
-        {
-          validator: function (value: string[]) {
-            return value.length === new Set(value).size;
+          invitedAt: {
+            type: Date,
+            default: Date.now,
           },
-          message: "Emails duplicados encontrados.",
-        },
-        {
-          validator: (v: string[]) => v.length <= 30,
-          message: "Não pode haver mais de 30 membros convidados.",
+          email: {
+            type: String,
+            required: true,
+            validate: {
+              validator: (email: string) =>
+                /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email),
+              message: "O email é inválido.",
+            },
+          },
         },
       ],
       default: [],

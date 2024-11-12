@@ -54,6 +54,8 @@ export function Invites() {
       ),
   });
 
+  console.log(data);
+
   const deleteMutation = useMutation({
     mutationFn: (data: { workspaceId: string; email: string }) =>
       fetch("/api/workspace/invite", {
@@ -219,6 +221,7 @@ export function Invites() {
                     size="icon"
                     className="group hover:border-red-500 hover:bg-red-50"
                     title="Deletar"
+                    disabled={resendMutation.isPending}
                   >
                     <Trash2 className="size-4 group-hover:text-red-500" />
                   </Button>
