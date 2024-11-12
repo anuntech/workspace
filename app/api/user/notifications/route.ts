@@ -21,12 +21,15 @@ export async function GET(request: Request) {
       notifications.map(async (v) => {
         const fromUser = await User.findOne({ _id: v.from });
         const workspace = await Workspace.findOne({ _id: v.workspaceId });
+
         return {
           id: v._id,
           user: fromUser?.name,
           avatar: fromUser?.image,
           icon: fromUser?.icon,
-          message: `convidou você para o workspace ${workspace.name}`,
+          message: `convidou você para o workspace ${
+            workspace?.name || "Invalid Workspace"
+          }`,
           workspaceId: v.workspaceId,
           state: v.state,
           isNew: v.isNew,
