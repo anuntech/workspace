@@ -66,12 +66,12 @@ export default function MembersPage() {
       </header>
       <main className="flex flex-col items-center p-10">
         <div className="w-full max-w-3xl space-y-5">
-          <h1 className="text-2xl">
+          <h1 className="text-2xl flex gap-3">
             Membros{" "}
             {!membersQuery.isPending ? (
               `(${membersQuantity}/${plan?.membersLimit})`
             ) : (
-              <Skeleton className="w-full h-4" />
+              <Skeleton className="w-11" />
             )}
           </h1>
           <Separator />
