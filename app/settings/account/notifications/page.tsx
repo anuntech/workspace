@@ -91,7 +91,7 @@ export default function NotificationsPage() {
         </Breadcrumb>
       </header>
 
-      <div className="p-6">
+      <div className="py-6 px-4">
         <div className="flex items-center mb-4">
           <h1 className="text-2xl font-semibold">Suas notificações</h1>
         </div>
