@@ -41,7 +41,7 @@ export default function NotificationsPage() {
     onError: (err: AxiosError) => {
       toast({
         title: "Erro ao aceitar o convite",
-        description: (err.response.data as any)?.error,
+        description: (err.response?.data as any)?.error,
         variant: "destructive",
         duration: 7000,
       });
@@ -109,15 +109,15 @@ export default function NotificationsPage() {
         </div>
 
         <div className="mt-6 space-y-4">
-          {!notificationsQuery.isPending ? (
+          {!notificationsQuery.isLoading ? (
             notifications.map((notification: any) => (
               <div
                 key={notification.id}
-                className={`flex items-start p-4 rounded-lg shadow-sm ${
+                className={`flex items-start p-4 rounded-lg shadow-sm transition-colors duration-200 ${
                   notification.isNew
                     ? "bg-gray-50 border-l-4 border-blue-500"
                     : "bg-white"
-                }`}
+                } hover:bg-gray-100`}
               >
                 <div className="mr-4">
                   {notification?.icon?.value ? (
@@ -125,7 +125,7 @@ export default function NotificationsPage() {
                       {notification.icon.type === "emoji" ? (
                         notification.icon.value
                       ) : (
-                        <Avatar className="size-10">
+                        <Avatar className="w-10 h-10">
                           <AvatarImage
                             src={
                               getS3Image(notification.icon.value) || "/shad.png"
@@ -137,7 +137,7 @@ export default function NotificationsPage() {
                       )}
                     </div>
                   ) : (
-                    <Avatar className="size-10">
+                    <Avatar className="w-10 h-10">
                       <AvatarImage
                         src={notification?.avatar || "/shad.png"}
                         alt="@shadcn"
@@ -170,7 +170,7 @@ export default function NotificationsPage() {
                           workspaceId: notification.workspaceId,
                         })
                       }
-                      variant="outline"
+                      variant="destructive"
                       size="sm"
                       disabled={
                         acceptInviteMutation.isPending ||
@@ -192,6 +192,7 @@ export default function NotificationsPage() {
                         refuseInviteMutation.isPending
                       }
                       variant="default"
+                      className="bg-green-500 hover:bg-green-600"
                       size="sm"
                     >
                       <CheckIcon className="w-4 h-4 mr-1" />
