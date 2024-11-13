@@ -9,6 +9,7 @@ import Workspace from "@/models/Workspace";
 import mongoose from "mongoose";
 import MyApplications from "@/models/MyApplications";
 import Applications from "@/models/Applications";
+import plans from "@/models/Plans";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: "2023-08-16",
@@ -94,8 +95,6 @@ export async function POST(req: NextRequest) {
         const type = stripeObject.metadata?.type;
         const applicationId = stripeObject.metadata?.applicationId;
         const workspace = await Workspace.findById(workspaceId);
-        console.log("BBBBBBBB");
-        console.log(type);
         if (type == "premium") {
           workspace.plan = "premium";
         } else if (type == "app") {
@@ -156,23 +155,27 @@ export async function POST(req: NextRequest) {
         user.hasAccess = false;
         await user.save();
 
-        const workspaceId = stripeObject.metadata?.workspaceId;
+        const { workspaceId, type } = stripeObject.metadata;
 
-        const workspace = await Workspace.findById(workspaceId);
+        if (type == "premium") {
+          const workspace = await Workspace.findById(workspaceId);
 
-        workspace.plan = "free";
+          workspace.plan = "free";
+          const plan = await plans.findOne({ name: workspace.plan });
+          workspace.members.splice(plan.membersLimit);
 
-        workspace.save();
-        const premiumApps = await Applications.find({
-          workspaceAccess: "premium",
-        });
+          workspace.save();
+          const premiumApps = await Applications.find({
+            workspaceAccess: "premium",
+          });
 
-        const premiumAppIds = premiumApps.map((app) => app._id);
+          const premiumAppIds = premiumApps.map((app) => app._id);
 
-        await MyApplications.updateOne(
-          { workspaceId },
-          { $pull: { allowedApplicationsId: { $in: premiumAppIds } } }
-        );
+          await MyApplications.updateOne(
+            { workspaceId },
+            { $pull: { allowedApplicationsId: { $in: premiumAppIds } } }
+          );
+        }
 
         break;
       }
