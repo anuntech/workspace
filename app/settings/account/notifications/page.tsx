@@ -170,8 +170,8 @@ export default function NotificationsPage() {
                           workspaceId: notification.workspaceId,
                         })
                       }
-                      variant="destructive"
                       size="sm"
+                      variant="outline"
                       disabled={
                         acceptInviteMutation.isPending ||
                         refuseInviteMutation.isPending
@@ -192,7 +192,6 @@ export default function NotificationsPage() {
                         refuseInviteMutation.isPending
                       }
                       variant="default"
-                      className="bg-green-500 hover:bg-green-600"
                       size="sm"
                     >
                       <CheckIcon className="w-4 h-4 mr-1" />
@@ -216,7 +215,7 @@ export default function NotificationsPage() {
                 )}
 
                 {notification.isInvite && notification.state === "expired" && (
-                  <div className="flex items-center space-x-2 px-3 py-1 ml-4 rounded-lg bg-red-100 text-red-600 text-xs">
+                  <div className="flex items-center space-x-2 px-3 py-1 ml-4 rounded-lg bg-red-400 text-white text-xs">
                     <XIcon className="h-4 w-4" />
                     <span>Convite expirado</span>
                   </div>
