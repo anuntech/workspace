@@ -105,6 +105,18 @@ export async function POST(request: Request) {
 
     worksPace.save();
 
+    await Notifications.updateMany(
+      {
+        from: session.user.id,
+        userId: user.id,
+        workspaceId: worksPace.id,
+        isInvite: true,
+      },
+      {
+        state: "expired",
+      }
+    );
+
     await sendInviteWorkspaceEmail(email, worksPace.id, worksPace.name);
     if (user) {
       await sendInviteNotification(user.id, session.user.id, worksPace.id);

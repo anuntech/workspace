@@ -22,6 +22,8 @@ export async function GET(request: Request) {
         const fromUser = await User.findOne({ _id: v.from });
         const workspace = await Workspace.findOne({ _id: v.workspaceId });
 
+        const combinationKey = `${v.from}-${v.workspaceId}`;
+
         return {
           id: v._id,
           user: fromUser?.name || "Unknown User",

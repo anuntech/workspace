@@ -2,6 +2,7 @@ import connectMongo from "@/libs/mongoose";
 import { authOptions } from "@/libs/next-auth";
 import { sendInviteNotification } from "@/libs/notification";
 import { sendInviteWorkspaceEmail } from "@/libs/workspace-invite";
+import Notifications from "@/models/Notification";
 import Plans from "@/models/Plans";
 import User from "@/models/User";
 import Workspace from "@/models/Workspace";
@@ -91,6 +92,18 @@ export async function POST(request: Request) {
       },
     });
 
+    await Notifications.updateMany(
+      {
+        from: session.user.id,
+        userId: user.id,
+        workspaceId: worksPace.id,
+        isInvite: true,
+      },
+      {
+        state: "expired",
+      }
+    );
+
     await sendInviteWorkspaceEmail(email, workspaceId, worksPace.name);
     if (user) {
       await sendInviteNotification(user.id, session.user.id, worksPace.id);
@@ -106,7 +119,6 @@ export async function POST(request: Request) {
 export async function DELETE(request: Request) {
   try {
     const session = await getServerSession(authOptions);
-
     await connectMongo();
 
     const { workspaceId, email } = await request.json();

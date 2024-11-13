@@ -11,7 +11,6 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import api from "@/libs/api";
 import { getS3Image } from "@/libs/s3-client";
@@ -212,6 +211,13 @@ export default function NotificationsPage() {
                   <div className="flex items-center space-x-2 px-3 py-1 ml-4 rounded-lg bg-red-100 text-red-600 text-xs">
                     <XIcon className="h-4 w-4" />
                     <span>Convite recusado</span>
+                  </div>
+                )}
+
+                {notification.isInvite && notification.state === "expired" && (
+                  <div className="flex items-center space-x-2 px-3 py-1 ml-4 rounded-lg bg-red-100 text-red-600 text-xs">
+                    <XIcon className="h-4 w-4" />
+                    <span>Convite expirado</span>
                   </div>
                 )}
 
