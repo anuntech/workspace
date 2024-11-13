@@ -161,10 +161,10 @@ export async function POST(req: NextRequest) {
           const workspace = await Workspace.findById(workspaceId);
 
           workspace.plan = "free";
-          const plan = await plans.findOne({ name: workspace.plan });
-          workspace.members.splice(plan.membersLimit);
+          const plan = await plans.findOne({ name: "free" });
+          workspace.members.splice(plan.membersLimit - 1);
 
-          workspace.save();
+          await workspace.save();
           const premiumApps = await Applications.find({
             workspaceAccess: "premium",
           });
