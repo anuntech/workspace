@@ -49,6 +49,10 @@ export async function GET(request: Request) {
   try {
     const session = await getServerSession(authOptions);
 
+    if (!session) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    }
+
     await connectMongo();
 
     const user = await Workspace.find({ owner: session.user.id });
