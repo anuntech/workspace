@@ -78,25 +78,11 @@ export default function AppPage({ params }: { params: { slug: string } }) {
   });
 
   const paymentMutation = useMutation({
-    mutationFn: async () =>
+    mutationFn: async ({ mode }: { mode: "payment" | "subscription" }) =>
       await api.post("/api/applications/create-checkout", {
         successUrl: window.location.href,
         cancelUrl: window.location.href,
-        mode: "payment",
-        workspaceId: workspace,
-        applicationId: params.slug,
-      }),
-    onSuccess: ({ data }) => {
-      window.location.href = data.url;
-    },
-  });
-
-  const rentableMutation = useMutation({
-    mutationFn: async () =>
-      await api.post("/api/applications/create-checkout", {
-        successUrl: window.location.href,
-        cancelUrl: window.location.href,
-        mode: "subscription",
+        mode,
         workspaceId: workspace,
         applicationId: params.slug,
       }),
@@ -106,7 +92,11 @@ export default function AppPage({ params }: { params: { slug: string } }) {
   });
 
   const handlePayment = () => {
-    paymentMutation.mutate();
+    paymentMutation.mutate({ mode: "payment" });
+  };
+
+  const handleSubscription = () => {
+    paymentMutation.mutate({ mode: "subscription" });
   };
 
   if (applicationsQuery.isLoading) {
@@ -191,7 +181,7 @@ export default function AppPage({ params }: { params: { slug: string } }) {
     return (
       <Button
         type="button"
-        onClick={handlePayment}
+        onClick={handleSubscription}
         disabled={paymentMutation.isPending}
         className="bg-gradient-to-r from-blue-400 to-blue-600 hover:from-blue-500 hover:to-blue-700 text-white font-semibold px-4 py-2 rounded-lg shadow-lg hover:shadow-xl transition-transform duration-300 ease-in-out hover:scale-105"
       >
