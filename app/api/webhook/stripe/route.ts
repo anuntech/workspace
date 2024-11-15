@@ -101,8 +101,11 @@ export async function POST(req: NextRequest) {
           workspace.boughtApplications.push(
             new mongoose.Types.ObjectId(applicationId)
           );
+        } else if (type == "app-rentable") {
+          workspace.boughtApplications.push(
+            new mongoose.Types.ObjectId(applicationId)
+          );
         }
-
         workspace.save();
 
         const subscriptionId = stripeObject.subscription; // ID da assinatura criada
@@ -155,7 +158,7 @@ export async function POST(req: NextRequest) {
         user.hasAccess = false;
         await user.save();
 
-        const { workspaceId, type } = stripeObject.metadata;
+        const { workspaceId, type, applicationId } = stripeObject.metadata;
 
         if (type == "premium") {
           const workspace = await Workspace.findById(workspaceId);
@@ -174,6 +177,18 @@ export async function POST(req: NextRequest) {
           await MyApplications.updateOne(
             { workspaceId },
             { $pull: { allowedApplicationsId: { $in: premiumAppIds } } }
+          );
+        }
+
+        if (type == "app-rentable") {
+          await Workspace.findByIdAndUpdate(workspaceId, {
+            $pull: {
+              boughtApplications: applicationId,
+            },
+          });
+          await MyApplications.updateOne(
+            { workspaceId },
+            { $pull: { allowedApplicationsId: applicationId } }
           );
         }
 

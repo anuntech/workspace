@@ -90,6 +90,11 @@ export default function AppsPage() {
                               Comprável
                             </div>
                           )}
+                          {app.workspaceAccess == "rentable" && (
+                            <div className="absolute top-0 right-0 bg-blue-500 text-white px-2 py-1 text-xs font-bold transform rotate-12 shadow-md">
+                              Alugável
+                            </div>
+                          )}
                           <CardContent className="flex items-center gap-3 p-5">
                             {app.icon?.type == "emoji" && (
                               <p className="text-[2rem]">{app.icon.value}</p>
