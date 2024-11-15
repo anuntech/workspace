@@ -17,7 +17,7 @@ export interface IApplications extends mongoose.Document {
     type: "image" | "emoji";
     value: string;
   };
-  workspaceAccess: "free" | "premium" | "buyable";
+  workspaceAccess: "free" | "premium" | "buyable" | "rentable";
   priceId?: string;
 }
 

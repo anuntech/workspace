@@ -82,7 +82,11 @@ export default function AdminPage() {
   const onSubmit: SubmitHandler<Input> = async (data) => {
     const formData = new FormData();
 
-    if (category != "buyable" && category != "premium") {
+    if (
+      category != "buyable" &&
+      category != "premium" &&
+      category != "rentable"
+    ) {
       data.priceId = null;
     }
 
@@ -260,7 +264,9 @@ export default function AdminPage() {
           </section>
           <Separator />
 
-          {(category == "buyable" || category == "premium") && (
+          {(category == "buyable" ||
+            category == "premium" ||
+            category == "rentable") && (
             <>
               <section className="grid grid-cols-2 gap-8 py-5">
                 <div>
