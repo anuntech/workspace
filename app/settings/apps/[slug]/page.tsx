@@ -24,7 +24,6 @@ import {
 
 export default function AppPage({ params }: { params: { slug: string } }) {
   const searchParams = useSearchParams();
-
   const workspace = searchParams.get("workspace");
 
   const workspaceQuery = useQuery({
@@ -84,7 +83,21 @@ export default function AppPage({ params }: { params: { slug: string } }) {
         successUrl: window.location.href,
         cancelUrl: window.location.href,
         mode: "payment",
-        workspaceId: searchParams.get("workspace"),
+        workspaceId: workspace,
+        applicationId: params.slug,
+      }),
+    onSuccess: ({ data }) => {
+      window.location.href = data.url;
+    },
+  });
+
+  const rentableMutation = useMutation({
+    mutationFn: async () =>
+      await api.post("/api/applications/create-checkout", {
+        successUrl: window.location.href,
+        cancelUrl: window.location.href,
+        mode: "subscription",
+        workspaceId: workspace,
         applicationId: params.slug,
       }),
     onSuccess: ({ data }) => {
@@ -96,14 +109,124 @@ export default function AppPage({ params }: { params: { slug: string } }) {
     paymentMutation.mutate();
   };
 
-  if (applicationsQuery.isPending || applicationsQuery.isLoading) {
+  if (applicationsQuery.isLoading) {
     return <div>Carregando...</div>;
   }
 
-  const application = applicationsQuery?.data?.data.find(
+  const application = applicationsQuery.data?.data.find(
     (app: any) => app._id === params.slug
   );
+
   const alreadyEnabled = application.status === "enabled";
+
+  const isBuyableAndNotBought =
+    application.workspaceAccess === "buyable" &&
+    !actualWorkspace?.boughtApplications?.includes(application._id);
+
+  const isPremiumAndNotBoughtAndNotPremiumPlan =
+    application.workspaceAccess === "premium" &&
+    actualWorkspace?.plan !== "premium" &&
+    !actualWorkspace?.boughtApplications?.includes(application._id);
+
+  const isRentableAndNotBought =
+    application.workspaceAccess === "rentable" &&
+    !actualWorkspace?.boughtApplications?.includes(application._id);
+
+  function BuyButton() {
+    return (
+      <Button
+        type="button"
+        onClick={handlePayment}
+        disabled={paymentMutation.isPending}
+        className="bg-gradient-to-r from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 text-white font-semibold px-4 py-2 rounded-lg shadow-lg hover:shadow-xl transition-transform duration-300 ease-in-out hover:scale-105"
+      >
+        <CirclePlus className="mr-2 size-5" />
+        Comprar
+      </Button>
+    );
+  }
+
+  function UpgradeButton() {
+    return (
+      <Link href={`/settings/plans?workspace=${workspace}`}>
+        <Button
+          type="button"
+          className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-semibold px-4 py-2 rounded-lg shadow-lg hover:shadow-xl transition-transform duration-300 ease-in-out hover:scale-105"
+        >
+          <CirclePlus className="mr-2 size-5" />
+          Upgrade para Premium
+        </Button>
+      </Link>
+    );
+  }
+
+  function UninstallButton() {
+    return (
+      <Button
+        type="button"
+        onClick={() => deleteApplicationMutation.mutate()}
+        variant="destructive"
+        disabled={deleteApplicationMutation.isPending}
+      >
+        <CircleMinus className="mr-2 size-5" />
+        Desinstalar
+      </Button>
+    );
+  }
+
+  function InstallButton() {
+    return (
+      <Button
+        type="button"
+        onClick={() => getApplicationMutation.mutate()}
+        disabled={getApplicationMutation.isPending}
+      >
+        <CirclePlus className="mr-2 size-5" />
+        Instalar
+      </Button>
+    );
+  }
+
+  function RentableButton() {
+    return (
+      <Button
+        type="button"
+        onClick={handlePayment}
+        disabled={paymentMutation.isPending}
+        className="bg-gradient-to-r from-blue-400 to-blue-600 hover:from-blue-500 hover:to-blue-700 text-white font-semibold px-4 py-2 rounded-lg shadow-lg hover:shadow-xl transition-transform duration-300 ease-in-out hover:scale-105"
+      >
+        <CirclePlus className="mr-2 size-5" />
+        Alugar
+      </Button>
+    );
+  }
+
+  function renderHeaderContent() {
+    if (isBuyableAndNotBought) {
+      return (
+        <div className="space-x-2">
+          <BuyButton />
+        </div>
+      );
+    } else if (isPremiumAndNotBoughtAndNotPremiumPlan) {
+      return (
+        <div className="space-x-2">
+          <BuyButton />
+          <UpgradeButton />
+        </div>
+      );
+    } else if (isRentableAndNotBought) {
+      return (
+        <div className="space-x-2">
+          <RentableButton />
+        </div>
+      );
+    } else if (alreadyEnabled) {
+      return <UninstallButton />;
+    } else {
+      return <InstallButton />;
+    }
+  }
 
   return (
     <>
@@ -136,10 +259,9 @@ export default function AppPage({ params }: { params: { slug: string } }) {
             Loja de aplicativos
           </Link>
           <section className="flex gap-3">
-            {application.icon?.type == "emoji" && (
+            {application.icon?.type === "emoji" ? (
               <p className="text-[2rem]">{application.icon.value}</p>
-            )}
-            {(application.icon?.type == "image" || !application.icon) && (
+            ) : (
               <Avatar>
                 <AvatarImage
                   src={getS3Image(
@@ -158,69 +280,10 @@ export default function AppPage({ params }: { params: { slug: string } }) {
           </section>
           <section className="space-y-5 rounded-md border p-5">
             <header className="flex justify-end">
-              {application.workspaceAccess === "buyable" &&
-              !actualWorkspace?.boughtApplications?.find(
-                (id: any) => id === application._id
-              ) ? (
-                <div className="space-x-2">
-                  <Button
-                    type="button"
-                    onClick={() => handlePayment()}
-                    disabled={paymentMutation.isPending}
-                    className="bg-gradient-to-r from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 text-white font-semibold px-4 py-2 rounded-lg shadow-lg hover:shadow-xl transform transition-transform duration-300 ease-in-out hover:scale-105"
-                  >
-                    <CirclePlus className="mr-2 size-5" />
-                    Comprar
-                  </Button>
-                </div>
-              ) : application.workspaceAccess === "premium" &&
-                actualWorkspace?.plan !== "premium" &&
-                !actualWorkspace?.boughtApplications?.find(
-                  (id: any) => id === application._id
-                ) ? (
-                <div className="space-x-2">
-                  <Button
-                    type="button"
-                    onClick={() => handlePayment()}
-                    disabled={paymentMutation.isPending}
-                    className="bg-gradient-to-r from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 text-white font-semibold px-4 py-2 rounded-lg shadow-lg hover:shadow-xl transform transition-transform duration-300 ease-in-out hover:scale-105"
-                  >
-                    <CirclePlus className="mr-2 size-5" />
-                    Comprar
-                  </Button>
-                  <Link href={`/settings/plans?workspace=${workspace}`}>
-                    <Button
-                      type="button"
-                      className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-semibold px-4 py-2 rounded-lg shadow-lg hover:shadow-xl transform transition-transform duration-300 ease-in-out hover:scale-105"
-                    >
-                      <CirclePlus className="mr-2 size-5" />
-                      Upgrade para Premium
-                    </Button>
-                  </Link>
-                </div>
-              ) : alreadyEnabled ? (
-                <Button
-                  type="button"
-                  onClick={() => deleteApplicationMutation.mutate()}
-                  variant="destructive"
-                  disabled={deleteApplicationMutation.isPending}
-                >
-                  <CircleMinus className="mr-2 size-5" />
-                  Desinstalar
-                </Button>
-              ) : (
-                <Button
-                  type="button"
-                  onClick={() => getApplicationMutation.mutate()}
-                  disabled={getApplicationMutation.isPending}
-                >
-                  <CirclePlus className="mr-2 size-5" />
-                  Instalar
-                </Button>
-              )}
+              {renderHeaderContent()}
             </header>
 
-            {application.galleryPhotos.length == 0 ? (
+            {application.galleryPhotos.length === 0 ? (
               <div className="grid grid-cols-2 gap-4">
                 <div className="h-52 rounded-md bg-zinc-300" />
                 <div className="h-52 rounded-md bg-zinc-300" />
