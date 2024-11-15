@@ -55,7 +55,8 @@ export async function POST(
     }
 
     if (
-      application.workspaceAccess == "buyable" &&
+      (application.workspaceAccess == "buyable" ||
+        application.workspaceAccess == "rentable") &&
       !workspace.boughtApplications?.find(
         (id) => id.toString() === application.id.toString()
       )
