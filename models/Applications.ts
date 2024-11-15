@@ -88,7 +88,7 @@ const applicationSchema = new mongoose.Schema<IApplications>(
     },
     workspaceAccess: {
       type: String,
-      enum: ["free", "premium", "buyable"],
+      enum: ["free", "premium", "buyable", "rentable"],
     },
     priceId: {
       type: String,

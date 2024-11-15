@@ -49,9 +49,9 @@ export default function AdminPage() {
   const [icon, setIcon] = useState<FormData>(null);
   const [imageUrlWithoutS3, setImageUrlWithoutS3] = useState<string>("");
   const [emojiAvatar, setEmojiAvatar] = useState<string>("");
-  const [category, setCategory] = useState<"free" | "premium" | "buyable">(
-    "free"
-  );
+  const [category, setCategory] = useState<
+    "free" | "premium" | "buyable" | "rentable"
+  >("free");
 
   const saveApplicationMutation = useMutation({
     mutationFn: async (data: FormData) => api.post("/api/applications", data),

@@ -3,7 +3,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 interface Props {
   value: string;
-  setValue: (value: "free" | "premium" | "buyable") => void;
+  setValue: (value: "free" | "premium" | "buyable" | "rentable") => void;
 }
 
 export function WorkspaceAccessRadio({ value, setValue }: Props) {
@@ -12,7 +12,7 @@ export function WorkspaceAccessRadio({ value, setValue }: Props) {
       defaultValue="free"
       value={value}
       onValueChange={(value) =>
-        setValue(value as "free" | "premium" | "buyable")
+        setValue(value as "free" | "premium" | "buyable" | "rentable")
       }
       className="flex items-center space-x-2"
     >
@@ -27,6 +27,10 @@ export function WorkspaceAccessRadio({ value, setValue }: Props) {
       <div className="flex items-center space-x-2">
         <RadioGroupItem value="buyable" />
         <Label htmlFor="r2">Buyable</Label>
+      </div>
+      <div className="flex items-center space-x-2">
+        <RadioGroupItem value="rentable" />
+        <Label htmlFor="r2">Rentable</Label>
       </div>
     </RadioGroup>
   );
