@@ -13,7 +13,7 @@ interface CreateCheckoutParams {
   };
   workspaceId: string;
   applicationId?: string;
-  type?: "premium" | "app";
+  type?: "premium" | "app" | "app-rentable";
 }
 
 interface CreateCustomerPortalParams {

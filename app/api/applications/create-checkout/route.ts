@@ -40,6 +40,13 @@ export async function POST(req: NextRequest) {
       },
       { status: 400 }
     );
+  } else if (["payment", "subscription"].indexOf(body.mode) == -1) {
+    return NextResponse.json(
+      {
+        error: "Invalid mode",
+      },
+      { status: 400 }
+    );
   }
 
   try {
@@ -82,10 +89,13 @@ export async function POST(req: NextRequest) {
 
     if (
       application.workspaceAccess != "buyable" &&
-      application.workspaceAccess != "premium"
+      application.workspaceAccess != "premium" &&
+      application.workspaceAccess != "rentable"
     ) {
       return NextResponse.json(
-        { error: "You can't create a subscription for this application" },
+        {
+          error: "You can't create a subscription/payment for this application",
+        },
         { status: 403 }
       );
     }
@@ -104,23 +114,46 @@ export async function POST(req: NextRequest) {
 
     const { mode, successUrl, cancelUrl } = body;
 
-    const stripeSessionURL = await createCheckout({
-      priceId: application.priceId,
-      mode,
-      successUrl,
-      cancelUrl,
-      // If user is logged in, it will pass the user ID to the Stripe Session so it can be retrieved in the webhook later
-      clientReferenceId: user?._id?.toString(),
-      // If user is logged in, this will automatically prefill Checkout data like email and/or credit card for faster checkout
-      user,
-      // If you send coupons from the frontend, you can pass it here
-      // couponId: body.couponId,
-      workspaceId: workspace.id,
-      applicationId: application.id,
-      type: "app",
-    });
+    switch (mode) {
+      case "payment":
+        const stripeSessionURL = await createCheckout({
+          priceId: application.priceId,
+          mode,
+          successUrl,
+          cancelUrl,
+          // If user is logged in, it will pass the user ID to the Stripe Session so it can be retrieved in the webhook later
+          clientReferenceId: user?._id?.toString(),
+          // If user is logged in, this will automatically prefill Checkout data like email and/or credit card for faster checkout
+          user,
+          // If you send coupons from the frontend, you can pass it here
+          // couponId: body.couponId,
+          workspaceId: workspace.id,
+          applicationId: application.id,
+          type: "app",
+        });
 
-    return NextResponse.json({ url: stripeSessionURL });
+        return NextResponse.json({ url: stripeSessionURL });
+      case "subscription":
+        const stripeSubscriptionSessionURL = await createCheckout({
+          priceId: application.priceId,
+          mode,
+          successUrl,
+          cancelUrl,
+          // If user is logged in, it will pass the user ID to the Stripe Session so it can be retrieved in the webhook later
+          clientReferenceId: user?._id?.toString(),
+          // If user is logged in, this will automatically prefill Checkout data like email and/or credit card for faster checkout
+          user,
+          // If you send coupons from the frontend, you can pass it here
+          // couponId: body.couponId,
+          workspaceId: workspace.id,
+          applicationId: application.id,
+          type: "app-rentable",
+        });
+
+        return NextResponse.json({ url: stripeSubscriptionSessionURL });
+      default:
+        return NextResponse.json({ error: "Invalid mode" }, { status: 400 });
+    }
   } catch (e) {
     console.error(e);
     return NextResponse.json({ error: e?.message }, { status: 500 });
