@@ -166,6 +166,11 @@ function App({ app, workspace }: { app: any; workspace: string }) {
             Comprável
           </div>
         )}
+        {app.workspaceAccess == "rentable" && (
+          <div className="absolute top-0 right-0 bg-blue-500 text-white px-2 py-1 text-xs font-bold transform rotate-12 shadow-md">
+            Alugável
+          </div>
+        )}
         <CardContent className="space-y-3 p-5">
           <div className="flex items-center gap-3">
             {app.icon?.type == "emoji" && (
