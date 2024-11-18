@@ -16,18 +16,22 @@ import api from "@/libs/api";
 import { getS3Image } from "@/libs/s3-client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { CheckIcon, XIcon } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "@/hooks/use-toast";
 import { AxiosError } from "axios";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function NotificationsPage() {
+  const [page, setPage] = useState(1);
+  const limit = 8;
+
   const notificationsQuery = useQuery({
-    queryKey: ["notifications"],
-    queryFn: async () => api.get("/api/user/notifications"),
+    queryKey: ["notifications", page],
+    queryFn: () =>
+      api.get(`/api/user/notifications?page=${page}&limit=${limit}`),
   });
 
-  const notifications = notificationsQuery.data?.data || [];
+  const notifications = notificationsQuery.data?.data?.notifications || [];
 
   const acceptInviteMutation = useMutation({
     mutationFn: async (data: { notificationId: string; workspaceId: string }) =>
@@ -241,6 +245,36 @@ export default function NotificationsPage() {
               <Skeleton className="w-full h-14 mb-5 p-4 rounded-lg" />
             </>
           )}
+
+          <div className="mt-6 space-y-4">
+            {notificationsQuery.data?.data.pagination && (
+              <div className="flex justify-between items-center mt-4">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={page === 1 || notificationsQuery.isLoading}
+                  onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+                >
+                  Anterior
+                </Button>
+                <span>
+                  Página {notificationsQuery.data?.data.pagination.currentPage}{" "}
+                  de {notificationsQuery.data?.data.pagination.totalPages}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={
+                    !notificationsQuery.data?.data.pagination.hasNextPage ||
+                    notificationsQuery.isLoading
+                  }
+                  onClick={() => setPage((prev) => prev + 1)}
+                >
+                  Próxima
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </>

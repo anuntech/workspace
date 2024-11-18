@@ -66,7 +66,6 @@ export async function POST(request: Request) {
         { status: 403 }
       );
     }
-
     const user = await User.findOne({ email });
 
     const alreadyIn = worksPace.members?.find(
@@ -92,17 +91,19 @@ export async function POST(request: Request) {
       },
     });
 
-    await Notifications.updateMany(
-      {
-        from: session.user.id,
-        userId: user.id,
-        workspaceId: worksPace.id,
-        isInvite: true,
-      },
-      {
-        state: "expired",
-      }
-    );
+    if (user) {
+      await Notifications.updateMany(
+        {
+          from: session.user.id,
+          userId: user.id,
+          workspaceId: worksPace.id,
+          isInvite: true,
+        },
+        {
+          state: "expired",
+        }
+      );
+    }
 
     await sendInviteWorkspaceEmail(email, workspaceId, worksPace.name);
     if (user) {
