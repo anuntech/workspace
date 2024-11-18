@@ -1,7 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronLeft, CircleMinus, CirclePlus, UserPlus } from "lucide-react";
+import {
+  ChevronLeft,
+  CircleMinus,
+  CirclePlus,
+  Settings,
+  UserPlus,
+} from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useSearchParams } from "next/navigation";
@@ -21,7 +27,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { SelectMemberAccess } from "./_components/select-member-access";
 
 export default function AppPage({ params }: { params: { slug: string } }) {
   const searchParams = useSearchParams();
@@ -214,9 +219,11 @@ export default function AppPage({ params }: { params: { slug: string } }) {
       );
     } else if (alreadyEnabled) {
       return (
-        <div className="flex gap-3">
-          <SelectMemberAccess />
+        <div className="flex gap-2">
           <UninstallButton />
+          <Button size="icon" variant="outline">
+            <Settings />
+          </Button>
         </div>
       );
     } else {
