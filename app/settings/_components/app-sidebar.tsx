@@ -265,7 +265,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                             asChild
                           >
                             <Link
-                              href={`/settings/account?workspace=${workspace}`}
+                              href={`/settings/manage-apps/${a._id}?workspace=${workspace}`}
                             >
                               {a.name}
                             </Link>
