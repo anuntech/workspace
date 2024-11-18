@@ -58,6 +58,10 @@ export default function AppPage({ params }: { params: { slug: string } }) {
         queryKey: ["applications"],
         type: "all",
       });
+      await queryClient.refetchQueries({
+        queryKey: ["workspace"],
+        type: "all",
+      });
     },
     onError: (err: AxiosError) => {
       toast({

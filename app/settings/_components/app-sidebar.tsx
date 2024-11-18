@@ -66,6 +66,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     queryFn: () => api.get("/api/user/notifications/is-there-new"),
   });
 
+  const workspaceQuery = useQuery({
+    queryKey: ["workspace"],
+    queryFn: async () => api.get("/api/workspace"),
+  });
+
+  const applicationsQuery = useQuery({
+    queryKey: ["applications"],
+    queryFn: async () => await api.get(`/api/applications/${workspace}`),
+  });
+
   return (
     <Sidebar
       {...props}
@@ -224,6 +234,50 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </CollapsibleContent>
           </SidebarGroup>
         </Collapsible>
+
+        {applicationsQuery.data?.data?.filter(
+          (app: any) => app.status === "enabled"
+        ).length > 0 && (
+          <Collapsible
+            title="Workspace"
+            defaultOpen
+            className="group/collapsible"
+          >
+            <SidebarGroup>
+              <SidebarGroupLabel
+                asChild
+                className="group/label text-sm text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+              >
+                <CollapsibleTrigger>
+                  Aplicativos
+                  <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
+                </CollapsibleTrigger>
+              </SidebarGroupLabel>
+              <CollapsibleContent>
+                <SidebarGroupContent className="font-normal">
+                  <SidebarMenu>
+                    {applicationsQuery.data?.data
+                      .filter((app: any) => app.status === "enabled")
+                      .map((a: any) => (
+                        <SidebarMenuItem>
+                          <SidebarMenuButton
+                            className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
+                            asChild
+                          >
+                            <Link
+                              href={`/settings/account?workspace=${workspace}`}
+                            >
+                              {a.name}
+                            </Link>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      ))}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </CollapsibleContent>
+            </SidebarGroup>
+          </Collapsible>
+        )}
         {emailDomain == config.domainName && (
           <Collapsible
             title="Workspace"
