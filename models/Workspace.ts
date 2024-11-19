@@ -121,6 +121,7 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
         },
       },
       required: false,
+      default: {},
     },
   },
   {
