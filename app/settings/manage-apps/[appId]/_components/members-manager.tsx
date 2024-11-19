@@ -69,12 +69,14 @@ export function UserSearchInput({
 
   const users = membersQuery.data?.data || [];
 
-  const availableUsers = users.filter(
-    (user: any) =>
-      !selectedUsers.some((selected) => selected.id === user.id) &&
-      (user.name.toLowerCase().includes(query.toLowerCase()) ||
-        user.email.toLowerCase().includes(query.toLowerCase()))
-  );
+  const availableUsers = users
+    .filter(
+      (user: any) =>
+        !selectedUsers.some((selected) => selected.id === user.id) &&
+        (user.name.toLowerCase().includes(query.toLowerCase()) ||
+          user.email.toLowerCase().includes(query.toLowerCase()))
+    )
+    .filter((user: any) => user.role !== "admin");
 
   const handleSelectUser = (user: User) => {
     if (!selectedUsers.find((u) => u.id === user.id)) {
