@@ -29,9 +29,11 @@ export function MembersManager() {
   return (
     <div className="space-y-5 h-96">
       <section>
-        <h2 className="text-lg font-bold">Convidar para o workspace</h2>
+        <h2 className="text-lg font-bold">
+          Adicionar membros para um aplicativo
+        </h2>
         <span className="text-sm text-zinc-500">
-          Convide os membros da sua equipe para colaborar.
+          Adicione os membros da sua equipe para terem acesso a esse app.
         </span>
       </section>
       <section className="">
