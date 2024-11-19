@@ -111,7 +111,7 @@ export function UserSearchInput() {
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => setIsDropdownOpen(true)}
           onBlur={() => setTimeout(() => setIsDropdownOpen(false), 100)}
-          className="flex-1 min-w-[100px] border-none focus:ring-0 focus:outline-none"
+          className="flex-1 min-w-[100px] border-none focus:ring-0 focus:outline-none shadow-none focus-visible:outline-none  focus-visible:ring-0 "
         />
       </div>
 

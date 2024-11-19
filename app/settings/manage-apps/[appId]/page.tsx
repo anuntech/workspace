@@ -14,16 +14,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import api from "@/libs/api";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useEffect, useState } from "react";
-import { Input } from "@/components/ui/input";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function MembersPage() {
   const searchParams = useSearchParams();
@@ -50,11 +40,13 @@ export default function MembersPage() {
         <div className="w-full max-w-3xl space-y-5">
           <h1 className="text-2xl flex gap-3">Membros</h1>
           <Separator />
-          <Tabs defaultValue="invites" className="space-y-10">
+          <Tabs defaultValue="members-manager" className="space-y-10">
             <TabsList>
-              <TabsTrigger value="invites">Convites</TabsTrigger>
+              <TabsTrigger value="members-manager">
+                Gerencenciar membros
+              </TabsTrigger>
             </TabsList>
-            <TabsContent value="invites">
+            <TabsContent value="members-manager">
               <MembersManager />
             </TabsContent>
           </Tabs>
