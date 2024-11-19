@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import api from "@/libs/api";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
+import { getS3Image } from "@/libs/s3-client";
 
 type User = {
   id: string;
@@ -61,12 +62,12 @@ export function UserSearchInput({
   const [query, setQuery] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const { data, isPending } = useQuery({
+  const membersQuery = useQuery({
     queryKey: ["workspace/members"],
     queryFn: () => api.get(`/api/workspace/members/${workspaceId}`),
   });
 
-  const users = data?.data || [];
+  const users = membersQuery.data?.data || [];
 
   const availableUsers = users.filter(
     (user: any) =>
@@ -110,7 +111,7 @@ export function UserSearchInput({
           onFocus={() => setIsDropdownOpen(true)}
           onBlur={() => setTimeout(() => setIsDropdownOpen(false), 100)}
           className="flex-1 min-w-[100px] border-none focus:ring-0 focus:outline-none shadow-none focus-visible:outline-none  focus-visible:ring-0"
-          disabled={isPending}
+          disabled={membersQuery.isPending}
         />
       </div>
 
@@ -126,13 +127,31 @@ export function UserSearchInput({
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={() => handleSelectUser(user)}
               >
-                <Avatar className="w-8 h-8">
-                  {user.image ? (
-                    <AvatarImage src={user.image} alt={user.name} />
-                  ) : (
-                    <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-                  )}
-                </Avatar>
+                {user.data?.icon?.value ? (
+                  <div>
+                    {user.data?.icon.type === "emoji" ? (
+                      <span className="text-[2rem] w-full h-full flex size-10">
+                        {user.data?.icon.value}
+                      </span>
+                    ) : (
+                      <Avatar className="size-10">
+                        <AvatarImage
+                          src={getS3Image(user.data?.icon.value) || "/shad.png"}
+                          alt="@shadcn"
+                        />
+                        <AvatarFallback>SC</AvatarFallback>
+                      </Avatar>
+                    )}
+                  </div>
+                ) : (
+                  <Avatar className="size-10">
+                    <AvatarImage
+                      src={user.data?.image || "/shad.png"}
+                      alt="@shadcn"
+                    />
+                    <AvatarFallback>SC</AvatarFallback>
+                  </Avatar>
+                )}
 
                 <div className="flex flex-col">
                   <span className="text-sm font-medium text-gray-800">
