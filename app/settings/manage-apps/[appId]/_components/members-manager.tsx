@@ -22,9 +22,11 @@ export function MembersManager() {
           Convide os membros da sua equipe para colaborar.
         </span>
       </section>
-      <section className="flex gap-2">
-        <UserSearchInput />
-        <Button>Adicionar</Button>
+      <section className="">
+        <div className="flex gap-2">
+          <UserSearchInput />
+          <Button className="h-full">Adicionar</Button>
+        </div>
       </section>
     </div>
   );
