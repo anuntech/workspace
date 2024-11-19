@@ -110,13 +110,13 @@ export function UserSearchInput() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => setIsDropdownOpen(true)}
-          onBlur={() => setTimeout(() => setIsDropdownOpen(false), 200)}
+          onBlur={() => setTimeout(() => setIsDropdownOpen(false), 100)}
           className="flex-1 min-w-[100px] border-none focus:ring-0 focus:outline-none"
         />
       </div>
 
       {isDropdownOpen && (
-        <div className="absolute mt-2 w-full border bg-white rounded-md shadow-lg z-10 transition-all duration-300 ease-in-out">
+        <div className="absolute max-h-56 overflow-auto mt-2 w-full border bg-white rounded-md shadow-lg z-10 transition-all duration-300 ease-in-out">
           {availableUsers.length > 0 ? (
             availableUsers.map((user) => (
               <div
