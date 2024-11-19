@@ -1,9 +1,8 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils"; // Função para combinar classes no Tailwind
+import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 
@@ -12,17 +11,9 @@ type User = {
   name: string;
   email: string;
   image: string;
-  customerId?: string;
-  priceId?: string;
-  hasAccess?: boolean;
-  icon?: {
-    type: "image" | "emoji";
-    value: string;
-  };
 };
 
 export function MembersManager() {
-  const searchParams = useSearchParams();
   return (
     <div className="space-y-5 h-96">
       <section>
@@ -76,6 +67,7 @@ export function UserSearchInput() {
   const [query, setQuery] = useState("");
   const [filteredUsers, setFilteredUsers] = useState(users);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
 
   useEffect(() => {
     if (query.trim() === "") {
@@ -91,19 +83,46 @@ export function UserSearchInput() {
     }
   }, [query]);
 
+  const handleSelectUser = (user: User) => {
+    if (!selectedUsers.find((u) => u.id === user.id)) {
+      setSelectedUsers((prev) => [...prev, user]);
+      setQuery("");
+    }
+  };
+
+  const handleRemoveUser = (userId: string) => {
+    setSelectedUsers((prev) => prev.filter((user) => user.id !== userId));
+  };
+
   return (
     <div className="relative w-full max-w-md">
-      <Input
-        placeholder="Selecione um usuário"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        onFocus={() => setIsDropdownOpen(true)} // Abre o menu ao focar no input
-        onBlur={() => setTimeout(() => setIsDropdownOpen(false), 200)} // Fecha o menu após sair do foco (delay para clique)
-        className="w-full"
-      />
+      <div className="flex flex-wrap gap-2 p-2 border rounded-md">
+        {selectedUsers.map((user) => (
+          <div
+            key={user.id}
+            className="flex items-center px-2 py-1 bg-gray-100 rounded-full"
+          >
+            <span className="text-sm text-gray-800">{user.name}</span>
+            <button
+              className="ml-2 text-gray-500 hover:text-gray-700"
+              onClick={() => handleRemoveUser(user.id)}
+            >
+              ✕
+            </button>
+          </div>
+        ))}
+        <Input
+          placeholder="Selecione um usuário"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onFocus={() => setIsDropdownOpen(true)} // Abre o menu ao focar no input
+          onBlur={() => setTimeout(() => setIsDropdownOpen(false), 200)} // Fecha o menu após sair do foco (delay para clique)
+          className="flex-1 min-w-[100px]"
+        />
+      </div>
 
       {isDropdownOpen && filteredUsers.length > 0 && (
-        <div className="absolute mt-2 w-full border bg-white rounded-md shadow-md">
+        <div className="absolute mt-2 w-full border bg-white rounded-md shadow-md z-10">
           {filteredUsers.map((user) => (
             <div
               key={user.id}
@@ -111,6 +130,7 @@ export function UserSearchInput() {
                 "flex items-center px-4 py-2 space-x-3 hover:bg-gray-100 cursor-pointer"
               )}
               onMouseDown={(e) => e.preventDefault()} // Previne blur ao clicar no item
+              onClick={() => handleSelectUser(user)}
             >
               <Avatar className="w-8 h-8">
                 {user.image ? (
