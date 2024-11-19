@@ -5,15 +5,26 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import api from "@/libs/api";
+import { useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "next/navigation";
 
 type User = {
   id: string;
   name: string;
   email: string;
   image: string;
+  icon?: {
+    value: string;
+    type: "image" | "emoji";
+  };
 };
 
 export function MembersManager() {
+  const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
+  const searchParams = useSearchParams();
+  const workspace = searchParams.get("workspace");
+
   return (
     <div className="space-y-5 h-96">
       <section>
@@ -23,55 +34,42 @@ export function MembersManager() {
         </span>
       </section>
       <section className="">
-        <div className="flex gap-2">
-          <UserSearchInput />
-          <Button className="h-full">Adicionar</Button>
+        <div className="flex gap-2 items-center">
+          <UserSearchInput
+            selectedUsers={selectedUsers}
+            setSelectedUsers={setSelectedUsers}
+            workspaceId={workspace}
+          />
+          <Button className="h-full" disabled={selectedUsers.length < 1}>
+            Adicionar
+          </Button>
         </div>
       </section>
     </div>
   );
 }
 
-const users: User[] = [
-  {
-    id: "1",
-    name: "Renata Macedo",
-    email: "renata.macedo@watecservice.com",
-    image: "",
-  },
-  {
-    id: "2",
-    name: "Renata Lima",
-    email: "renata.lima@grupovalitek.com.br",
-    image: "",
-  },
-  {
-    id: "3",
-    name: "Luciane Molinari",
-    email: "luciane.molinari@grupovalitek.com.br",
-    image: "",
-  },
-  {
-    id: "4",
-    name: "Alexandre Domene",
-    email: "alexandre@grupovalitek.com.br",
-    image: "",
-  },
-  {
-    id: "5",
-    name: "Luana Campos",
-    email: "luana.campos@watecservice.com",
-    image: "",
-  },
-];
-
-export function UserSearchInput() {
+export function UserSearchInput({
+  selectedUsers,
+  setSelectedUsers,
+  workspaceId,
+}: {
+  selectedUsers: User[];
+  setSelectedUsers: React.Dispatch<React.SetStateAction<User[]>>;
+  workspaceId: string;
+}) {
   const [query, setQuery] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
+
+  const { data, isPending } = useQuery({
+    queryKey: ["workspace/members"],
+    queryFn: () => api.get(`/api/workspace/members/${workspaceId}`),
+  });
+
+  const users = data?.data || [];
 
   const availableUsers = users.filter(
-    (user) =>
+    (user: any) =>
       !selectedUsers.some((selected) => selected.id === user.id) &&
       (user.name.toLowerCase().includes(query.toLowerCase()) ||
         user.email.toLowerCase().includes(query.toLowerCase()))
@@ -111,14 +109,15 @@ export function UserSearchInput() {
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => setIsDropdownOpen(true)}
           onBlur={() => setTimeout(() => setIsDropdownOpen(false), 100)}
-          className="flex-1 min-w-[100px] border-none focus:ring-0 focus:outline-none shadow-none focus-visible:outline-none  focus-visible:ring-0 "
+          className="flex-1 min-w-[100px] border-none focus:ring-0 focus:outline-none shadow-none focus-visible:outline-none  focus-visible:ring-0"
+          disabled={isPending}
         />
       </div>
 
       {isDropdownOpen && (
         <div className="absolute max-h-56 overflow-auto mt-2 w-full border bg-white rounded-md shadow-lg z-10 transition-all duration-300 ease-in-out">
           {availableUsers.length > 0 ? (
-            availableUsers.map((user) => (
+            availableUsers.map((user: any) => (
               <div
                 key={user.id}
                 className={cn(
