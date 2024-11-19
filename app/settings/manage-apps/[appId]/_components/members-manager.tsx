@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -68,7 +68,6 @@ export function UserSearchInput() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
 
-  // Filtrar usuários disponíveis (não selecionados e que correspondem à busca)
   const availableUsers = users.filter(
     (user) =>
       !selectedUsers.some((selected) => selected.id === user.id) &&
@@ -89,15 +88,15 @@ export function UserSearchInput() {
 
   return (
     <div className="relative w-full max-w-md">
-      <div className="flex flex-wrap gap-2 p-2 border rounded-md">
+      <div className="flex flex-wrap gap-2 p-2 border rounded-md shadow-sm bg-white focus-within:ring-2 focus-within:ring-blue-500 transition-all duration-300 ease-in-out">
         {selectedUsers.map((user) => (
           <div
             key={user.id}
-            className="flex items-center px-2 py-1 bg-gray-100 rounded-full"
+            className="flex items-center px-2 py-1 bg-blue-100 text-blue-800 rounded-full shadow-sm"
           >
-            <span className="text-sm text-gray-800">{user.name}</span>
+            <span className="text-sm">{user.name}</span>
             <button
-              className="ml-2 text-gray-500 hover:text-gray-700"
+              className="ml-2 text-blue-500 hover:text-blue-700 transition-colors"
               onClick={() => handleRemoveUser(user.id)}
             >
               ✕
@@ -108,46 +107,45 @@ export function UserSearchInput() {
           placeholder="Selecione um usuário"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          onFocus={() => setIsDropdownOpen(true)} // Abre o menu ao focar no input
-          onBlur={() => setTimeout(() => setIsDropdownOpen(false), 200)} // Fecha o menu após sair do foco (delay para clique)
-          className="flex-1 min-w-[100px]"
+          onFocus={() => setIsDropdownOpen(true)}
+          onBlur={() => setTimeout(() => setIsDropdownOpen(false), 200)}
+          className="flex-1 min-w-[100px] border-none focus:ring-0 focus:outline-none"
         />
       </div>
 
-      {/* Dropdown */}
-      {isDropdownOpen && availableUsers.length > 0 && (
-        <div className="absolute mt-2 w-full border bg-white rounded-md shadow-md z-10">
-          {availableUsers.map((user) => (
-            <div
-              key={user.id}
-              className={cn(
-                "flex items-center px-4 py-2 space-x-3 hover:bg-gray-100 cursor-pointer"
-              )}
-              onMouseDown={(e) => e.preventDefault()} // Previne blur ao clicar no item
-              onClick={() => handleSelectUser(user)}
-            >
-              <Avatar className="w-8 h-8">
-                {user.image ? (
-                  <AvatarImage src={user.image} alt={user.name} />
-                ) : (
-                  <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+      {isDropdownOpen && (
+        <div className="absolute mt-2 w-full border bg-white rounded-md shadow-lg z-10 transition-all duration-300 ease-in-out">
+          {availableUsers.length > 0 ? (
+            availableUsers.map((user) => (
+              <div
+                key={user.id}
+                className={cn(
+                  "flex items-center px-4 py-2 space-x-3 hover:bg-blue-100 cursor-pointer transition-colors"
                 )}
-              </Avatar>
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => handleSelectUser(user)}
+              >
+                <Avatar className="w-8 h-8">
+                  {user.image ? (
+                    <AvatarImage src={user.image} alt={user.name} />
+                  ) : (
+                    <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                  )}
+                </Avatar>
 
-              <div className="flex flex-col">
-                <span className="text-sm font-medium text-gray-800">
-                  {user.name}
-                </span>
-                <span className="text-xs text-gray-500">{user.email}</span>
+                <div className="flex flex-col">
+                  <span className="text-sm font-medium text-gray-800">
+                    {user.name}
+                  </span>
+                  <span className="text-xs text-gray-500">{user.email}</span>
+                </div>
               </div>
+            ))
+          ) : (
+            <div className="px-4 py-2 text-sm text-gray-500">
+              Nenhum usuário encontrado
             </div>
-          ))}
-        </div>
-      )}
-
-      {isDropdownOpen && availableUsers.length === 0 && (
-        <div className="absolute mt-2 w-full border bg-white rounded-md shadow-md z-10 px-4 py-2 text-sm text-gray-500">
-          Nenhum usuário encontrado
+          )}
         </div>
       )}
     </div>
