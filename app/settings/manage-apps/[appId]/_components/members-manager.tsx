@@ -65,23 +65,16 @@ const users: User[] = [
 
 export function UserSearchInput() {
   const [query, setQuery] = useState("");
-  const [filteredUsers, setFilteredUsers] = useState(users);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
 
-  useEffect(() => {
-    if (query.trim() === "") {
-      setFilteredUsers(users);
-    } else {
-      setFilteredUsers(
-        users.filter(
-          (user) =>
-            user.name.toLowerCase().includes(query.toLowerCase()) ||
-            user.email.toLowerCase().includes(query.toLowerCase())
-        )
-      );
-    }
-  }, [query]);
+  // Filtrar usuários disponíveis (não selecionados e que correspondem à busca)
+  const availableUsers = users.filter(
+    (user) =>
+      !selectedUsers.some((selected) => selected.id === user.id) &&
+      (user.name.toLowerCase().includes(query.toLowerCase()) ||
+        user.email.toLowerCase().includes(query.toLowerCase()))
+  );
 
   const handleSelectUser = (user: User) => {
     if (!selectedUsers.find((u) => u.id === user.id)) {
@@ -121,9 +114,10 @@ export function UserSearchInput() {
         />
       </div>
 
-      {isDropdownOpen && filteredUsers.length > 0 && (
+      {/* Dropdown */}
+      {isDropdownOpen && availableUsers.length > 0 && (
         <div className="absolute mt-2 w-full border bg-white rounded-md shadow-md z-10">
-          {filteredUsers.map((user) => (
+          {availableUsers.map((user) => (
             <div
               key={user.id}
               className={cn(
@@ -151,7 +145,7 @@ export function UserSearchInput() {
         </div>
       )}
 
-      {isDropdownOpen && filteredUsers.length === 0 && (
+      {isDropdownOpen && availableUsers.length === 0 && (
         <div className="absolute mt-2 w-full border bg-white rounded-md shadow-md z-10 px-4 py-2 text-sm text-gray-500">
           Nenhum usuário encontrado
         </div>
