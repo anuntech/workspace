@@ -27,7 +27,7 @@ export interface IWorkspace extends Document {
       {
         appId: mongoose.Schema.Types.ObjectId;
         members: {
-          id: mongoose.Schema.Types.ObjectId;
+          memberId: mongoose.Schema.Types.ObjectId;
         };
       }
     ];
@@ -121,7 +121,12 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
             ref: "Application",
           },
           members: [
-            { id: { type: mongoose.Schema.Types.ObjectId, ref: "Member" } },
+            {
+              memberId: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Member",
+              },
+            },
           ],
         },
       ],
