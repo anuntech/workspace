@@ -62,8 +62,6 @@ export function MembersManager({ params }: { params: { appId: string } }) {
     },
   });
 
-  console.log(appMembersQuery.data?.data);
-
   const handleAddMembers = async () => {
     appMembersMutation.mutate({
       memberId: selectedUsers[0]._id,
@@ -101,7 +99,7 @@ export function MembersManager({ params }: { params: { appId: string } }) {
           {members?.members.map((member: any) => (
             <div
               key={member._id}
-              className="flex items-center justify-between space-x-4"
+              className="flex items-center justify-between space-x-4 hover:bg-gray-100 p-4 rounded-lg"
             >
               <div className="flex items-center space-x-4">
                 {member.icon && (
@@ -220,7 +218,7 @@ export function UserSearchInput({
   };
 
   return (
-    <div className="relative w-full max-w-md">
+    <div className="relative w-full">
       <div className="flex flex-wrap gap-2 p-1 border rounded-md shadow-sm bg-white focus-within:ring-2 focus-within:ring-blue-500 transition-all duration-300 ease-in-out">
         {selectedUsers.map((user) => (
           <div
@@ -259,26 +257,25 @@ export function UserSearchInput({
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={() => handleSelectUser(user)}
               >
-                {user.data?.icon?.value ? (
-                  <div>
-                    {user.data?.icon.type === "emoji" ? (
-                      <span className="text-[2rem] w-full h-full flex size-10">
-                        {user.data?.icon.value}
-                      </span>
+                {user.icon && (
+                  <div className="text-[1.3rem]">
+                    {user.icon.type == "emoji" ? (
+                      user.icon.value
                     ) : (
-                      <Avatar className="size-10">
-                        <AvatarImage
-                          src={getS3Image(user.data?.icon.value) || "/shad.png"}
-                          alt="@shadcn"
-                        />
-                        <AvatarFallback>SC</AvatarFallback>
-                      </Avatar>
+                      <img
+                        className="rounded-full"
+                        width={54}
+                        height={54}
+                        src={getS3Image(user.icon.value)}
+                        alt=""
+                      />
                     )}
                   </div>
-                ) : (
+                )}
+                {!user.icon && (
                   <Avatar className="size-10">
                     <AvatarImage
-                      src={user.data?.image || "/shad.png"}
+                      src={user?.image || "/shad.png"}
                       alt="@shadcn"
                     />
                     <AvatarFallback>SC</AvatarFallback>
