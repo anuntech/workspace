@@ -9,6 +9,19 @@ import api from "@/libs/api";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import { getS3Image } from "@/libs/s3-client";
+import { Select } from "@/components/ui/select";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Trash2 } from "lucide-react";
 
 type User = {
   _id: string;
@@ -21,7 +34,7 @@ type User = {
   };
 };
 
-export function MembersManager({ params }: { params: { appId: string} }) {
+export function MembersManager({ params }: { params: { appId: string } }) {
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
   const searchParams = useSearchParams();
   const workspace = searchParams.get("workspace");
@@ -41,21 +54,24 @@ export function MembersManager({ params }: { params: { appId: string} }) {
     },
   });
 
-  const handleAddMembers = async () => {
-    const members = selectedUsers.map((user) => ({
-      memberId: user._id,
-    }));
+  const appMembersQuery = useQuery({
+    queryKey: ["appMembers"],
+    queryFn: async () => {
+      const res = await api.get(`/api/workspace/rules/members/${workspace}`);
+      return res;
+    },
+  });
 
-    console.log("aaaa");
-    console.log(selectedUsers[0]._id, workspace);
-    
+  console.log(appMembersQuery.data?.data);
+
+  const handleAddMembers = async () => {
     appMembersMutation.mutate({
       memberId: selectedUsers[0]._id,
       workspaceId: workspace,
-    })
+    });
   };
 
-
+  const members = appMembersQuery.data?.data?.find((ap: any) => ap.appId);
   return (
     <div className="space-y-5 h-96">
       <section>
@@ -66,16 +82,98 @@ export function MembersManager({ params }: { params: { appId: string} }) {
           Adicione os membros da sua equipe para terem acesso a esse app.
         </span>
       </section>
-      <section className="">
+      <section>
         <div className="flex gap-2 items-center">
           <UserSearchInput
             selectedUsers={selectedUsers}
             setSelectedUsers={setSelectedUsers}
             workspaceId={workspace}
           />
-          <Button onClick={() => handleAddMembers()} className="h-full" disabled={selectedUsers.length < 1}>
+          <Button
+            onClick={() => handleAddMembers()}
+            className="h-full"
+            disabled={selectedUsers.length < 1}
+          >
             Adicionar
           </Button>
+        </div>
+        <div className="mt-7">
+          {members?.members.map((member: any) => (
+            <div
+              key={member._id}
+              className="flex items-center justify-between space-x-4"
+            >
+              <div className="flex items-center space-x-4">
+                {member.icon && (
+                  <div className="text-[1.3rem]">
+                    {member.icon.type == "emoji" ? (
+                      member.icon.value
+                    ) : (
+                      <img
+                        className="rounded-full"
+                        width={54}
+                        height={54}
+                        src={getS3Image(member.icon.value)}
+                        alt=""
+                      />
+                    )}
+                  </div>
+                )}
+                {!member.icon && (
+                  <Avatar className="size-10">
+                    <AvatarImage
+                      src={member?.image || "/shad.png"}
+                      alt="@shadcn"
+                    />
+                    <AvatarFallback>SC</AvatarFallback>
+                  </Avatar>
+                )}
+                <div>
+                  <p className="text-sm font-medium leading-none">
+                    {member.name}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {member.email}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="group hover:border-red-500 hover:bg-red-50"
+                    >
+                      <Trash2 className="size-4 group-hover:text-red-500" />
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Esta ação não pode ser desfeita. Isso excluirá
+                        permanentemente o membro de seu workspace.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction
+                      // onClick={() =>
+                      // deleteMutation.mutate({
+                      //   workspaceId: workspace,
+                      //   userId: member._id,
+                      // })
+                      // }
+                      >
+                        Continuar
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
     </div>
@@ -123,11 +221,11 @@ export function UserSearchInput({
 
   return (
     <div className="relative w-full max-w-md">
-      <div className="flex flex-wrap gap-2 p-2 border rounded-md shadow-sm bg-white focus-within:ring-2 focus-within:ring-blue-500 transition-all duration-300 ease-in-out">
+      <div className="flex flex-wrap gap-2 p-1 border rounded-md shadow-sm bg-white focus-within:ring-2 focus-within:ring-blue-500 transition-all duration-300 ease-in-out">
         {selectedUsers.map((user) => (
           <div
             key={user._id}
-            className="flex items-center px-2 py-1 bg-blue-100 text-blue-800 rounded-full shadow-sm"
+            className="flex items-center px-2 bg-blue-100 text-blue-800 rounded-full shadow-sm"
           >
             <span className="text-sm">{user.name}</span>
             <button
