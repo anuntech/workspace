@@ -15,7 +15,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 
-export default function MembersPage() {
+export default function MembersPage({ params }: { params: { appId: string} }) {
   const searchParams = useSearchParams();
   const workspace = searchParams.get("workspace");
 
@@ -47,7 +47,7 @@ export default function MembersPage() {
               </TabsTrigger>
             </TabsList>
             <TabsContent value="members-manager">
-              <MembersManager />
+              <MembersManager params={params} />
             </TabsContent>
           </Tabs>
         </div>

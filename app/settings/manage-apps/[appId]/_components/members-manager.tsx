@@ -6,12 +6,12 @@ import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import api from "@/libs/api";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import { getS3Image } from "@/libs/s3-client";
 
 type User = {
-  id: string;
+  _id: string;
   name: string;
   email: string;
   image: string;
@@ -21,10 +21,40 @@ type User = {
   };
 };
 
-export function MembersManager() {
+export function MembersManager({ params }: { params: { appId: string} }) {
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
   const searchParams = useSearchParams();
   const workspace = searchParams.get("workspace");
+
+  const appMembersMutation = useMutation({
+    mutationFn: (data: { workspaceId: string; memberId: string }) =>
+      api.post(`/api/workspace/rules`, {
+        workspaceId: data.workspaceId,
+        memberId: data.memberId,
+        appId: params.appId,
+      }),
+    onError: (error) => {
+      console.error("Erro ao adicionar membro:", error);
+    },
+    onSuccess: () => {
+      console.log("Membro adicionado com sucesso!");
+    },
+  });
+
+  const handleAddMembers = async () => {
+    const members = selectedUsers.map((user) => ({
+      memberId: user._id,
+    }));
+
+    console.log("aaaa");
+    console.log(selectedUsers[0]._id, workspace);
+    
+    appMembersMutation.mutate({
+      memberId: selectedUsers[0]._id,
+      workspaceId: workspace,
+    })
+  };
+
 
   return (
     <div className="space-y-5 h-96">
@@ -43,7 +73,7 @@ export function MembersManager() {
             setSelectedUsers={setSelectedUsers}
             workspaceId={workspace}
           />
-          <Button className="h-full" disabled={selectedUsers.length < 1}>
+          <Button onClick={() => handleAddMembers()} className="h-full" disabled={selectedUsers.length < 1}>
             Adicionar
           </Button>
         </div>
@@ -74,21 +104,21 @@ export function UserSearchInput({
   const availableUsers = users
     .filter(
       (user: any) =>
-        !selectedUsers.some((selected) => selected.id === user.id) &&
+        !selectedUsers.some((selected) => selected._id === user._id) &&
         (user.name.toLowerCase().includes(query.toLowerCase()) ||
           user.email.toLowerCase().includes(query.toLowerCase()))
     )
     .filter((user: any) => user.role !== "admin");
 
   const handleSelectUser = (user: User) => {
-    if (!selectedUsers.find((u) => u.id === user.id)) {
+    if (!selectedUsers.find((u) => u._id === user._id)) {
       setSelectedUsers((prev) => [...prev, user]);
       setQuery("");
     }
   };
 
   const handleRemoveUser = (userId: string) => {
-    setSelectedUsers((prev) => prev.filter((user) => user.id !== userId));
+    setSelectedUsers((prev) => prev.filter((user) => user._id !== userId));
   };
 
   return (
@@ -96,13 +126,13 @@ export function UserSearchInput({
       <div className="flex flex-wrap gap-2 p-2 border rounded-md shadow-sm bg-white focus-within:ring-2 focus-within:ring-blue-500 transition-all duration-300 ease-in-out">
         {selectedUsers.map((user) => (
           <div
-            key={user.id}
+            key={user._id}
             className="flex items-center px-2 py-1 bg-blue-100 text-blue-800 rounded-full shadow-sm"
           >
             <span className="text-sm">{user.name}</span>
             <button
               className="ml-2 text-blue-500 hover:text-blue-700 transition-colors"
-              onClick={() => handleRemoveUser(user.id)}
+              onClick={() => handleRemoveUser(user._id)}
             >
               ✕
             </button>
@@ -124,7 +154,7 @@ export function UserSearchInput({
           {availableUsers.length > 0 ? (
             availableUsers.map((user: any) => (
               <div
-                key={user.id}
+                key={user._id}
                 className={cn(
                   "flex items-center px-4 py-2 space-x-3 hover:bg-blue-100 cursor-pointer transition-colors"
                 )}

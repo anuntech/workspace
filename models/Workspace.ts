@@ -26,9 +26,11 @@ export interface IWorkspace extends Document {
     allowedMemberApps: [
       {
         appId: mongoose.Schema.Types.ObjectId;
-        members: {
-          memberId: mongoose.Schema.Types.ObjectId;
-        };
+        members: [
+          {
+            memberId: mongoose.Schema.Types.ObjectId;
+          }
+        ];
       }
     ];
   };
@@ -74,7 +76,6 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
           },
         },
       ],
-      required: false,
       default: [],
     },
     invitedMembersEmail: {
@@ -130,7 +131,6 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
           ],
         },
       ],
-      required: false,
       default: {},
     },
   },
