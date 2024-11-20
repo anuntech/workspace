@@ -111,11 +111,17 @@ export function MembersManager({ params }: { params: { appId: string } }) {
             selectedUsers={selectedUsers}
             setSelectedUsers={setSelectedUsers}
             workspaceId={workspace}
+            excludedUsers={members?.members}
           />
           <Button
             onClick={() => handleAddMembers()}
             className="h-full"
-            disabled={selectedUsers.length < 1}
+            disabled={
+              selectedUsers.length < 1 ||
+              deleteMutation.isPending ||
+              appMembersQuery.isPending ||
+              appMembersMutation.isPending
+            }
           >
             Adicionar
           </Button>
@@ -202,10 +208,12 @@ export function UserSearchInput({
   selectedUsers,
   setSelectedUsers,
   workspaceId,
+  excludedUsers = [],
 }: {
   selectedUsers: User[];
   setSelectedUsers: React.Dispatch<React.SetStateAction<User[]>>;
   workspaceId: string;
+  excludedUsers?: any[];
 }) {
   const [query, setQuery] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -221,6 +229,7 @@ export function UserSearchInput({
     .filter(
       (user: any) =>
         !selectedUsers.some((selected) => selected._id === user._id) &&
+        !excludedUsers.some((excluded) => excluded.id === user._id) &&
         (user.name.toLowerCase().includes(query.toLowerCase()) ||
           user.email.toLowerCase().includes(query.toLowerCase()))
     )
