@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import api from "@/libs/api";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import { getS3Image } from "@/libs/s3-client";
 import { Select } from "@/components/ui/select";
@@ -41,7 +41,7 @@ export function MembersManager({ params }: { params: { appId: string } }) {
 
   const appMembersMutation = useMutation({
     mutationFn: (data: { workspaceId: string; memberId: string }) =>
-      api.post(`/api/workspace/rules`, {
+      api.post(`/api/workspace/rules/members`, {
         workspaceId: data.workspaceId,
         memberId: data.memberId,
         appId: params.appId,
@@ -50,7 +50,11 @@ export function MembersManager({ params }: { params: { appId: string } }) {
       console.error("Erro ao adicionar membro:", error);
     },
     onSuccess: () => {
-      console.log("Membro adicionado com sucesso!");
+      queryClient.refetchQueries({
+        queryKey: ["appMembers"],
+        type: "active",
+      });
+      setSelectedUsers([]);
     },
   });
 
@@ -62,10 +66,31 @@ export function MembersManager({ params }: { params: { appId: string } }) {
     },
   });
 
+  const queryClient = useQueryClient();
+
+  const deleteMutation = useMutation({
+    mutationFn: (data: { userId: string }) =>
+      api.delete(
+        `/api/workspace/rules/members/${workspace}/${data.userId}/${params.appId}`
+      ),
+    onSuccess: () => {
+      queryClient.refetchQueries({
+        queryKey: ["appMembers"],
+        type: "active",
+      });
+    },
+  });
+
   const handleAddMembers = async () => {
     appMembersMutation.mutate({
       memberId: selectedUsers[0]._id,
       workspaceId: workspace,
+    });
+  };
+
+  const handleDeleteMember = async (id: string) => {
+    deleteMutation.mutate({
+      userId: id,
     });
   };
 
@@ -157,12 +182,7 @@ export function MembersManager({ params }: { params: { appId: string } }) {
                     <AlertDialogFooter>
                       <AlertDialogCancel>Cancelar</AlertDialogCancel>
                       <AlertDialogAction
-                      // onClick={() =>
-                      // deleteMutation.mutate({
-                      //   workspaceId: workspace,
-                      //   userId: member._id,
-                      // })
-                      // }
+                        onClick={() => handleDeleteMember(member.id)}
                       >
                         Continuar
                       </AlertDialogAction>
