@@ -23,10 +23,14 @@ export interface IWorkspace extends Document {
   priceId: string;
   boughtApplications: mongoose.Types.ObjectId[];
   rules: {
-    allowedMemberApps: {
-      appId: mongoose.Schema.Types.ObjectId;
-      memberId: mongoose.Schema.Types.ObjectId;
-    };
+    allowedMemberApps: [
+      {
+        appId: mongoose.Schema.Types.ObjectId;
+        members: {
+          id: mongoose.Schema.Types.ObjectId;
+        };
+      }
+    ];
   };
 }
 
@@ -110,16 +114,17 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
       default: [],
     },
     rules: {
-      allowedMemberApps: {
-        appId: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Application",
+      allowedMemberApps: [
+        {
+          appId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Application",
+          },
+          members: [
+            { id: { type: mongoose.Schema.Types.ObjectId, ref: "Member" } },
+          ],
         },
-        memberId: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Member",
-        },
-      },
+      ],
       required: false,
       default: {},
     },
