@@ -9,7 +9,6 @@ import api from "@/libs/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import { getS3Image } from "@/libs/s3-client";
-import { Select } from "@/components/ui/select";
 import {
   AlertDialog,
   AlertDialogAction,
