@@ -22,6 +22,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { WorkspaceAccessRadio } from "./_components/workspace-access-radio";
+import { FieldsDialog } from "./_components/fields";
 
 type Input = {
   name: string;
@@ -345,6 +346,21 @@ export default function AdminPage() {
                 {...register("titleDescription", { required: true })}
                 disabled={isSubmitting}
               />
+            </div>
+          </section>
+          <Separator />
+          <section className="grid grid-cols-2 gap-8 py-5">
+            <div>
+              <p>
+                Campos <span className="text-red-400">*</span>
+              </p>
+              <span className="text-sm text-muted-foreground">
+                Digite o nome que será mostrado publicamente como identificação
+                do seu workspace em todas as interações na plataforma.
+              </span>
+            </div>
+            <div className="w-full flex justify-center items-center">
+              <FieldsDialog />
             </div>
           </section>
           <Separator />

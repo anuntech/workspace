@@ -15,7 +15,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 
-export default function MembersPage({ params }: { params: { appId: string} }) {
+export default function MembersPage({ params }: { params: { appId: string } }) {
   const searchParams = useSearchParams();
   const workspace = searchParams.get("workspace");
 
