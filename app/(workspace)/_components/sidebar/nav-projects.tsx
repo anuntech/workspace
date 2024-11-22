@@ -59,6 +59,8 @@ export function NavProjects() {
     );
   }
 
+  console.log(enabledApplications);
+
   return (
     // <SidebarGroup className="group-data-[collapsible=icon]:hidden">
     <SidebarGroup>
@@ -68,33 +70,61 @@ export function NavProjects() {
         </SidebarGroupLabel>
       )}
       <SidebarMenu>
-        {enabledApplications.map((data: any) => (
-          <SidebarMenuItem key={data.name}>
-            <SidebarMenuButton
-              asChild
-              className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
-              tooltip={data.name}
-            >
-              <Link
-                href={`/service/${data._id}?workspace=${workspace}`}
-                passHref
+        {enabledApplications.map((data: any) =>
+          data.fields.length == 0 ? (
+            <SidebarMenuItem key={data.name}>
+              <SidebarMenuButton
+                asChild
+                className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
+                tooltip={data.name}
               >
-                {data.icon?.type == "emoji" && (
-                  <p className="size-5">{data.icon.value}</p>
-                )}
-                {(data.icon?.type == "image" || !data.icon) && (
-                  <Avatar className="size-5">
-                    <AvatarImage
-                      src={getS3Image(data.icon?.value || data.avatarSrc)}
-                    />
-                    <AvatarFallback>{data.avatarFallback}</AvatarFallback>
-                  </Avatar>
-                )}
-                <span>{data.name}</span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        ))}
+                <Link
+                  href={`/service/${data._id}?workspace=${workspace}`}
+                  passHref
+                >
+                  {data.icon?.type == "emoji" && (
+                    <p className="size-5">{data.icon.value}</p>
+                  )}
+                  {(data.icon?.type == "image" || !data.icon) && (
+                    <Avatar className="size-5">
+                      <AvatarImage
+                        src={getS3Image(data.icon?.value || data.avatarSrc)}
+                      />
+                      <AvatarFallback>{data.avatarFallback}</AvatarFallback>
+                    </Avatar>
+                  )}
+                  <span>{data.name}</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ) : (
+            <SidebarMenuItem key={data.name}>
+              <SidebarMenuButton
+                asChild
+                className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
+                tooltip={data.name}
+              >
+                <Link
+                  href={`/service/${data._id}?workspace=${workspace}`}
+                  passHref
+                >
+                  {data.icon?.type == "emoji" && (
+                    <p className="size-5">{data.icon.value}</p>
+                  )}
+                  {(data.icon?.type == "image" || !data.icon) && (
+                    <Avatar className="size-5">
+                      <AvatarImage
+                        src={getS3Image(data.icon?.value || data.avatarSrc)}
+                      />
+                      <AvatarFallback>{data.avatarFallback}</AvatarFallback>
+                    </Avatar>
+                  )}
+                  <span>{data.name}</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          )
+        )}
       </SidebarMenu>
     </SidebarGroup>
   );
