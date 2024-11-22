@@ -125,6 +125,10 @@ export default function AdminPage() {
     setSharedWith((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const handleSaveFields = (fields: { key: string; value: string }[]) => {
+    console.log(fields);
+  };
+
   const handleAvatarChange = (avatar: {
     value: string;
     type: "image" | "emoji";
@@ -360,7 +364,7 @@ export default function AdminPage() {
               </span>
             </div>
             <div className="w-full flex justify-center items-center">
-              <FieldsDialog />
+              <FieldsDialog handleSave={handleSaveFields} />
             </div>
           </section>
           <Separator />

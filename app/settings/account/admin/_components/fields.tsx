@@ -12,7 +12,11 @@ import { Input } from "@/components/ui/input";
 import { PlusCircle, X } from "lucide-react";
 import { useState } from "react";
 
-export function FieldsDialog({ handleSave }: { handleSave?: () => void }) {
+export function FieldsDialog({
+  handleSave,
+}: {
+  handleSave?: (fields: { key: string; value: string }[]) => void;
+}) {
   const [fields, setFields] = useState([
     {
       key: "",
@@ -86,7 +90,7 @@ export function FieldsDialog({ handleSave }: { handleSave?: () => void }) {
             <PlusCircle />
             <span>Adicionar campo</span>
           </Button>
-          <Button type="button" onClick={handleSave}>
+          <Button type="button" onClick={() => handleSave?.(fields)}>
             Salvar mudanças
           </Button>
         </DialogFooter>
