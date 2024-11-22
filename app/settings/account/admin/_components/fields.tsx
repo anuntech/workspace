@@ -13,12 +13,31 @@ import { PlusCircle, X } from "lucide-react";
 import { useState } from "react";
 
 export function FieldsDialog() {
-  const [field, setField] = useState([
+  const [fields, setFields] = useState([
     {
       key: "",
       value: "",
     },
   ]);
+
+  const addField = () => {
+    setFields([...fields, { key: "", value: "" }]);
+  };
+
+  const removeField = (index: number) => {
+    const updatedFields = fields.filter((_, i) => i !== index);
+    setFields(updatedFields);
+  };
+
+  const updateField = (index: number, type: "key" | "value", value: string) => {
+    const updatedFields = [...fields];
+    updatedFields[index][type] = value;
+    setFields(updatedFields);
+  };
+
+  const saveChanges = () => {
+    console.log("Saved fields:", fields);
+  };
 
   return (
     <Dialog>
@@ -29,36 +48,47 @@ export function FieldsDialog() {
         <DialogHeader>
           <DialogTitle>Gerenciar campos</DialogTitle>
           <DialogDescription>
-            Make changes to your profile here. Click save when you're done.
+            Manage your custom fields. Add or remove fields and click save when
+            you're done.
           </DialogDescription>
         </DialogHeader>
-        {field.map((f, index) => (
-          <div key={index} className="flex gap-2">
-            <div className="flex gap-4">
+        <div className="space-y-4">
+          {fields.map((field, index) => (
+            <div key={index} className="flex items-center gap-2">
               <Input
-                placeholder="Nome do campo"
-                id="key"
-                defaultValue={f.key}
-                className="col-span-3"
+                placeholder="Key"
+                value={field.key}
+                onChange={(e) => updateField(index, "key", e.target.value)}
+                className="flex-1"
               />
               <Input
-                id="username"
-                defaultValue={f.value}
-                className="col-span-3"
-                placeholder="Link do campo"
+                placeholder="Value"
+                value={field.value}
+                onChange={(e) => updateField(index, "value", e.target.value)}
+                className="flex-1"
               />
+              <Button
+                variant="destructive"
+                onClick={() => removeField(index)}
+                className="p-2"
+                aria-label="Remove field"
+              >
+                <X />
+              </Button>
             </div>
-            <Button variant="destructive">
-              <X />
-            </Button>
-          </div>
-        ))}
-        <Button>
-          <span>Adicionar campo</span>
-          <PlusCircle />
-        </Button>
+          ))}
+          <Button
+            onClick={addField}
+            className="w-full flex items-center justify-center gap-2"
+          >
+            <PlusCircle />
+            <span>Adicionar campo</span>
+          </Button>
+        </div>
         <DialogFooter>
-          <Button type="submit">Salvar mudanças</Button>
+          <Button type="button" onClick={saveChanges}>
+            Salvar mudanças
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
