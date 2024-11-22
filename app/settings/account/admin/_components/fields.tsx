@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { PlusCircle, X } from "lucide-react";
 import { useState } from "react";
 
-export function FieldsDialog() {
+export function FieldsDialog({ handleSave }: { handleSave?: () => void }) {
   const [fields, setFields] = useState([
     {
       key: "",
@@ -39,10 +39,6 @@ export function FieldsDialog() {
     setFields(updatedFields);
   };
 
-  const saveChanges = () => {
-    console.log("Saved fields:", fields);
-  };
-
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -56,17 +52,17 @@ export function FieldsDialog() {
             you're done.
           </DialogDescription>
         </DialogHeader>
-        <div className="space-y-4">
+        <div className="space-y-4 max-h-96 overflow-auto">
           {fields.map((field, index) => (
             <div key={index} className="flex items-center gap-2">
               <Input
-                placeholder="Key"
+                placeholder="Campo"
                 value={field.key}
                 onChange={(e) => updateField(index, "key", e.target.value)}
                 className="flex-1"
               />
               <Input
-                placeholder="Value"
+                placeholder="Valor"
                 value={field.value}
                 onChange={(e) => updateField(index, "value", e.target.value)}
                 className="flex-1"
@@ -81,16 +77,16 @@ export function FieldsDialog() {
               </Button>
             </div>
           ))}
+        </div>
+        <DialogFooter className="flex sm:justify-between sm:items-start w-full">
           <Button
             onClick={addField}
-            className="w-full flex items-center justify-center gap-2"
+            className="flex items-center justify-center gap-2"
           >
             <PlusCircle />
             <span>Adicionar campo</span>
           </Button>
-        </div>
-        <DialogFooter>
-          <Button type="button" onClick={saveChanges}>
+          <Button type="button" onClick={handleSave}>
             Salvar mudanças
           </Button>
         </DialogFooter>

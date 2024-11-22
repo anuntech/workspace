@@ -34,6 +34,10 @@ export interface IWorkspace extends Document {
       }
     ];
   };
+  fields: {
+    key: string;
+    value: string;
+  }[];
 }
 
 const workspaceSchema = new mongoose.Schema<IWorkspace>(
@@ -133,6 +137,18 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
       ],
       default: {},
     },
+    fields: [
+      {
+        key: {
+          type: String,
+          required: true,
+        },
+        value: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
   },
   {
     toJSON: { virtuals: true },
