@@ -25,6 +25,10 @@ export function FieldsDialog() {
   };
 
   const removeField = (index: number) => {
+    if (fields.length === 1) {
+      setFields([{ key: "", value: "" }]);
+      return;
+    }
     const updatedFields = fields.filter((_, i) => i !== index);
     setFields(updatedFields);
   };
