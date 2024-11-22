@@ -92,6 +92,7 @@ export async function POST(request: Request) {
       galleryPhotos: galleryPhotosIds,
       workspaceAccess: body.get("category"),
       priceId: body.get("priceId"),
+      fields: JSON.parse(body.get("fields") as string),
     });
 
     return NextResponse.json(application);

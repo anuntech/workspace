@@ -19,6 +19,10 @@ export interface IApplications extends mongoose.Document {
   };
   workspaceAccess: "free" | "premium" | "buyable" | "rentable";
   priceId?: string;
+  fields: {
+    key: string;
+    value: string;
+  }[];
 }
 
 const applicationSchema = new mongoose.Schema<IApplications>(
@@ -95,6 +99,18 @@ const applicationSchema = new mongoose.Schema<IApplications>(
       trim: true,
       maxlength: 100,
     },
+    fields: [
+      {
+        key: {
+          type: String,
+          required: true,
+        },
+        value: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
   },
   {
     toJSON: { virtuals: true },

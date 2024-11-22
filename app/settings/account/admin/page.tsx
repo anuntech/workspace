@@ -53,6 +53,7 @@ export default function AdminPage() {
   const [category, setCategory] = useState<
     "free" | "premium" | "buyable" | "rentable"
   >("free");
+  const [fields, setFields] = useState<{ key: string; value: string }[]>();
 
   const saveApplicationMutation = useMutation({
     mutationFn: async (data: FormData) => api.post("/api/applications", data),
@@ -69,6 +70,7 @@ export default function AdminPage() {
       });
       setImageUrlWithoutS3(null);
       setEmojiAvatar(null);
+      setFields([]);
       setCategory("free");
     },
     onError: () => {
@@ -102,6 +104,7 @@ export default function AdminPage() {
     formData.append("iconType", icon.get("iconType") as string);
     formData.append("category", category);
     formData.append("priceId", data.priceId);
+    formData.append("fields", JSON.stringify(fields));
 
     const galeryPhotos = data.galeryPhotos as unknown as FileList;
     if (galeryPhotos && galeryPhotos.length > 0) {
@@ -126,7 +129,7 @@ export default function AdminPage() {
   };
 
   const handleSaveFields = (fields: { key: string; value: string }[]) => {
-    console.log(fields);
+    setFields(fields);
   };
 
   const handleAvatarChange = (avatar: {
@@ -355,9 +358,7 @@ export default function AdminPage() {
           <Separator />
           <section className="grid grid-cols-2 gap-8 py-5">
             <div>
-              <p>
-                Campos <span className="text-red-400">*</span>
-              </p>
+              <p>Campos</p>
               <span className="text-sm text-muted-foreground">
                 Digite o nome que será mostrado publicamente como identificação
                 do seu workspace em todas as interações na plataforma.

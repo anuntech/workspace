@@ -23,6 +23,7 @@ export function FieldsDialog({
       value: "",
     },
   ]);
+  const [isOpen, setIsOpen] = useState(false);
 
   const addField = () => {
     setFields([...fields, { key: "", value: "" }]);
@@ -44,7 +45,7 @@ export function FieldsDialog({
   };
 
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button className="max-w-52">Gerenciar campos</Button>
       </DialogTrigger>
@@ -90,7 +91,13 @@ export function FieldsDialog({
             <PlusCircle />
             <span>Adicionar campo</span>
           </Button>
-          <Button type="button" onClick={() => handleSave?.(fields)}>
+          <Button
+            type="button"
+            onClick={() => {
+              handleSave?.(fields);
+              setIsOpen(false);
+            }}
+          >
             Salvar mudanças
           </Button>
         </DialogFooter>
