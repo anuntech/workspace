@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  Folder,
-  Forward,
-  MoreHorizontal,
-  Trash2,
-  type LucideIcon,
-} from "lucide-react";
+import { Folder, MoreHorizontal, Trash2, type LucideIcon } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -19,7 +13,6 @@ import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
@@ -59,10 +52,7 @@ export function NavProjects() {
     );
   }
 
-  console.log(enabledApplications);
-
   return (
-    // <SidebarGroup className="group-data-[collapsible=icon]:hidden">
     <SidebarGroup>
       {enabledApplications.length > 0 && (
         <SidebarGroupLabel className="group-data-[collapsible=icon]:hidden">
@@ -70,17 +60,18 @@ export function NavProjects() {
         </SidebarGroupLabel>
       )}
       <SidebarMenu>
-        {enabledApplications.map((data: any) =>
-          data.fields.length == 0 ? (
-            <SidebarMenuItem key={data.name}>
-              <SidebarMenuButton
-                asChild
-                className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
-                tooltip={data.name}
-              >
+        {enabledApplications.map((data: any) => (
+          <SidebarMenuItem key={data.name}>
+            <SidebarMenuButton
+              asChild
+              className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
+              tooltip={data.name}
+            >
+              <div className="flex items-center justify-between w-full">
                 <Link
                   href={`/service/${data._id}?workspace=${workspace}`}
                   passHref
+                  className="flex items-center"
                 >
                   {data.icon?.type == "emoji" && (
                     <p className="size-5">{data.icon.value}</p>
@@ -93,38 +84,29 @@ export function NavProjects() {
                       <AvatarFallback>{data.avatarFallback}</AvatarFallback>
                     </Avatar>
                   )}
-                  <span>{data.name}</span>
+                  <span className="ml-2">{data.name}</span>
                 </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ) : (
-            <SidebarMenuItem key={data.name}>
-              <SidebarMenuButton
-                asChild
-                className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
-                tooltip={data.name}
-              >
-                <Link
-                  href={`/service/${data._id}?workspace=${workspace}`}
-                  passHref
-                >
-                  {data.icon?.type == "emoji" && (
-                    <p className="size-5">{data.icon.value}</p>
-                  )}
-                  {(data.icon?.type == "image" || !data.icon) && (
-                    <Avatar className="size-5">
-                      <AvatarImage
-                        src={getS3Image(data.icon?.value || data.avatarSrc)}
-                      />
-                      <AvatarFallback>{data.avatarFallback}</AvatarFallback>
-                    </Avatar>
-                  )}
-                  <span>{data.name}</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          )
-        )}
+
+                {data.fields.length > 0 && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button className="p-1">
+                        <MoreHorizontal size={20} />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      {data.fields.map((field: any, index: number) => (
+                        <DropdownMenuItem key={index}>
+                          <a href={field.value}>{field.key}</a>
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
+              </div>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        ))}
       </SidebarMenu>
     </SidebarGroup>
   );

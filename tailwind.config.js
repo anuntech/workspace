@@ -16,7 +16,9 @@ module.exports = {
   			appearFromRight: 'appearFromRight 300ms ease-in-out',
   			wiggle: 'wiggle 1.5s ease-in-out infinite',
   			popup: 'popup 0.25s ease-in-out',
-  			shimmer: 'shimmer 3s ease-out infinite alternate'
+  			shimmer: 'shimmer 3s ease-out infinite alternate',
+  			'accordion-down': 'accordion-down 0.2s ease-out',
+  			'accordion-up': 'accordion-up 0.2s ease-out'
   		},
   		keyframes: {
   			opacity: {
@@ -77,6 +79,22 @@ module.exports = {
   				},
   				'100%': {
   					backgroundPosition: '0% 50%'
+  				}
+  			},
+  			'accordion-down': {
+  				from: {
+  					height: '0'
+  				},
+  				to: {
+  					height: 'var(--radix-accordion-content-height)'
+  				}
+  			},
+  			'accordion-up': {
+  				from: {
+  					height: 'var(--radix-accordion-content-height)'
+  				},
+  				to: {
+  					height: '0'
   				}
   			}
   		},
