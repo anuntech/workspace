@@ -33,12 +33,16 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { useRef, useState } from "react";
+import { cn } from "@/lib/utils";
 
 export function NavProjects() {
   const { isMobile } = useSidebar();
   const urlParams = useSearchParams();
   const workspace = urlParams.get("workspace");
   const router = useRouter();
+  const [isHovered, setHovered] = useState(false);
+  const triggerRef = useRef(null);
 
   const applicationsQuery = useQuery({
     queryKey: ["applications"],
@@ -57,6 +61,8 @@ export function NavProjects() {
     );
   }
 
+  console.log(isHovered);
+
   return (
     <SidebarGroup>
       {enabledApplications.length > 0 && (
@@ -74,23 +80,32 @@ export function NavProjects() {
             >
               {data.fields.length > 0 ? (
                 <Accordion type="multiple" className="w-full">
-                  <AccordionItem value="item-1">
-                    <AccordionTrigger>
-                      {" "}
-                      {data.icon?.type == "emoji" && (
-                        <p className="size-5">{data.icon.value}</p>
-                      )}
-                      {(data.icon?.type == "image" || !data.icon) && (
-                        <Avatar className="size-5">
-                          <AvatarImage
-                            src={getS3Image(data.icon?.value || data.avatarSrc)}
-                          />
-                          <AvatarFallback>{data.avatarFallback}</AvatarFallback>
-                        </Avatar>
-                      )}
-                    </AccordionTrigger>
+                  <AccordionItem value="item-1" className="absolute">
+                    <AccordionTrigger
+                      ref={triggerRef}
+                      onMouseEnter={() => setHovered(true)}
+                      onMouseLeave={() => setHovered(false)}
+                    ></AccordionTrigger>
                   </AccordionItem>
-                  <div className="flex items-center justify-between w-full">
+                  {data.icon?.type == "emoji" && (
+                    <p
+                      className={cn(
+                        `size-5 pointer-events-none`,
+                        isHovered && "opacity-0 transition-opacity duration-100"
+                      )}
+                    >
+                      {data.icon.value}
+                    </p>
+                  )}
+                  {(data.icon?.type == "image" || !data.icon) && (
+                    <Avatar className="size-5">
+                      <AvatarImage
+                        src={getS3Image(data.icon?.value || data.avatarSrc)}
+                      />
+                      <AvatarFallback>{data.avatarFallback}</AvatarFallback>
+                    </Avatar>
+                  )}
+                  <div>
                     <Link
                       href={`/service/${data._id}?workspace=${workspace}`}
                       passHref
@@ -98,8 +113,8 @@ export function NavProjects() {
                     >
                       <span className="ml-2">{data.name}</span>
                     </Link>
-
-                    {/* {data.fields.length > 0 && (
+                  </div>
+                  {/* {data.fields.length > 0 && (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <button className="p-1">
@@ -115,7 +130,6 @@ export function NavProjects() {
                     </DropdownMenuContent>
                   </DropdownMenu>
                 )} */}
-                  </div>
                 </Accordion>
               ) : (
                 <div className="flex items-center justify-between w-full">
