@@ -28,6 +28,11 @@ import {
   AvatarImage,
 } from "../../../../components/ui/avatar";
 import { getS3Image } from "@/libs/s3-client";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 export function NavProjects() {
   const { isMobile } = useSidebar();
@@ -67,27 +72,34 @@ export function NavProjects() {
               className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
               tooltip={data.name}
             >
-              <div className="flex items-center justify-between w-full">
-                <Link
-                  href={`/service/${data._id}?workspace=${workspace}`}
-                  passHref
-                  className="flex items-center"
-                >
-                  {data.icon?.type == "emoji" && (
-                    <p className="size-5">{data.icon.value}</p>
-                  )}
-                  {(data.icon?.type == "image" || !data.icon) && (
-                    <Avatar className="size-5">
-                      <AvatarImage
-                        src={getS3Image(data.icon?.value || data.avatarSrc)}
-                      />
-                      <AvatarFallback>{data.avatarFallback}</AvatarFallback>
-                    </Avatar>
-                  )}
-                  <span className="ml-2">{data.name}</span>
-                </Link>
+              {data.fields.length > 0 ? (
+                <Accordion type="multiple" className="w-full">
+                  <AccordionItem value="item-1">
+                    <AccordionTrigger>
+                      {" "}
+                      {data.icon?.type == "emoji" && (
+                        <p className="size-5">{data.icon.value}</p>
+                      )}
+                      {(data.icon?.type == "image" || !data.icon) && (
+                        <Avatar className="size-5">
+                          <AvatarImage
+                            src={getS3Image(data.icon?.value || data.avatarSrc)}
+                          />
+                          <AvatarFallback>{data.avatarFallback}</AvatarFallback>
+                        </Avatar>
+                      )}
+                    </AccordionTrigger>
+                  </AccordionItem>
+                  <div className="flex items-center justify-between w-full">
+                    <Link
+                      href={`/service/${data._id}?workspace=${workspace}`}
+                      passHref
+                      className="flex items-center"
+                    >
+                      <span className="ml-2">{data.name}</span>
+                    </Link>
 
-                {data.fields.length > 0 && (
+                    {/* {data.fields.length > 0 && (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <button className="p-1">
@@ -102,8 +114,31 @@ export function NavProjects() {
                       ))}
                     </DropdownMenuContent>
                   </DropdownMenu>
-                )}
-              </div>
+                )} */}
+                  </div>
+                </Accordion>
+              ) : (
+                <div className="flex items-center justify-between w-full">
+                  <Link
+                    href={`/service/${data._id}?workspace=${workspace}`}
+                    passHref
+                    className="flex items-center"
+                  >
+                    {data.icon?.type == "emoji" && (
+                      <p className="size-5">{data.icon.value}</p>
+                    )}
+                    {(data.icon?.type == "image" || !data.icon) && (
+                      <Avatar className="size-5">
+                        <AvatarImage
+                          src={getS3Image(data.icon?.value || data.avatarSrc)}
+                        />
+                        <AvatarFallback>{data.avatarFallback}</AvatarFallback>
+                      </Avatar>
+                    )}
+                    <span className="ml-2">{data.name}</span>
+                  </Link>
+                </div>
+              )}
             </SidebarMenuButton>
           </SidebarMenuItem>
         ))}
