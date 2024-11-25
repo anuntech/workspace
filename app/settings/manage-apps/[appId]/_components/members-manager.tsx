@@ -60,7 +60,9 @@ export function MembersManager({ params }: { params: { appId: string } }) {
   const appMembersQuery = useQuery({
     queryKey: ["appMembers"],
     queryFn: async () => {
-      const res = await api.get(`/api/workspace/rules/members/${workspace}`);
+      const res = await api.get(
+        `/api/workspace/rules/members/${workspace}?appId=${params.appId}`
+      );
       return res;
     },
   });

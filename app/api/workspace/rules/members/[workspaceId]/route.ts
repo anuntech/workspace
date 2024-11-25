@@ -1,14 +1,18 @@
 import connectMongo from "@/libs/mongoose";
 import { authOptions } from "@/libs/next-auth";
+import Applications from "@/models/Applications";
 import User from "@/models/User";
 import Workspace from "@/models/Workspace";
-import mongoose from "mongoose";
 import { getServerSession } from "next-auth";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
-  request: Request,
-  { params }: { params: { workspaceId: string } }
+  request: NextRequest,
+  {
+    params,
+  }: {
+    params: { workspaceId: string };
+  }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -16,6 +20,11 @@ export async function GET(
     await connectMongo();
 
     const { workspaceId } = params;
+    const appId = request.nextUrl.searchParams.get("appId");
+    const app = await Applications.findById(appId);
+    if (!app) {
+      return NextResponse.json({ error: "App not found" }, { status: 404 });
+    }
 
     const workspace = await Workspace.findOne({ _id: workspaceId });
     if (!workspace) {
@@ -37,7 +46,9 @@ export async function GET(
       }))
     );
 
-    return NextResponse.json(res);
+    const filtered = res.filter((app) => app.appId.toString() === appId);
+
+    return NextResponse.json(filtered);
   } catch (e) {
     console.error(e);
     return NextResponse.json({ error: e?.message }, { status: 500 });
