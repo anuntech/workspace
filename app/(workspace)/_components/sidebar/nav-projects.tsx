@@ -34,7 +34,6 @@ export function NavProjects() {
   const urlParams = useSearchParams();
   const workspace = urlParams.get("workspace");
   const router = useRouter();
-  const [hoveredItem, setHoveredItem] = useState<string | null>(null); // Estado para controlar o hover de cada item
 
   const applicationsQuery = useQuery({
     queryKey: ["applications"],
@@ -69,23 +68,12 @@ export function NavProjects() {
                   <SidebarMenuButton
                     className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
                     tooltip={data.name}
-                    onMouseEnter={() => setHoveredItem(data.name)}
-                    onMouseLeave={() => setHoveredItem(null)}
                   >
                     <AccordionTrigger
-                      className={cn(
-                        `absolute p-0 top-2 left-2`,
-                        hoveredItem !== data.name && "hidden"
-                      )}
+                      className={cn(`absolute p-0 top-2 right-2`)}
                     ></AccordionTrigger>
                     {data.icon?.type == "emoji" && (
-                      <p
-                        className={cn(
-                          `size-5 pointer-events-none ml-[-8px]`,
-                          hoveredItem === data.name &&
-                            "opacity-0 transition-opacity duration-100"
-                        )}
-                      >
+                      <p className={cn(`size-5 pointer-events-none ml-[-8px]`)}>
                         {data.icon.value}
                       </p>
                     )}
