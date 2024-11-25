@@ -36,6 +36,7 @@ import {
 } from "@/components/ui/accordion";
 import { useRef, useState } from "react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 export function NavProjects() {
   const { isMobile } = useSidebar();
@@ -111,12 +112,20 @@ export function NavProjects() {
                         passHref
                         className="flex items-center"
                       >
-                        <span className="ml-2">{data.name}</span>
+                        <span className="">{data.name}</span>
                       </Link>
                     </div>
                   </SidebarMenuButton>
-                  <AccordionContent>
-                    Yes. It adheres to the WAI-ARIA design pattern.
+                  <AccordionContent className="pb-0">
+                    {data.fields.map((field: any) => (
+                      <Button
+                        id={field.key}
+                        variant="ghost"
+                        className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150 w-full justify-start pl-10 relative before:content-['•'] before:absolute before:left-6 before:text-gray-500 h-4 py-4"
+                      >
+                        <a href={field.value}>{field.key}</a>
+                      </Button>
+                    ))}
                   </AccordionContent>
                 </AccordionItem>
               ) : (
