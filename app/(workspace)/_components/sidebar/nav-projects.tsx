@@ -41,8 +41,7 @@ export function NavProjects() {
   const urlParams = useSearchParams();
   const workspace = urlParams.get("workspace");
   const router = useRouter();
-  const [isHovered, setHovered] = useState(false);
-  const triggerRef = useRef(null);
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null); // Estado para controlar o hover de cada item
 
   const applicationsQuery = useQuery({
     queryKey: ["applications"],
@@ -61,8 +60,6 @@ export function NavProjects() {
     );
   }
 
-  console.log(isHovered);
-
   return (
     <SidebarGroup>
       {enabledApplications.length > 0 && (
@@ -77,21 +74,20 @@ export function NavProjects() {
               asChild
               className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
               tooltip={data.name}
+              onMouseEnter={() => setHoveredItem(data.name)}
+              onMouseLeave={() => setHoveredItem(null)}
             >
               {data.fields.length > 0 ? (
                 <Accordion type="multiple" className="w-full">
                   <AccordionItem value="item-1" className="absolute">
-                    <AccordionTrigger
-                      ref={triggerRef}
-                      onMouseEnter={() => setHovered(true)}
-                      onMouseLeave={() => setHovered(false)}
-                    ></AccordionTrigger>
+                    <AccordionTrigger></AccordionTrigger>
                   </AccordionItem>
                   {data.icon?.type == "emoji" && (
                     <p
                       className={cn(
                         `size-5 pointer-events-none`,
-                        isHovered && "opacity-0 transition-opacity duration-100"
+                        hoveredItem === data.name &&
+                          "opacity-0 transition-opacity duration-100"
                       )}
                     >
                       {data.icon.value}
@@ -114,22 +110,6 @@ export function NavProjects() {
                       <span className="ml-2">{data.name}</span>
                     </Link>
                   </div>
-                  {/* {data.fields.length > 0 && (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <button className="p-1">
-                        <MoreHorizontal size={20} />
-                      </button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                      {data.fields.map((field: any, index: number) => (
-                        <DropdownMenuItem key={index}>
-                          <a href={field.value}>{field.key}</a>
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                )} */}
                 </Accordion>
               ) : (
                 <div className="flex items-center justify-between w-full">
