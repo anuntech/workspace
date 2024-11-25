@@ -30,6 +30,7 @@ import {
 import { getS3Image } from "@/libs/s3-client";
 import {
   Accordion,
+  AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
@@ -70,56 +71,31 @@ export function NavProjects() {
       <SidebarMenu>
         {enabledApplications.map((data: any) => (
           <SidebarMenuItem key={data.name}>
-            <SidebarMenuButton
-              asChild
-              className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
-              tooltip={data.name}
-              onMouseEnter={() => setHoveredItem(data.name)}
-              onMouseLeave={() => setHoveredItem(null)}
-            >
+            <Accordion type="multiple">
               {data.fields.length > 0 ? (
-                <Accordion type="multiple" className="w-full">
-                  <AccordionItem value="item-1" className="absolute">
-                    <AccordionTrigger></AccordionTrigger>
-                  </AccordionItem>
-                  {data.icon?.type == "emoji" && (
-                    <p
-                      className={cn(
-                        `size-5 pointer-events-none`,
-                        hoveredItem === data.name &&
-                          "opacity-0 transition-opacity duration-100"
-                      )}
-                    >
-                      {data.icon.value}
-                    </p>
-                  )}
-                  {(data.icon?.type == "image" || !data.icon) && (
-                    <Avatar className="size-5">
-                      <AvatarImage
-                        src={getS3Image(data.icon?.value || data.avatarSrc)}
-                      />
-                      <AvatarFallback>{data.avatarFallback}</AvatarFallback>
-                    </Avatar>
-                  )}
-                  <div>
-                    <Link
-                      href={`/service/${data._id}?workspace=${workspace}`}
-                      passHref
-                      className="flex items-center"
-                    >
-                      <span className="ml-2">{data.name}</span>
-                    </Link>
-                  </div>
-                </Accordion>
-              ) : (
-                <div className="flex items-center justify-between w-full">
-                  <Link
-                    href={`/service/${data._id}?workspace=${workspace}`}
-                    passHref
-                    className="flex items-center"
+                <AccordionItem value="item-1" className="border-none">
+                  <SidebarMenuButton
+                    className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
+                    tooltip={data.name}
+                    onMouseEnter={() => setHoveredItem(data.name)}
+                    onMouseLeave={() => setHoveredItem(null)}
                   >
+                    <AccordionTrigger
+                      className={cn(
+                        `absolute p-0 top-2 left-2`,
+                        hoveredItem !== data.name && "hidden"
+                      )}
+                    ></AccordionTrigger>
                     {data.icon?.type == "emoji" && (
-                      <p className="size-5">{data.icon.value}</p>
+                      <p
+                        className={cn(
+                          `size-5 pointer-events-none ml-[-8px]`,
+                          hoveredItem === data.name &&
+                            "opacity-0 transition-opacity duration-100"
+                        )}
+                      >
+                        {data.icon.value}
+                      </p>
                     )}
                     {(data.icon?.type == "image" || !data.icon) && (
                       <Avatar className="size-5">
@@ -129,11 +105,49 @@ export function NavProjects() {
                         <AvatarFallback>{data.avatarFallback}</AvatarFallback>
                       </Avatar>
                     )}
-                    <span className="ml-2">{data.name}</span>
-                  </Link>
-                </div>
+                    <div>
+                      <Link
+                        href={`/service/${data._id}?workspace=${workspace}`}
+                        passHref
+                        className="flex items-center"
+                      >
+                        <span className="ml-2">{data.name}</span>
+                      </Link>
+                    </div>
+                  </SidebarMenuButton>
+                  <AccordionContent>
+                    Yes. It adheres to the WAI-ARIA design pattern.
+                  </AccordionContent>
+                </AccordionItem>
+              ) : (
+                <SidebarMenuButton
+                  asChild
+                  className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
+                  tooltip={data.name}
+                >
+                  <div className="flex items-center justify-between w-full">
+                    <Link
+                      href={`/service/${data._id}?workspace=${workspace}`}
+                      passHref
+                      className="flex items-center"
+                    >
+                      {data.icon?.type == "emoji" && (
+                        <p className="size-5">{data.icon.value}</p>
+                      )}
+                      {(data.icon?.type == "image" || !data.icon) && (
+                        <Avatar className="size-5">
+                          <AvatarImage
+                            src={getS3Image(data.icon?.value || data.avatarSrc)}
+                          />
+                          <AvatarFallback>{data.avatarFallback}</AvatarFallback>
+                        </Avatar>
+                      )}
+                      <span className="ml-2">{data.name}</span>
+                    </Link>
+                  </div>
+                </SidebarMenuButton>
               )}
-            </SidebarMenuButton>
+            </Accordion>
           </SidebarMenuItem>
         ))}
       </SidebarMenu>
