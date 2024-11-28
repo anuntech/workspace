@@ -87,11 +87,21 @@ export function SetNameForm() {
         placeholder="Nome"
         className="py-6"
         autoFocus
-        disabled={isPending || isSubmitting}
+        disabled={
+          isPending ||
+          isSubmitting ||
+          saveNameMutation.isPending ||
+          getTokenMutation.isPending
+        }
         {...register("name", { required: true })}
       />
       <Button
-        disabled={isPending || isSubmitting}
+        disabled={
+          isPending ||
+          isSubmitting ||
+          saveNameMutation.isPending ||
+          getTokenMutation.isPending
+        }
         type="submit"
         className="w-full py-6"
       >
