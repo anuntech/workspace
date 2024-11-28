@@ -14,7 +14,10 @@ export function SignInOptions({ csrfToken }: { csrfToken: string }) {
   const googleError = searchParams.get("error") == "OAuthSignin";
   const accountNotLinked = searchParams.get("error") == "OAuthAccountNotLinked";
   const isRegister = searchParams.get("register") == "true";
-  const [isEmailFormVisible, setIsEmailFormVisible] = useState(!!emailError);
+  const emailParam = searchParams.get("email");
+  const [isEmailFormVisible, setIsEmailFormVisible] = useState(
+    !!emailError || !!emailParam
+  );
 
   function handleContinueWithEmail() {
     setIsEmailFormVisible(!isEmailFormVisible);
