@@ -64,13 +64,13 @@ export function FieldsDialog({
                 placeholder="Campo"
                 value={field.key}
                 onChange={(e) => updateField(index, "key", e.target.value)}
-                className="flex-1"
+                className="flex-1 focus-visible:ring-0 shadow-none focus-visible:outline-none"
               />
               <Input
                 placeholder="Valor"
                 value={field.value}
                 onChange={(e) => updateField(index, "value", e.target.value)}
-                className="flex-1"
+                className="flex-1 focus-visible:ring-0 shadow-none focus-visible:outline-none"
               />
               <Button
                 variant="destructive"

@@ -104,7 +104,7 @@ export default function AdminPage() {
     formData.append("iconType", icon.get("iconType") as string);
     formData.append("category", category);
     formData.append("priceId", data.priceId);
-    formData.append("fields", JSON.stringify(fields));
+    formData.append("fields", JSON.stringify(fields || []));
 
     const galeryPhotos = data.galeryPhotos as unknown as FileList;
     if (galeryPhotos && galeryPhotos.length > 0) {
