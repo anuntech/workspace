@@ -28,12 +28,10 @@ export function InviteWorkspaceForm() {
     queryKey: ["user"],
     queryFn: () => fetch("/api/user").then((res) => res.json()),
   });
+  const router = useRouter();
 
   if (user.isFetched && !user) {
-    signIn("email", {
-      email: response.data.email,
-      callbackUrl: `/invite-workspace?token=${invite}`,
-    });
+    router.push(`/auth/sign-in?email=${response.data.email}`);
   }
 
   if (
@@ -41,13 +39,9 @@ export function InviteWorkspaceForm() {
     isFetched &&
     user?.data?.email != response?.data?.email
   ) {
-    signIn("email", {
-      email: response.data.email,
-      callbackUrl: `/invite-workspace?token=${invite}`,
-    });
+    router.push(`/auth/sign-in?email=${response.data.email}`);
   }
 
-  const router = useRouter();
   if (isFetched && response.status == 400) {
     router.push("/");
   }
@@ -78,7 +72,13 @@ export function InviteWorkspaceForm() {
       <Button
         type="button"
         className="w-full py-6"
-        disabled={acceptInviteMutation.isPending || isPending}
+        disabled={
+          acceptInviteMutation.isPending ||
+          isPending ||
+          user.isPending ||
+          user?.data?.email != response?.data?.email ||
+          !user
+        }
         onClick={() => acceptInviteMutation.mutate({ invite })}
       >
         Aceitar
