@@ -30,12 +30,14 @@ export function RedirectIsMember({
       (w: any) => w.id === workspaceId
     );
 
-    const isMember =
-      selectedWorkspace.members.find(
-        (w: any) => w.memberId === userQuery?.data?._id
-      )?.role == "member";
+    if (selectedWorkspace) {
+      const isMember =
+        selectedWorkspace.members.find(
+          (w: any) => w.memberId === userQuery?.data?._id
+        )?.role == "member";
 
-    if (isMember) router.push(`/?workspace=${workspaceId}`);
+      if (isMember) router.push(`/?workspace=${workspaceId}`);
+    }
   }
 
   return children;
