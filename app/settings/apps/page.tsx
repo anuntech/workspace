@@ -160,7 +160,7 @@ function App({ app, workspace }: { app: any; workspace: string }) {
       href={`/settings/apps/${app._id}?workspace=${workspace}`}
       key={app.name}
     >
-      <Card className="relative">
+      <Card className="relative w-64 h-36">
         {app.workspaceAccess == "premium" && (
           <div className="absolute top-0 right-0 bg-black text-white px-2 py-1 text-xs font-bold transform rotate-12 shadow-md">
             Premium
@@ -193,7 +193,9 @@ function App({ app, workspace }: { app: any; workspace: string }) {
               <span>{app.name}</span>
             </div>
           </div>
-          <p className="text-xs text-muted-foreground">{app.description}</p>
+          <p className="text-xs text-muted-foreground line-clamp-3">
+            {app.description}
+          </p>
         </CardContent>
       </Card>
     </Link>
