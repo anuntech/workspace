@@ -15,7 +15,7 @@ export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions);
 
-    const user = await User.findOne({ email: session.user.email });
+    const user = await User.findById(session.user.id);
     if (user.email.split("@")[1] !== config.domainName) {
       return NextResponse.json(
         { error: "You have no permission" },
