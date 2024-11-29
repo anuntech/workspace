@@ -15,6 +15,7 @@
     "@emoji-mart/data": "^1.2.1",
     "@emoji-mart/react": "^1.1.1",
     "@headlessui/react": "^1.7.18",
+    "@hookform/resolvers": "^3.9.1",
     "@mdx-js/loader": "^2.3.0",
     "@mdx-js/react": "^2.3.0",
     "@next/mdx": "^13.5.6",
@@ -63,7 +64,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-easy-crop": "^5.1.0",
-    "react-hook-form": "^7.53.0",
+    "react-hook-form": "^7.53.2",
     "react-hot-toast": "^2.4.1",
     "react-joyride": "^2.9.3",
     "react-syntax-highlighter": "^15.5.0",
@@ -73,7 +74,7 @@
     "stripe": "^13.11.0",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
-    "zod": "^3.22.4"
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",

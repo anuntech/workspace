@@ -1,50 +1,69 @@
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { signIn } from "next-auth/react";
+"use client";
+
 import { useState } from "react";
-import { useSearchParams } from "next/navigation";
-import { useMutation } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { signIn } from "next-auth/react";
+
+const emailSchema = z.object({
+  email: z
+    .string()
+    .min(
+      1,
+      "O campo de e-mail não pode estar vazio. Por favor, preencha-o antes de continuar."
+    )
+    .email(
+      "Por favor, insira um endereço de e-mail válido no formato: exemplo@dominio.com."
+    )
+    .max(
+      254,
+      "O endereço de e-mail excede o limite de 254 caracteres. Insira um e-mail mais curto."
+    ),
+});
 
 export function SignInWithEmailForm({ csrfToken }: { csrfToken: string }) {
-  const searchParams = useSearchParams();
-  const emailParam = searchParams.get("email");
-  const [email, setEmail] = useState(emailParam || "");
-  const emailError = searchParams.get("error") == "EmailSignin";
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const signInWithEmailMutation = useMutation({
-    mutationFn: () =>
-      signIn("email", { email, callbackUrl: "/onboarding/name" }),
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(emailSchema),
   });
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-    signInWithEmailMutation.mutate();
-  };
+  async function onSubmit(data: any) {
+    setIsSubmitting(true);
+    try {
+      await signIn("email", { email: data.email });
+    } catch (error) {
+      console.error("Erro ao enviar e-mail:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
 
   return (
-    <form
-      method="post"
-      action="/api/auth/signin/email"
-      className="w-full transform space-y-4"
-    >
-      {emailError && <p className="text-red-500">Email inválido</p>}
-      <input type="hidden" name="csrfToken" value={csrfToken} />
-      <Input
-        type="email"
-        name="email"
-        placeholder="E-mail"
-        className="py-6"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        autoFocus
-      />
-      <Button
-        onClick={handleSubmit}
-        disabled={signInWithEmailMutation.isPending}
-        type="submit"
-        className="w-full py-6"
-      >
-        Continuar com e-mail
+    <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-4">
+      <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
+      <div>
+        <Input
+          type="text"
+          placeholder="exemplo@company.com"
+          {...register("email")}
+          disabled={isSubmitting}
+        />
+        {errors.email && (
+          <p className="text-red-500 text-sm mt-1">
+            {errors.email.message.toString()}
+          </p>
+        )}
+      </div>
+      <Button type="submit" disabled={isSubmitting} className="w-full">
+        {isSubmitting ? "Enviando..." : "Continuar"}
       </Button>
     </form>
   );
