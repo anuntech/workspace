@@ -8,7 +8,23 @@ import { initialWorkspaceIcons } from "@/libs/icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/libs/api";
 import { toast } from "@/hooks/use-toast";
+import { z } from "zod";
 import { AxiosError } from "axios";
+
+const workspaceSchema = z
+  .string()
+  .min(
+    1,
+    "O nome do workspace não pode estar vazio. Por favor, insira um nome antes de continuar."
+  )
+  .max(
+    50,
+    "O nome do workspace não pode exceder 50 caracteres. Por favor, insira um nome mais curto."
+  )
+  .regex(
+    /^[a-zA-Z0-9 _-]+$/,
+    "O nome do workspace contém caracteres inválidos. Use apenas letras, números, espaços, traços ou sublinhados."
+  );
 
 export function CreateWorkspaceForm() {
   const [name, setName] = useState("");
@@ -26,17 +42,42 @@ export function CreateWorkspaceForm() {
       router.push(`/?workspace=${(await data.data).id}`);
     },
     onError: (err: AxiosError) => {
-      toast({
-        title: "Erro ao criar workspace",
-        description: (err.response.data as any)?.error,
-        variant: "destructive",
-        duration: 7000,
-      });
+      const errorMessage =
+        (err.response?.data as any)?.error ||
+        "Erro ao criar workspace. Tente novamente.";
+      if (errorMessage.includes("limite")) {
+        toast({
+          title: "Limite atingido",
+          description:
+            "Você atingiu o limite de workspaces criados. Exclua um existente ou entre em contato com o suporte.",
+          variant: "destructive",
+          duration: 7000,
+        });
+      } else {
+        toast({
+          title: "Erro ao criar workspace",
+          description: errorMessage,
+          variant: "destructive",
+          duration: 7000,
+        });
+      }
     },
   });
 
   const handleCreateWorkspace = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const result = workspaceSchema.safeParse(name);
+    if (!result.success) {
+      toast({
+        title: "Erro ao criar o workspace",
+        description: result.error.errors[0].message,
+        variant: "destructive",
+        duration: 7000,
+      });
+      return;
+    }
+
     const randomIcon =
       initialWorkspaceIcons[
         Math.floor(Math.random() * initialWorkspaceIcons.length)

@@ -42,7 +42,7 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
       type: String,
       trim: true,
       required: true,
-      maxlength: 100,
+      maxlength: 50,
     },
     icon: {
       type: {
