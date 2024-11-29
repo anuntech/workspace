@@ -260,7 +260,7 @@ export default function AccountPage() {
   );
 }
 
-const DeleteAccountDialog = ({ isOpen, onClose, onDelete }: any) => {
+const DeleteAccountDialog = () => {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
