@@ -10,13 +10,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
+
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
@@ -27,6 +21,17 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 type User = {
   id: string;
@@ -240,9 +245,7 @@ export default function AccountPage() {
                 </span>
               </div>
               <div className="flex justify-end">
-                <Button type="button" variant="destructive">
-                  Deletar conta
-                </Button>
+                <DeleteAccountDialog />
               </div>
             </section>
             <div className="flex justify-end max-w-3xl items-center mt-20 w-full">
@@ -256,3 +259,36 @@ export default function AccountPage() {
     </>
   );
 }
+
+const DeleteAccountDialog = ({ isOpen, onClose, onDelete }: any) => {
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button type="button" variant="destructive">
+          Deletar conta
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Exclusão de Conta</AlertDialogTitle>
+          <AlertDialogDescription>
+            Para prosseguir com a exclusão da sua conta, entre em contato com o
+            suporte da Anuntech pelo e-mail:{" "}
+            <a
+              href="mailto:hi@anuntech.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ fontWeight: "bold", textDecoration: "underline" }}
+            >
+              hi@anuntech.com
+            </a>
+            . Nossa equipe está pronta para ajudar você.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogAction>Ok</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+};
