@@ -108,7 +108,10 @@ export function CreateWorkspaceForm() {
         autoFocus
       />
       <Button
-        disabled={sendCreateWorkspaceEmail.isPending}
+        disabled={
+          sendCreateWorkspaceEmail.isPending ||
+          sendCreateWorkspaceEmail.isSuccess
+        }
         type="submit"
         className="w-full py-6"
       >
