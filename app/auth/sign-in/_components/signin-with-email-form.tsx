@@ -7,6 +7,7 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { signIn } from "next-auth/react";
+import { Loader2 } from "lucide-react";
 
 const emailSchema = z.object({
   email: z
@@ -30,9 +31,10 @@ export function SignInWithEmailForm({ csrfToken }: { csrfToken: string }) {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm({
     resolver: zodResolver(emailSchema),
+    mode: "onChange",
   });
 
   async function onSubmit(data: any) {
@@ -62,8 +64,13 @@ export function SignInWithEmailForm({ csrfToken }: { csrfToken: string }) {
           </p>
         )}
       </div>
-      <Button type="submit" disabled={isSubmitting} className="w-full">
-        {isSubmitting ? "Enviando..." : "Continuar"}
+      <Button
+        type="submit"
+        disabled={!isValid || isSubmitting}
+        className="w-full flex items-center justify-center"
+      >
+        {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+        Continuar com o e-mail
       </Button>
     </form>
   );

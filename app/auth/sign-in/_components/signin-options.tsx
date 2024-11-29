@@ -25,11 +25,16 @@ export function SignInOptions({ csrfToken }: { csrfToken: string }) {
 
   return (
     <div className="flex w-full max-w-sm flex-col items-center">
-      <h1 className="mb-4 text-2xl font-bold text-primary">
-        {isEmailFormVisible
-          ? "Qual é seu e-mail?"
-          : `${isRegister ? "Registrar" : "Entrar"} na Anuntech`}
-      </h1>
+      {isEmailFormVisible && (
+        <h1 className="mb-4 text-2xl font-bold text-primary">
+          Qual é seu e-mail
+        </h1>
+      )}
+      {!isEmailFormVisible && (
+        <h1 className="mb-8 text-2xl font-bold text-primary">
+          Entrar na Anuntech
+        </h1>
+      )}
       {!isEmailFormVisible ? (
         <>
           {googleError && (
