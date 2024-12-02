@@ -56,6 +56,7 @@ export function SignInWithEmailForm({ csrfToken }: { csrfToken: string }) {
           type="text"
           placeholder="exemplo@company.com"
           {...register("email")}
+          className="py-6"
           disabled={isSubmitting}
         />
         {errors.email && (
@@ -67,7 +68,7 @@ export function SignInWithEmailForm({ csrfToken }: { csrfToken: string }) {
       <Button
         type="submit"
         disabled={!isValid || isSubmitting}
-        className="w-full flex items-center justify-center"
+        className="w-full py-6 flex items-center justify-center"
       >
         {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
         Continuar com o e-mail
