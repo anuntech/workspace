@@ -122,3 +122,17 @@ main::-webkit-scrollbar-thumb {
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
+
+#nprogress .bar {
+  background: #000; /* Cor da barra de carregamento */
+  height: 4px; /* Espessura da barra */
+}
+
+#nprogress .peg {
+  box-shadow: 0 0 10px #000, 0 0 5px #000; /* Efeito de brilho */
+  opacity: 1;
+}
+
+#nprogress .spinner {
+  display: none; /* Remove o spinner (opcional) */
+}

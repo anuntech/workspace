@@ -161,25 +161,56 @@ export function AppSidebar({ ...props }) {
               <CollapsibleContent>
                 <SidebarGroupContent className="font-normal">
                   <SidebarMenu>
-                    {filteredWorkspaceMenuItems.map((item: any) => (
-                      <SidebarMenuItem key={item.label}>
-                        {item.href ? (
-                          <SidebarMenuButton
-                            className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
-                            asChild
-                          >
-                            <Link href={item.href}>{item.label}</Link>
-                          </SidebarMenuButton>
-                        ) : (
-                          <SidebarMenuButton
-                            className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
-                            onClick={item.action}
-                          >
-                            {item.label}
-                          </SidebarMenuButton>
-                        )}
-                      </SidebarMenuItem>
-                    ))}
+                    {filteredWorkspaceMenuItems.map((item: any) => {
+                      if (
+                        item.label == "Faturas" &&
+                        userQuery.data?.customerId
+                      ) {
+                        return (
+                          <SidebarMenuItem key={item.label}>
+                            {item.href ? (
+                              <SidebarMenuButton
+                                className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
+                                asChild
+                              >
+                                <Link href={item.href}>{item.label}</Link>
+                              </SidebarMenuButton>
+                            ) : (
+                              <SidebarMenuButton
+                                className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
+                                onClick={item.action}
+                              >
+                                {item.label}
+                              </SidebarMenuButton>
+                            )}
+                          </SidebarMenuItem>
+                        );
+                      }
+
+                      if (item.label != "Faturas") {
+                        return (
+                          <SidebarMenuItem key={item.label}>
+                            {item.href ? (
+                              <SidebarMenuButton
+                                className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
+                                asChild
+                              >
+                                <Link href={item.href}>{item.label}</Link>
+                              </SidebarMenuButton>
+                            ) : (
+                              <SidebarMenuButton
+                                className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
+                                onClick={item.action}
+                              >
+                                {item.label}
+                              </SidebarMenuButton>
+                            )}
+                          </SidebarMenuItem>
+                        );
+                      }
+
+                      return null;
+                    })}
                   </SidebarMenu>
                 </SidebarGroupContent>
               </CollapsibleContent>
