@@ -6,6 +6,7 @@ import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import config from "@/config";
 import connectMongo from "./mongo";
 import { custom } from "openid-client";
+import nodemailer from "nodemailer";
 
 custom.setHttpOptionsDefaults({
   timeout: 20000,
@@ -41,6 +42,37 @@ export const authOptions: NextAuthOptionsExtended = {
           EmailProvider({
             server: process.env.EMAIL_SERVER,
             from: config.mailgun.fromNoReply,
+            async sendVerificationRequest({
+              identifier: email,
+              url,
+              provider,
+            }) {
+              const { host } = new URL(url);
+              const transport = nodemailer.createTransport(provider.server);
+              await transport.sendMail({
+                to: email,
+                from: provider.from,
+                subject: `Acesse sua conta na Anuntech`,
+                text: `Acesse sua conta na Anuntech\n${url}\n\n`,
+                html: `
+                  <body style="background-color: #f9f9f9; font-family: Arial, sans-serif; color: #333;">
+                    <div style="max-width: 600px; margin: auto; padding: 20px; background-color: #ffffff; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+                      <div style="text-align: center;">
+                        <img src="https://anuntech.com.br/logo.png" alt="Anuntech" style="max-width: 200px; margin-bottom: 20px;" />
+                      </div>
+                      <h2 style="color: #000000; font-size: 24px; font-weight: bold;">Acesse sua conta na Anuntech</h2>
+                      <p>Olá,</p>
+                      <p>Recebemos uma solicitação para acessar sua conta na Anuntech. Clique no botão abaixo para entrar:</p>
+                      <div style="text-align: center; margin: 30px 0;">
+                        <a href="${url}" style="background-color: #000000; color: #ffffff; padding: 15px 25px; text-decoration: none; border-radius: 5px; display: inline-block;">Entrar na Anuntech</a>
+                      </div>
+                      <p>Se você não solicitou este acesso, por favor, ignore este e-mail.</p>
+                      <p>Atenciosamente,<br />Equipe Anuntech</p>
+                    </div>
+                  </body>
+                `,
+              });
+            },
           }),
         ]
       : []),
