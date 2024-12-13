@@ -20,6 +20,7 @@ export default function ServicePage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const workspace = searchParams.get("workspace");
+  const fieldSubScreen = searchParams.get("fieldSubScreen");
   const [isIframeLoading, setIsIframeLoading] = useState(true);
 
   if (!params.id) {
@@ -45,6 +46,11 @@ export default function ServicePage({ params }: { params: { id: string } }) {
   const app = applicationsQuery.data.data.find(
     (app: any) => app._id === params.id
   );
+
+  const subFieldUrl = app.fields.find(
+    (field: any) => field.key === fieldSubScreen
+  )?.value;
+
   return (
     <>
       <header className="flex h-14 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
@@ -70,7 +76,7 @@ export default function ServicePage({ params }: { params: { id: string } }) {
         </div>
       )}
       <iframe
-        src={app.applicationUrl}
+        src={!subFieldUrl ? app.applicationUrl : subFieldUrl}
         width="100%"
         height="100%"
         style={{ border: "none" }}

@@ -102,7 +102,11 @@ export function NavProjects() {
                         variant="ghost"
                         className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150 w-full justify-start pl-10 relative before:content-['•'] before:absolute before:left-6 before:text-gray-500 h-4 py-4"
                       >
-                        <a href={field.value}>{field.key}</a>
+                        <Link
+                          href={`/service/${data._id}?workspace=${workspace}&fieldSubScreen=${field.key}`}
+                        >
+                          {field.key}
+                        </Link>
                       </Button>
                     ))}
                   </AccordionContent>
