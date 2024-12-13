@@ -93,6 +93,15 @@ export default function AdminPage() {
       data.priceId = null;
     }
 
+    if (!icon) {
+      toast({
+        title: "É necessário selecionar um avatar!",
+        variant: "destructive",
+        duration: 3000,
+      });
+      return;
+    }
+
     formData.append("name", data.name);
     formData.append("cta", data.cta);
     formData.append("title", data.title);
