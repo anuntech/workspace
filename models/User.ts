@@ -61,6 +61,10 @@ const userSchema = new mongoose.Schema(
         trim: true,
       },
     },
+    pagesOpened: {
+      type: [String],
+      enum: ["dashboard", "projects", "services"],
+    },
   },
   {
     timestamps: true,
