@@ -63,7 +63,7 @@ const userSchema = new mongoose.Schema(
     },
     pagesOpened: {
       type: [String],
-      enum: ["dashboard", "projects", "services"],
+      enum: ["workspace", "invitation", "application"],
     },
   },
   {
