@@ -11,8 +11,15 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { ArrowRight, Briefcase, PlusSquare, UserPlus } from "lucide-react";
+import Link from "next/link";
 
-export default function WorkspacePage() {
+export default function WorkspacePage({
+  searchParams,
+}: {
+  searchParams?: { [key: string]: string | string[] | undefined };
+}) {
+  const workspace = searchParams?.workspace;
+
   return (
     <>
       <header className="flex h-14 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
@@ -57,25 +64,31 @@ export default function WorkspacePage() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center mt-4">
           <div className="flex flex-col items-center gap-2">
-            <Button size="icon" variant="outline" className="hover:bg-gray-100">
-              <Briefcase className="w-6 h-6" />
-            </Button>
+            <Link href={`/settings?workspace=${workspace}`}>
+              <Button size="icon" variant="outline">
+                <Briefcase className="w-6 h-6" />
+              </Button>
+            </Link>
             <p className="text-sm font-medium text-gray-700">Adicionar Logo</p>
           </div>
 
           <div className="flex flex-col items-center gap-2">
-            <Button size="icon" variant="outline" className="hover:bg-gray-100">
-              <UserPlus className="w-6 h-6" />
-            </Button>
+            <Link href={`/settings/members?workspace=${workspace}`}>
+              <Button size="icon" variant="outline">
+                <UserPlus className="w-6 h-6" />
+              </Button>
+            </Link>
             <p className="text-sm font-medium text-gray-700">
               Convidar Membros
             </p>
           </div>
 
           <div className="flex flex-col items-center gap-2">
-            <Button size="icon" variant="outline" className="hover:bg-gray-100">
-              <PlusSquare className="w-6 h-6" />
-            </Button>
+            <Link href={`/settings/apps?workspace=${workspace}`}>
+              <Button size="icon" variant="outline">
+                <PlusSquare className="w-6 h-6" />
+              </Button>
+            </Link>
             <p className="text-sm font-medium text-gray-700">
               Adicionar Aplicativo
             </p>
