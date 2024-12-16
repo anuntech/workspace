@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -10,15 +12,38 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { useQuery } from "@tanstack/react-query";
 import { ArrowRight, Briefcase, PlusSquare, UserPlus } from "lucide-react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
-export default function WorkspacePage({
-  searchParams,
-}: {
-  searchParams?: { [key: string]: string | string[] | undefined };
-}) {
-  const workspace = searchParams?.workspace;
+export default function WorkspacePage() {
+  const workspace = useSearchParams().get("workspace");
+
+  const userQuery = useQuery({
+    queryKey: ["user"],
+    queryFn: () => fetch("/api/user").then((res) => res.json()),
+  });
+
+  const quantity = userQuery.data?.pagesOpened
+    ? userQuery.data?.pagesOpened?.length + 1
+    : 0;
+
+  let percent;
+
+  switch (quantity) {
+    case 1:
+      percent = 100;
+      break;
+    case 2:
+      percent = 66;
+      break;
+    case 3:
+      percent = 33;
+      break;
+    default:
+      percent = 0;
+  }
 
   return (
     <>
@@ -55,10 +80,10 @@ export default function WorkspacePage({
 
         <div className="w-full max-w-md mb-8">
           <p className="text-sm text-gray-600 mb-2">Progresso do Tutorial</p>
-          <Progress value={33} className="h-2" />
+          <Progress value={quantity} className="h-2" />
           <div className="flex justify-between text-xs mt-2 text-gray-500">
-            <span>Etapa 1/3</span>
-            <span>33% Concluído</span>
+            <span>Etapa {quantity}/3</span>
+            <span>{percent}% Concluído</span>
           </div>
         </div>
 
