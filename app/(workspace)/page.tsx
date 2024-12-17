@@ -31,11 +31,12 @@ export default function WorkspacePage() {
     queryFn: () => fetch("/api/user").then((res) => res.json()),
   });
 
+  // Quantidade de páginas abertas
   const quantity = userQuery.data?.pagesOpened
-    ? userQuery.data?.pagesOpened?.length
+    ? userQuery.data?.pagesOpened.length
     : 0;
 
-  // Calcula progresso
+  // Cálculo básico de progresso
   let percent;
   switch (quantity) {
     case 1:
@@ -51,7 +52,7 @@ export default function WorkspacePage() {
       percent = 0;
   }
 
-  // Verifica se cada etapa já foi concluída
+  // Verificações se cada etapa foi concluída
   const isInviteMembersFinished = userQuery.data?.pagesOpened?.some(
     (page: any) => page.name === "invitation"
   );
@@ -63,23 +64,19 @@ export default function WorkspacePage() {
   );
 
   // Classes condicionais para cada etapa
-  // Se concluída -> fundo verde
-  // Se não concluída -> outline (ou outro estilo que preferir)
+  // Quando concluída -> fundo cinza-escuro, texto branco (estilo minimalista black)
+  // Quando não concluída -> outline / estilo padrão
   const workspaceButtonClasses = isWorkspaceFinished
-    ? "bg-green-600 hover:bg-green-700 text-white"
-    : "bg-white text-gray-900 border border-gray-300 hover:bg-gray-100";
+    ? "bg-gray-800 hover:bg-gray-700 text-white"
+    : "border border-gray-300 bg-white text-gray-900 hover:bg-gray-100";
 
   const inviteMembersButtonClasses = isInviteMembersFinished
-    ? "bg-green-600 hover:bg-green-700 text-white"
-    : "bg-white text-gray-900 border border-gray-300 hover:bg-gray-100";
+    ? "bg-gray-800 hover:bg-gray-700 text-white"
+    : "border border-gray-300 bg-white text-gray-900 hover:bg-gray-100";
 
   const applicationsButtonClasses = isApplicationsFinished
-    ? "bg-green-600 hover:bg-green-700 text-white"
-    : "bg-white text-gray-900 border border-gray-300 hover:bg-gray-100";
-
-  // Podemos também usar a prop `disabled` se quisermos bloquear o botão
-  // depois que a etapa foi concluída, mas isso depende do fluxo desejado.
-  // Ex.: disabled={isWorkspaceFinished}
+    ? "bg-gray-800 hover:bg-gray-700 text-white"
+    : "border border-gray-300 bg-white text-gray-900 hover:bg-gray-100";
 
   return (
     <>
@@ -124,6 +121,7 @@ export default function WorkspacePage() {
         </div>
 
         <div className="flex flex-col w-full max-w-md gap-6 mt-4">
+          {/* Etapa 1: Adicionar Logo */}
           <div className="flex flex-col items-center gap-2">
             <Link href={`/settings?workspace=${workspace}`} className="w-full">
               <Button
@@ -134,7 +132,6 @@ export default function WorkspacePage() {
                   <Briefcase className="w-6 h-6 mr-2" />
                   Adicionar Logo
                 </div>
-
                 <CheckCircle
                   className={`ml-auto ${
                     isWorkspaceFinished ? "text-white" : "text-gray-400"
@@ -144,6 +141,7 @@ export default function WorkspacePage() {
             </Link>
           </div>
 
+          {/* Etapa 2: Convidar Membros */}
           <div className="flex flex-col items-center gap-2">
             <Link
               href={`/settings/members?workspace=${workspace}`}
@@ -166,6 +164,7 @@ export default function WorkspacePage() {
             </Link>
           </div>
 
+          {/* Etapa 3: Adicionar Aplicativo */}
           <div className="flex flex-col items-center gap-2">
             <Link
               href={`/settings/apps?workspace=${workspace}`}
