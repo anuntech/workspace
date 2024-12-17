@@ -47,6 +47,27 @@ export default function SettingsPage() {
     queryFn: async () => api.get("/api/workspace"),
   });
 
+  const userQuery = useQuery({
+    queryKey: ["user"],
+    queryFn: () => fetch("/api/user").then((res) => res.json()),
+  });
+
+  const changePagesOpenedMutation = useMutation({
+    mutationFn: () =>
+      api.post("/api/user/pages-opened", {
+        pageOpened: "workspace",
+      }),
+  });
+
+  useEffect(() => {
+    if (
+      userQuery.isFetched &&
+      !userQuery.data?.pagesOpened?.includes("workspace")
+    ) {
+      changePagesOpenedMutation.mutate();
+    }
+  }, [userQuery.isFetched]);
+
   const [onLoad, setOnLoad] = useState(false);
 
   const searchParams = useSearchParams();

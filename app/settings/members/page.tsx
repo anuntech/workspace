@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Invites } from "./_components/invites";
 import { Members } from "./_components/members";
 import { useSearchParams } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import {
   Breadcrumb,
@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import api from "@/libs/api";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useEffect } from "react";
 
 export default function MembersPage() {
   const searchParams = useSearchParams();
@@ -36,6 +37,27 @@ export default function MembersPage() {
     queryKey: ["workspace"],
     queryFn: () => api.get(`/api/workspace`),
   });
+
+  const userQuery = useQuery({
+    queryKey: ["user"],
+    queryFn: () => fetch("/api/user").then((res) => res.json()),
+  });
+
+  const changePagesOpenedMutation = useMutation({
+    mutationFn: () =>
+      api.post("/api/user/pages-opened", {
+        pageOpened: "invitation",
+      }),
+  });
+
+  useEffect(() => {
+    if (
+      userQuery.isFetched &&
+      !userQuery.data?.pagesOpened?.includes("invitation")
+    ) {
+      changePagesOpenedMutation.mutate();
+    }
+  }, [userQuery.isFetched]);
 
   const actualWorkspace = workspaceQuery.data?.data?.find(
     (v: any) => v.id === workspace

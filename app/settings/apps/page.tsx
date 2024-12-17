@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Search } from "lucide-react";
 import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import { api } from "@/libs/api";
 import { getS3Image } from "@/libs/s3-client";
@@ -30,6 +30,27 @@ export default function AppsPage() {
     queryKey: ["applications"],
     queryFn: async () => await api.get(`/api/applications/${workspace}`),
   });
+
+  const userQuery = useQuery({
+    queryKey: ["user"],
+    queryFn: () => fetch("/api/user").then((res) => res.json()),
+  });
+
+  const changePagesOpenedMutation = useMutation({
+    mutationFn: () =>
+      api.post("/api/user/pages-opened", {
+        pageOpened: "application",
+      }),
+  });
+
+  useEffect(() => {
+    if (
+      userQuery.isFetched &&
+      !userQuery.data?.pagesOpened?.includes("application")
+    ) {
+      changePagesOpenedMutation.mutate();
+    }
+  }, [userQuery.isFetched]);
 
   if (applicationsQuery.isPending) {
     return <div>Carregando...</div>;

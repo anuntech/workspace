@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import toJSON from "./plugins/toJSON";
+import { unique } from "next/dist/build/utils";
 
 const userSchema = new mongoose.Schema(
   {
@@ -62,8 +63,15 @@ const userSchema = new mongoose.Schema(
       },
     },
     pagesOpened: {
-      type: [String],
-      enum: ["workspace", "invitation", "application"],
+      type: [
+        {
+          name: {
+            type: String,
+            unique: true,
+            required: [true, "O nome da página é obrigatório."],
+          },
+        },
+      ],
     },
   },
   {
@@ -79,6 +87,17 @@ userSchema.pre("save", function (next) {
   if (this.isModified("email")) {
     this.email = this.email.trim().toLowerCase();
   }
+
+  if (this.isModified("pagesOpened") && Array.isArray(this.pagesOpened)) {
+    // Remove duplicatas de pagesOpened
+    const uniquePages = this.pagesOpened.reduce((acc, current) => {
+      const isDuplicate = acc.find((item) => item.name === current.name);
+      if (!isDuplicate) acc.push(current);
+      return acc;
+    }, []);
+    this.pagesOpened = uniquePages;
+  }
+
   next();
 });
 

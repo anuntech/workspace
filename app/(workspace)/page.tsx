@@ -26,20 +26,20 @@ export default function WorkspacePage() {
   });
 
   const quantity = userQuery.data?.pagesOpened
-    ? userQuery.data?.pagesOpened?.length + 1
+    ? userQuery.data?.pagesOpened?.length
     : 0;
 
   let percent;
 
   switch (quantity) {
     case 1:
-      percent = 100;
+      percent = 33;
       break;
     case 2:
       percent = 66;
       break;
     case 3:
-      percent = 33;
+      percent = 100;
       break;
     default:
       percent = 0;
@@ -80,7 +80,7 @@ export default function WorkspacePage() {
 
         <div className="w-full max-w-md mb-8">
           <p className="text-sm text-gray-600 mb-2">Progresso do Tutorial</p>
-          <Progress value={quantity} className="h-2" />
+          <Progress value={percent} className="h-2" />
           <div className="flex justify-between text-xs mt-2 text-gray-500">
             <span>Etapa {quantity}/3</span>
             <span>{percent}% Concluído</span>
