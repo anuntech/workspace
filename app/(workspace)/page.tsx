@@ -13,7 +13,13 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowRight, Briefcase, PlusSquare, UserPlus } from "lucide-react";
+import {
+  ArrowRight,
+  Briefcase,
+  CheckCircle,
+  PlusSquare,
+  UserPlus,
+} from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
@@ -87,36 +93,60 @@ export default function WorkspacePage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center mt-4">
+        {/* Botões em uma coluna esticada */}
+        <div className="flex flex-col w-full max-w-md gap-6 mt-4">
           <div className="flex flex-col items-center gap-2">
-            <Link href={`/settings?workspace=${workspace}`}>
-              <Button size="icon" variant="outline">
-                <Briefcase className="w-6 h-6" />
+            <Link href={`/settings?workspace=${workspace}`} className="w-full">
+              <Button
+                size="lg"
+                variant="outline"
+                className="w-full justify-start"
+              >
+                <div className="flex items-center justify-start gap-2">
+                  <Briefcase className="w-6 h-6 mr-2" />
+                  Adicionar Logo
+                </div>
+                <CheckCircle className="ml-auto" />
               </Button>
             </Link>
-            <p className="text-sm font-medium text-gray-700">Adicionar Logo</p>
           </div>
 
           <div className="flex flex-col items-center gap-2">
-            <Link href={`/settings/members?workspace=${workspace}`}>
-              <Button size="icon" variant="outline">
-                <UserPlus className="w-6 h-6" />
+            <Link
+              href={`/settings/members?workspace=${workspace}`}
+              className="w-full"
+            >
+              <Button
+                size="lg"
+                variant="outline"
+                className="w-full justify-start"
+              >
+                <div className="flex items-center justify-start gap-2">
+                  <UserPlus className="w-6 h-6 mr-2" />
+                  Convidar Membros
+                </div>
+                <CheckCircle className="ml-auto" />
               </Button>
             </Link>
-            <p className="text-sm font-medium text-gray-700">
-              Convidar Membros
-            </p>
           </div>
 
           <div className="flex flex-col items-center gap-2">
-            <Link href={`/settings/apps?workspace=${workspace}`}>
-              <Button size="icon" variant="outline">
-                <PlusSquare className="w-6 h-6" />
+            <Link
+              href={`/settings/apps?workspace=${workspace}`}
+              className="w-full"
+            >
+              <Button
+                size="lg"
+                variant="outline"
+                className="w-full justify-start"
+              >
+                <div className="flex items-center justify-start gap-2">
+                  <PlusSquare className="w-6 h-6 mr-2" />
+                  Adicionar Aplicativo
+                </div>
+                <CheckCircle className="ml-auto" />
               </Button>
             </Link>
-            <p className="text-sm font-medium text-gray-700">
-              Adicionar Aplicativo
-            </p>
           </div>
         </div>
 
