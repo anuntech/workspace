@@ -35,8 +35,8 @@ export default function WorkspacePage() {
     ? userQuery.data?.pagesOpened?.length
     : 0;
 
+  // Calcula progresso
   let percent;
-
   switch (quantity) {
     case 1:
       percent = 33;
@@ -50,6 +50,36 @@ export default function WorkspacePage() {
     default:
       percent = 0;
   }
+
+  // Verifica se cada etapa já foi concluída
+  const isInviteMembersFinished = userQuery.data?.pagesOpened?.some(
+    (page: any) => page.name === "invitation"
+  );
+  const isApplicationsFinished = userQuery.data?.pagesOpened?.some(
+    (page: any) => page.name === "application"
+  );
+  const isWorkspaceFinished = userQuery.data?.pagesOpened?.some(
+    (page: any) => page.name === "workspace"
+  );
+
+  // Classes condicionais para cada etapa
+  // Se concluída -> fundo verde
+  // Se não concluída -> outline (ou outro estilo que preferir)
+  const workspaceButtonClasses = isWorkspaceFinished
+    ? "bg-green-600 hover:bg-green-700 text-white"
+    : "bg-white text-gray-900 border border-gray-300 hover:bg-gray-100";
+
+  const inviteMembersButtonClasses = isInviteMembersFinished
+    ? "bg-green-600 hover:bg-green-700 text-white"
+    : "bg-white text-gray-900 border border-gray-300 hover:bg-gray-100";
+
+  const applicationsButtonClasses = isApplicationsFinished
+    ? "bg-green-600 hover:bg-green-700 text-white"
+    : "bg-white text-gray-900 border border-gray-300 hover:bg-gray-100";
+
+  // Podemos também usar a prop `disabled` se quisermos bloquear o botão
+  // depois que a etapa foi concluída, mas isso depende do fluxo desejado.
+  // Ex.: disabled={isWorkspaceFinished}
 
   return (
     <>
@@ -93,20 +123,23 @@ export default function WorkspacePage() {
           </div>
         </div>
 
-        {/* Botões em uma coluna esticada */}
         <div className="flex flex-col w-full max-w-md gap-6 mt-4">
           <div className="flex flex-col items-center gap-2">
             <Link href={`/settings?workspace=${workspace}`} className="w-full">
               <Button
                 size="lg"
-                variant="outline"
-                className="w-full justify-start"
+                className={`w-full justify-start ${workspaceButtonClasses}`}
               >
                 <div className="flex items-center justify-start gap-2">
                   <Briefcase className="w-6 h-6 mr-2" />
                   Adicionar Logo
                 </div>
-                <CheckCircle className="ml-auto" />
+
+                <CheckCircle
+                  className={`ml-auto ${
+                    isWorkspaceFinished ? "text-white" : "text-gray-400"
+                  }`}
+                />
               </Button>
             </Link>
           </div>
@@ -118,14 +151,17 @@ export default function WorkspacePage() {
             >
               <Button
                 size="lg"
-                variant="outline"
-                className="w-full justify-start"
+                className={`w-full justify-start ${inviteMembersButtonClasses}`}
               >
                 <div className="flex items-center justify-start gap-2">
                   <UserPlus className="w-6 h-6 mr-2" />
                   Convidar Membros
                 </div>
-                <CheckCircle className="ml-auto" />
+                <CheckCircle
+                  className={`ml-auto ${
+                    isInviteMembersFinished ? "text-white" : "text-gray-400"
+                  }`}
+                />
               </Button>
             </Link>
           </div>
@@ -137,14 +173,17 @@ export default function WorkspacePage() {
             >
               <Button
                 size="lg"
-                variant="outline"
-                className="w-full justify-start"
+                className={`w-full justify-start ${applicationsButtonClasses}`}
               >
                 <div className="flex items-center justify-start gap-2">
                   <PlusSquare className="w-6 h-6 mr-2" />
                   Adicionar Aplicativo
                 </div>
-                <CheckCircle className="ml-auto" />
+                <CheckCircle
+                  className={`ml-auto ${
+                    isApplicationsFinished ? "text-white" : "text-gray-400"
+                  }`}
+                />
               </Button>
             </Link>
           </div>
