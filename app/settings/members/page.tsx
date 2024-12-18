@@ -34,37 +34,30 @@ export default function MembersPage() {
   });
 
   const workspaceQuery = useQuery({
-    queryKey: ["workspace"],
-    queryFn: () => api.get(`/api/workspace`),
+    queryKey: ["find-workspace"],
+    queryFn: async () =>
+      api.get(`/api/workspace/${workspace}`).then((res) => res.data),
   });
 
-  const userQuery = useQuery({
-    queryKey: ["user"],
-    queryFn: () => fetch("/api/user").then((res) => res.json()),
-  });
-
-  const changePagesOpenedMutation = useMutation({
+  const changeTutorialMutation = useMutation({
     mutationFn: () =>
-      api.post("/api/user/pages-opened", {
+      api.post("/api/workspace/tutorial", {
         pageOpened: "invitation",
+        workspaceId: workspace,
       }),
   });
 
   useEffect(() => {
     if (
-      userQuery.isFetched &&
-      !userQuery.data?.pagesOpened?.includes("invitation")
+      workspaceQuery.isFetched &&
+      !workspaceQuery.data?.tutorial?.includes("invitation")
     ) {
-      changePagesOpenedMutation.mutate();
+      changeTutorialMutation.mutate();
     }
-  }, [userQuery.isFetched]);
-
-  const actualWorkspace = workspaceQuery.data?.data?.find(
-    (v: any) => v.id === workspace
-  );
+  }, [workspaceQuery.isFetched]);
 
   const plan = plansQuery.data?.data?.find(
-    (pl: any) => pl.name == actualWorkspace?.plan
+    (pl: any) => pl.name == workspaceQuery.data?.plan
   );
 
   const membersQuantity = membersQuery.data?.data?.length + 1;

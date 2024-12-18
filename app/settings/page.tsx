@@ -60,7 +60,7 @@ export default function SettingsPage() {
   useEffect(() => {
     if (
       workspaceQuery.isFetched &&
-      !workspaceQuery.data?.pagesOpened?.includes("workspace")
+      !workspaceQuery.data?.tutorial?.includes("workspace")
     ) {
       changeTutorialMutation.mutate();
     }

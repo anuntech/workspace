@@ -31,26 +31,28 @@ export default function AppsPage() {
     queryFn: async () => await api.get(`/api/applications/${workspace}`),
   });
 
-  const userQuery = useQuery({
-    queryKey: ["user"],
-    queryFn: () => fetch("/api/user").then((res) => res.json()),
+  const workspaceQuery = useQuery({
+    queryKey: ["find-workspace"],
+    queryFn: async () =>
+      api.get(`/api/workspace/${workspace}`).then((res) => res.data),
   });
 
-  const changePagesOpenedMutation = useMutation({
+  const changeTutorialMutation = useMutation({
     mutationFn: () =>
-      api.post("/api/user/pages-opened", {
+      api.post("/api/workspace/tutorial", {
         pageOpened: "application",
+        workspaceId: workspace,
       }),
   });
 
   useEffect(() => {
     if (
-      userQuery.isFetched &&
-      !userQuery.data?.pagesOpened?.includes("application")
+      workspaceQuery.isFetched &&
+      !workspaceQuery.data?.tutorial?.includes("application")
     ) {
-      changePagesOpenedMutation.mutate();
+      changeTutorialMutation.mutate();
     }
-  }, [userQuery.isFetched]);
+  }, [workspaceQuery.isFetched]);
 
   if (applicationsQuery.isPending) {
     return <div>Carregando...</div>;

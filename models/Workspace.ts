@@ -143,7 +143,7 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
             type: String,
             unique: true,
             required: [true, "O nome da página é obrigatório."],
-            enum: [],
+            enum: ["workspace", "invitation", "application"],
           },
         },
       ],
