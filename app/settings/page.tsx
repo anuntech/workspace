@@ -32,6 +32,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { Loader, LoaderCircle } from "lucide-react";
 
 type Workspace = {
   name?: string;
@@ -178,6 +179,7 @@ export default function SettingsPage() {
         body: JSON.stringify(data),
       }),
     onSuccess: () => {
+      toast({ title: "Workspace atualizado com sucesso!" });
       setIsChanged(false);
     },
   });
@@ -261,7 +263,7 @@ export default function SettingsPage() {
                   placeholder="Nome..."
                   {...register("name", { required: true })}
                   onChange={() => setIsChanged(true)}
-                  disabled={isPending || isSubmitting}
+                  disabled={isPending || isSubmitting || mutation.isPending}
                 />
               </div>
             </section>
@@ -280,7 +282,9 @@ export default function SettingsPage() {
                   <AlertDialogTrigger asChild>
                     <Button
                       variant="destructive"
-                      disabled={roleQuery.data?.role != "owner"}
+                      disabled={
+                        roleQuery.data?.role != "owner" || mutation.isPending
+                      }
                     >
                       Deletar workspace
                     </Button>
@@ -311,7 +315,11 @@ export default function SettingsPage() {
             </section>
           </div>
           <div className="flex justify-end max-w-3xl items-center mt-20 w-full">
-            <Button type="submit" disabled={!isChanged || isSubmitting}>
+            <Button
+              type="submit"
+              disabled={!isChanged || isSubmitting || mutation.isPending}
+            >
+              {mutation.isPending && <LoaderCircle className="animate-spin" />}
               Salvar as alterações
             </Button>
           </div>
