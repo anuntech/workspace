@@ -26,17 +26,24 @@ export async function POST(request: Request) {
 
     const workspace = await Workspace.findById(body.workspaceId);
 
-    // if (user?.pagesOpened?.find((el: any) => el.name == body.pageOpened)) {
-    //   return NextResponse.json(
-    //     { error: "pageOpened already added" },
-    //     { status: 400 }
-    //   );
-    // }
+    if (!workspace) {
+      return NextResponse.json(
+        { error: "Workspace not found" },
+        { status: 404 }
+      );
+    }
+
+    if (user?.pagesOpened?.find((el: any) => el.name == body.pageOpened)) {
+      return NextResponse.json(
+        { error: "pageOpened already added" },
+        { status: 400 }
+      );
+    }
 
     const isAdminOrOwner =
-      workspace?.owner == user?._id ||
-      !!workspace.members.find(
-        (member: any) => member.userId == user?._id && member.role == "owner"
+      workspace?.owner.toString() == user?._id ||
+      workspace.members.find(
+        (member: any) => member.userId == user?._id && member.role == "admin"
       );
 
     if (!isAdminOrOwner) {
@@ -54,9 +61,9 @@ export async function POST(request: Request) {
       name: body.pageOpened,
     });
 
-    await user.save();
+    await workspace.save();
 
-    return NextResponse.json(user);
+    return NextResponse.json(workspace);
   } catch (e) {
     console.error(e);
     return NextResponse.json({ error: e?.message }, { status: 500 });
