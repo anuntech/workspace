@@ -32,19 +32,19 @@ export default function WorkspacePage() {
       api.get(`/api/workspace/${workspace}`).then((res) => res.data),
   });
 
-  const changePagesOpenedMutation = useMutation({
+  const changeTutorialMutation = useMutation({
     mutationFn: async () => {
-      await api.post("/api/user/pages-opened", {
+      await api.post("/api/workspace/tutorial", {
         pageOpened: "workspace",
         workspaceId: workspace,
       });
 
-      await api.post("/api/user/pages-opened", {
+      await api.post("/api/workspace/tutorial", {
         pageOpened: "invitation",
         workspaceId: workspace,
       });
 
-      await api.post("/api/user/pages-opened", {
+      await api.post("/api/workspace/tutorial", {
         pageOpened: "application",
         workspaceId: workspace,
       });
@@ -57,14 +57,14 @@ export default function WorkspacePage() {
   const handleSkipTutorial = () => {
     if (
       workspaceQuery.isFetched &&
-      !workspaceQuery.data?.pagesOpened?.includes("workspace")
+      !workspaceQuery.data?.tutorial?.includes("workspace")
     ) {
-      changePagesOpenedMutation.mutate();
+      changeTutorialMutation.mutate();
     }
   };
 
-  const quantity = workspaceQuery.data?.pagesOpened
-    ? workspaceQuery.data?.pagesOpened.length
+  const quantity = workspaceQuery.data?.tutorial
+    ? workspaceQuery.data?.tutorial.length
     : 0;
 
   let percent;
@@ -82,13 +82,13 @@ export default function WorkspacePage() {
       percent = 0;
   }
 
-  const isInviteMembersFinished = workspaceQuery.data?.pagesOpened?.some(
+  const isInviteMembersFinished = workspaceQuery.data?.tutorial?.some(
     (page: any) => page.name === "invitation"
   );
-  const isApplicationsFinished = workspaceQuery.data?.pagesOpened?.some(
+  const isApplicationsFinished = workspaceQuery.data?.tutorial?.some(
     (page: any) => page.name === "application"
   );
-  const isWorkspaceFinished = workspaceQuery.data?.pagesOpened?.some(
+  const isWorkspaceFinished = workspaceQuery.data?.tutorial?.some(
     (page: any) => page.name === "workspace"
   );
 
@@ -214,7 +214,7 @@ export default function WorkspacePage() {
             className="gap-2 px-6 py-2 text-gray-700 hover:bg-gray-100"
             onClick={handleSkipTutorial}
             disabled={
-              changePagesOpenedMutation.isPending ||
+              changeTutorialMutation.isPending ||
               quantity == 3 ||
               workspaceQuery.isPending
             }
