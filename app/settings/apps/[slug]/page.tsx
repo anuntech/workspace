@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/libs/api";
 import { getS3Image } from "@/libs/s3-client";
@@ -48,6 +48,8 @@ export default function AppPage({ params }: { params: { slug: string } }) {
 
   const queryClient = useQueryClient();
 
+  const router = useRouter();
+
   const getApplicationMutation = useMutation({
     mutationFn: async () =>
       await api.post(`/api/applications/${workspace}/allow`, {
@@ -62,6 +64,7 @@ export default function AppPage({ params }: { params: { slug: string } }) {
         queryKey: ["workspace"],
         type: "all",
       });
+      router.push(`/service/${params.slug}?workspace=${workspace}`);
     },
     onError: (err: AxiosError) => {
       toast({
@@ -137,7 +140,7 @@ export default function AppPage({ params }: { params: { slug: string } }) {
       <Button
         type="button"
         onClick={handlePayment}
-        disabled={paymentMutation.isPending}
+        disabled={paymentMutation.isPending || applicationsQuery.isPending}
         className="bg-gradient-to-r from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 text-white font-semibold px-4 py-2 rounded-lg shadow-lg hover:shadow-xl transition-transform duration-300 ease-in-out hover:scale-105"
       >
         <CirclePlus className="mr-2 size-5" />
@@ -166,7 +169,9 @@ export default function AppPage({ params }: { params: { slug: string } }) {
         type="button"
         onClick={() => deleteApplicationMutation.mutate()}
         variant="destructive"
-        disabled={deleteApplicationMutation.isPending}
+        disabled={
+          deleteApplicationMutation.isPending || applicationsQuery.isRefetching
+        }
       >
         <CircleMinus className="mr-2 size-5" />
         Desinstalar
@@ -179,7 +184,9 @@ export default function AppPage({ params }: { params: { slug: string } }) {
       <Button
         type="button"
         onClick={() => getApplicationMutation.mutate()}
-        disabled={getApplicationMutation.isPending}
+        disabled={
+          getApplicationMutation.isPending || applicationsQuery.isRefetching
+        }
       >
         <CirclePlus className="mr-2 size-5" />
         Instalar
