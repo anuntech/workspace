@@ -128,11 +128,11 @@ export default function WorkspacePage() {
 
       <div className="flex flex-col items-center justify-center h-[88vh] px-4">
         <img
-          src="./anuntech-logo.svg"
-          width={120}
-          height={120}
+          src="./anuntech-icon-black.png"
+          width={200}
+          height={200}
           alt="Anuntech Logo"
-          className="mb-6"
+          className="mb-[-10px]"
         />
 
         <h1 className="text-3xl font-bold mb-6 tracking-wide text-gray-800">
