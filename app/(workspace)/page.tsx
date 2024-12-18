@@ -26,41 +26,45 @@ import { useRouter, useSearchParams } from "next/navigation";
 export default function WorkspacePage() {
   const workspace = useSearchParams().get("workspace");
 
-  const userQuery = useQuery({
-    queryKey: ["user"],
-    queryFn: () => fetch("/api/user").then((res) => res.json()),
+  const workspaceQuery = useQuery({
+    queryKey: ["find-workspace"],
+    queryFn: () =>
+      api.get(`/api/workspace/${workspace}`).then((res) => res.data),
   });
 
   const changePagesOpenedMutation = useMutation({
     mutationFn: async () => {
       await api.post("/api/user/pages-opened", {
         pageOpened: "workspace",
+        workspaceId: workspace,
       });
 
       await api.post("/api/user/pages-opened", {
         pageOpened: "invitation",
+        workspaceId: workspace,
       });
 
       await api.post("/api/user/pages-opened", {
         pageOpened: "application",
+        workspaceId: workspace,
       });
     },
     onSuccess: async () => {
-      await userQuery.refetch();
+      await workspaceQuery.refetch();
     },
   });
 
   const handleSkipTutorial = () => {
     if (
-      userQuery.isFetched &&
-      !userQuery.data?.pagesOpened?.includes("workspace")
+      workspaceQuery.isFetched &&
+      !workspaceQuery.data?.pagesOpened?.includes("workspace")
     ) {
       changePagesOpenedMutation.mutate();
     }
   };
 
-  const quantity = userQuery.data?.pagesOpened
-    ? userQuery.data?.pagesOpened.length
+  const quantity = workspaceQuery.data?.pagesOpened
+    ? workspaceQuery.data?.pagesOpened.length
     : 0;
 
   let percent;
@@ -78,13 +82,13 @@ export default function WorkspacePage() {
       percent = 0;
   }
 
-  const isInviteMembersFinished = userQuery.data?.pagesOpened?.some(
+  const isInviteMembersFinished = workspaceQuery.data?.pagesOpened?.some(
     (page: any) => page.name === "invitation"
   );
-  const isApplicationsFinished = userQuery.data?.pagesOpened?.some(
+  const isApplicationsFinished = workspaceQuery.data?.pagesOpened?.some(
     (page: any) => page.name === "application"
   );
-  const isWorkspaceFinished = userQuery.data?.pagesOpened?.some(
+  const isWorkspaceFinished = workspaceQuery.data?.pagesOpened?.some(
     (page: any) => page.name === "workspace"
   );
 
@@ -212,7 +216,7 @@ export default function WorkspacePage() {
             disabled={
               changePagesOpenedMutation.isPending ||
               quantity == 3 ||
-              userQuery.isPending
+              workspaceQuery.isPending
             }
           >
             Pular Tutorial

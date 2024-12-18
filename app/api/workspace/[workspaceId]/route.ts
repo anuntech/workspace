@@ -41,3 +41,42 @@ export async function DELETE(
     return NextResponse.json({ error: e?.message }, { status: 500 });
   }
 }
+
+export async function GET(
+  request: Request,
+  { params }: { params: { workspaceId: string; memberId: string } }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+
+    const { workspaceId } = params;
+
+    await connectMongo();
+
+    const workspace = await Workspace.findById(workspaceId);
+
+    if (!workspace) {
+      return NextResponse.json(
+        { error: "Workspace not found" },
+        { status: 404 }
+      );
+    }
+
+    if (
+      workspace.owner.toString() != session.user.id &&
+      !workspace.members.find(
+        (member) => member.memberId.toString() == session.user.id
+      )
+    ) {
+      return NextResponse.json(
+        { error: "You do not have permission to get this workspace" },
+        { status: 403 }
+      );
+    }
+
+    return NextResponse.json(workspace, { status: 200 });
+  } catch (e) {
+    console.error(e);
+    return NextResponse.json({ error: e?.message }, { status: 500 });
+  }
+}

@@ -34,6 +34,9 @@ export interface IWorkspace extends Document {
       }
     ];
   };
+  tutorial: {
+    name: string;
+  }[];
 }
 
 const workspaceSchema = new mongoose.Schema<IWorkspace>(
@@ -133,6 +136,18 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
       ],
       default: {},
     },
+    tutorial: {
+      type: [
+        {
+          name: {
+            type: String,
+            unique: true,
+            required: [true, "O nome da página é obrigatório."],
+            enum: [],
+          },
+        },
+      ],
+    },
   },
   {
     toJSON: { virtuals: true },
@@ -146,6 +161,16 @@ workspaceSchema.pre("save", function (next) {
   }
   if (this.isModified("icon.value")) {
     this.icon.value = this.icon.value.trim();
+  }
+
+  if (this.isModified("tutorial") && Array.isArray(this.tutorial)) {
+    // Remove duplicatas de tutorial
+    const uniquePages = this.tutorial.reduce((acc, current) => {
+      const isDuplicate = acc.find((item) => item.name === current.name);
+      if (!isDuplicate) acc.push(current);
+      return acc;
+    }, []);
+    this.tutorial = uniquePages;
   }
   next();
 });

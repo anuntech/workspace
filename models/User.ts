@@ -62,17 +62,6 @@ const userSchema = new mongoose.Schema(
         trim: true,
       },
     },
-    pagesOpened: {
-      type: [
-        {
-          name: {
-            type: String,
-            unique: true,
-            required: [true, "O nome da página é obrigatório."],
-          },
-        },
-      ],
-    },
   },
   {
     timestamps: true,
@@ -86,16 +75,6 @@ userSchema.pre("save", function (next) {
   }
   if (this.isModified("email")) {
     this.email = this.email.trim().toLowerCase();
-  }
-
-  if (this.isModified("pagesOpened") && Array.isArray(this.pagesOpened)) {
-    // Remove duplicatas de pagesOpened
-    const uniquePages = this.pagesOpened.reduce((acc, current) => {
-      const isDuplicate = acc.find((item) => item.name === current.name);
-      if (!isDuplicate) acc.push(current);
-      return acc;
-    }, []);
-    this.pagesOpened = uniquePages;
   }
 
   next();

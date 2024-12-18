@@ -5,6 +5,7 @@ import connectMongo from "@/libs/mongoose";
 import User from "@/models/User";
 import clientPromise from "@/libs/mongo";
 import mongoose from "mongoose";
+import Workspace from "@/models/Workspace";
 
 export async function POST(request: Request) {
   try {
@@ -23,6 +24,8 @@ export async function POST(request: Request) {
 
     const user = await User.findById(session?.user?.id);
 
+    const workspace = await Workspace.findById(body.workspaceId);
+
     // if (user?.pagesOpened?.find((el: any) => el.name == body.pageOpened)) {
     //   return NextResponse.json(
     //     { error: "pageOpened already added" },
@@ -30,11 +33,24 @@ export async function POST(request: Request) {
     //   );
     // }
 
-    if (!user?.pagesOpened) {
-      user.pagesOpened = [];
+    const isAdminOrOwner =
+      workspace?.owner == user?._id ||
+      !!workspace.members.find(
+        (member: any) => member.userId == user?._id && member.role == "owner"
+      );
+
+    if (!isAdminOrOwner) {
+      return NextResponse.json(
+        { error: "You don't have permission to open this page." },
+        { status: 400 }
+      );
     }
 
-    user?.pagesOpened?.push({
+    if (!workspace?.tutorial) {
+      workspace.tutorial = [];
+    }
+
+    workspace?.tutorial?.push({
       name: body.pageOpened,
     });
 
