@@ -43,9 +43,10 @@ type Workspace = {
 };
 
 export default function SettingsPage() {
-  const { isPending, data, isSuccess } = useQuery({
-    queryKey: ["workspace"],
-    queryFn: async () => api.get("/api/workspace"),
+  const workspaceQuery = useQuery({
+    queryKey: ["find-workspace"],
+    queryFn: async () =>
+      api.get(`/api/workspace/${workspace}`).then((res) => res.data),
   });
 
   const userQuery = useQuery({
@@ -53,10 +54,11 @@ export default function SettingsPage() {
     queryFn: () => fetch("/api/user").then((res) => res.json()),
   });
 
-  const changePagesOpenedMutation = useMutation({
+  const changeTutorialMutation = useMutation({
     mutationFn: () =>
-      api.post("/api/user/pages-opened", {
+      api.post("/api/workspace/tutorial", {
         pageOpened: "workspace",
+        workspaceId: workspace,
       }),
   });
 
@@ -65,7 +67,7 @@ export default function SettingsPage() {
       userQuery.isFetched &&
       !userQuery.data?.pagesOpened?.includes("workspace")
     ) {
-      changePagesOpenedMutation.mutate();
+      changeTutorialMutation.mutate();
     }
   }, [userQuery.isFetched]);
 
@@ -83,15 +85,13 @@ export default function SettingsPage() {
   const [isChanged, setIsChanged] = useState(false);
 
   useEffect(() => {
-    if (!isSuccess) return;
-    const workspace = data?.data.find(
-      (workspace: any) => workspace.id === searchParams.get("workspace")
-    );
+    if (!workspaceQuery.isSuccess) return;
+    const workspace = workspaceQuery.data;
 
     setValue("name", workspace?.name);
     setValue("icon", workspace?.icon);
     setValue("id", workspace?.id);
-  }, [isSuccess]);
+  }, [workspaceQuery.isSuccess]);
 
   const {
     register,
@@ -194,15 +194,6 @@ export default function SettingsPage() {
 
   const router = useRouter();
 
-  const workspaceQuery = useQuery({
-    queryKey: ["workspace"],
-    queryFn: async () => api.get("/api/workspace"),
-  });
-
-  const selectedWorkspace = workspaceQuery.data?.data?.find(
-    (workspace: any) => workspace.id === searchParams.get("workspace")
-  );
-
   return (
     <>
       <header className="flex sticky top-0 bg-background h-16 shrink-0 items-center gap-2 px-4">
@@ -241,7 +232,7 @@ export default function SettingsPage() {
                   ) : (
                     <AvatarSelector
                       emojiSize="70px"
-                      data={selectedWorkspace?.icon}
+                      data={workspaceQuery.data?.icon}
                       onAvatarChange={handleAvatarChange}
                     />
                   )}
@@ -263,7 +254,11 @@ export default function SettingsPage() {
                   placeholder="Nome..."
                   {...register("name", { required: true })}
                   onChange={() => setIsChanged(true)}
-                  disabled={isPending || isSubmitting || mutation.isPending}
+                  disabled={
+                    workspaceQuery.isPending ||
+                    isSubmitting ||
+                    mutation.isPending
+                  }
                 />
               </div>
             </section>
