@@ -49,11 +49,6 @@ export default function SettingsPage() {
       api.get(`/api/workspace/${workspace}`).then((res) => res.data),
   });
 
-  const userQuery = useQuery({
-    queryKey: ["user"],
-    queryFn: () => fetch("/api/user").then((res) => res.json()),
-  });
-
   const changeTutorialMutation = useMutation({
     mutationFn: () =>
       api.post("/api/workspace/tutorial", {
@@ -64,14 +59,12 @@ export default function SettingsPage() {
 
   useEffect(() => {
     if (
-      userQuery.isFetched &&
-      !userQuery.data?.pagesOpened?.includes("workspace")
+      workspaceQuery.isFetched &&
+      !workspaceQuery.data?.pagesOpened?.includes("workspace")
     ) {
       changeTutorialMutation.mutate();
     }
-  }, [userQuery.isFetched]);
-
-  const [onLoad, setOnLoad] = useState(false);
+  }, [workspaceQuery.isFetched]);
 
   const searchParams = useSearchParams();
   const workspace = searchParams.get("workspace");
