@@ -31,6 +31,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { LoaderCircle } from "lucide-react";
 
 type User = {
   id: string;
@@ -79,6 +80,11 @@ export default function AccountPage() {
         body: JSON.stringify(data),
       }),
     onSuccess: () => {
+      toast({
+        title: "Configurações atualizadas com sucesso",
+        description: "As configurações foram atualizadas com sucesso.",
+        duration: 5000,
+      });
       setIsChanged(false);
     },
   });
@@ -248,7 +254,13 @@ export default function AccountPage() {
               </div>
             </section>
             <div className="flex justify-end max-w-3xl items-center mt-20 w-full">
-              <Button type="submit" disabled={!isChanged || isSubmitting}>
+              <Button
+                type="submit"
+                disabled={!isChanged || isSubmitting || mutation.isPending}
+              >
+                {mutation.isPending && (
+                  <LoaderCircle className="animate-spin" />
+                )}
                 Salvar as alterações
               </Button>
             </div>
