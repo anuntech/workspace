@@ -97,17 +97,17 @@ export function NavProjects() {
                   </SidebarMenuButton>
                   <AccordionContent className="pb-0">
                     {data.fields.map((field: any) => (
-                      <Button
-                        id={field.key}
-                        variant="ghost"
-                        className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150 w-full justify-start pl-10 relative before:content-['•'] before:absolute before:left-6 before:text-gray-500 h-4 py-4"
+                      <Link
+                        href={`/service/${data._id}?workspace=${workspace}&fieldSubScreen=${field.key}`}
                       >
-                        <Link
-                          href={`/service/${data._id}?workspace=${workspace}&fieldSubScreen=${field.key}`}
+                        <Button
+                          id={field.key}
+                          variant="ghost"
+                          className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150 w-full justify-start pl-10 relative before:content-['•'] before:absolute before:left-6 before:text-gray-500 h-4 py-4"
                         >
                           {field.key}
-                        </Link>
-                      </Button>
+                        </Button>
+                      </Link>
                     ))}
                   </AccordionContent>
                 </AccordionItem>
@@ -117,12 +117,12 @@ export function NavProjects() {
                   className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
                   tooltip={data.name}
                 >
-                  <div className="flex items-center justify-between w-full">
-                    <Link
-                      href={`/service/${data._id}?workspace=${workspace}`}
-                      passHref
-                      className="flex items-center"
-                    >
+                  <Link
+                    href={`/service/${data._id}?workspace=${workspace}`}
+                    passHref
+                    className="flex items-center justify-between w-full"
+                  >
+                    <div className="flex items-center">
                       {data.icon?.type == "emoji" && (
                         <p className="size-5">{data.icon.value}</p>
                       )}
@@ -135,8 +135,8 @@ export function NavProjects() {
                         </Avatar>
                       )}
                       <span className="ml-2">{data.name}</span>
-                    </Link>
-                  </div>
+                    </div>
+                  </Link>
                 </SidebarMenuButton>
               )}
             </Accordion>
