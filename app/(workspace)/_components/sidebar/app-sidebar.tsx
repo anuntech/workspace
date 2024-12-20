@@ -29,7 +29,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain />
-        <Separator className="mx-2 hidden group-data-[collapsible=icon]:block" />
         <NavProjects />
       </SidebarContent>
       <SidebarFooter>
