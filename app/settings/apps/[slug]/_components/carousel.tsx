@@ -29,7 +29,7 @@ export default function AppGalleryCarousel({
       <CarouselContent>
         {application.galleryPhotos.map((src, index) => (
           <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/2">
-            <div className="p-1">
+            <div className="size-40">
               <ImageManager href={getS3Image(src)} />
             </div>
           </CarouselItem>

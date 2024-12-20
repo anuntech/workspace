@@ -137,13 +137,11 @@ export function ImageManager({ href }: { href: string }) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Image
+        <img
           src={href}
           alt="Image Preview"
-          width={500}
-          height={500}
           onLoad={handleImageLoad}
-          className="cursor-pointer"
+          className="cursor-pointer w-full h-full"
           draggable={false}
         />
       </DialogTrigger>
