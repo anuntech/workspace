@@ -55,7 +55,7 @@ const userSchema = new mongoose.Schema(
     icon: {
       type: {
         type: String,
-        enum: ["image", "emoji"],
+        enum: ["image", "emoji", "lucide"],
       },
       value: {
         type: String,
