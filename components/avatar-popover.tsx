@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -191,48 +191,74 @@ export function AvatarPopover({ onAvatarChange }: AvatarPopoverProps) {
   );
 }
 
-function isValidLucideComponent(value: unknown) {
-  return (
-    typeof value === "function" &&
-    (value as { name?: string }).name !== "createLucideIcon"
-  );
-}
-
 function LucidePicker({
   onAvatarChange,
 }: {
   onAvatarChange: (avatar: { value: string; type: "lucide" }) => void;
 }) {
-  const iconEntries = Object.entries(lucideIcons).slice(0, 500);
-  const searchFilter = useState("");
+  const [searchFilter, setSearchFilter] = useState("");
+
+  const iconEntries = useMemo(() => {
+    return Object.entries(lucideIcons).slice(200, 500);
+  }, []);
+
+  const filteredIcons = useMemo(() => {
+    const filterLower = searchFilter.trim().toLowerCase();
+    if (!filterLower) {
+      return iconEntries;
+    }
+
+    return iconEntries.filter(([iconName]) =>
+      iconName.toLowerCase().includes(filterLower)
+    );
+  }, [searchFilter, iconEntries]);
+
   return (
     <div>
-      <div className="flex items-center">
-        <Input className="pl-10" placeholder="Procurar" />
+      <div className="flex items-center relative">
+        <Input
+          onChange={(e) => setSearchFilter(e.target.value)}
+          className="pl-10"
+          placeholder="Procurar"
+        />
         <lucideIcons.Search className="absolute ml-3" size={15} />
       </div>
+
       <div className="grid grid-cols-6 gap-3 max-h-96 overflow-auto pt-4 scrollbar-custom">
-        {iconEntries.map(([iconName, Icon]) => {
-          const IconComponent = Icon as React.FC<React.SVGProps<SVGSVGElement>>;
-          return (
-            <button
-              key={iconName}
-              onClick={() =>
-                onAvatarChange({
-                  value: iconName.toLowerCase(),
-                  type: "lucide",
-                })
-              }
-              className="flex items-center justify-center w-10 h-10
-                       border border-gray-300 rounded-lg shadow-lg
-                       hover:bg-gray-100 transition-all"
-              title={iconName}
-            >
-              <IconComponent className="w-7 h-7 text-gray-700" />
-            </button>
-          );
-        })}
+        <IconButton
+          iconEntries={filteredIcons}
+          onAvatarChange={onAvatarChange}
+        />
       </div>
     </div>
   );
 }
+
+const IconButton = ({
+  iconEntries,
+  onAvatarChange,
+}: {
+  iconEntries: any[];
+  onAvatarChange: (avatar: { value: string; type: "lucide" }) => void;
+}) => {
+  return iconEntries.map(([iconName, Icon]) => {
+    const IconComponent = Icon as React.FC<React.SVGProps<SVGSVGElement>>;
+    return (
+      <button
+        key={iconName}
+        onClick={() =>
+          onAvatarChange({
+            value: iconName.toLowerCase(),
+            type: "lucide",
+          })
+        }
+        className="flex items-center justify-center w-10 h-10
+                 border border-gray-300 rounded-lg shadow-lg
+                 hover:bg-gray-100 transition-all"
+        title={iconName}
+      >
+        <IconComponent className="w-7 h-7 text-gray-700" />
+      </button>
+    );
+  });
+};
