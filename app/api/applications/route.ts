@@ -81,7 +81,6 @@ export async function POST(request: Request) {
       name: body.get("name"),
       cta: body.get("cta"),
       description: body.get("description"),
-      descriptionTitle: body.get("descriptionTitle"),
       avatarSrc: profilePhoto ? profilePhotoId : null,
       avatarFallback: body.get("name").slice(0, 2),
       icon,

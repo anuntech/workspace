@@ -81,11 +81,6 @@ const applicationSchema = new mongoose.Schema<IApplications>(
       trim: true,
       maxlength: 500,
     },
-    descriptionTitle: {
-      type: String,
-      trim: true,
-      maxlength: 100,
-    },
     workspacesAllowed: {
       type: [mongoose.Schema.Types.ObjectId],
       trim: true,

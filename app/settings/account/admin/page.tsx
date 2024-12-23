@@ -348,25 +348,6 @@ export default function AdminPage() {
           <Separator />
           <section className="grid grid-cols-2 gap-8 py-5">
             <div>
-              <p>
-                Título da descrição <span className="text-red-400">*</span>
-              </p>
-              <span className="text-sm text-muted-foreground">
-                Digite o nome que será mostrado publicamente como identificação
-                do seu workspace em todas as interações na plataforma.
-              </span>
-            </div>
-            <div className="flex justify-end">
-              <Input
-                placeholder="Título da descrição..."
-                {...register("titleDescription", { required: true })}
-                disabled={isSubmitting}
-              />
-            </div>
-          </section>
-          <Separator />
-          <section className="grid grid-cols-2 gap-8 py-5">
-            <div>
               <p>Campos</p>
               <span className="text-sm text-muted-foreground">
                 Digite o nome que será mostrado publicamente como identificação
