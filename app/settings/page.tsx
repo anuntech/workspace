@@ -105,7 +105,7 @@ export default function SettingsPage() {
       }),
     onSuccess: async () => {
       await queryClient.refetchQueries({
-        queryKey: ["workspace"],
+        queryKey: ["find-workspace"],
         type: "active",
       });
       router.push("/");
@@ -116,7 +116,7 @@ export default function SettingsPage() {
     mutationFn: async (data: any) => api.patch("/api/workspace/icon", data),
     onSuccess: async () => {
       await queryClient.refetchQueries({
-        queryKey: ["workspace"],
+        queryKey: ["find-workspace"],
         type: "all",
       });
       toast({
