@@ -230,7 +230,7 @@ function LucidePicker({
         <lucideIcons.Search className="absolute ml-3" size={15} />
       </div>
 
-      <div className="grid grid-cols-6 gap-3 max-h-96 overflow-auto pt-4 scrollbar-custom">
+      <div className="grid grid-cols-8 gap-3 max-h-96 overflow-auto pt-4 scrollbar-custom">
         <IconButton
           iconEntries={filteredIcons}
           onAvatarChange={onAvatarChange}
@@ -258,12 +258,12 @@ const IconButton = ({
             type: "lucide",
           })
         }
-        className="flex items-center justify-center w-10 h-10
+        className="flex items-center justify-center w-8 h-8
                  border border-gray-300 rounded-lg shadow-lg
                  hover:bg-gray-100 transition-all"
         title={iconName}
       >
-        <IconComponent className="w-7 h-7 text-gray-700" />
+        <IconComponent className="w-6 h-6 text-gray-700" />
       </button>
     );
   });
