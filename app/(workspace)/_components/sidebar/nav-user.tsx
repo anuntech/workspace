@@ -22,6 +22,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { getS3Image } from "@/libs/s3-client";
 import { signOut } from "next-auth/react";
 import api from "@/libs/api";
+import { IconComponent } from "@/components/get-lucide-icons";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
@@ -51,19 +52,7 @@ export function NavUser() {
               tooltip={"Perfil"}
             >
               <div className="relative">
-                {data?.icon ? (
-                  data.icon.type === "emoji" ? (
-                    <span className="text-[1.3rem]">{data.icon.value}</span>
-                  ) : (
-                    <Avatar className="h-8 w-8 rounded-lg">
-                      <AvatarImage
-                        src={getS3Image(data.icon.value) || "/shad.png"}
-                        alt="@shadcn"
-                      />
-                      <AvatarFallback className="rounded-lg">SC</AvatarFallback>
-                    </Avatar>
-                  )
-                ) : (
+                {!data.icon && (
                   <Avatar className="h-8 w-8 rounded-lg">
                     <AvatarImage
                       src={data?.image || "/shad.png"}
@@ -72,8 +61,24 @@ export function NavUser() {
                     <AvatarFallback className="rounded-lg">SC</AvatarFallback>
                   </Avatar>
                 )}
+                {data?.icon?.type === "emoji" && (
+                  <span className="text-[1.3rem]">{data.icon.value}</span>
+                )}
+                {data?.icon?.type === "image" && (
+                  <Avatar className="h-8 w-8 rounded-lg">
+                    <AvatarImage
+                      src={getS3Image(data?.icon?.value) || "/shad.png"}
+                      alt="@shadcn"
+                    />
+                    <AvatarFallback className="rounded-lg">SC</AvatarFallback>
+                  </Avatar>
+                )}
+                {data?.icon?.type === "lucide" && (
+                  <span className="text-[1.3rem]">
+                    <IconComponent name={data.icon.value} />
+                  </span>
+                )}
 
-                {/* Indicador de nova notificação */}
                 {hasNewNotification && (
                   <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-blue-600" />
                 )}
@@ -94,19 +99,7 @@ export function NavUser() {
           >
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                {data?.icon ? (
-                  data.icon.type === "emoji" ? (
-                    <span className="text-[1.3rem]">{data.icon.value}</span>
-                  ) : (
-                    <Avatar className="h-8 w-8 rounded-lg">
-                      <AvatarImage
-                        src={getS3Image(data.icon.value) || "/shad.png"}
-                        alt="@shadcn"
-                      />
-                      <AvatarFallback className="rounded-lg">SC</AvatarFallback>
-                    </Avatar>
-                  )
-                ) : (
+                {!data.icon && (
                   <Avatar className="h-8 w-8 rounded-lg">
                     <AvatarImage
                       src={data?.image || "/shad.png"}
@@ -114,6 +107,23 @@ export function NavUser() {
                     />
                     <AvatarFallback className="rounded-lg">SC</AvatarFallback>
                   </Avatar>
+                )}
+                {data?.icon?.type === "emoji" && (
+                  <span className="text-[1.3rem]">{data.icon.value}</span>
+                )}
+                {data?.icon?.type === "image" && (
+                  <Avatar className="h-8 w-8 rounded-lg">
+                    <AvatarImage
+                      src={getS3Image(data?.icon?.value) || "/shad.png"}
+                      alt="@shadcn"
+                    />
+                    <AvatarFallback className="rounded-lg">SC</AvatarFallback>
+                  </Avatar>
+                )}
+                {data?.icon?.type === "lucide" && (
+                  <span className="text-[1.3rem]">
+                    <IconComponent name={data.icon.value} />
+                  </span>
                 )}
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">{data?.name}</span>
