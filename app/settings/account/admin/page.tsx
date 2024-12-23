@@ -107,7 +107,6 @@ export default function AdminPage() {
     formData.append("title", data.title);
     formData.append("iframeUrl", data.iframeUrl);
     formData.append("description", data.description);
-    formData.append("titleDescription", data.titleDescription);
     formData.append("workspacesAllowed", JSON.stringify(sharedWith));
     formData.append("icon", icon.get("icon") as File);
     formData.append("iconType", icon.get("iconType") as string);
