@@ -59,7 +59,7 @@ export async function PATCH(request: Request) {
     }
 
     const iconType = body.get("iconType") as string;
-    const allowedIconTypes = ["image", "emoji"];
+    const allowedIconTypes = ["image", "emoji", "lucide"];
     if (!allowedIconTypes.includes(iconType)) {
       return NextResponse.json({ error: "Invalid icon type" }, { status: 400 });
     }
@@ -131,6 +131,21 @@ export async function PATCH(request: Request) {
         workspace.icon.value = icon;
         break;
       }
+
+      case "lucide": {
+        const icon = body.get("icon") as string;
+        if (!icon) {
+          return NextResponse.json(
+            { error: "Invalid lucide icon" },
+            { status: 400 }
+          );
+        }
+
+        workspace.icon.type = "lucide";
+        workspace.icon.value = icon;
+        break;
+      }
+
       default:
         return NextResponse.json(
           { error: "Invalid icon type" },
