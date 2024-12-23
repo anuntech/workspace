@@ -28,7 +28,7 @@ export async function GET(
 
     const users = await User.find({
       _id: { $in: worksPace.members?.map((member) => member.memberId) },
-    }).select("name email image");
+    }).select("name email image icon");
 
     const membersWithRoles = worksPace.members.map((member) => {
       const user = users.find(

@@ -83,7 +83,9 @@ export default function MembersPage() {
         <div className="w-full max-w-3xl space-y-5">
           <h1 className="text-2xl flex gap-3">
             Membros{" "}
-            {!membersQuery.isPending && !plansQuery.isPending ? (
+            {!membersQuery.isPending &&
+            !plansQuery.isPending &&
+            plan?.membersLimit ? (
               `(${membersQuantity}/${plan?.membersLimit})`
             ) : (
               <Skeleton className="w-11" />

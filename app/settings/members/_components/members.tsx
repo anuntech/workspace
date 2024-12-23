@@ -1,5 +1,6 @@
 "use client";
 
+import { IconComponent } from "@/components/get-lucide-icons";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -154,25 +155,7 @@ export function Members() {
         <>
           <div className="flex items-center justify-between space-x-4">
             <div className="flex items-center space-x-4">
-              {ownerQuery.data?.icon?.value ? (
-                <div>
-                  {ownerQuery.data?.icon.type === "emoji" ? (
-                    <span className="text-[2rem] w-full h-full flex size-10">
-                      {ownerQuery.data?.icon.value}
-                    </span>
-                  ) : (
-                    <Avatar className="size-10">
-                      <AvatarImage
-                        src={
-                          getS3Image(ownerQuery.data?.icon.value) || "/shad.png"
-                        }
-                        alt="@shadcn"
-                      />
-                      <AvatarFallback>SC</AvatarFallback>
-                    </Avatar>
-                  )}
-                </div>
-              ) : (
+              {!ownerQuery.data?.icon && (
                 <Avatar className="size-10">
                   <AvatarImage
                     src={ownerQuery.data?.image || "/shad.png"}
@@ -180,6 +163,30 @@ export function Members() {
                   />
                   <AvatarFallback>SC</AvatarFallback>
                 </Avatar>
+              )}
+              {ownerQuery.data?.icon?.type === "emoji" && (
+                <span className="text-[2rem] w-full h-full flex size-10">
+                  {ownerQuery.data?.icon.value}
+                </span>
+              )}
+              {ownerQuery.data?.icon?.type === "image" && (
+                <Avatar className="h-8 w-8 rounded-lg">
+                  <AvatarImage
+                    src={
+                      getS3Image(ownerQuery.data?.icon?.value) || "/shad.png"
+                    }
+                    alt="@shadcn"
+                  />
+                  <AvatarFallback className="rounded-lg">SC</AvatarFallback>
+                </Avatar>
+              )}
+              {ownerQuery.data?.icon?.type === "lucide" && (
+                <span className="text-[2rem] w-full h-full flex size-10">
+                  <IconComponent
+                    className="size-10"
+                    name={ownerQuery.data?.icon.value}
+                  />
+                </span>
               )}
               <div>
                 <p className="text-sm font-medium leading-none">
@@ -197,21 +204,6 @@ export function Members() {
               className="flex items-center justify-between space-x-4"
             >
               <div className="flex items-center space-x-4">
-                {member.icon && (
-                  <div className="text-[1.3rem]">
-                    {member.icon.type == "emoji" ? (
-                      member.icon.value
-                    ) : (
-                      <Image
-                        className="rounded-full"
-                        width={54}
-                        height={54}
-                        src={getS3Image(member.icon.value)}
-                        alt=""
-                      />
-                    )}
-                  </div>
-                )}
                 {!member.icon && (
                   <Avatar className="size-10">
                     <AvatarImage
@@ -220,6 +212,26 @@ export function Members() {
                     />
                     <AvatarFallback>SC</AvatarFallback>
                   </Avatar>
+                )}
+                {member?.icon?.type === "emoji" && (
+                  <span className="text-[1.3rem]">{member.icon.value}</span>
+                )}
+                {member?.icon?.type === "image" && (
+                  <Avatar className="h-8 w-8 rounded-lg">
+                    <AvatarImage
+                      src={getS3Image(member?.icon?.value) || "/shad.png"}
+                      alt="@shadcn"
+                    />
+                    <AvatarFallback className="rounded-lg">SC</AvatarFallback>
+                  </Avatar>
+                )}
+                {member?.icon?.type === "lucide" && (
+                  <span className="text-[2rem] w-full h-full flex size-10">
+                    <IconComponent
+                      className="size-10"
+                      name={member?.icon.value}
+                    />
+                  </span>
                 )}
                 <div>
                   <p className="text-sm font-medium leading-none">

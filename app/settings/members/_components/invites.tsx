@@ -1,5 +1,6 @@
 "use client";
 
+import { IconComponent } from "@/components/get-lucide-icons";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -173,27 +174,30 @@ export function Invites() {
             className="flex items-center justify-between space-x-4"
           >
             <div className="flex items-center space-x-4">
-              {user.icon && (
-                <div className="text-[1.3rem]">
-                  {user.icon.type == "emoji" ? (
-                    user.icon.value
-                  ) : (
-                    <Image
-                      className="rounded-full"
-                      width={54}
-                      height={54}
-                      src={getS3Image(user.icon.value)}
-                      alt=""
-                    />
-                  )}
-                </div>
-              )}
               {!user.icon && (
                 <Avatar className="size-10">
                   <AvatarImage src={user?.image || "/shad.png"} alt="@shadcn" />
                   <AvatarFallback>SC</AvatarFallback>
                 </Avatar>
               )}
+              {user?.icon?.type === "emoji" && (
+                <span className="text-[1.3rem]">{user.icon.value}</span>
+              )}
+              {user?.icon?.type === "image" && (
+                <Avatar className="h-8 w-8 rounded-lg">
+                  <AvatarImage
+                    src={getS3Image(user?.icon?.value) || "/shad.png"}
+                    alt="@shadcn"
+                  />
+                  <AvatarFallback className="rounded-lg">SC</AvatarFallback>
+                </Avatar>
+              )}
+              {user?.icon?.type === "lucide" && (
+                <span className="text-[1.3rem]">
+                  <IconComponent name={user.icon.value} />
+                </span>
+              )}
+
               <div>
                 <p className="text-sm font-medium leading-none">{user.name}</p>
                 <p className="text-sm text-muted-foreground">{user.email}</p>
