@@ -112,7 +112,6 @@ export function TutorialDashboard() {
         width={200}
         height={200}
         alt="Anuntech Logo"
-        className="mb-[-10px]"
       />
 
       <h1 className="text-3xl font-bold mb-6 tracking-wide text-gray-800">
