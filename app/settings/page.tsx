@@ -138,7 +138,7 @@ export default function SettingsPage() {
 
   const handleAvatarChange = (avatar: {
     value: string;
-    type: "image" | "emoji";
+    type: "image" | "emoji" | "lucide";
   }) => {
     const formData = new FormData();
 

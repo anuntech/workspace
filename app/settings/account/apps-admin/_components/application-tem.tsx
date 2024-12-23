@@ -35,7 +35,7 @@ export function ApplicationItem({ application }: ApplicationItemProps) {
 
   const handleAvatarChange = (avatar: {
     value: string;
-    type: "image" | "emoji";
+    type: "image" | "emoji" | "lucide";
   }) => {
     const formData = new FormData();
 

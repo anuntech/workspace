@@ -14,7 +14,7 @@ export interface IApplications extends mongoose.Document {
   workspacesAllowed: mongoose.Schema.Types.ObjectId[];
   galleryPhotos: string[];
   icon: {
-    type: "image" | "emoji";
+    type: "image" | "emoji" | "lucide";
     value: string;
   };
   workspaceAccess: "free" | "premium" | "buyable" | "rentable";

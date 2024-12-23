@@ -29,7 +29,7 @@ type User = {
   image: string;
   icon?: {
     value: string;
-    type: "image" | "emoji";
+    type: "image" | "emoji" | "lucide";
   };
 };
 

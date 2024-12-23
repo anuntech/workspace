@@ -14,9 +14,15 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/hooks/use-toast";
 import ImageEditor from "@/components/image-crop";
 import { cn } from "@/lib/utils";
+import * as lucideIcons from "lucide-react"; // Import all Lucide icons
+import { LucideProps } from "lucide-react";
+import { Input } from "./ui/input";
 
 interface AvatarPopoverProps {
-  onAvatarChange: (avatar: { value: string; type: "image" | "emoji" }) => void;
+  onAvatarChange: (avatar: {
+    value: string;
+    type: "image" | "emoji" | "lucide";
+  }) => void;
 }
 
 export function AvatarPopover({ onAvatarChange }: AvatarPopoverProps) {
@@ -102,6 +108,12 @@ export function AvatarPopover({ onAvatarChange }: AvatarPopoverProps) {
                   Emojis
                 </TabsTrigger>
                 <TabsTrigger
+                  value="lucide"
+                  className="w-1/2 text-center py-2 text-sm font-medium text-gray-700 hover:bg-white rounded-lg transition-all"
+                >
+                  lucide
+                </TabsTrigger>
+                <TabsTrigger
                   value="upload"
                   className="w-1/2 text-center py-2 text-sm font-medium text-gray-700 hover:bg-white rounded-lg transition-all"
                 >
@@ -168,10 +180,59 @@ export function AvatarPopover({ onAvatarChange }: AvatarPopoverProps) {
                   </Button>
                 </div>
               </TabsContent>
+              <TabsContent value="lucide" className="pt-4">
+                <LucidePicker onAvatarChange={handleSaveEmoji} />
+              </TabsContent>
             </Tabs>
           </div>
         </div>
       </PopoverContent>
     </Popover>
+  );
+}
+
+function isValidLucideComponent(value: unknown) {
+  return (
+    typeof value === "function" &&
+    (value as { name?: string }).name !== "createLucideIcon"
+  );
+}
+
+function LucidePicker({
+  onAvatarChange,
+}: {
+  onAvatarChange: (avatar: { value: string; type: "lucide" }) => void;
+}) {
+  const iconEntries = Object.entries(lucideIcons).slice(0, 500);
+  const searchFilter = useState("");
+  return (
+    <div>
+      <div className="flex items-center">
+        <Input className="pl-10" placeholder="Procurar" />
+        <lucideIcons.Search className="absolute ml-3" size={15} />
+      </div>
+      <div className="grid grid-cols-6 gap-3 max-h-96 overflow-auto pt-4 scrollbar-custom">
+        {iconEntries.map(([iconName, Icon]) => {
+          const IconComponent = Icon as React.FC<React.SVGProps<SVGSVGElement>>;
+          return (
+            <button
+              key={iconName}
+              onClick={() =>
+                onAvatarChange({
+                  value: iconName.toLowerCase(),
+                  type: "lucide",
+                })
+              }
+              className="flex items-center justify-center w-10 h-10
+                       border border-gray-300 rounded-lg shadow-lg
+                       hover:bg-gray-100 transition-all"
+              title={iconName}
+            >
+              <IconComponent className="w-7 h-7 text-gray-700" />
+            </button>
+          );
+        })}
+      </div>
+    </div>
   );
 }

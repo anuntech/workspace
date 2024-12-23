@@ -38,7 +38,7 @@ type User = {
   priceId: string;
   hasAccess: boolean;
   icon?: {
-    type: "image" | "emoji";
+    type: "image" | "emoji" | "lucide";
     value: string;
   };
 };
