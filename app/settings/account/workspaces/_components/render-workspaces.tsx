@@ -1,5 +1,6 @@
 "use client";
 
+import { IconComponent } from "@/components/get-lucide-icons";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -78,11 +79,13 @@ export function RenderWorkspaces() {
       >
         <div className="flex items-center space-x-4">
           <Avatar className="w-10 h-10 flex items-center justify-center">
-            {workspace.icon.type == "emoji" ? (
+            {workspace.icon.type == "emoji" && (
               <div className="flex items-center justify-center w-full h-full">
                 {workspace.icon.value}
               </div>
-            ) : (
+            )}
+
+            {workspace.icon.type == "image" && (
               <>
                 <AvatarImage
                   src={getS3Image(workspace.icon.value)}
@@ -90,6 +93,10 @@ export function RenderWorkspaces() {
                 />
                 <AvatarFallback>OM</AvatarFallback>
               </>
+            )}
+
+            {workspace.icon.type == "lucide" && (
+              <IconComponent name={workspace.icon.value} />
             )}
           </Avatar>
           <div>
