@@ -74,6 +74,12 @@ export function AvatarPopover({ onAvatarChange }: AvatarPopoverProps) {
     setOpen(false);
   };
 
+  // type == lucide
+  const handleSaveLucide = (icon: { value: string; type: "lucide" }) => {
+    onAvatarChange(icon);
+    setOpen(false);
+  };
+
   const handleSetOpen = () => {
     setOpen(!open);
     if (open) {
@@ -181,7 +187,7 @@ export function AvatarPopover({ onAvatarChange }: AvatarPopoverProps) {
                 </div>
               </TabsContent>
               <TabsContent value="lucide" className="pt-4">
-                <LucidePicker onAvatarChange={handleSaveEmoji} />
+                <LucidePicker onAvatarChange={handleSaveLucide} />
               </TabsContent>
             </Tabs>
           </div>
@@ -248,7 +254,7 @@ const IconButton = ({
         key={iconName}
         onClick={() =>
           onAvatarChange({
-            value: iconName.toLowerCase(),
+            value: iconName,
             type: "lucide",
           })
         }

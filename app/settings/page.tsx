@@ -157,6 +157,12 @@ export default function SettingsPage() {
         formData.append("iconType", avatar.type);
         formData.append("workspaceId", workspace);
         break;
+
+      case "lucide":
+        formData.append("icon", avatar.value);
+        formData.append("iconType", avatar.type);
+        formData.append("workspaceId", workspace);
+        break;
     }
 
     changeWorkspaceAvatarMutation.mutate(formData);
