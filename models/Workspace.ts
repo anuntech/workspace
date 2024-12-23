@@ -10,7 +10,7 @@ interface members extends Document {
 export interface IWorkspace extends Document {
   name: string;
   icon: {
-    type: "image" | "emoji";
+    type: "image" | "emoji" | "lucide";
     value: string;
   };
   owner: mongoose.Schema.Types.ObjectId;
@@ -50,7 +50,7 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
     icon: {
       type: {
         type: String,
-        enum: ["image", "emoji"],
+        enum: ["image", "emoji", "lucide"],
         required: true,
       },
       value: {

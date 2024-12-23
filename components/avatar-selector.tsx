@@ -6,7 +6,10 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { AvatarPopover } from "./avatar-popover";
 
 interface AvatarSelectorProps {
-  onAvatarChange: (avatar: { value: string; type: "image" | "emoji" }) => void;
+  onAvatarChange: (avatar: {
+    value: string;
+    type: "image" | "emoji" | "lucide";
+  }) => void;
   data: { value: string; type: "image" | "emoji" };
   setOnLoad?: Dispatch<SetStateAction<boolean>>;
   imageUrlWithoutS3?: string;
@@ -23,7 +26,7 @@ export function AvatarSelector({
 }: AvatarSelectorProps) {
   const handleAvatarChange = (newAvatar: {
     value: string;
-    type: "image" | "emoji";
+    type: "image" | "emoji" | "lucide";
   }) => {
     onAvatarChange(newAvatar);
   };
