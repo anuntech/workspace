@@ -99,7 +99,7 @@ export function AvatarPopover({ onAvatarChange }: AvatarPopoverProps) {
           <Pencil className="w-6 h-6" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-96 p-6 rounded-lg shadow-lg border border-gray-200 bg-white">
+      <PopoverContent className="w-[400px] p-6 rounded-lg shadow-lg border border-gray-200 bg-white">
         <div className="grid gap-6">
           <div className="space-y-4">
             <h4 className="text-lg font-semibold text-gray-800">
@@ -220,7 +220,7 @@ function LucidePicker({
   }, [searchFilter, iconEntries]);
 
   return (
-    <div>
+    <div className="w-full">
       <div className="flex items-center relative">
         <Input
           onChange={(e) => setSearchFilter(e.target.value)}
