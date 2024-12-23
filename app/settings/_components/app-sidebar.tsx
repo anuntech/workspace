@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import config from "@/config";
@@ -41,24 +41,24 @@ export function AppSidebar({ ...props }) {
     queryFn: () => fetch("/api/user").then((res) => res.json()),
   });
 
-  const createPortalMutation = useMutation({
-    mutationFn: async () =>
-      await api.post("/api/stripe/create-portal", {
-        returnUrl: window.location.href,
-        customerId: userQuery.data?.customerId,
-      }),
-    onSuccess: ({ data }) => {
-      window.location.href = data.url;
-    },
-    onError: (err: AxiosError) => {
-      toast({
-        title: "Erro ao acessar a fatura",
-        description: (err.response.data as any)?.error,
-        variant: "destructive",
-        duration: 7000,
-      });
-    },
-  });
+  // const createPortalMutation = useMutation({
+  //   mutationFn: async () =>
+  //     await api.post("/api/stripe/create-portal", {
+  //       returnUrl: window.location.href,
+  //       customerId: userQuery.data?.customerId,
+  //     }),
+  //   onSuccess: ({ data }) => {
+  //     window.location.href = data.url;
+  //   },
+  //   onError: (err: AxiosError) => {
+  //     toast({
+  //       title: "Erro ao acessar a fatura",
+  //       description: (err.response.data as any)?.error,
+  //       variant: "destructive",
+  //       duration: 7000,
+  //     });
+  //   },
+  // });
 
   const emailDomain = userQuery.data?.email?.split("@")[1];
 
@@ -78,6 +78,8 @@ export function AppSidebar({ ...props }) {
     );
   };
 
+  const router = useRouter();
+
   const workspaceMenuItems = [
     { label: "Visão geral", href: `/settings?workspace=${workspace}` },
     {
@@ -88,7 +90,7 @@ export function AppSidebar({ ...props }) {
     { label: "Planos", href: `/settings/plans?workspace=${workspace}` },
     {
       label: "Faturas",
-      action: () => createPortalMutation.mutate(),
+      href: "https://billing.stripe.com/p/login/28o8wWbMXco02KQ144",
     },
   ];
 
