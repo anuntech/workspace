@@ -26,7 +26,7 @@ export async function PATCH(request: Request) {
     const userId = session.user.id.toString();
 
     const iconType = body.get("iconType") as string;
-    const allowedIconTypes = ["image", "emoji"];
+    const allowedIconTypes = ["image", "emoji", "lucide"];
     if (!allowedIconTypes.includes(iconType)) {
       return NextResponse.json({ error: "Invalid icon type" }, { status: 400 });
     }
@@ -98,6 +98,20 @@ export async function PATCH(request: Request) {
         }
 
         user.icon.type = "emoji";
+        user.icon.value = icon;
+        break;
+      }
+
+      case "lucide": {
+        const icon = body.get("icon") as string;
+        if (!icon) {
+          return NextResponse.json(
+            { error: "Invalid lucide icon" },
+            { status: 400 }
+          );
+        }
+
+        user.icon.type = "lucide";
         user.icon.value = icon;
         break;
       }

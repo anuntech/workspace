@@ -136,12 +136,14 @@ export default function AccountPage() {
       case "image":
         formData.append("icon", base64ToBlob(avatar.value), "avatar.jpeg");
         formData.append("iconType", avatar.type);
-        formData.append("workspaceId", workspace);
         break;
       case "emoji":
         formData.append("icon", avatar.value);
         formData.append("iconType", avatar.type);
-        formData.append("workspaceId", workspace);
+        break;
+      case "lucide":
+        formData.append("icon", avatar.value);
+        formData.append("iconType", avatar.type);
         break;
     }
 
