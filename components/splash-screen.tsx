@@ -17,7 +17,7 @@ export default function SplashScreen({ onFinish }: { onFinish: () => void }) {
         autoPlay
         muted
         onEnded={handleVideoEnd}
-        className="w-full h-full object-cover"
+        className="w-1/2 h-1/2 object-cover"
       />
       {/* Botão de pular se desejar */}
       {/*
