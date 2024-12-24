@@ -52,7 +52,7 @@ export function NavUser() {
               tooltip={"Perfil"}
             >
               <div className="relative">
-                {!data.icon && (
+                {!data?.icon && (
                   <Avatar className="h-8 w-8 rounded-lg">
                     <AvatarImage
                       src={data?.image || "/shad.png"}
@@ -99,7 +99,7 @@ export function NavUser() {
           >
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                {!data.icon && (
+                {!data?.icon && (
                   <Avatar className="h-8 w-8 rounded-lg">
                     <AvatarImage
                       src={data?.image || "/shad.png"}
