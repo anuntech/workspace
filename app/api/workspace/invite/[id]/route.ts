@@ -41,7 +41,7 @@ export async function GET(
 
     const invitedUsers = await User.find({
       email: { $in: worksPace.invitedMembersEmail.map((a) => a.email) },
-    }).select("name email image");
+    }).select("name email image icon");
 
     const usersWithoutAccounst = worksPace.invitedMembersEmail
       .map((c) => c.email)

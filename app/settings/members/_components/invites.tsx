@@ -174,7 +174,7 @@ export function Invites() {
             className="flex items-center justify-between space-x-4"
           >
             <div className="flex items-center space-x-4">
-              {!user.icon && (
+              {!user?.icon && (
                 <Avatar className="size-10">
                   <AvatarImage src={user?.image || "/shad.png"} alt="@shadcn" />
                   <AvatarFallback>SC</AvatarFallback>
@@ -193,8 +193,8 @@ export function Invites() {
                 </Avatar>
               )}
               {user?.icon?.type === "lucide" && (
-                <span className="text-[1.3rem]">
-                  <IconComponent name={user.icon.value} />
+                <span className="text-[2rem] w-full h-full flex size-10">
+                  <IconComponent className="size-10" name={user?.icon.value} />
                 </span>
               )}
 
