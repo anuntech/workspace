@@ -10,7 +10,7 @@ export default function SplashScreen({ onFinish }: { onFinish: () => void }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-white">
       <video
         ref={videoRef}
         src="/splash.mp4"
