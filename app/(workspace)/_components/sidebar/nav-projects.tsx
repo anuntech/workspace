@@ -29,6 +29,7 @@ import { useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { IconComponent } from "@/components/get-lucide-icons";
 
 export function NavProjects() {
   const { isMobile } = useSidebar();
@@ -84,6 +85,17 @@ export function NavProjects() {
                           {data.icon.value}
                         </p>
                       )}
+
+                      {data.icon?.type == "lucide" && (
+                        <p
+                          className={cn(`size-5 pointer-events-none ml-[-8px]`)}
+                        >
+                          <IconComponent
+                            className="size-5"
+                            name={data.icon?.value}
+                          />
+                        </p>
+                      )}
                       {(data.icon?.type == "image" || !data.icon) && (
                         <Avatar className="size-5">
                           <AvatarImage
@@ -132,6 +144,12 @@ export function NavProjects() {
                       <div className="flex items-center">
                         {data.icon?.type == "emoji" && (
                           <p className="size-5">{data.icon.value}</p>
+                        )}
+                        {data.icon?.type == "lucide" && (
+                          <IconComponent
+                            className="size-5"
+                            name={data.icon?.value}
+                          />
                         )}
                         {(data.icon?.type == "image" || !data.icon) && (
                           <Avatar className="size-5">
