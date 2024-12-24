@@ -20,6 +20,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { IconComponent } from "@/components/get-lucide-icons";
 
 export default function AppsPage() {
   const [inputValue, setInputValue] = useState("");
@@ -122,6 +123,12 @@ export default function AppsPage() {
                             {app.icon?.type == "emoji" && (
                               <p className="text-[2rem]">{app.icon.value}</p>
                             )}
+                            {app.icon?.type == "lucide" && (
+                              <IconComponent
+                                className="text-[2rem]"
+                                name={app.icon?.value}
+                              />
+                            )}
                             {(app.icon?.type == "image" || !app.icon) && (
                               <Avatar>
                                 <AvatarImage
@@ -203,6 +210,9 @@ function App({ app, workspace }: { app: any; workspace: string }) {
           <div className="flex items-center gap-3">
             {app.icon?.type == "emoji" && (
               <p className="text-[2rem]">{app.icon.value}</p>
+            )}
+            {app.icon?.type == "lucide" && (
+              <IconComponent className="size-[2rem]" name={app.icon?.value} />
             )}
             {(app.icon?.type == "image" || !app.icon) && (
               <Avatar>

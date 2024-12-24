@@ -27,6 +27,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { IconComponent } from "@/components/get-lucide-icons";
 
 export default function AppPage({ params }: { params: { slug: string } }) {
   const searchParams = useSearchParams();
@@ -272,10 +273,18 @@ export default function AppPage({ params }: { params: { slug: string } }) {
             <ChevronLeft className="size-4" />
             Loja de aplicativos
           </Link>
-          <section className="flex gap-3">
-            {application.icon?.type === "emoji" ? (
+          <section className="flex gap-3 items-center">
+            {application.icon?.type === "emoji" && (
               <p className="text-[2rem]">{application.icon.value}</p>
-            ) : (
+            )}
+
+            {application.icon?.type == "lucide" && (
+              <IconComponent
+                className="size-[2rem]"
+                name={application.icon?.value}
+              />
+            )}
+            {application.icon?.type == "image" && (
               <Avatar>
                 <AvatarImage
                   src={getS3Image(
