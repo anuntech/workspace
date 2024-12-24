@@ -13,7 +13,7 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import api from "@/libs/api";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useIsFetching, useMutation, useQuery } from "@tanstack/react-query";
 import {
   ArrowRight,
   Briefcase,
@@ -28,9 +28,6 @@ import { useState } from "react";
 
 export default function WorkspacePage() {
   const workspace = useSearchParams().get("workspace");
-  const splash = useSearchParams().get("splash");
-  const router = useRouter();
-  const [isFinishingAnimation, setIsFinishingAnimation] = useState(false);
 
   const roleQuery = useQuery({
     queryKey: ["workspace/role"],
@@ -40,6 +37,8 @@ export default function WorkspacePage() {
         status: res.status,
       })),
   });
+
+  const isFetching = useIsFetching() > 0 || roleQuery.isPending;
 
   return (
     <>
@@ -59,9 +58,7 @@ export default function WorkspacePage() {
       {roleQuery.data?.data?.role !== "member" && !roleQuery.isPending && (
         <TutorialDashboard />
       )}
-      {roleQuery.isPending && (
-        <SplashScreen onFinish={() => setIsFinishingAnimation(true)} />
-      )}
+      {isFetching && <SplashScreen onFinish={() => console.log("finish")} />}
     </>
   );
 }
