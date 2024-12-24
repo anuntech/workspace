@@ -11,7 +11,7 @@ interface AvatarSelectorProps {
     value: string;
     type: "image" | "emoji" | "lucide";
   }) => void;
-  data: { value: string; type: "image" | "emoji" | "lucide" };
+  data?: { value: string; type: "image" | "emoji" | "lucide" };
   setOnLoad?: Dispatch<SetStateAction<boolean>>;
   imageUrlWithoutS3?: string;
   emojiSize?: string;

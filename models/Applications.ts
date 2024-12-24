@@ -54,7 +54,7 @@ const applicationSchema = new mongoose.Schema<IApplications>(
     icon: {
       type: {
         type: String,
-        enum: ["image", "emoji"],
+        enum: ["image", "emoji", "lucide"],
         required: true,
       },
       value: {

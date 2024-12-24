@@ -52,29 +52,31 @@ export async function POST(request: Request) {
 
     let icon;
 
-    if (body.get("iconType") == "image") {
-      if (profilePhoto) {
-        const form = {
-          Bucket: process.env.NEXT_PUBLIC_HETZNER_BUCKET_NAME!,
-          Key: profilePhotoId,
-          Body: Buffer.from(await profilePhoto.arrayBuffer()),
-          ContentType: profilePhoto.type,
-          ACL: "public-read",
-        } as PutObjectCommandInput;
+    switch (body.get("iconType")) {
+      case "image":
+        if (profilePhoto) {
+          const form = {
+            Bucket: process.env.NEXT_PUBLIC_HETZNER_BUCKET_NAME!,
+            Key: profilePhotoId,
+            Body: Buffer.from(await profilePhoto.arrayBuffer()),
+            ContentType: profilePhoto.type,
+            ACL: "public-read",
+          } as PutObjectCommandInput;
 
-        const command = new PutObjectCommand(form);
-        await s3Client.send(command);
-      }
+          const command = new PutObjectCommand(form);
+          await s3Client.send(command);
+        }
 
-      icon = {
-        type: body.get("iconType"),
-        value: profilePhotoId,
-      };
-    } else {
-      icon = {
-        type: body.get("iconType"),
-        value: body.get("icon"),
-      };
+        icon = {
+          type: body.get("iconType"),
+          value: profilePhotoId,
+        };
+        break;
+      default:
+        icon = {
+          type: body.get("iconType"),
+          value: body.get("icon"),
+        };
     }
 
     const application = await Applications.create({

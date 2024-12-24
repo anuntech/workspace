@@ -50,6 +50,10 @@ export default function AdminPage() {
   const [icon, setIcon] = useState<FormData>(null);
   const [imageUrlWithoutS3, setImageUrlWithoutS3] = useState<string>("");
   const [emojiAvatar, setEmojiAvatar] = useState<string>("");
+  const [emojiAvatarType, setEmojiAvatarType] = useState<"emoji" | "lucide">(
+    "emoji"
+  );
+
   const [category, setCategory] = useState<
     "free" | "premium" | "buyable" | "rentable"
   >("free");
@@ -162,6 +166,15 @@ export default function AdminPage() {
         formData.append("iconType", avatar.type);
         setImageUrlWithoutS3(null);
         setEmojiAvatar(avatar.value);
+        setEmojiAvatarType(avatar.type);
+        break;
+
+      case "lucide":
+        formData.append("icon", avatar.value);
+        formData.append("iconType", avatar.type);
+        setImageUrlWithoutS3(null);
+        setEmojiAvatar(avatar.value);
+        setEmojiAvatarType(avatar.type);
         break;
     }
 
@@ -214,7 +227,9 @@ export default function AdminPage() {
             /> */}
               <AvatarSelector
                 data={
-                  emojiAvatar ? { value: emojiAvatar, type: "emoji" } : null
+                  emojiAvatar
+                    ? { value: emojiAvatar, type: emojiAvatarType }
+                    : null
                 }
                 className="w-[100px]"
                 emojiSize="4rem"
