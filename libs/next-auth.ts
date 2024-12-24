@@ -100,7 +100,7 @@ export const authOptions: NextAuthOptionsExtended = {
     colorScheme: config.colors.theme as "light" | "dark" | "auto",
     // Add you own logo below. Recommended size is rectangle (i.e. 200x50px) and show your logo + name.
     // It will be used in the login flow to display your logo. If you don't add it, it will look faded.
-    logo: `/anuntech-logo.svg`,
+    logo: `/anuntech-icon-black.png`,
   },
   pages: {
     signIn: "/auth/sign-in",
