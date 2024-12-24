@@ -59,7 +59,7 @@ export default function WorkspacePage() {
       {roleQuery.data?.data?.role !== "member" && !roleQuery.isPending && (
         <TutorialDashboard />
       )}
-      {roleQuery.isFetching && !isFinishingAnimation && (
+      {roleQuery.isPending && (
         <SplashScreen onFinish={() => setIsFinishingAnimation(true)} />
       )}
     </>
