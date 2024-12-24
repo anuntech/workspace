@@ -23,9 +23,14 @@ import {
 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { TutorialDashboard } from "./_components/tutorial-dashboard";
+import SplashScreen from "@/components/splash-screen";
+import { useState } from "react";
 
 export default function WorkspacePage() {
   const workspace = useSearchParams().get("workspace");
+  const splash = useSearchParams().get("splash");
+  const router = useRouter();
+  const [isFinishingAnimation, setIsFinishingAnimation] = useState(false);
 
   const roleQuery = useQuery({
     queryKey: ["workspace/role"],
@@ -53,6 +58,9 @@ export default function WorkspacePage() {
       </header>
       {roleQuery.data?.data?.role !== "member" && !roleQuery.isPending && (
         <TutorialDashboard />
+      )}
+      {roleQuery.isFetching && !isFinishingAnimation && (
+        <SplashScreen onFinish={() => setIsFinishingAnimation(true)} />
       )}
     </>
   );
