@@ -205,7 +205,9 @@ function LucidePicker({
   const [searchFilter, setSearchFilter] = useState("");
 
   const iconEntries = useMemo(() => {
-    return Object.entries(lucideIcons).slice(200, 600);
+    return Object.entries(lucideIcons)
+      .filter(([iconName]) => !iconName.endsWith("Icon"))
+      .slice(200, 600);
   }, []);
 
   const filteredIcons = useMemo(() => {

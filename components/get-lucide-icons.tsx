@@ -9,10 +9,15 @@ export const IconComponent = ({
   className?: string;
 }) => {
   const Icon = Object.entries(lucideIcons)
-    .slice(200, 600)
-    .find((icon) => icon[0] === name)?.[1] as React.FC<
+    .filter(([iconName]) => !iconName.endsWith("Icon"))
+    // .slice(200, 600)
+    .find(([iconName]) => iconName === name)?.[1] as React.FC<
     React.SVGProps<SVGSVGElement>
   >;
+
+  if (!Icon) {
+    return null;
+  }
 
   return <Icon className={className} />;
 };
