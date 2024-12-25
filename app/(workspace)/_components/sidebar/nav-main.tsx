@@ -21,6 +21,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "../../../../components/ui/skeleton";
 import Link from "next/link";
+import { NavLink } from "./nav-link";
 
 export function NavMain() {
   const urlParams = useSearchParams();
@@ -46,10 +47,10 @@ export function NavMain() {
               asChild
               tooltip={"Dashboard"}
             >
-              <a href={`/?workspace=${workspace}`}>
+              <Link href={`/?workspace=${workspace}`}>
                 <House />
                 <span>Dashboard</span>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </Collapsible>

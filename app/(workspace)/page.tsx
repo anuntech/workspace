@@ -24,7 +24,7 @@ import {
 import { useRouter, useSearchParams } from "next/navigation";
 import { TutorialDashboard } from "./_components/tutorial-dashboard";
 import SplashScreen from "@/components/splash-screen";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function WorkspacePage() {
   const workspace = useSearchParams().get("workspace");
@@ -38,7 +38,11 @@ export default function WorkspacePage() {
       })),
   });
 
-  const isFetching = useIsFetching() > 0 || roleQuery.isPending;
+  const [showVideo, setShowVideo] = useState(
+    !localStorage.getItem("completedIntro")
+  );
+
+  console.log(showVideo);
 
   return (
     <>
@@ -58,7 +62,14 @@ export default function WorkspacePage() {
       {roleQuery.data?.data?.role !== "member" && !roleQuery.isPending && (
         <TutorialDashboard />
       )}
-      {isFetching && <SplashScreen onFinish={() => console.log("finish")} />}
+      {showVideo && (
+        <SplashScreen
+          onFinish={() => {
+            setShowVideo(false);
+            localStorage.setItem("completedIntro", "true");
+          }}
+        />
+      )}
     </>
   );
 }

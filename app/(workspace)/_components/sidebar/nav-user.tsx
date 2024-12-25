@@ -155,7 +155,12 @@ export function NavUser() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => signOut()}>
+            <DropdownMenuItem
+              onClick={() => {
+                localStorage.removeItem("completedIntro");
+                signOut();
+              }}
+            >
               <LogOut />
               Sair
             </DropdownMenuItem>
