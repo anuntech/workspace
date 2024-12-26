@@ -10,6 +10,7 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { WorkspaceSwitcher } from "@/app/(workspace)/_components/sidebar/workspace-switcher";
 import { TeamSwitcher } from "@/app/(workspace)/_components/sidebar/team-switcher";
@@ -18,6 +19,9 @@ import { NavFooterOptions } from "./nav-footer-options";
 import { Separator } from "@/components/ui/separator";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const sideBar = useSidebar();
+  sideBar.setOpen(localStorage.getItem("sidebar") == "true");
+
   return (
     <Sidebar
       collapsible="icon"
