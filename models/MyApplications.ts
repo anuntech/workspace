@@ -5,6 +5,7 @@ import { Model } from "mongoose";
 export interface IMyApplications extends Document {
   workspaceId: mongoose.Schema.Types.ObjectId;
   allowedApplicationsId: mongoose.Schema.Types.ObjectId[];
+  favoriteApplications: mongoose.Schema.Types.ObjectId[];
 }
 
 const myApplicationSchema = new mongoose.Schema<IMyApplications>(
@@ -15,6 +16,15 @@ const myApplicationSchema = new mongoose.Schema<IMyApplications>(
       required: true,
     },
     allowedApplicationsId: {
+      type: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Applications",
+        },
+      ],
+      default: [],
+    },
+    favoriteApplications: {
       type: [
         {
           type: mongoose.Schema.Types.ObjectId,
