@@ -7,7 +7,7 @@ import User from "@/models/User";
 import Workspace from "@/models/Workspace";
 import Applications from "@/models/Applications";
 import MyApplications from "@/models/MyApplications";
-import mongoose from "mongoose";
+import mongoose, { MongooseError } from "mongoose";
 
 // This function is used to create a Stripe Checkout Session (one-time payment or subscription)
 // It's called by the <ButtonCheckout /> component
@@ -50,12 +50,12 @@ export async function POST(req: NextRequest) {
     const favoriteIndex = myApplications.favoriteApplications.findIndex(
       (a) =>
         a.applicationId.toString() === application.id.toString() &&
-        a.userId === new mongoose.Schema.Types.ObjectId(session.user.id)
+        a.userId.toString() === session.user.id
     );
 
     if (favoriteIndex == -1) {
       myApplications?.favoriteApplications.push({
-        userId: new mongoose.Schema.Types.ObjectId(session.user.id),
+        userId: new mongoose.Types.ObjectId(session.user.id),
         applicationId: application.id,
       });
       await myApplications.save();

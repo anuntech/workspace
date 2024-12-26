@@ -8,7 +8,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import api from "@/libs/api";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Skeleton } from "../../../../components/ui/skeleton";
@@ -204,7 +204,10 @@ function SidebarApplication({
               </Link>
 
               {/* Passamos isHovering para controlar se o ícone deve aparecer */}
-              <DropdownApplication isHover={isHovering} />
+              <DropdownApplication
+                isHover={isHovering}
+                applicationId={data._id}
+              />
             </div>
           </SidebarMenuButton>
         )}
@@ -213,8 +216,24 @@ function SidebarApplication({
   );
 }
 
-export function DropdownApplication({ isHover }: { isHover?: boolean }) {
+export function DropdownApplication({
+  isHover,
+  applicationId,
+}: {
+  isHover?: boolean;
+  applicationId: string;
+}) {
   const [isOpen, setIsOpen] = useState(false);
+  const urlParams = useSearchParams();
+  const workspace = urlParams.get("workspace");
+  const changeFavoriteMutation = useMutation({
+    mutationFn: async () =>
+      api.post(`/api/applications/favorite`, {
+        applicationId,
+        workspaceId: workspace,
+      }),
+  });
+
   return (
     <DropdownMenu
       onOpenChange={(open) => {
@@ -231,7 +250,7 @@ export function DropdownApplication({ isHover }: { isHover?: boolean }) {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
         <DropdownMenuGroup>
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={() => changeFavoriteMutation.mutate()}>
             <Heart />
             Adicionar aos favoritos
           </DropdownMenuItem>

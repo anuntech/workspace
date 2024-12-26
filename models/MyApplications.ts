@@ -6,8 +6,8 @@ export interface IMyApplications extends Document {
   workspaceId: mongoose.Schema.Types.ObjectId;
   allowedApplicationsId: mongoose.Schema.Types.ObjectId[];
   favoriteApplications: {
-    applicationId: mongoose.Schema.Types.ObjectId;
-    userId: mongoose.Schema.Types.ObjectId;
+    applicationId: mongoose.Types.ObjectId;
+    userId: mongoose.Types.ObjectId;
   }[];
 }
 
@@ -30,11 +30,11 @@ const myApplicationSchema = new mongoose.Schema<IMyApplications>(
     favoriteApplications: [
       {
         applicationId: {
-          type: mongoose.Schema.Types.ObjectId,
+          type: mongoose.Types.ObjectId,
           ref: "Applications",
         },
         userId: {
-          type: mongoose.Schema.Types.ObjectId,
+          type: mongoose.Types.ObjectId,
           ref: "User",
         },
       },
