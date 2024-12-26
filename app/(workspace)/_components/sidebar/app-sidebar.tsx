@@ -20,7 +20,7 @@ import { Separator } from "@/components/ui/separator";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const sideBar = useSidebar();
-  sideBar.setOpen(localStorage.getItem("sidebar") == "true");
+  sideBar.setOpen(localStorage?.getItem("sidebar") == "true");
 
   return (
     <Sidebar
