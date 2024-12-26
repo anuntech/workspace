@@ -5,7 +5,10 @@ import { Model } from "mongoose";
 export interface IMyApplications extends Document {
   workspaceId: mongoose.Schema.Types.ObjectId;
   allowedApplicationsId: mongoose.Schema.Types.ObjectId[];
-  favoriteApplications: mongoose.Schema.Types.ObjectId[];
+  favoriteApplications: {
+    applicationId: mongoose.Schema.Types.ObjectId;
+    userId: mongoose.Schema.Types.ObjectId;
+  }[];
 }
 
 const myApplicationSchema = new mongoose.Schema<IMyApplications>(
@@ -24,15 +27,18 @@ const myApplicationSchema = new mongoose.Schema<IMyApplications>(
       ],
       default: [],
     },
-    favoriteApplications: {
-      type: [
-        {
+    favoriteApplications: [
+      {
+        applicationId: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "Applications",
         },
-      ],
-      default: [],
-    },
+        userId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
+      },
+    ],
   },
   {
     toJSON: { virtuals: true },
