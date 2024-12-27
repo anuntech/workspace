@@ -8,7 +8,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import api from "@/libs/api";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Skeleton } from "../../../../components/ui/skeleton";
@@ -46,15 +46,16 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Heart, MoreHorizontal } from "lucide-react";
 
-export function NavProjects() {
+export function NavFavorites() {
   const { isMobile } = useSidebar();
   const urlParams = useSearchParams();
   const workspace = urlParams.get("workspace");
   const router = useRouter();
 
   const applicationsQuery = useQuery({
-    queryKey: ["applications"],
-    queryFn: async () => api.get(`/api/applications/${workspace}`),
+    queryKey: ["applications/favorite"],
+    queryFn: async () =>
+      api.get(`/api/applications/favorite?workspaceId=${workspace}`),
   });
 
   if (applicationsQuery.isPending) {
@@ -64,8 +65,8 @@ export function NavProjects() {
   let enabledApplications;
 
   if (applicationsQuery?.data?.data && applicationsQuery.data.status === 200) {
-    enabledApplications = applicationsQuery.data.data?.filter(
-      (app: any) => app.status === "enabled"
+    enabledApplications = applicationsQuery.data.data?.favorites.map(
+      (a: any) => a.applicationId
     );
   }
 
@@ -77,11 +78,10 @@ export function NavProjects() {
       <SidebarGroup>
         {enabledApplications?.length > 0 && (
           <SidebarGroupLabel className="group-data-[collapsible=icon]:hidden">
-            Aplicativos
+            Favoritos
           </SidebarGroupLabel>
         )}
         <SidebarMenu>
-          {/* Em vez de usar o hook diretamente aqui, vamos extrair para um componente */}
           {enabledApplications?.map((data: any) => (
             <SidebarApplication
               key={data.name}
@@ -95,7 +95,6 @@ export function NavProjects() {
   );
 }
 
-// Este componente cuida do estado de hover + lógica condicional
 function SidebarApplication({
   data,
   workspace,
@@ -103,8 +102,6 @@ function SidebarApplication({
   data: any;
   workspace: string | null;
 }) {
-  // Agora o hook é chamado sempre que este componente é montado,
-  // independentemente de quantos items são renderizados
   const [isHovering, setIsHovering] = useState(false);
   const buttonRef = useRef<HTMLDivElement>(null);
 
@@ -203,7 +200,6 @@ function SidebarApplication({
                 </div>
               </Link>
 
-              {/* Passamos isHovering para controlar se o ícone deve aparecer */}
               <DropdownApplication
                 isHover={isHovering}
                 applicationId={data._id}
@@ -226,20 +222,12 @@ export function DropdownApplication({
   const [isOpen, setIsOpen] = useState(false);
   const urlParams = useSearchParams();
   const workspace = urlParams.get("workspace");
-  const queryClient = useQueryClient();
-
   const changeFavoriteMutation = useMutation({
     mutationFn: async () =>
       api.post(`/api/applications/favorite`, {
         applicationId,
         workspaceId: workspace,
       }),
-    onSuccess: async () => {
-      await queryClient.refetchQueries({
-        queryKey: ["applications/favorite"],
-        type: "all",
-      });
-    },
   });
 
   return (
@@ -260,7 +248,7 @@ export function DropdownApplication({
         <DropdownMenuGroup>
           <DropdownMenuItem onClick={() => changeFavoriteMutation.mutate()}>
             <Heart />
-            Adicionar aos favoritos
+            Remover dos favoritos
           </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>

@@ -114,7 +114,7 @@ export async function GET(req: NextRequest) {
 
     const myApplications = await MyApplications.findOne({
       workspaceId: new mongoose.Types.ObjectId(workspaceId),
-    });
+    }).populate("favoriteApplications.applicationId");
 
     if (!myApplications) {
       return NextResponse.json(

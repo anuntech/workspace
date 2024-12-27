@@ -17,10 +17,27 @@ import { TeamSwitcher } from "@/app/(workspace)/_components/sidebar/team-switche
 import { NavUser } from "@/app/(workspace)/_components/sidebar/nav-user";
 import { NavFooterOptions } from "./nav-footer-options";
 import { Separator } from "@/components/ui/separator";
+import { NavFavorites } from "./nav-favorites";
+import { useQuery } from "@tanstack/react-query";
+import api from "@/libs/api";
+import { useSearchParams } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const sideBar = useSidebar();
+  const session = useSession();
   sideBar.setOpen(localStorage?.getItem("sidebar") == "true");
+  const urlParams = useSearchParams();
+  const workspace = urlParams.get("workspace");
+  const applicationsQuery = useQuery({
+    queryKey: ["applications/favorite"],
+    queryFn: async () =>
+      api.get(`/api/applications/favorite?workspaceId=${workspace}`),
+  });
+
+  const isThereFavorite = applicationsQuery.data?.data?.favorites.some(
+    (a: any) => a.userId == session.data?.user?.id
+  );
 
   return (
     <Sidebar
@@ -33,6 +50,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain />
+        {isThereFavorite && <NavFavorites />}
         <NavProjects />
       </SidebarContent>
       <SidebarFooter>
