@@ -8,7 +8,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "@/libs/api";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Skeleton } from "../../../../components/ui/skeleton";
@@ -138,7 +138,7 @@ function SidebarApplication({
               )}
               <div>
                 <Link
-                  href={`/service/${data._id}?workspace=${workspace}`}
+                  href={`/service/${data.id}?workspace=${workspace}`}
                   passHref
                   className="flex items-center"
                 >
@@ -150,7 +150,7 @@ function SidebarApplication({
               {data.fields.map((field: any) => (
                 <Link
                   key={field.key}
-                  href={`/service/${data._id}?workspace=${workspace}&fieldSubScreen=${field.key}`}
+                  href={`/service/${data.id}?workspace=${workspace}&fieldSubScreen=${field.key}`}
                 >
                   <Button
                     id={field.key}
@@ -177,7 +177,7 @@ function SidebarApplication({
               className="flex items-center justify-between w-full"
             >
               <Link
-                href={`/service/${data._id}?workspace=${workspace}`}
+                href={`/service/${data.id}?workspace=${workspace}`}
                 passHref
                 className="flex items-center"
               >
@@ -202,7 +202,7 @@ function SidebarApplication({
 
               <DropdownApplication
                 isHover={isHovering}
-                applicationId={data._id}
+                applicationId={data.id}
               />
             </div>
           </SidebarMenuButton>
@@ -222,12 +222,20 @@ export function DropdownApplication({
   const [isOpen, setIsOpen] = useState(false);
   const urlParams = useSearchParams();
   const workspace = urlParams.get("workspace");
+  const queryClient = useQueryClient();
+
   const changeFavoriteMutation = useMutation({
     mutationFn: async () =>
       api.post(`/api/applications/favorite`, {
         applicationId,
         workspaceId: workspace,
       }),
+    onSuccess: async () => {
+      await queryClient.refetchQueries({
+        queryKey: ["applications/favorite"],
+        type: "all",
+      });
+    },
   });
 
   return (

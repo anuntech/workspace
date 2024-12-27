@@ -45,6 +45,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Heart, MoreHorizontal } from "lucide-react";
+import { useSession } from "next-auth/react";
 
 export function NavProjects() {
   const { isMobile } = useSidebar();
@@ -227,6 +228,18 @@ export function DropdownApplication({
   const urlParams = useSearchParams();
   const workspace = urlParams.get("workspace");
   const queryClient = useQueryClient();
+  const session = useSession();
+
+  const applicationsQuery = useQuery({
+    queryKey: ["applications/favorite"],
+    queryFn: async () =>
+      api.get(`/api/applications/favorite?workspaceId=${workspace}`),
+  });
+
+  const isThisAnFavoriteApp = applicationsQuery.data?.data.favorites.some(
+    (a: any) =>
+      a.userId == session.data?.user?.id && a.applicationId.id == applicationId
+  );
 
   const changeFavoriteMutation = useMutation({
     mutationFn: async () =>
@@ -260,7 +273,7 @@ export function DropdownApplication({
         <DropdownMenuGroup>
           <DropdownMenuItem onClick={() => changeFavoriteMutation.mutate()}>
             <Heart />
-            Adicionar aos favoritos
+            {isThisAnFavoriteApp ? "Remover dos" : "Adicionar aos"} favoritos
           </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>
