@@ -9,9 +9,6 @@ import Applications from "@/models/Applications";
 import MyApplications from "@/models/MyApplications";
 import mongoose, { MongooseError } from "mongoose";
 
-// This function is used to create a Stripe Checkout Session (one-time payment or subscription)
-// It's called by the <ButtonCheckout /> component
-// By default, it doesn't force users to be authenticated. But if they are, it will prefill the Checkout data with their email and/or credit card
 export async function POST(req: NextRequest) {
   const body = await req.json();
   const session = await getServerSession(authOptions);
@@ -31,7 +28,7 @@ export async function POST(req: NextRequest) {
 
   if (
     workspace.owner.toString() != session.user.id &&
-    !workspace.members.find(
+    !workspace.members.some(
       (m) => m.memberId.toString() === session.user.id.toString()
     )
   ) {
@@ -68,6 +65,72 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(myApplications);
   } catch (e) {
+    console.error(e);
+    return NextResponse.json({ error: e?.message }, { status: 500 });
+  }
+}
+
+export async function GET(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const workspaceId = searchParams.get("workspaceId");
+
+    if (!workspaceId) {
+      return NextResponse.json(
+        { error: "Workspace ID is required" },
+        { status: 400 }
+      );
+    }
+
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    await connectMongo();
+
+    const workspace = await Workspace.findById(workspaceId);
+    if (!workspace) {
+      return NextResponse.json(
+        { error: "Workspace not found" },
+        { status: 404 }
+      );
+    }
+
+    const isOwner = workspace.owner.toString() === session.user.id.toString();
+    const isMember = workspace.members.some(
+      (m) => m.memberId.toString() === session.user.id.toString()
+    );
+
+    if (!isOwner && !isMember) {
+      return NextResponse.json(
+        {
+          error:
+            "You do not have permission to view favorites in this workspace",
+        },
+        { status: 403 }
+      );
+    }
+
+    const myApplications = await MyApplications.findOne({
+      workspaceId: new mongoose.Types.ObjectId(workspaceId),
+    });
+
+    if (!myApplications) {
+      return NextResponse.json(
+        { error: "No applications found for this workspace" },
+        { status: 404 }
+      );
+    }
+
+    const userFavorites = myApplications.favoriteApplications.filter(
+      (fav) => fav.userId.toString() === session.user.id.toString()
+    );
+
+    return NextResponse.json({
+      favorites: userFavorites,
+    });
+  } catch (e: any) {
     console.error(e);
     return NextResponse.json({ error: e?.message }, { status: 500 });
   }
