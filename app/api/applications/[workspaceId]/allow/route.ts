@@ -194,6 +194,11 @@ export async function DELETE(
       });
     }
 
+    myApplications.favoriteApplications =
+      myApplications.favoriteApplications.filter(
+        (fav) => fav.applicationId.toString() != body.applicationId
+      );
+
     await myApplications.save();
     return NextResponse.json(myApplications);
   } catch (e) {
