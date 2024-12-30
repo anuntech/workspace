@@ -82,7 +82,6 @@ export function NavProjects() {
           </SidebarGroupLabel>
         )}
         <SidebarMenu>
-          {/* Em vez de usar o hook diretamente aqui, vamos extrair para um componente */}
           {enabledApplications?.map((data: any) => (
             <SidebarApplication
               key={data.name}
@@ -96,7 +95,6 @@ export function NavProjects() {
   );
 }
 
-// Este componente cuida do estado de hover + lógica condicional
 function SidebarApplication({
   data,
   workspace,
@@ -104,8 +102,6 @@ function SidebarApplication({
   data: any;
   workspace: string | null;
 }) {
-  // Agora o hook é chamado sempre que este componente é montado,
-  // independentemente de quantos items são renderizados
   const [isHovering, setIsHovering] = useState(false);
   const buttonRef = useRef<HTMLDivElement>(null);
 
@@ -173,7 +169,6 @@ function SidebarApplication({
             className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
             tooltip={data.name}
           >
-            {/* Div que controla o hover */}
             <div
               ref={buttonRef}
               onMouseEnter={() => setIsHovering(true)}
@@ -204,7 +199,6 @@ function SidebarApplication({
                 </div>
               </Link>
 
-              {/* Passamos isHovering para controlar se o ícone deve aparecer */}
               <DropdownApplication
                 isHover={isHovering}
                 applicationId={data._id}
