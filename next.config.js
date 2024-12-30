@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
   eslint: {
     ignoreDuringBuilds: true,
   },
@@ -14,6 +13,7 @@ const nextConfig = {
       "workspace.nbg1.your-objectstorage.com",
     ],
   },
+  reactStrictMode: false
 };
 
 module.exports = nextConfig;

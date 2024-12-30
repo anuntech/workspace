@@ -88,17 +88,37 @@ export async function POST(
           { status: 403 }
         );
       }
+      const alreadyInstalled = myApplications.allowedApplicationsId.find(
+        (appId) => appId.toString() === application._id.toString()
+      );
+      if (!alreadyInstalled) {
+        myApplications.allowedApplicationsId.push(application._id);
+      }
 
-      myApplications.allowedApplicationsId.push(application.id);
+      const existingPositionIndex = myApplications.appPositions?.findIndex(
+        (pos) => pos.appId.toString() === application._id.toString()
+      );
+
+      if (existingPositionIndex === -1) {
+        myApplications.appPositions?.push({
+          appId: application._id,
+          position: myApplications.appPositions?.length,
+        });
+      }
 
       await myApplications.save();
-
       return NextResponse.json(myApplications);
     }
 
     await MyApplications.create({
       workspaceId: params.workspaceId,
       allowedApplicationsId: [new mongoose.Types.ObjectId(body.applicationId)],
+      appPositions: [
+        {
+          appId: application._id,
+          position: 0,
+        },
+      ],
     });
 
     return NextResponse.json(myApplications);
@@ -145,20 +165,36 @@ export async function DELETE(
     });
     const body = await request.json();
 
-    console.log(body);
+    if (!myApplications) return NextResponse.json(myApplications);
 
-    if (myApplications) {
-      myApplications.allowedApplicationsId.splice(
-        myApplications.allowedApplicationsId.indexOf(
-          new mongoose.Types.ObjectId(body.applicationId) as any
-        ),
-        1
-      );
-      await myApplications.save();
-
-      return NextResponse.json(myApplications);
+    const indexInAllowed = myApplications.allowedApplicationsId.findIndex(
+      (id) => id.toString() === body.applicationId
+    );
+    if (indexInAllowed !== -1) {
+      myApplications.allowedApplicationsId.splice(indexInAllowed, 1);
     }
 
+    const indexInPositions = myApplications.appPositions?.findIndex(
+      (pos) => pos?.appId?.toString() === body.applicationId
+    );
+    if (indexInPositions !== -1) {
+      const removedPos =
+        myApplications.appPositions[indexInPositions]?.position;
+
+      myApplications.appPositions?.splice(indexInPositions, 1);
+
+      myApplications.appPositions = myApplications.appPositions?.map((pos) => {
+        if (pos.position > removedPos) {
+          return {
+            ...pos,
+            position: pos.position - 1,
+          };
+        }
+        return pos;
+      });
+    }
+
+    await myApplications.save();
     return NextResponse.json(myApplications);
   } catch (e) {
     console.error(e);
