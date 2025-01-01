@@ -49,13 +49,17 @@ import { useSession } from "next-auth/react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
 export function NavProjects() {
-  const { isMobile } = useSidebar();
   const urlParams = useSearchParams();
   const workspace = urlParams.get("workspace");
 
   const applicationsQuery = useQuery({
     queryKey: ["applications"],
     queryFn: async () => api.get(`/api/applications/${workspace}`),
+  });
+
+  const setPositionsMutation = useMutation({
+    mutationFn: async (data: any) =>
+      api.post(`/api/applications/${workspace}/set-positions`, data),
   });
 
   if (applicationsQuery.isPending) {
@@ -71,6 +75,7 @@ export function NavProjects() {
   }
 
   const onDragEnd = (result: any) => {
+    console.log(result);
     const { source, destination } = result;
 
     if (!destination || source.index === destination.index) {
@@ -81,7 +86,13 @@ export function NavProjects() {
     const [movedItem] = reorderedApplications.splice(source.index, 1);
     reorderedApplications.splice(destination.index, 0, movedItem);
 
-    console.log("Nova ordem:", reorderedApplications);
+    const data = reorderedApplications.map((app: any, index: number) => ({
+      appId: app._id,
+      appName: app.name,
+      position: index,
+    }));
+
+    setPositionsMutation.mutate(data);
   };
 
   return (

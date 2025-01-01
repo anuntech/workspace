@@ -90,7 +90,8 @@ export async function POST(
     }
 
     for (const app of body) {
-      if (!app.appId || !app.position) {
+      console.log(app);
+      if (!app.appId || app.position == undefined) {
         return NextResponse.json({ error: "Body is invalid" }, { status: 400 });
       }
 
@@ -109,6 +110,7 @@ export async function POST(
       }
 
       myApplications.appPositions[indexInPositions].position = app.position;
+      console.log(indexInPositions, app.position);
     }
 
     await myApplications.save();
