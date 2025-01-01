@@ -31,25 +31,31 @@ export async function GET(
 
     const applicationsEnabledOrDisabled = await Promise.all(
       applications.map(async (app) => {
-        const allowedApplicationsId = (
-          await MyApplications.findOne({
-            workspaceId: new mongoose.Types.ObjectId(params.workspaceId),
-          })
-        )?.allowedApplicationsId;
+        const myApplications = await MyApplications.findOne({
+          workspaceId: new mongoose.Types.ObjectId(params.workspaceId),
+        });
+        const appPosition = myApplications.appPositions.find(
+          (a) => a.appId.toString() === app._id.toString()
+        )?.position;
 
-        const isEnabled = allowedApplicationsId?.includes(
+        const isEnabled = myApplications?.allowedApplicationsId?.includes(
           new mongoose.Types.ObjectId(app._id.toString()) as any
         );
 
         return {
           ...app.toObject(),
           status: isEnabled ? "enabled" : "disabled",
+          position: appPosition,
         };
       })
     );
 
+    const applicationsSortedByPosition = applicationsEnabledOrDisabled.sort(
+      (a, b) => a?.position - b?.position
+    );
+
     const removeApplicationsWithoutPermission =
-      applicationsEnabledOrDisabled.filter((app) =>
+      applicationsSortedByPosition.filter((app) =>
         app.workspacesAllowed.length > 0
           ? app.workspacesAllowed.find((id) => id.toString() === workspace.id)
           : true
