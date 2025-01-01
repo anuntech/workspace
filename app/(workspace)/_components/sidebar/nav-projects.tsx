@@ -51,6 +51,9 @@ import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 export function NavProjects() {
   const urlParams = useSearchParams();
   const workspace = urlParams.get("workspace");
+  const queryClient = useQueryClient();
+
+  const [localApplications, setLocalApplications] = useState<any[]>([]);
 
   const applicationsQuery = useQuery({
     queryKey: ["applications"],
@@ -60,6 +63,9 @@ export function NavProjects() {
   const setPositionsMutation = useMutation({
     mutationFn: async (data: any) =>
       api.post(`/api/applications/${workspace}/set-positions`, data),
+    onSuccess: () => {
+      applicationsQuery.refetch();
+    },
   });
 
   if (applicationsQuery.isPending) {
@@ -75,7 +81,6 @@ export function NavProjects() {
   }
 
   const onDragEnd = (result: any) => {
-    console.log(result);
     const { source, destination } = result;
 
     if (!destination || source.index === destination.index) {
@@ -86,9 +91,16 @@ export function NavProjects() {
     const [movedItem] = reorderedApplications.splice(source.index, 1);
     reorderedApplications.splice(destination.index, 0, movedItem);
 
+    queryClient.setQueryData(["applications"], (oldData: any) => {
+      if (!oldData) return;
+      return {
+        ...oldData,
+        data: reorderedApplications,
+      };
+    });
+
     const data = reorderedApplications.map((app: any, index: number) => ({
       appId: app._id,
-      appName: app.name,
       position: index,
     }));
 
