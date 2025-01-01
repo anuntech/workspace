@@ -46,7 +46,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Heart, MoreHorizontal } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import {
+  DragDropContext,
+  Draggable,
+  DraggableProvided,
+  Droppable,
+} from "react-beautiful-dnd";
 
 export function NavProjects() {
   const urlParams = useSearchParams();
@@ -141,6 +146,7 @@ export function NavProjects() {
                           key={data.name}
                           data={data}
                           workspace={workspace}
+                          provided={provided}
                         />
                       </div>
                     )}
@@ -159,9 +165,11 @@ export function NavProjects() {
 function SidebarApplication({
   data,
   workspace,
+  provided,
 }: {
   data: any;
   workspace: string | null;
+  provided: DraggableProvided;
 }) {
   const [isHovering, setIsHovering] = useState(false);
   const buttonRef = useRef<HTMLDivElement>(null);
@@ -170,41 +178,48 @@ function SidebarApplication({
     <SidebarMenuItem>
       <Accordion type="multiple">
         {data.fields.length > 0 ? (
-          <AccordionItem value="item-1" className="border-none">
+          <AccordionItem
+            value="item-1"
+            className="border-none"
+            ref={provided.innerRef}
+          >
             <SidebarMenuButton
               className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
               tooltip={data.name}
+              asChild
             >
-              <AccordionTrigger
-                className={cn(`absolute p-0 top-2 right-2`)}
-              ></AccordionTrigger>
-              {data.icon?.type == "emoji" && (
-                <p className={cn(`size-5 pointer-events-none ml-[-8px]`)}>
-                  {data.icon.value}
-                </p>
-              )}
+              <div className="relative w-full">
+                <AccordionTrigger
+                  className={cn(`absolute p-0 top-2 right-2`)}
+                ></AccordionTrigger>
+                {data.icon?.type == "emoji" && (
+                  <p className={cn(`size-5 pointer-events-none ml-[-8px]`)}>
+                    {data.icon.value}
+                  </p>
+                )}
 
-              {data.icon?.type == "lucide" && (
-                <p className={cn(`size-5 pointer-events-none ml-[-8px]`)}>
-                  <IconComponent className="size-5" name={data.icon?.value} />
-                </p>
-              )}
-              {(data.icon?.type == "image" || !data.icon) && (
-                <Avatar className="size-5">
-                  <AvatarImage
-                    src={getS3Image(data.icon?.value || data.avatarSrc)}
-                  />
-                  <AvatarFallback>{data.avatarFallback}</AvatarFallback>
-                </Avatar>
-              )}
-              <div>
-                <Link
-                  href={`/service/${data._id}?workspace=${workspace}`}
-                  passHref
-                  className="flex items-center"
-                >
-                  <span className="">{data.name}</span>
-                </Link>
+                {data.icon?.type == "lucide" && (
+                  <p className={cn(`size-5 pointer-events-none ml-[-8px]`)}>
+                    <IconComponent className="size-5" name={data.icon?.value} />
+                  </p>
+                )}
+                {(data.icon?.type == "image" || !data.icon) && (
+                  <Avatar className="size-5">
+                    <AvatarImage
+                      src={getS3Image(data.icon?.value || data.avatarSrc)}
+                    />
+                    <AvatarFallback>{data.avatarFallback}</AvatarFallback>
+                  </Avatar>
+                )}
+                <div>
+                  <Link
+                    href={`/service/${data._id}?workspace=${workspace}`}
+                    passHref
+                    className="flex items-center"
+                  >
+                    <span className="">{data.name}</span>
+                  </Link>
+                </div>
               </div>
             </SidebarMenuButton>
             <AccordionContent className="pb-0">
