@@ -96,7 +96,7 @@ export default function AppsPage() {
                   Instalados
                 </span>
                 <div className="grid grid-cols-3 gap-5">
-                  {applicationsQuery.data.data
+                  {applicationsQuery.data?.data
                     .filter((app: any) => app.status === "enabled")
                     .map((app: any) => (
                       <Link
@@ -159,7 +159,7 @@ export default function AppsPage() {
                   Desinstalados
                 </span>
                 <div className="grid grid-cols-3 gap-5">
-                  {applicationsQuery?.data.data
+                  {applicationsQuery?.data?.data
                     .filter((app: any) => app.status === "disabled")
                     ?.map((app: any) => (
                       <App app={app} workspace={workspace} />
@@ -169,7 +169,7 @@ export default function AppsPage() {
             </>
           ) : (
             <section className="grid grid-cols-3 gap-5 py-5">
-              {applicationsQuery.data.data
+              {applicationsQuery.data?.data
                 .filter((app: any) =>
                   app.name.toLowerCase().includes(inputValue.toLowerCase())
                 )

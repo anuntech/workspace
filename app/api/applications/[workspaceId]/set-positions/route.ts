@@ -115,7 +115,7 @@ export async function POST(
 
     await myApplications.save();
 
-    return NextResponse.json(true);
+    return NextResponse.json(myApplications);
   } catch (e) {
     console.error(e);
     return NextResponse.json({ error: e?.message }, { status: 500 });

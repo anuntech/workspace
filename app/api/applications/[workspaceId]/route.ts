@@ -34,7 +34,7 @@ export async function GET(
         const myApplications = await MyApplications.findOne({
           workspaceId: new mongoose.Types.ObjectId(params.workspaceId),
         });
-        const appPosition = myApplications.appPositions.find(
+        const appPosition = myApplications?.appPositions?.find(
           (a) => a.appId.toString() === app._id.toString()
         )?.position;
 
