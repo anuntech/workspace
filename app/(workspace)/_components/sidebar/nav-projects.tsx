@@ -191,7 +191,11 @@ function SidebarApplication({
               onMouseLeave={() => setIsHovering(false)}
             >
               <div className="flex items-center justify-between w-full">
-                <div className="flex items-center">
+                <Link
+                  href={`/service/${data._id}?workspace=${workspace}`}
+                  passHref
+                  className="flex items-center"
+                >
                   <div className="flex w-5 items-center justify-center">
                     {data.icon?.type === "emoji" && (
                       <p className="text-[1.15rem] pointer-events-none">
@@ -214,7 +218,7 @@ function SidebarApplication({
                     )}
                   </div>
                   <span className="ml-3">{data.name}</span>
-                </div>
+                </Link>
 
                 <div className="flex items-center gap-2">
                   <DropdownApplication
@@ -256,7 +260,11 @@ function SidebarApplication({
               className="flex items-center justify-between w-full"
               ref={buttonRef}
             >
-              <div className="flex items-center">
+              <Link
+                href={`/service/${data._id}?workspace=${workspace}`}
+                passHref
+                className="flex items-center"
+              >
                 <div className="flex w-5 items-center justify-center">
                   {data.icon?.type === "emoji" && (
                     <p className="text-[1.15rem] pointer-events-none">
@@ -279,7 +287,7 @@ function SidebarApplication({
                   )}
                 </div>
                 <span className="ml-3">{data.name}</span>
-              </div>
+              </Link>
 
               <DropdownApplication
                 isHover={isHovering}
