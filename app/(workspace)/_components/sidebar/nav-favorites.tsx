@@ -125,9 +125,7 @@ function SidebarApplication({
                 >
                   <div className="flex w-5 items-center justify-center">
                     {data.icon?.type === "emoji" && (
-                      <p className="text-[1.15rem] pointer-events-none">
-                        {data.icon.value}
-                      </p>
+                      <p className=" pointer-events-none">{data.icon.value}</p>
                     )}
                     {data.icon?.type === "lucide" && (
                       <IconComponent
@@ -194,9 +192,7 @@ function SidebarApplication({
               >
                 <div className="flex w-5 items-center justify-center">
                   {data.icon?.type === "emoji" && (
-                    <p className="text-[1.15rem] pointer-events-none">
-                      {data.icon.value}
-                    </p>
+                    <p className=" pointer-events-none">{data.icon.value}</p>
                   )}
                   {data.icon?.type === "lucide" && (
                     <IconComponent
