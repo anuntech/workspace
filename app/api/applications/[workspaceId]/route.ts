@@ -34,9 +34,6 @@ export async function GET(
         const myApplications = await MyApplications.findOne({
           workspaceId: new mongoose.Types.ObjectId(params.workspaceId),
         });
-        const appPosition = myApplications?.appPositions?.find(
-          (a) => a.appId.toString() === app._id.toString()
-        )?.position;
 
         const isEnabled = myApplications?.allowedApplicationsId?.includes(
           new mongoose.Types.ObjectId(app._id.toString()) as any
@@ -45,7 +42,6 @@ export async function GET(
         return {
           ...app.toObject(),
           status: isEnabled ? "enabled" : "disabled",
-          position: appPosition,
         };
       })
     );

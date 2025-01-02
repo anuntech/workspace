@@ -93,20 +93,6 @@ export async function POST(
       if (!app.appId || app.position == undefined) {
         return NextResponse.json({ error: "Body is invalid" }, { status: 400 });
       }
-
-      const appPosition = myApplications.appPositions.find(
-        (a) => a.appId.toString() === app.appId
-      );
-      if (!appPosition) {
-        return NextResponse.json({ error: "App not found" }, { status: 400 });
-      }
-
-      const indexInPositions = myApplications.appPositions.findIndex(
-        (a) => a.appId.toString() === app.appId
-      );
-      if (indexInPositions === -1) {
-        return NextResponse.json({ error: "App not found" }, { status: 400 });
-      }
     }
 
     const positionMap = body.reduce((acc, item) => {

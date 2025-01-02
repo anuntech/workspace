@@ -10,10 +10,6 @@ export interface IMyApplications extends Document {
     userId: mongoose.Types.ObjectId;
     position: number;
   }[];
-  appPositions: {
-    appId: mongoose.Types.ObjectId;
-    position: number;
-  }[];
 }
 
 const myApplicationSchema = new mongoose.Schema<IMyApplications>(
@@ -41,15 +37,6 @@ const myApplicationSchema = new mongoose.Schema<IMyApplications>(
         userId: {
           type: mongoose.Types.ObjectId,
           ref: "User",
-        },
-        position: Number,
-      },
-    ],
-    appPositions: [
-      {
-        appId: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Applications",
         },
         position: Number,
       },
