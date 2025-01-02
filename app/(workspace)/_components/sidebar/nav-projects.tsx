@@ -186,11 +186,13 @@ function SidebarApplication({
             <SidebarMenuButton
               className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
               tooltip={data.name}
+              onMouseEnter={() => setIsHovering(true)}
+              onMouseLeave={() => setIsHovering(false)}
               asChild
             >
               <div className="relative w-full">
                 <AccordionTrigger
-                  className={cn(`absolute p-0 top-2 right-2`)}
+                  className={cn(`absolute p-0 top-[0.47rem] right-2`)}
                 ></AccordionTrigger>
                 {data.icon?.type == "emoji" && (
                   <p className={cn(`size-5 pointer-events-none ml-[-8px]`)}>
@@ -220,6 +222,11 @@ function SidebarApplication({
                     <span className="">{data.name}</span>
                   </Link>
                 </div>
+                <DropdownApplication
+                  isHover={isHovering}
+                  applicationId={data._id}
+                  className="ml-11 text-muted-foreground"
+                />
               </div>
             </SidebarMenuButton>
             <AccordionContent className="pb-0">
@@ -278,6 +285,7 @@ function SidebarApplication({
               <DropdownApplication
                 isHover={isHovering}
                 applicationId={data._id}
+                className="text-muted-foreground"
               />
             </div>
           </SidebarMenuButton>
@@ -290,9 +298,11 @@ function SidebarApplication({
 export function DropdownApplication({
   isHover,
   applicationId,
+  className,
 }: {
   isHover?: boolean;
   applicationId: string;
+  className?: string;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const urlParams = useSearchParams();
@@ -334,9 +344,9 @@ export function DropdownApplication({
         }, 100);
       }}
     >
-      <DropdownMenuTrigger asChild>
+      <DropdownMenuTrigger asChild className={className}>
         <button className={!isHover && !isOpen && "hidden"}>
-          <MoreHorizontal className="size-4" />
+          <MoreHorizontal className="size-4 " />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
