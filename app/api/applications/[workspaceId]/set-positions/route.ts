@@ -90,7 +90,6 @@ export async function POST(
     }
 
     for (const app of body) {
-      console.log(app);
       if (!app.appId || app.position == undefined) {
         return NextResponse.json({ error: "Body is invalid" }, { status: 400 });
       }
@@ -108,10 +107,22 @@ export async function POST(
       if (indexInPositions === -1) {
         return NextResponse.json({ error: "App not found" }, { status: 400 });
       }
-
-      myApplications.appPositions[indexInPositions].position = app.position;
-      console.log(indexInPositions, app.position);
     }
+
+    const positionMap = body.reduce((acc, item) => {
+      acc[item.appId] = item.position;
+      return acc;
+    }, {});
+
+    console.log(positionMap);
+
+    console.log(myApplications.allowedApplicationsId);
+
+    myApplications.allowedApplicationsId.sort((a, b) => {
+      return positionMap[a.toString()] - positionMap[b.toString()];
+    });
+
+    console.log(myApplications.allowedApplicationsId);
 
     await myApplications.save();
 

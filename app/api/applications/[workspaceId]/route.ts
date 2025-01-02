@@ -50,12 +50,8 @@ export async function GET(
       })
     );
 
-    const applicationsSortedByPosition = applicationsEnabledOrDisabled.sort(
-      (a, b) => a?.position - b?.position
-    );
-
     const removeApplicationsWithoutPermission =
-      applicationsSortedByPosition.filter((app) =>
+      applicationsEnabledOrDisabled.filter((app) =>
         app.workspacesAllowed.length > 0
           ? app.workspacesAllowed.find((id) => id.toString() === workspace.id)
           : true
