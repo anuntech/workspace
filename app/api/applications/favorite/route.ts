@@ -54,6 +54,7 @@ export async function POST(req: NextRequest) {
       myApplications?.favoriteApplications.push({
         userId: new mongoose.Types.ObjectId(session.user.id),
         applicationId: application.id,
+        position: myApplications.favoriteApplications.length,
       });
       await myApplications.save();
 

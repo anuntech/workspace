@@ -8,6 +8,7 @@ export interface IMyApplications extends Document {
   favoriteApplications: {
     applicationId: mongoose.Types.ObjectId;
     userId: mongoose.Types.ObjectId;
+    position: number;
   }[];
   appPositions: {
     appId: mongoose.Types.ObjectId;
@@ -41,6 +42,7 @@ const myApplicationSchema = new mongoose.Schema<IMyApplications>(
           type: mongoose.Types.ObjectId,
           ref: "User",
         },
+        position: Number,
       },
     ],
     appPositions: [
