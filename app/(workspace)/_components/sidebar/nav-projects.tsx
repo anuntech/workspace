@@ -190,43 +190,49 @@ function SidebarApplication({
               onMouseLeave={() => setIsHovering(false)}
               asChild
             >
-              <div className="relative w-full">
-                <AccordionTrigger
-                  className={cn(`absolute p-0 top-[0.47rem] right-2`)}
-                ></AccordionTrigger>
-                {data.icon?.type == "emoji" && (
-                  <p className={cn(`size-5 pointer-events-none ml-[-8px]`)}>
-                    {data.icon.value}
-                  </p>
-                )}
+              <div className="w-full">
+                <div className="flex items-center justify-center size-5">
+                  {data.icon?.type == "emoji" && (
+                    <p className={cn(`text-[1.20rem] pointer-events-none`)}>
+                      {data.icon.value}
+                    </p>
+                  )}
 
-                {data.icon?.type == "lucide" && (
-                  <p className={cn(`size-5 pointer-events-none ml-[-8px]`)}>
-                    <IconComponent className="size-5" name={data.icon?.value} />
-                  </p>
-                )}
-                {(data.icon?.type == "image" || !data.icon) && (
-                  <Avatar className="size-5">
-                    <AvatarImage
-                      src={getS3Image(data.icon?.value || data.avatarSrc)}
-                    />
-                    <AvatarFallback>{data.avatarFallback}</AvatarFallback>
-                  </Avatar>
-                )}
+                  {data.icon?.type == "lucide" && (
+                    <p className={cn(`size-5 pointer-events-none`)}>
+                      <IconComponent
+                        className="size-5"
+                        name={data.icon?.value}
+                      />
+                    </p>
+                  )}
+                  {(data.icon?.type == "image" || !data.icon) && (
+                    <Avatar className="size-5">
+                      <AvatarImage
+                        src={getS3Image(data.icon?.value || data.avatarSrc)}
+                      />
+                      <AvatarFallback>{data.avatarFallback}</AvatarFallback>
+                    </Avatar>
+                  )}
+                </div>
                 <div>
                   <Link
-                    href={`/service/${data._id}?workspace=${workspace}`}
+                    href={`/service/${data.id}?workspace=${workspace}`}
                     passHref
                     className="flex items-center"
                   >
-                    <span className="">{data.name}</span>
+                    <span className="ml-1">{data.name}</span>
                   </Link>
                 </div>
-                <DropdownApplication
-                  isHover={isHovering}
-                  applicationId={data._id}
-                  className="ml-11 text-muted-foreground"
-                />
+                <div className="ml-11 flex items-center justify-between w-20 ">
+                  <DropdownApplication
+                    isHover={isHovering}
+                    applicationId={data._id}
+                    className="text-muted-foreground"
+                  />
+                  <div className={isHovering && "hidden"}></div>
+                  <AccordionTrigger></AccordionTrigger>
+                </div>
               </div>
             </SidebarMenuButton>
             <AccordionContent className="pb-0">
@@ -264,29 +270,36 @@ function SidebarApplication({
                 className="flex items-center"
               >
                 <div className="flex items-center">
-                  {data.icon?.type == "emoji" && (
-                    <p className="size-5">{data.icon.value}</p>
-                  )}
-                  {data.icon?.type == "lucide" && (
-                    <IconComponent className="size-5" name={data.icon?.value} />
-                  )}
-                  {(data.icon?.type == "image" || !data.icon) && (
-                    <Avatar className="size-5">
-                      <AvatarImage
-                        src={getS3Image(data.icon?.value || data.avatarSrc)}
+                  <div className="flex w-6 items-center justify-center">
+                    {data.icon?.type == "emoji" && (
+                      <p className="size-5">{data.icon.value}</p>
+                    )}
+                    {data.icon?.type == "lucide" && (
+                      <IconComponent
+                        className="size-5"
+                        name={data.icon?.value}
                       />
-                      <AvatarFallback>{data.avatarFallback}</AvatarFallback>
-                    </Avatar>
-                  )}
+                    )}
+                    {(data.icon?.type == "image" || !data.icon) && (
+                      <Avatar className="size-5">
+                        <AvatarImage
+                          src={getS3Image(data.icon?.value || data.avatarSrc)}
+                        />
+                        <AvatarFallback>{data.avatarFallback}</AvatarFallback>
+                      </Avatar>
+                    )}
+                  </div>
                   <span className="ml-2">{data.name}</span>
                 </div>
               </Link>
 
-              <DropdownApplication
-                isHover={isHovering}
-                applicationId={data._id}
-                className="text-muted-foreground"
-              />
+              <div className="ml-11 flex items-center justify-end w-20 ">
+                <DropdownApplication
+                  isHover={isHovering}
+                  applicationId={data._id}
+                  className="text-muted-foreground"
+                />
+              </div>
             </div>
           </SidebarMenuButton>
         )}
