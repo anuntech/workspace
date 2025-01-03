@@ -60,7 +60,7 @@ export function NavFavorites() {
   const router = useRouter();
 
   const applicationsQuery = useQuery({
-    queryKey: ["applications/favorites"],
+    queryKey: ["applications/favorite"],
     queryFn: async () =>
       api.get(`/api/applications/favorite?workspaceId=${workspace}`),
   });
@@ -99,7 +99,7 @@ export function NavFavorites() {
     const [movedItem] = reorderedApplications.splice(source.index, 1);
     reorderedApplications.splice(destination.index, 0, movedItem);
 
-    queryClient.setQueryData(["applications/favorites"], (oldData: any) => {
+    queryClient.setQueryData(["applications/favorite"], (oldData: any) => {
       if (!oldData) return;
       return {
         ...oldData,
@@ -192,7 +192,7 @@ function SidebarApplication({
             >
               <div className="flex items-center justify-between w-full">
                 <Link
-                  href={`/service/${data._id}?workspace=${workspace}`}
+                  href={`/service/${data.id}?workspace=${workspace}`}
                   passHref
                   className="flex items-center"
                 >
@@ -221,7 +221,7 @@ function SidebarApplication({
                 <div className="flex items-center gap-2">
                   <DropdownApplication
                     isHover={isHovering}
-                    applicationId={data._id}
+                    applicationId={data.id}
                     className="text-muted-foreground"
                   />
                   <AccordionTrigger />
@@ -233,7 +233,7 @@ function SidebarApplication({
               {data.fields.map((field: any) => (
                 <Link
                   key={field.key}
-                  href={`/service/${data._id}?workspace=${workspace}&fieldSubScreen=${field.key}`}
+                  href={`/service/${data.id}?workspace=${workspace}&fieldSubScreen=${field.key}`}
                 >
                   <Button
                     id={field.key}
@@ -259,7 +259,7 @@ function SidebarApplication({
               ref={buttonRef}
             >
               <Link
-                href={`/service/${data._id}?workspace=${workspace}`}
+                href={`/service/${data.id}?workspace=${workspace}`}
                 passHref
                 className="flex items-center"
               >
@@ -287,7 +287,7 @@ function SidebarApplication({
 
               <DropdownApplication
                 isHover={isHovering}
-                applicationId={data._id}
+                applicationId={data.id}
                 className="text-muted-foreground"
               />
             </div>
