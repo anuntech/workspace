@@ -58,11 +58,9 @@ export function NavProjects() {
   const workspace = urlParams.get("workspace");
   const queryClient = useQueryClient();
 
-  const [localApplications, setLocalApplications] = useState<any[]>([]);
-
   const applicationsQuery = useQuery({
-    queryKey: ["applications"],
-    queryFn: async () => api.get(`/api/applications/${workspace}`),
+    queryKey: ["applications/allow"],
+    queryFn: async () => api.get(`/api/applications/${workspace}/allow`),
   });
 
   const setPositionsMutation = useMutation({
@@ -77,13 +75,7 @@ export function NavProjects() {
     return <Skeleton className="h-7 mx-2" />;
   }
 
-  let enabledApplications: any;
-
-  if (applicationsQuery?.data?.data && applicationsQuery.data.status === 200) {
-    enabledApplications = applicationsQuery.data.data?.filter(
-      (app: any) => app.status === "enabled"
-    );
-  }
+  let enabledApplications = applicationsQuery.data?.data;
 
   const onDragEnd = (result: any) => {
     const { source, destination } = result;
@@ -96,7 +88,7 @@ export function NavProjects() {
     const [movedItem] = reorderedApplications.splice(source.index, 1);
     reorderedApplications.splice(destination.index, 0, movedItem);
 
-    queryClient.setQueryData(["applications"], (oldData: any) => {
+    queryClient.setQueryData(["applications/allow"], (oldData: any) => {
       if (!oldData) return;
       return {
         ...oldData,
@@ -105,7 +97,7 @@ export function NavProjects() {
     });
 
     const data = reorderedApplications.map((app: any, index: number) => ({
-      appId: app._id,
+      appId: app.id,
       position: index,
     }));
 
@@ -146,7 +138,6 @@ export function NavProjects() {
                           key={data.name}
                           data={data}
                           workspace={workspace}
-                          provided={provided}
                         />
                       </div>
                     )}
@@ -165,11 +156,9 @@ export function NavProjects() {
 function SidebarApplication({
   data,
   workspace,
-  provided,
 }: {
   data: any;
   workspace: string | null;
-  provided: DraggableProvided;
 }) {
   const [isHovering, setIsHovering] = useState(false);
   const buttonRef = useRef<HTMLDivElement>(null);
@@ -178,11 +167,7 @@ function SidebarApplication({
     <SidebarMenuItem>
       <Accordion type="multiple">
         {data.fields.length > 0 ? (
-          <AccordionItem
-            value="item-1"
-            className="border-none"
-            ref={provided.innerRef}
-          >
+          <AccordionItem value="item-1" className="border-none">
             <SidebarMenuButton
               asChild
               className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
@@ -192,17 +177,17 @@ function SidebarApplication({
             >
               <div className="flex items-center justify-between w-full">
                 <Link
-                  href={`/service/${data._id}?workspace=${workspace}`}
+                  href={`/service/${data.id}?workspace=${workspace}`}
                   passHref
-                  className="flex items-center"
+                  className="flex items-center cursor-pointer"
                 >
                   <div className="flex w-5 items-center justify-center">
                     {data.icon?.type === "emoji" && (
-                      <p className=" pointer-events-none">{data.icon.value}</p>
+                      <p className="">{data.icon.value}</p>
                     )}
                     {data.icon?.type === "lucide" && (
                       <IconComponent
-                        className="size-5 pointer-events-none"
+                        className="size-5"
                         name={data.icon.value}
                       />
                     )}
@@ -221,7 +206,7 @@ function SidebarApplication({
                 <div className="flex items-center gap-2">
                   <DropdownApplication
                     isHover={isHovering}
-                    applicationId={data._id}
+                    applicationId={data.id}
                     className="text-muted-foreground"
                   />
                   <AccordionTrigger />
@@ -233,7 +218,7 @@ function SidebarApplication({
               {data.fields.map((field: any) => (
                 <Link
                   key={field.key}
-                  href={`/service/${data._id}?workspace=${workspace}&fieldSubScreen=${field.key}`}
+                  href={`/service/${data.id}?workspace=${workspace}&fieldSubScreen=${field.key}`}
                 >
                   <Button
                     id={field.key}
@@ -259,19 +244,16 @@ function SidebarApplication({
               ref={buttonRef}
             >
               <Link
-                href={`/service/${data._id}?workspace=${workspace}`}
+                href={`/service/${data.id}?workspace=${workspace}`}
                 passHref
                 className="flex items-center"
               >
                 <div className="flex w-5 items-center justify-center">
                   {data.icon?.type === "emoji" && (
-                    <p className=" pointer-events-none">{data.icon.value}</p>
+                    <p className="">{data.icon.value}</p>
                   )}
                   {data.icon?.type === "lucide" && (
-                    <IconComponent
-                      className="size-5 pointer-events-none"
-                      name={data.icon.value}
-                    />
+                    <IconComponent className="size-5" name={data.icon.value} />
                   )}
                   {(data.icon?.type === "image" || !data.icon) && (
                     <Avatar className="size-5">
@@ -287,7 +269,7 @@ function SidebarApplication({
 
               <DropdownApplication
                 isHover={isHovering}
-                applicationId={data._id}
+                applicationId={data.id}
                 className="text-muted-foreground"
               />
             </div>
