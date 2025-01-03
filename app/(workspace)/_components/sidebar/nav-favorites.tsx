@@ -65,13 +65,13 @@ export function NavFavorites() {
       api.get(`/api/applications/favorite?workspaceId=${workspace}`),
   });
 
-  const setPositionsMutation = useMutation({
-    mutationFn: async (data: any) =>
-      api.post(`/api/applications/${workspace}/set-positions`, data),
-    onSuccess: () => {
-      applicationsQuery.refetch();
-    },
-  });
+  // const setPositionsMutation = useMutation({
+  //   mutationFn: async (data: any) =>
+  //     api.post(`/api/applications/${workspace}/set-positions`, data),
+  //   onSuccess: () => {
+  //     applicationsQuery.refetch();
+  //   },
+  // });
 
   if (applicationsQuery.isPending) {
     return <Skeleton className="h-7 mx-2" />;
@@ -96,7 +96,7 @@ export function NavFavorites() {
     const [movedItem] = reorderedApplications.splice(source.index, 1);
     reorderedApplications.splice(destination.index, 0, movedItem);
 
-    queryClient.setQueryData(["applications/allow"], (oldData: any) => {
+    queryClient.setQueryData(["applications/favorites"], (oldData: any) => {
       if (!oldData) return;
       return {
         ...oldData,
@@ -109,7 +109,7 @@ export function NavFavorites() {
       position: index,
     }));
 
-    setPositionsMutation.mutate(data);
+    // setPositionsMutation.mutate(data);
   };
 
   return (

@@ -93,6 +93,17 @@ export async function POST(
       if (!app.appId || app.position == undefined) {
         return NextResponse.json({ error: "Body is invalid" }, { status: 400 });
       }
+
+      if (
+        !myApplications.allowedApplicationsId.some(
+          (id) => id.toString() === app.appId.toString()
+        )
+      ) {
+        return NextResponse.json(
+          { error: "Application not found" },
+          { status: 400 }
+        );
+      }
     }
 
     const positionMap = body.reduce((acc, item) => {
