@@ -51,7 +51,12 @@ export async function POST(request: Request) {
       );
     }
 
-    if (body.data.length != myApplications.allowedApplicationsId.length) {
+    if (
+      body.data.length !=
+      myApplications.favoriteApplications.filter(
+        (a) => a.userId.toString() === session.user.id.toString()
+      ).length
+    ) {
       return NextResponse.json({ error: "Body is invalid" }, { status: 400 });
     }
 
