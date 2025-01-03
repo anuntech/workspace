@@ -60,18 +60,21 @@ export function NavFavorites() {
   const router = useRouter();
 
   const applicationsQuery = useQuery({
-    queryKey: ["applications/favorite"],
+    queryKey: ["applications/favorites"],
     queryFn: async () =>
       api.get(`/api/applications/favorite?workspaceId=${workspace}`),
   });
 
-  // const setPositionsMutation = useMutation({
-  //   mutationFn: async (data: any) =>
-  //     api.post(`/api/applications/${workspace}/set-positions`, data),
-  //   onSuccess: () => {
-  //     applicationsQuery.refetch();
-  //   },
-  // });
+  const setPositionsMutation = useMutation({
+    mutationFn: async (data: any) =>
+      api.post(`/api/applications/favorite/set-positions`, {
+        data,
+        workspaceId: workspace,
+      }),
+    onSuccess: () => {
+      applicationsQuery.refetch();
+    },
+  });
 
   if (applicationsQuery.isPending) {
     return <Skeleton className="h-7 mx-2" />;
@@ -100,7 +103,11 @@ export function NavFavorites() {
       if (!oldData) return;
       return {
         ...oldData,
-        data: reorderedApplications,
+        data: {
+          favorites: reorderedApplications.map((a: any) => ({
+            applicationId: { ...a },
+          })),
+        },
       };
     });
 
@@ -109,7 +116,7 @@ export function NavFavorites() {
       position: index,
     }));
 
-    // setPositionsMutation.mutate(data);
+    setPositionsMutation.mutate(data);
   };
 
   return (
