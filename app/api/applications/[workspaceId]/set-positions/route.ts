@@ -111,15 +111,9 @@ export async function POST(
       return acc;
     }, {});
 
-    console.log(positionMap);
-
-    console.log(myApplications.allowedApplicationsId);
-
     myApplications.allowedApplicationsId.sort((a, b) => {
       return positionMap[a.toString()] - positionMap[b.toString()];
     });
-
-    console.log(myApplications.allowedApplicationsId);
 
     await myApplications.save();
 

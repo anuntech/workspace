@@ -51,12 +51,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Heart, MoreHorizontal } from "lucide-react";
+import { useSession } from "next-auth/react";
 
 export function NavFavorites() {
   const { isMobile } = useSidebar();
   const urlParams = useSearchParams();
   const workspace = urlParams.get("workspace");
   const queryClient = useQueryClient();
+  const session = useSession();
   const router = useRouter();
 
   const applicationsQuery = useQuery({
@@ -106,6 +108,7 @@ export function NavFavorites() {
         data: {
           favorites: reorderedApplications.map((a: any) => ({
             applicationId: { ...a },
+            userId: session.data?.user?.id,
           })),
         },
       };

@@ -55,8 +55,6 @@ export function Invites() {
       ),
   });
 
-  console.log(data);
-
   const deleteMutation = useMutation({
     mutationFn: (data: { workspaceId: string; email: string }) =>
       fetch("/api/workspace/invite", {

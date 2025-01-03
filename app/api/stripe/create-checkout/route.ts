@@ -83,7 +83,6 @@ export async function POST(req: NextRequest) {
       workspaceId: workspace.id,
     });
 
-    console.log(stripeSessionURL);
     return NextResponse.json({ url: stripeSessionURL });
   } catch (e) {
     console.error(e);

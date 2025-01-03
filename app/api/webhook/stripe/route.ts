@@ -42,7 +42,6 @@ export async function POST(req: NextRequest) {
   eventType = event.type;
 
   try {
-    console.log(eventType);
     switch (eventType) {
       case "checkout.session.completed": {
         // First payment is successful and a subscription is created (if mode was set to "subscription" in ButtonCheckout)
@@ -88,7 +87,6 @@ export async function POST(req: NextRequest) {
         user.priceId = priceId;
         user.customerId = customerId;
 
-        console.log(user);
         // user.hasAccess = true;
         await user.save();
 

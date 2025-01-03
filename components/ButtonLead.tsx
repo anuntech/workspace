@@ -28,7 +28,6 @@ const ButtonLead = ({ extraStyle }: { extraStyle?: string }) => {
       setEmail("");
       setIsDisabled(true);
     } catch (error) {
-      console.log(error);
     } finally {
       setIsLoading(false);
     }

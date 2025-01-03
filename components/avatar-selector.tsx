@@ -45,8 +45,6 @@ export function AvatarSelector({
     }
 
     if (data?.type === "lucide") {
-      console.log(data.value);
-
       return (
         <div className="flex items-center justify-center w-full h-full">
           <IconComponent name={data.value} className="size-[7rem]" />
