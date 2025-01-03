@@ -127,7 +127,7 @@ export function NavFavorites() {
       <SidebarGroup>
         {enabledApplications?.length > 0 && (
           <SidebarGroupLabel className="group-data-[collapsible=icon]:hidden">
-            Aplicativos
+            Favoritos
           </SidebarGroupLabel>
         )}
         <DragDropContext onDragEnd={onDragEnd}>
