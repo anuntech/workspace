@@ -63,6 +63,15 @@ export function NavProjects() {
     queryFn: async () => api.get(`/api/applications/${workspace}/allow`),
   });
 
+  const roleQuery = useQuery({
+    queryKey: ["workspace/role"],
+    queryFn: () =>
+      fetch(`/api/workspace/role/${workspace}`).then(async (res) => ({
+        data: await res.json(),
+        status: res.status,
+      })),
+  });
+
   const setPositionsMutation = useMutation({
     mutationFn: async (data: any) =>
       api.post(`/api/applications/${workspace}/set-positions`, data),
@@ -124,6 +133,10 @@ export function NavProjects() {
                     key={data.name}
                     draggableId={data.name}
                     index={index}
+                    isDragDisabled={
+                      roleQuery.data?.data?.role == "member" ||
+                      roleQuery.isPending
+                    }
                   >
                     {(provided) => (
                       <div
