@@ -101,12 +101,31 @@ export async function POST(request: Request) {
       return acc;
     }, {});
 
-    myApplications.favoriteApplications.sort((a, b) => {
+    const userId = session.user.id.toString();
+
+    // 1) Separe os favoritos do usuário logado dos favoritos dos outros usuários
+    const favoritesOfCurrentUser = myApplications.favoriteApplications.filter(
+      (item) => item.userId.toString() === userId
+    );
+    const favoritesOfOthers = myApplications.favoriteApplications.filter(
+      (item) => item.userId.toString() !== userId
+    );
+
+    // 2) Reordene somente os favoritos do usuário logado
+    favoritesOfCurrentUser.sort((a, b) => {
       return (
         positionMap[a.applicationId.toString()] -
         positionMap[b.applicationId.toString()]
       );
     });
+
+    // 3) "Rejunte" tudo
+    myApplications.favoriteApplications = [
+      ...favoritesOfCurrentUser,
+      ...favoritesOfOthers,
+    ];
+
+    // 4) Salve
 
     await myApplications.save();
 
