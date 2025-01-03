@@ -15,6 +15,7 @@ export default function SplashScreen({ onFinish }: { onFinish: () => void }) {
         ref={videoRef}
         src="/splash.mp4"
         autoPlay
+        muted
         onEnded={handleVideoEnd}
         className="w-1/2 h-1/2 object-cover"
       />
