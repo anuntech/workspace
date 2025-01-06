@@ -68,6 +68,15 @@ export function DropdownApplication({
     },
   });
 
+  const roleQuery = useQuery({
+    queryKey: ["workspace/role"],
+    queryFn: () =>
+      fetch(`/api/workspace/role/${workspace}`).then(async (res) => ({
+        data: await res.json(),
+        status: res.status,
+      })),
+  });
+
   const router = useRouter();
 
   return (
@@ -91,21 +100,27 @@ export function DropdownApplication({
               <Heart />
               {isThisAnFavoriteApp ? "Remover dos" : "Adicionar aos"} favoritos
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() =>
-                router.push(
-                  `/settings/manage-apps/${applicationId}?workspace=${workspace}`
-                )
-              }
-            >
-              <Share2 />
-              Compartilhar
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => setIsOpenAlert(true)}>
-              <PackageX />
-              Desinstalar
-            </DropdownMenuItem>
+
+            {roleQuery.data?.data?.role !== "member" &&
+              !roleQuery.isPending && (
+                <>
+                  <DropdownMenuItem
+                    onClick={() =>
+                      router.push(
+                        `/settings/manage-apps/${applicationId}?workspace=${workspace}`
+                      )
+                    }
+                  >
+                    <Share2 />
+                    Compartilhar
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => setIsOpenAlert(true)}>
+                    <PackageX />
+                    Desinstalar
+                  </DropdownMenuItem>
+                </>
+              )}
           </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
