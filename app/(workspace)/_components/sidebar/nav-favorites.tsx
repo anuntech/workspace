@@ -30,28 +30,9 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { IconComponent } from "@/components/get-lucide-icons";
-import {
-  DragDropContext,
-  Draggable,
-  DraggableProvided,
-  Droppable,
-} from "react-beautiful-dnd";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuPortal,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Heart, MoreHorizontal } from "lucide-react";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { useSession } from "next-auth/react";
+import { DropdownApplication } from "./dropdown-application";
 
 export function NavFavorites() {
   const { isMobile } = useSidebar();
@@ -298,59 +279,5 @@ function SidebarApplication({
         )}
       </Accordion>
     </SidebarMenuItem>
-  );
-}
-
-export function DropdownApplication({
-  isHover,
-  applicationId,
-  className,
-}: {
-  isHover?: boolean;
-  applicationId: string;
-  className?: string;
-}) {
-  const [isOpen, setIsOpen] = useState(false);
-  const urlParams = useSearchParams();
-  const workspace = urlParams.get("workspace");
-  const queryClient = useQueryClient();
-
-  const changeFavoriteMutation = useMutation({
-    mutationFn: async () =>
-      api.post(`/api/applications/favorite`, {
-        applicationId,
-        workspaceId: workspace,
-      }),
-    onSuccess: async () => {
-      await queryClient.refetchQueries({
-        queryKey: ["applications/favorite"],
-        type: "all",
-      });
-    },
-  });
-
-  return (
-    <DropdownMenu
-      onOpenChange={(open) => {
-        if (open) setIsOpen(true);
-        setTimeout(() => {
-          setIsOpen(open);
-        }, 100);
-      }}
-    >
-      <DropdownMenuTrigger asChild className={className}>
-        <button className={!isHover && !isOpen && "hidden"}>
-          <MoreHorizontal className="size-4" />
-        </button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56">
-        <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => changeFavoriteMutation.mutate()}>
-            <Heart />
-            Remover dos favoritos
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
   );
 }

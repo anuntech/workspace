@@ -26,32 +26,11 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { useRef, useState } from "react";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { IconComponent } from "@/components/get-lucide-icons";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuPortal,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Heart, MoreHorizontal } from "lucide-react";
-import { useSession } from "next-auth/react";
-import {
-  DragDropContext,
-  Draggable,
-  DraggableProvided,
-  Droppable,
-} from "react-beautiful-dnd";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { DropdownApplication } from "./dropdown-application";
 
 export function NavProjects() {
   const urlParams = useSearchParams();
@@ -290,71 +269,5 @@ function SidebarApplication({
         )}
       </Accordion>
     </SidebarMenuItem>
-  );
-}
-
-export function DropdownApplication({
-  isHover,
-  applicationId,
-  className,
-}: {
-  isHover?: boolean;
-  applicationId: string;
-  className?: string;
-}) {
-  const [isOpen, setIsOpen] = useState(false);
-  const urlParams = useSearchParams();
-  const workspace = urlParams.get("workspace");
-  const queryClient = useQueryClient();
-  const session = useSession();
-
-  const applicationsQuery = useQuery({
-    queryKey: ["applications/favorite"],
-    queryFn: async () =>
-      api.get(`/api/applications/favorite?workspaceId=${workspace}`),
-  });
-
-  const isThisAnFavoriteApp = applicationsQuery.data?.data.favorites.some(
-    (a: any) =>
-      a.userId == session.data?.user?.id && a.applicationId.id == applicationId
-  );
-
-  const changeFavoriteMutation = useMutation({
-    mutationFn: async () =>
-      api.post(`/api/applications/favorite`, {
-        applicationId,
-        workspaceId: workspace,
-      }),
-    onSuccess: async () => {
-      await queryClient.refetchQueries({
-        queryKey: ["applications/favorite"],
-        type: "all",
-      });
-    },
-  });
-
-  return (
-    <DropdownMenu
-      onOpenChange={(open) => {
-        if (open) setIsOpen(true);
-        setTimeout(() => {
-          setIsOpen(open);
-        }, 100);
-      }}
-    >
-      <DropdownMenuTrigger asChild className={className}>
-        <button className={!isHover && !isOpen && "hidden"}>
-          <MoreHorizontal className="size-4 " />
-        </button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56">
-        <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => changeFavoriteMutation.mutate()}>
-            <Heart />
-            {isThisAnFavoriteApp ? "Remover dos" : "Adicionar aos"} favoritos
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
   );
 }
