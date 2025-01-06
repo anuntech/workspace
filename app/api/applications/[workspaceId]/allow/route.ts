@@ -211,7 +211,32 @@ export async function GET(
       );
     }
 
-    const applications = myApplications.allowedApplicationsId;
+    let applications = myApplications.allowedApplicationsId;
+
+    const memberRole = workspace.members.find(
+      (member) => member.memberId.toString() === session.user.id.toString()
+    )?.role;
+
+    const isNotAdminAndOwner =
+      memberRole !== "admin" && workspace.owner.toString() !== session.user.id;
+
+    if (isNotAdminAndOwner) {
+      const applicationsIdsThatUserHasPermission =
+        workspace.rules.allowedMemberApps
+          .filter(
+            (app) =>
+              !!app.members.find(
+                (m) => m.memberId.toString() == session.user.id
+              )
+          )
+          .map((app) => app.appId.toString());
+
+      applications = myApplications.allowedApplicationsId.filter((app) =>
+        applicationsIdsThatUserHasPermission.includes(
+          (app as any)._id.toString()
+        )
+      );
+    }
 
     return NextResponse.json(applications);
   } catch (e) {
