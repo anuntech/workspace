@@ -123,9 +123,34 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const userFavorites = myApplications.favoriteApplications.filter(
+    let userFavorites = myApplications.favoriteApplications.filter(
       (fav) => fav.userId.toString() === session.user.id.toString()
     );
+
+    const memberRole = workspace.members.find(
+      (member) => member.memberId.toString() === session.user.id.toString()
+    )?.role;
+
+    const isNotAdminAndOwner =
+      memberRole !== "admin" && workspace.owner.toString() !== session.user.id;
+
+    if (isNotAdminAndOwner) {
+      // This is the condition that allows the user to see only the applications that he has permission to see
+      const applicationsIdsThatUserHasPermission =
+        workspace.rules.allowedMemberApps
+          .filter(
+            (app) =>
+              !!app.members.find(
+                (m) => m.memberId.toString() == session.user.id
+              )
+          )
+          .map((app) => app.appId.toString());
+      userFavorites = userFavorites.filter((app) =>
+        applicationsIdsThatUserHasPermission.includes(
+          app.applicationId._id.toString()
+        )
+      );
+    }
 
     return NextResponse.json({
       favorites: userFavorites,
