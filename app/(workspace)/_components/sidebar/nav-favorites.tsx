@@ -4,44 +4,21 @@ import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  useSidebar,
 } from "@/components/ui/sidebar";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "@/libs/api";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Skeleton } from "../../../../components/ui/skeleton";
-import Link from "next/link";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "../../../../components/ui/avatar";
-import { getS3Image } from "@/libs/s3-client";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { useRef, useState } from "react";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { IconComponent } from "@/components/get-lucide-icons";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { useSession } from "next-auth/react";
-import { DropdownApplication } from "./dropdown-application";
 import { SidebarApplication } from "./sidebar-application";
 
 export function NavFavorites() {
-  const { isMobile } = useSidebar();
   const urlParams = useSearchParams();
   const workspace = urlParams.get("workspace");
   const queryClient = useQueryClient();
   const session = useSession();
-  const router = useRouter();
 
   const applicationsQuery = useQuery({
     queryKey: ["applications/favorite"],

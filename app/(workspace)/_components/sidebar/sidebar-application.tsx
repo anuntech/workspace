@@ -26,12 +26,8 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { useRef, useState } from "react";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { IconComponent } from "@/components/get-lucide-icons";
-import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
-import { useSession } from "next-auth/react";
 import { DropdownApplication } from "./dropdown-application";
 
 export function SidebarApplication({
