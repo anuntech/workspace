@@ -9,7 +9,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import { api } from "@/libs/api";
 import { useQuery } from "@tanstack/react-query";
 import { Loader, LoaderCircle } from "lucide-react";
@@ -21,6 +21,7 @@ export default function ServicePage({ params }: { params: { id: string } }) {
   const searchParams = useSearchParams();
   const workspace = searchParams.get("workspace");
   const fieldSubScreen = searchParams.get("fieldSubScreen");
+  const sideBar = useSidebar();
   const [isIframeLoading, setIsIframeLoading] = useState(true);
 
   if (!params.id) {
@@ -55,7 +56,12 @@ export default function ServicePage({ params }: { params: { id: string } }) {
     <>
       <header className="flex h-14 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
         <div className="flex items-center gap-2">
-          <SidebarTrigger className="-ml-1" />
+          <SidebarTrigger
+            onClick={() =>
+              localStorage.setItem("sidebar", String(!sideBar.open))
+            }
+            className="-ml-1"
+          />
           <Separator orientation="vertical" className="mr-2 h-4" />
           <Breadcrumb>
             <BreadcrumbList>
