@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Heart, MoreHorizontal, PackageX, Share2, Trash } from "lucide-react";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
 
 export function DropdownApplication({
   isHover,
