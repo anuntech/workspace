@@ -21,8 +21,8 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { IconComponent } from "@/components/get-lucide-icons";
-import { Button } from "@/components/ui/button";
 import config from "@/config";
+import { AddAppStepsDialog } from "./_components/manage-apps/add-app-steps";
 
 export default function AppsPage() {
   const [inputValue, setInputValue] = useState("");
@@ -90,7 +90,7 @@ export default function AppsPage() {
         <div className="w-full max-w-3xl space-y-5">
           <div className="flex items-center justify-between">
             <h1 className="text-2xl">Loja de aplicativos</h1>
-            {isAnuntechUser && <Button>Adicionar novo aplicativo</Button>}
+            {isAnuntechUser && <AddAppStepsDialog />}
           </div>
           <Separator />
           <section className="relative flex items-center">
