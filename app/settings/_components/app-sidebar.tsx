@@ -307,7 +307,7 @@ export function AppSidebar({ ...props }) {
           </Collapsible>
         )}
 
-        {isAnuntechUser && (
+        {/* {isAnuntechUser && (
           <Collapsible
             title="Anuntech"
             defaultOpen
@@ -343,7 +343,7 @@ export function AppSidebar({ ...props }) {
               </CollapsibleContent>
             </SidebarGroup>
           </Collapsible>
-        )}
+        )} */}
       </SidebarContent>
       <SidebarRail />
     </Sidebar>

@@ -21,6 +21,8 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { IconComponent } from "@/components/get-lucide-icons";
+import { Button } from "@/components/ui/button";
+import config from "@/config";
 
 export default function AppsPage() {
   const [inputValue, setInputValue] = useState("");
@@ -45,6 +47,14 @@ export default function AppsPage() {
         workspaceId: workspace,
       }),
   });
+
+  const userQuery = useQuery({
+    queryKey: ["user"],
+    queryFn: () => fetch("/api/user").then((res) => res.json()),
+  });
+
+  const emailDomain = userQuery.data?.email?.split("@")[1];
+  const isAnuntechUser = emailDomain === config.domainName;
 
   useEffect(() => {
     if (
@@ -78,7 +88,10 @@ export default function AppsPage() {
       </header>
       <div className="flex flex-col items-center p-10">
         <div className="w-full max-w-3xl space-y-5">
-          <h1 className="text-2xl">Loja de aplicativos</h1>
+          <div className="flex items-center justify-between">
+            <h1 className="text-2xl">Loja de aplicativos</h1>
+            {isAnuntechUser && <Button>Adicionar novo aplicativo</Button>}
+          </div>
           <Separator />
           <section className="relative flex items-center">
             <Search className="absolute left-4 size-4" />
