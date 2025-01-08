@@ -17,10 +17,6 @@ import { AvatarSelector } from "@/components/avatar-selector";
 import { useForm } from "react-hook-form";
 
 export function ImagesStep() {
-  const [name, setName] = useState("");
-  const [subtitle, setSubtitle] = useState("");
-  const [description, setDescription] = useState("");
-
   const [icon, setIcon] = useState<FormData>(null);
   const [imageUrlWithoutS3, setImageUrlWithoutS3] = useState<string>("");
   const [emojiAvatar, setEmojiAvatar] = useState<string>("");
@@ -34,17 +30,6 @@ export function ImagesStep() {
     reset,
     formState: { isSubmitting },
   } = useForm<any>();
-
-  const isFormValid =
-    name.trim() !== "" && subtitle.trim() !== "" && description.trim() !== "";
-
-  const handleSave = () => {
-    if (isFormValid) {
-      console.log("Aplicativo salvo:", { name, subtitle, description });
-    } else {
-      alert("Por favor, preencha todos os campos obrigatórios.");
-    }
-  };
 
   const handleAvatarChange = (avatar: {
     value: string;
@@ -98,7 +83,7 @@ export function ImagesStep() {
             data={
               emojiAvatar ? { value: emojiAvatar, type: emojiAvatarType } : null
             }
-            className="w-[100px]"
+            className="w-[80px]"
             emojiSize="4rem"
             imageUrlWithoutS3={imageUrlWithoutS3 ? imageUrlWithoutS3 : null}
             onAvatarChange={handleAvatarChange}
