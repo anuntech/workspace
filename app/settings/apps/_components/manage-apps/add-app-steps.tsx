@@ -51,7 +51,13 @@ export function AddAppStepsDialog() {
   const ActualStepComponent = steps[currentStep].content;
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => setIsOpen(open)}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        setIsOpen(open);
+        if (!open) setCurrentStep(0);
+      }}
+    >
       <DialogTrigger asChild>
         <Button onClick={() => setIsOpen(true)}>
           Adicionar novo aplicativo
