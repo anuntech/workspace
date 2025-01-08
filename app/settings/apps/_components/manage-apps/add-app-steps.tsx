@@ -9,17 +9,23 @@ import {
 import { Button } from "@/components/ui/button";
 import { BasicInformationStep } from "./basic-information-step";
 import { ImagesStep } from "./images-step";
+import { GetLink } from "./get-link";
 
 const initialSteps = [
   {
     id: 1,
     content: BasicInformationStep,
-    validation: false,
+    validation: true,
   },
   {
     id: 2,
     content: ImagesStep,
-    validation: false,
+    validation: true,
+  },
+  {
+    id: 3,
+    content: GetLink,
+    validation: true,
   },
 ];
 
@@ -79,7 +85,7 @@ export function AddAppStepsDialog() {
           <Button
             onClick={goToNextStep}
             disabled={
-              currentStep === steps.length - 1 && !steps[currentStep].validation
+              currentStep === steps.length - 1 || !steps[currentStep].validation
             }
           >
             Próximo
