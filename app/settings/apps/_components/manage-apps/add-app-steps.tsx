@@ -8,8 +8,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { BasicInformationStep } from "./basic-information-step";
-import { DialogTitle } from "@radix-ui/react-dialog";
-import { AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { ImagesStep } from "./images-step";
 
 const initialSteps = [
@@ -28,6 +26,7 @@ const initialSteps = [
 export function AddAppStepsDialog() {
   const [steps, setSteps] = useState(initialSteps);
   const [currentStep, setCurrentStep] = useState(0);
+  const [isOpen, setIsOpen] = useState(false);
 
   const goToNextStep = () => {
     if (currentStep < steps.length - 1) {
@@ -52,11 +51,16 @@ export function AddAppStepsDialog() {
   const ActualStepComponent = steps[currentStep].content;
 
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={(open) => setIsOpen(open)}>
       <DialogTrigger asChild>
-        <Button>Adicionar novo aplicativo</Button>
+        <Button onClick={() => setIsOpen(true)}>
+          Adicionar novo aplicativo
+        </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-lg p-6 space-y-4">
+      <DialogContent
+        className="max-w-lg p-6 space-y-4"
+        onInteractOutside={(event) => event.preventDefault()} // Previne o fechamento ao clicar fora
+      >
         <ActualStepComponent />
         <div className="flex justify-between mt-4">
           <Button

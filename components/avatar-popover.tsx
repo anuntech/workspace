@@ -10,12 +10,10 @@ import Picker from "@emoji-mart/react";
 import emojiData from "@emoji-mart/data";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Image from "next/image";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/hooks/use-toast";
 import ImageEditor from "@/components/image-crop";
 import { cn } from "@/lib/utils";
 import * as lucideIcons from "lucide-react"; // Import all Lucide icons
-import { LucideProps } from "lucide-react";
 import { Input } from "./ui/input";
 
 interface AvatarPopoverProps {
@@ -90,7 +88,7 @@ export function AvatarPopover({ onAvatarChange }: AvatarPopoverProps) {
   };
 
   return (
-    <Popover open={open} onOpenChange={handleSetOpen}>
+    <Popover modal={true} open={open} onOpenChange={handleSetOpen}>
       <PopoverTrigger asChild>
         <Button
           variant="ghost"
