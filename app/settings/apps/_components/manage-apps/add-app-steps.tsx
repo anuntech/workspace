@@ -5,6 +5,7 @@ import { BasicInformationStep } from "./basic-information-step";
 import { ImagesStep } from "./images-step";
 import { GetPrincipalLink } from "./get-principal-link";
 import { AppFormData } from "./types";
+import { ManageSettingsOrPrincipalStep } from "./manage-settings-or-principal/manage-settings-or-principal-step";
 
 const initialFormData: AppFormData = {
   basicInformation: {
@@ -43,6 +44,11 @@ export function AddAppStepsDialog() {
     {
       id: 3,
       content: GetPrincipalLink,
+      validation: true,
+    },
+    {
+      id: 4,
+      content: ManageSettingsOrPrincipalStep,
       validation: true,
     },
   ]);
