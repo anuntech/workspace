@@ -12,21 +12,24 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { AppFormData } from "./types";
 
-export function BasicInformationStep() {
-  const [name, setName] = useState("");
-  const [subtitle, setSubtitle] = useState("");
-  const [description, setDescription] = useState("");
+interface BasicInformationStepProps {
+  data: AppFormData;
+  updateFormData: (
+    section: keyof AppFormData,
+    updates: Partial<AppFormData[keyof AppFormData]>
+  ) => void;
+}
 
-  const isFormValid =
-    name.trim() !== "" && subtitle.trim() !== "" && description.trim() !== "";
+export function BasicInformationStep({
+  data,
+  updateFormData,
+}: BasicInformationStepProps) {
+  const { name, subtitle, description } = data.basicInformation;
 
-  const handleSave = () => {
-    if (isFormValid) {
-      console.log("Aplicativo salvo:", { name, subtitle, description });
-    } else {
-      alert("Por favor, preencha todos os campos obrigatórios.");
-    }
+  const handleChange = (field: string, value: string) => {
+    updateFormData("basicInformation", { [field]: value });
   };
 
   return (
@@ -45,7 +48,7 @@ export function BasicInformationStep() {
             id="name"
             placeholder="Coloque um nome para o aplicativo"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => handleChange("name", e.target.value)}
           />
         </div>
         <div>
@@ -54,7 +57,7 @@ export function BasicInformationStep() {
             id="subtitle"
             placeholder='"Seu aplicativo de produtividade"'
             value={subtitle}
-            onChange={(e) => setSubtitle(e.target.value)}
+            onChange={(e) => handleChange("subtitle", e.target.value)}
           />
         </div>
         <div>
@@ -63,7 +66,7 @@ export function BasicInformationStep() {
             id="description"
             placeholder="Um aplicativo feito para te ajudar na sua produtividade"
             value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            onChange={(e) => handleChange("description", e.target.value)}
           />
         </div>
       </div>

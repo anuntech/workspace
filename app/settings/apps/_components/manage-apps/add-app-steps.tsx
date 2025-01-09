@@ -1,36 +1,51 @@
 import { useState } from "react";
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogHeader,
-  DialogDescription,
-} from "@/components/ui/dialog";
+import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { BasicInformationStep } from "./basic-information-step";
 import { ImagesStep } from "./images-step";
 import { GetLink } from "./get-link";
+import { AppFormData } from "./types";
 
-const initialSteps = [
-  {
-    id: 1,
-    content: BasicInformationStep,
-    validation: true,
+const initialFormData: AppFormData = {
+  basicInformation: {
+    name: "",
+    subtitle: "",
+    description: "",
   },
-  {
-    id: 2,
-    content: ImagesStep,
-    validation: true,
+  images: {
+    icon: null,
+    imageUrlWithoutS3: "",
+    emojiAvatar: "",
+    emojiAvatarType: "emoji",
+    galleryPhotos: null,
   },
-  {
-    id: 3,
-    content: GetLink,
-    validation: true,
+  links: {
+    title: "",
+    link: "",
+    type: "default",
   },
-];
+};
 
 export function AddAppStepsDialog() {
-  const [steps, setSteps] = useState(initialSteps);
+  const [data, setData] = useState<AppFormData>(initialFormData);
+  console.log(data);
+  const [steps, setSteps] = useState([
+    {
+      id: 1,
+      content: BasicInformationStep,
+      validation: true,
+    },
+    {
+      id: 2,
+      content: ImagesStep,
+      validation: true,
+    },
+    {
+      id: 3,
+      content: GetLink,
+      validation: true,
+    },
+  ]);
   const [currentStep, setCurrentStep] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -46,15 +61,17 @@ export function AddAppStepsDialog() {
     }
   };
 
-  const setValidationByStep = (validation: boolean) => {
-    setSteps((prevSteps) =>
-      prevSteps.map((step, index) =>
-        index === currentStep ? { ...step, validation } : step
-      )
-    );
-  };
-
   const ActualStepComponent = steps[currentStep].content;
+
+  const updateFormData = (
+    section: keyof AppFormData,
+    updates: Partial<AppFormData[keyof AppFormData]>
+  ) => {
+    setData((prev: AppFormData) => ({
+      ...prev,
+      [section]: { ...prev[section], ...updates },
+    }));
+  };
 
   return (
     <Dialog
@@ -73,7 +90,7 @@ export function AddAppStepsDialog() {
         className="max-w-lg p-6 space-y-4"
         onInteractOutside={(event) => event.preventDefault()}
       >
-        <ActualStepComponent />
+        <ActualStepComponent data={data} updateFormData={updateFormData} />
         <div className="flex justify-between mt-4">
           <Button
             variant="outline"

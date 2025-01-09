@@ -1,36 +1,23 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import {
-  Dialog,
-  DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { base64ToBlob } from "@/lib/utils";
 import { AvatarSelector } from "@/components/avatar-selector";
-import { useForm } from "react-hook-form";
+import { AppFormData } from "./types";
 
-export function ImagesStep() {
-  const [icon, setIcon] = useState<FormData>(null);
-  const [imageUrlWithoutS3, setImageUrlWithoutS3] = useState<string>("");
-  const [emojiAvatar, setEmojiAvatar] = useState<string>("");
-  const [emojiAvatarType, setEmojiAvatarType] = useState<"emoji" | "lucide">(
-    "emoji"
-  );
+interface ImagesStepProps {
+  data: AppFormData;
+  updateFormData: (
+    section: keyof AppFormData,
+    updates: Partial<AppFormData[keyof AppFormData]>
+  ) => void;
+}
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { isSubmitting },
-  } = useForm<any>();
-
+export function ImagesStep({ data, updateFormData }: ImagesStepProps) {
   const handleAvatarChange = (avatar: {
     value: string;
     type: "image" | "emoji" | "lucide";
@@ -43,30 +30,25 @@ export function ImagesStep() {
         formData.append("icon", blob, "avatar.jpeg");
         formData.append("iconType", avatar.type);
 
-        const imageUrl = URL.createObjectURL(blob);
-        setImageUrlWithoutS3(imageUrl);
-        setEmojiAvatar(null);
+        updateFormData("images", {
+          icon: formData,
+          imageUrlWithoutS3: URL.createObjectURL(blob),
+          emojiAvatar: "",
+        });
         break;
       }
-
       case "emoji":
-        formData.append("icon", avatar.value);
-        formData.append("iconType", avatar.type);
-        setImageUrlWithoutS3(null);
-        setEmojiAvatar(avatar.value);
-        setEmojiAvatarType(avatar.type);
-        break;
-
       case "lucide":
         formData.append("icon", avatar.value);
         formData.append("iconType", avatar.type);
-        setImageUrlWithoutS3(null);
-        setEmojiAvatar(avatar.value);
-        setEmojiAvatarType(avatar.type);
+        updateFormData("images", {
+          icon: formData,
+          imageUrlWithoutS3: "",
+          emojiAvatar: avatar.value,
+          emojiAvatarType: avatar.type,
+        });
         break;
     }
-
-    setIcon(formData);
   };
 
   return (
@@ -82,11 +64,20 @@ export function ImagesStep() {
           <Label htmlFor="name">Ícone do aplicativo *</Label>
           <AvatarSelector
             data={
-              emojiAvatar ? { value: emojiAvatar, type: emojiAvatarType } : null
+              data.images.emojiAvatar
+                ? {
+                    value: data.images.emojiAvatar,
+                    type: data.images.emojiAvatarType,
+                  }
+                : null
             }
             className="w-[80px]"
             emojiSize="4rem"
-            imageUrlWithoutS3={imageUrlWithoutS3 ? imageUrlWithoutS3 : null}
+            imageUrlWithoutS3={
+              data.images.imageUrlWithoutS3
+                ? data.images.imageUrlWithoutS3
+                : null
+            }
             onAvatarChange={handleAvatarChange}
           />
         </div>
@@ -99,7 +90,6 @@ export function ImagesStep() {
             type="file"
             accept="image/*"
             multiple
-            {...register("galeryPhotos")}
           />
         </div>
       </div>
