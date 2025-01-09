@@ -69,16 +69,20 @@ export function GetPrincipalLink({
             className="space-y-2"
           >
             <div className="flex items-center space-x-2">
-              <RadioGroupItem value="default" id="r1" />
-              <Label htmlFor="r1">Default</Label>
+              <RadioGroupItem value="none" id="r1" />
+              <Label htmlFor="r1">Nenhum</Label>
             </div>
             <div className="flex items-center space-x-2">
-              <RadioGroupItem value="comfortable" id="r2" />
-              <Label htmlFor="r2">Comfortable</Label>
+              <RadioGroupItem value="iframe" id="r2" />
+              <Label htmlFor="r2">Iframe</Label>
             </div>
             <div className="flex items-center space-x-2">
-              <RadioGroupItem value="compact" id="r3" />
-              <Label htmlFor="r3">Compact</Label>
+              <RadioGroupItem value="newWindow" id="r3" />
+              <Label htmlFor="r3">Nova janela</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="sameWindow" id="r3" />
+              <Label htmlFor="r3">Mesma janela</Label>
             </div>
           </RadioGroup>
         </div>

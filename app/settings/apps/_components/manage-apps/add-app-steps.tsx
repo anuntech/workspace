@@ -22,7 +22,7 @@ const initialFormData: AppFormData = {
   principalLink: {
     title: "",
     link: "",
-    type: "default",
+    type: "none",
   },
 };
 

@@ -14,6 +14,6 @@ export interface AppFormData {
   principalLink: {
     title: string;
     link: string;
-    type: string;
+    type: "none" | "iframe" | "newWindow" | "sameWindow";
   };
 }
