@@ -71,7 +71,7 @@ export function AddAppStepsDialog() {
       </DialogTrigger>
       <DialogContent
         className="max-w-lg p-6 space-y-4"
-        onInteractOutside={(event) => event.preventDefault()} // Previne o fechamento ao clicar fora
+        onInteractOutside={(event) => event.preventDefault()}
       >
         <ActualStepComponent />
         <div className="flex justify-between mt-4">

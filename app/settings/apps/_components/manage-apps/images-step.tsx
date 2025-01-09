@@ -38,7 +38,7 @@ export function ImagesStep() {
     const formData = new FormData();
 
     switch (avatar.type) {
-      case "image":
+      case "image": {
         const blob = base64ToBlob(avatar.value);
         formData.append("icon", blob, "avatar.jpeg");
         formData.append("iconType", avatar.type);
@@ -47,6 +47,7 @@ export function ImagesStep() {
         setImageUrlWithoutS3(imageUrl);
         setEmojiAvatar(null);
         break;
+      }
 
       case "emoji":
         formData.append("icon", avatar.value);
