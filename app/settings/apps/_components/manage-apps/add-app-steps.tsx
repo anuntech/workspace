@@ -3,7 +3,7 @@ import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { BasicInformationStep } from "./basic-information-step";
 import { ImagesStep } from "./images-step";
-import { GetLink } from "./get-link";
+import { GetPrincipalLink } from "./get-principal-link";
 import { AppFormData } from "./types";
 
 const initialFormData: AppFormData = {
@@ -19,7 +19,7 @@ const initialFormData: AppFormData = {
     emojiAvatarType: "emoji",
     galleryPhotos: null,
   },
-  links: {
+  principalLink: {
     title: "",
     link: "",
     type: "default",
@@ -42,7 +42,7 @@ export function AddAppStepsDialog() {
     },
     {
       id: 3,
-      content: GetLink,
+      content: GetPrincipalLink,
       validation: true,
     },
   ]);

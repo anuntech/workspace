@@ -11,7 +11,7 @@ export interface AppFormData {
     emojiAvatarType: "emoji" | "lucide";
     galleryPhotos: FileList | null;
   };
-  links: {
+  principalLink: {
     title: string;
     link: string;
     type: string;

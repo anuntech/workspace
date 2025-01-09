@@ -1,19 +1,33 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import {
-  Dialog,
-  DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { AppFormData } from "./types";
 
-export function GetLink({ isSublink }: { isSublink?: boolean }) {
+interface GetPrincipalLinkProps {
+  data: AppFormData;
+  updateFormData: (
+    section: keyof AppFormData,
+    updates: Partial<AppFormData[keyof AppFormData]>
+  ) => void;
+  isSublink?: boolean;
+}
+
+export function GetPrincipalLink({
+  data,
+  updateFormData,
+  isSublink,
+}: GetPrincipalLinkProps) {
+  const { title, link, type } = data.principalLink;
+
+  const handleChange = (field: string, value: string) => {
+    updateFormData("principalLink", { [field]: value });
+  };
+
   return (
     <>
       <DialogHeader>
@@ -29,17 +43,31 @@ export function GetLink({ isSublink }: { isSublink?: boolean }) {
       <div className="grid gap-4">
         <div>
           <Label htmlFor="title">Título *</Label>
-          <Input id="title" placeholder="Coloque um nome para o aplicativo" />
+          <Input
+            id="title"
+            placeholder="Coloque um nome para o aplicativo"
+            value={title}
+            onChange={(e) => handleChange("title", e.target.value)}
+          />
         </div>
         <div>
-          <Label htmlFor="link">Subtítulo do aplicativo *</Label>
-          <Input id="link" placeholder='"Seu aplicativo de produtividade"' />
+          <Label htmlFor="link">Link do aplicativo *</Label>
+          <Input
+            id="link"
+            placeholder="https://seu-aplicativo.com"
+            value={link}
+            onChange={(e) => handleChange("link", e.target.value)}
+          />
         </div>
         <div className="space-y-4">
           <Label htmlFor="type">
             Tipo de {!isSublink ? "link" : "sublink"} *
           </Label>
-          <RadioGroup defaultValue="comfortable" className="space-y-2">
+          <RadioGroup
+            value={type}
+            onValueChange={(value) => handleChange("type", value)}
+            className="space-y-2"
+          >
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="default" id="r1" />
               <Label htmlFor="r1">Default</Label>
