@@ -8,7 +8,7 @@ export interface AppFormData {
     icon: FormData | null;
     imageUrlWithoutS3: string;
     emojiAvatar: string;
-    emojiAvatarType: "emoji" | "lucide";
+    emojiAvatarType: "emoji" | "lucide" | "image";
     galleryPhotos: FileList | null;
   };
   principalLink: {
@@ -16,4 +16,9 @@ export interface AppFormData {
     link: string;
     type: "none" | "iframe" | "newWindow" | "sameWindow";
   };
+  sublinks: {
+    title: string;
+    link: string;
+    type: "none" | "iframe" | "newWindow" | "sameWindow";
+  }[];
 }

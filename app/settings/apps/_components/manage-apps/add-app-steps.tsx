@@ -25,6 +25,7 @@ const initialFormData: AppFormData = {
     link: "",
     type: "none",
   },
+  sublinks: [],
 };
 
 export function AddAppStepsDialog() {
