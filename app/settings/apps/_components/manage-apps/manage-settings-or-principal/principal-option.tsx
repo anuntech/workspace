@@ -103,52 +103,40 @@ export function PrincipalOption({
       <div className="flex flex-col">
         {Array.isArray(data.sublinks) &&
           data.sublinks.map((sub, index) => (
-            <div key={index} className="flex">
+            <div key={index} className="flex w-full justify-between">
               <Button
                 variant="ghost"
                 className="hover:bg-gray-200 w-56 hover:text-gray-900 transition-colors duration-150 justify-start pl-10 relative before:content-['•'] before:absolute before:left-6 before:text-gray-500 h-4 py-4"
               >
                 {sub.title}
               </Button>
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button variant="ghost">
-                    <Trash2 className="size-4" />
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Esta ação não pode ser desfeita. Isso excluirá
-                      permanentemente este sublink.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                    <AlertDialogAction onClick={() => deleteSublink(index)}>
-                      Continuar
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-              <Button variant="ghost">
-                <Pencil className="size-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                onClick={() => moveSublink(index, "up")}
-                disabled={index === 0}
-              >
-                <ChevronUp className="size-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                onClick={() => moveSublink(index, "down")}
-                disabled={index === data.sublinks.length - 1}
-              >
-                <ChevronDown className="size-4" />
-              </Button>
+              <div>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="ghost">
+                      <Trash2 className="size-4" />
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Esta ação não pode ser desfeita. Isso excluirá
+                        permanentemente este sublink.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction onClick={() => deleteSublink(index)}>
+                        Continuar
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+                <Button variant="ghost">
+                  <Pencil className="size-4" />
+                </Button>
+              </div>
             </div>
           ))}
 
