@@ -8,6 +8,17 @@ import { getS3Image } from "@/libs/s3-client";
 import { ChevronDown, ChevronUp, Pencil, Trash2 } from "lucide-react";
 import { AppFormData } from "../types";
 import { AddSublinkDialog } from "./add-sublink-dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface PrincipalOptionProps {
   data: AppFormData;
@@ -37,6 +48,12 @@ export function PrincipalOption({
       ];
     }
 
+    updateFormData("sublinks", newSublinks);
+  };
+
+  const deleteSublink = (index: number) => {
+    if (!Array.isArray(data.sublinks)) return;
+    const newSublinks = data.sublinks.filter((_, i) => i !== index);
     updateFormData("sublinks", newSublinks);
   };
 
@@ -93,9 +110,28 @@ export function PrincipalOption({
               >
                 {sub.title}
               </Button>
-              <Button variant="ghost">
-                <Trash2 className="size-4" />
-              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="ghost">
+                    <Trash2 className="size-4" />
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Esta ação não pode ser desfeita. Isso excluirá
+                      permanentemente este sublink.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => deleteSublink(index)}>
+                      Continuar
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
               <Button variant="ghost">
                 <Pencil className="size-4" />
               </Button>
