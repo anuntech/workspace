@@ -82,6 +82,25 @@ export function AddAppStepsDialog() {
     }));
   };
 
+  const moveSublink = (index: number, direction: "up" | "down") => {
+    if (!Array.isArray(data.sublinks)) return;
+
+    const newSublinks = [...data.sublinks];
+    if (direction === "up" && index > 0) {
+      [newSublinks[index], newSublinks[index - 1]] = [
+        newSublinks[index - 1],
+        newSublinks[index],
+      ];
+    } else if (direction === "down" && index < newSublinks.length - 1) {
+      [newSublinks[index], newSublinks[index + 1]] = [
+        newSublinks[index + 1],
+        newSublinks[index],
+      ];
+    }
+
+    updateFormData("sublinks", newSublinks);
+  };
+
   return (
     <Dialog
       open={isOpen}

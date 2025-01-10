@@ -61,7 +61,7 @@ export function AddSublinkDialog({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="w-48">
+        <Button variant="outline" className="w-48 mt-3">
           Adicionar sublink
         </Button>
       </DialogTrigger>

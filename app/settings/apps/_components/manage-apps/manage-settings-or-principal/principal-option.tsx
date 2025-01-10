@@ -21,6 +21,25 @@ export function PrincipalOption({
   data,
   updateFormData,
 }: PrincipalOptionProps) {
+  const moveSublink = (index: number, direction: "up" | "down") => {
+    if (!Array.isArray(data.sublinks)) return;
+
+    const newSublinks = [...data.sublinks];
+    if (direction === "up" && index > 0) {
+      [newSublinks[index], newSublinks[index - 1]] = [
+        newSublinks[index - 1],
+        newSublinks[index],
+      ];
+    } else if (direction === "down" && index < newSublinks.length - 1) {
+      [newSublinks[index], newSublinks[index + 1]] = [
+        newSublinks[index + 1],
+        newSublinks[index],
+      ];
+    }
+
+    updateFormData("sublinks", newSublinks);
+  };
+
   return (
     <>
       <Button
@@ -64,7 +83,7 @@ export function PrincipalOption({
         </div>
       </Button>
 
-      <div className="flex flex-col gap-5">
+      <div className="flex flex-col">
         {Array.isArray(data.sublinks) &&
           data.sublinks.map((sub, index) => (
             <div key={index} className="flex">
@@ -80,10 +99,18 @@ export function PrincipalOption({
               <Button variant="ghost">
                 <Pencil className="size-4" />
               </Button>
-              <Button variant="ghost">
+              <Button
+                variant="ghost"
+                onClick={() => moveSublink(index, "up")}
+                disabled={index === 0}
+              >
                 <ChevronUp className="size-4" />
               </Button>
-              <Button variant="ghost">
+              <Button
+                variant="ghost"
+                onClick={() => moveSublink(index, "down")}
+                disabled={index === data.sublinks.length - 1}
+              >
                 <ChevronDown className="size-4" />
               </Button>
             </div>
