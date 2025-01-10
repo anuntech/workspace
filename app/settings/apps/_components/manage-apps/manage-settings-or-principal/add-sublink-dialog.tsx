@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -60,7 +61,7 @@ export function AddSublinkDialog({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="w-48 mt-4">
+        <Button variant="outline" className="w-48">
           Adicionar sublink
         </Button>
       </DialogTrigger>
