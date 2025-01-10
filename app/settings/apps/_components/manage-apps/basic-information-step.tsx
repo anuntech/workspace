@@ -7,6 +7,19 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { AppFormData } from "./types";
+import { z } from "zod";
+
+const basicInformationSchema = z.object({
+  name: z.string().min(1, "Nome é obrigatório").max(50, "Nome muito longo"),
+  subtitle: z
+    .string()
+    .min(1, "Subtítulo é obrigatório")
+    .max(100, "Subtítulo muito longo"),
+  description: z
+    .string()
+    .min(1, "Descrição é obrigatória")
+    .max(500, "Descrição muito longa"),
+});
 
 interface BasicInformationStepProps {
   data: AppFormData;
@@ -14,16 +27,30 @@ interface BasicInformationStepProps {
     section: keyof AppFormData,
     updates: Partial<AppFormData[keyof AppFormData]>
   ) => void;
+  setStepValidation: (isValid: boolean) => void;
 }
 
 export function BasicInformationStep({
   data,
   updateFormData,
+  setStepValidation,
 }: BasicInformationStepProps) {
   const { name, subtitle, description } = data.basicInformation;
 
   const handleChange = (field: string, value: string) => {
     updateFormData("basicInformation", { [field]: value });
+
+    // Validate the form after each change
+    const validationResult = basicInformationSchema.safeParse({
+      name,
+      subtitle,
+      description,
+      ...(field === "name" ? { name: value } : {}),
+      ...(field === "subtitle" ? { subtitle: value } : {}),
+      ...(field === "description" ? { description: value } : {}),
+    });
+
+    setStepValidation(validationResult.success);
   };
 
   return (

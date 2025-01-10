@@ -35,7 +35,7 @@ export function AddAppStepsDialog() {
     {
       id: 1,
       content: BasicInformationStep,
-      validation: true,
+      validation: false,
     },
     {
       id: 2,
@@ -101,6 +101,14 @@ export function AddAppStepsDialog() {
     updateFormData("sublinks", newSublinks);
   };
 
+  const setStepValidation = (isValid: boolean) => {
+    setSteps((prev) =>
+      prev.map((step, idx) =>
+        idx === currentStep ? { ...step, validation: isValid } : step
+      )
+    );
+  };
+
   return (
     <Dialog
       open={isOpen}
@@ -118,7 +126,11 @@ export function AddAppStepsDialog() {
         className="max-w-lg p-6 space-y-4"
         onInteractOutside={(event) => event.preventDefault()}
       >
-        <ActualStepComponent data={data} updateFormData={updateFormData} />
+        <ActualStepComponent
+          data={data}
+          updateFormData={updateFormData}
+          setStepValidation={setStepValidation}
+        />
         <div className="flex justify-between mt-4">
           <Button
             variant="outline"
