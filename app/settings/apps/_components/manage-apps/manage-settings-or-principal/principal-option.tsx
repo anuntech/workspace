@@ -5,7 +5,15 @@ import { DropdownApplication } from "@/app/(workspace)/_components/sidebar/dropd
 import { IconComponent } from "@/components/get-lucide-icons";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getS3Image } from "@/libs/s3-client";
-import { ChevronDown, ChevronUp, Pencil, Trash2 } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronUp,
+  Pencil,
+  Trash2,
+  MoreHorizontal,
+  MoveDown,
+  MoveUp,
+} from "lucide-react";
 import { AppFormData } from "../types";
 import { AddSublinkDialog } from "./add-sublink-dialog";
 import {
@@ -19,6 +27,13 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useState } from "react";
 
 interface PrincipalOptionProps {
   data: AppFormData;
@@ -32,6 +47,8 @@ export function PrincipalOption({
   data,
   updateFormData,
 }: PrincipalOptionProps) {
+  const [sublinkToDelete, setSublinkToDelete] = useState<number | null>(null);
+
   const moveSublink = (index: number, direction: "up" | "down") => {
     if (!Array.isArray(data.sublinks)) return;
 
@@ -110,38 +127,74 @@ export function PrincipalOption({
               >
                 {sub.title}
               </Button>
-              <div>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button variant="ghost">
-                      <Trash2 className="size-4" />
+              <div className="flex items-center">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="h-8 w-8 p-0">
+                      <MoreHorizontal className="size-4" />
                     </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Esta ação não pode ser desfeita. Isso excluirá
-                        permanentemente este sublink.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                      <AlertDialogAction onClick={() => deleteSublink(index)}>
-                        Continuar
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-                <Button variant="ghost">
-                  <Pencil className="size-4" />
-                </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => setSublinkToDelete(index)}>
+                      <Trash2 className="mr-2 size-4" />
+                      <span>Excluir</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <Pencil className="mr-2 size-4" />
+                      <span>Editar</span>
+                    </DropdownMenuItem>
+                    {index > 0 && (
+                      <DropdownMenuItem
+                        onClick={() => moveSublink(index, "up")}
+                      >
+                        <MoveUp className="mr-2 size-4" />
+                        <span>Mover para cima</span>
+                      </DropdownMenuItem>
+                    )}
+                    {index < data.sublinks.length - 1 && (
+                      <DropdownMenuItem
+                        onClick={() => moveSublink(index, "down")}
+                      >
+                        <MoveDown className="mr-2 size-4" />
+                        <span>Mover para baixo</span>
+                      </DropdownMenuItem>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             </div>
           ))}
 
         <AddSublinkDialog data={data} updateFormData={updateFormData} />
       </div>
+
+      <AlertDialog
+        open={sublinkToDelete !== null}
+        onOpenChange={() => setSublinkToDelete(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta ação não pode ser desfeita. Isso excluirá permanentemente
+              este sublink.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (sublinkToDelete !== null) {
+                  deleteSublink(sublinkToDelete);
+                }
+                setSublinkToDelete(null);
+              }}
+            >
+              Continuar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }
