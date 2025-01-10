@@ -9,16 +9,16 @@ export interface AppFormData {
     imageUrlWithoutS3: string;
     emojiAvatar: string;
     emojiAvatarType: "emoji" | "lucide" | "image";
-    galleryPhotos: FileList | null;
+    galleryPhotos: null;
   };
   principalLink: {
     title: string;
     link: string;
     type: "none" | "iframe" | "newWindow" | "sameWindow";
   };
-  sublinks: {
+  sublinks: Array<{
     title: string;
     link: string;
     type: "none" | "iframe" | "newWindow" | "sameWindow";
-  }[];
+  }>;
 }

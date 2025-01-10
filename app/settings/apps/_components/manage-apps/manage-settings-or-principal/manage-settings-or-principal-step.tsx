@@ -48,7 +48,7 @@ export function ManageSettingsOrPrincipalStep({
             <TabsTrigger value="settings">Menu de configurações</TabsTrigger>
           </TabsList>
           <TabsContent value="principal">
-            <PrincipalOption data={data} />
+            <PrincipalOption updateFormData={updateFormData} data={data} />
           </TabsContent>
           <TabsContent value="settings">Change your password here.</TabsContent>
         </Tabs>

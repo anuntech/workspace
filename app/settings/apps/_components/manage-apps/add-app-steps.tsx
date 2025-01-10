@@ -76,7 +76,9 @@ export function AddAppStepsDialog() {
   ) => {
     setData((prev: AppFormData) => ({
       ...prev,
-      [section]: { ...prev[section], ...updates },
+      [section]: Array.isArray(updates)
+        ? updates
+        : { ...prev[section], ...updates },
     }));
   };
 

@@ -7,14 +7,24 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getS3Image } from "@/libs/s3-client";
 import { ChevronUp } from "lucide-react";
 import { AppFormData } from "../types";
+import { AddSublinkDialog } from "./add-sublink-dialog";
 
 interface PrincipalOptionProps {
   data: AppFormData;
+  updateFormData: (
+    section: keyof AppFormData,
+    updates: Partial<AppFormData[keyof AppFormData]>
+  ) => void;
 }
 
-export function PrincipalOption({ data }: PrincipalOptionProps) {
+export function PrincipalOption({
+  data,
+  updateFormData,
+}: PrincipalOptionProps) {
   const buttonRef = useRef<HTMLDivElement>(null);
   const [isHovering, setIsHovering] = useState(false);
+
+  console.log(data.sublinks, "SUBLINKS");
 
   return (
     <>
@@ -63,19 +73,18 @@ export function PrincipalOption({ data }: PrincipalOptionProps) {
       </Button>
 
       <div className="flex flex-col gap-5">
-        {data.sublinks.map((sub, index) => (
-          <Button
-            key={index}
-            variant="ghost"
-            className="hover:bg-gray-200 w-72 hover:text-gray-900 transition-colors duration-150 justify-start pl-10 relative before:content-['•'] before:absolute before:left-6 before:text-gray-500 h-4 py-4"
-          >
-            {sub.title}
-          </Button>
-        ))}
+        {Array.isArray(data.sublinks) &&
+          data.sublinks.map((sub, index) => (
+            <Button
+              key={index}
+              variant="ghost"
+              className="hover:bg-gray-200 w-72 hover:text-gray-900 transition-colors duration-150 justify-start pl-10 relative before:content-['•'] before:absolute before:left-6 before:text-gray-500 h-4 py-4"
+            >
+              {sub.title}
+            </Button>
+          ))}
 
-        <Button variant="outline" className="w-48 mt-4">
-          Adicionar sublink
-        </Button>
+        <AddSublinkDialog data={data} updateFormData={updateFormData} />
       </div>
     </>
   );
