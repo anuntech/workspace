@@ -4,7 +4,6 @@ import Link from "next/link";
 import { DropdownApplication } from "@/app/(workspace)/_components/sidebar/dropdown-application";
 import { IconComponent } from "@/components/get-lucide-icons";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { getS3Image } from "@/libs/s3-client";
 import {
   ChevronDown,
   ChevronUp,
@@ -94,10 +93,18 @@ export function PrincipalOption({
                 />
               )}
               {(data.images.emojiAvatarType === "image" ||
-                !data.images.emojiAvatar) && (
+                !data.images.imageUrlWithoutS3) && (
                 <Avatar className="size-5">
-                  <AvatarImage src={getS3Image(data.images.emojiAvatar)} />
-                  <AvatarFallback>AB</AvatarFallback>
+                  {data.images.imageUrlWithoutS3 ? (
+                    <AvatarImage
+                      src={data.images.imageUrlWithoutS3}
+                      alt="Avatar"
+                      width={20}
+                      height={20}
+                    />
+                  ) : (
+                    <AvatarFallback>AB</AvatarFallback>
+                  )}
                 </Avatar>
               )}
             </div>
