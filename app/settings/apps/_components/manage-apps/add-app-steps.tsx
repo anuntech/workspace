@@ -45,7 +45,7 @@ export function AddAppStepsDialog() {
     {
       id: 3,
       content: GetPrincipalLink,
-      validation: true,
+      validation: false,
     },
     {
       id: 4,
@@ -80,25 +80,6 @@ export function AddAppStepsDialog() {
         ? updates
         : { ...prev[section], ...updates },
     }));
-  };
-
-  const moveSublink = (index: number, direction: "up" | "down") => {
-    if (!Array.isArray(data.sublinks)) return;
-
-    const newSublinks = [...data.sublinks];
-    if (direction === "up" && index > 0) {
-      [newSublinks[index], newSublinks[index - 1]] = [
-        newSublinks[index - 1],
-        newSublinks[index],
-      ];
-    } else if (direction === "down" && index < newSublinks.length - 1) {
-      [newSublinks[index], newSublinks[index + 1]] = [
-        newSublinks[index + 1],
-        newSublinks[index],
-      ];
-    }
-
-    updateFormData("sublinks", newSublinks);
   };
 
   const setStepValidation = (isValid: boolean) => {
@@ -139,14 +120,16 @@ export function AddAppStepsDialog() {
           >
             Anterior
           </Button>
-          <Button
-            onClick={goToNextStep}
-            disabled={
-              currentStep === steps.length - 1 || !steps[currentStep].validation
-            }
-          >
-            Próximo
-          </Button>
+          {currentStep === steps.length - 1 ? (
+            <Button>Salvar</Button>
+          ) : (
+            <Button
+              onClick={goToNextStep}
+              disabled={!steps[currentStep].validation}
+            >
+              Próximo
+            </Button>
+          )}
         </div>
       </DialogContent>
     </Dialog>
