@@ -8,6 +8,8 @@ import { Label } from "@/components/ui/label";
 import { base64ToBlob } from "@/lib/utils";
 import { AvatarSelector } from "@/components/avatar-selector";
 import { AppFormData } from "./types";
+import React from "react";
+import { toast } from "@/hooks/use-toast";
 
 interface ImagesStepProps {
   data: AppFormData;
@@ -58,6 +60,37 @@ export function ImagesStep({
     setStepValidation(true);
   };
 
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  React.useEffect(() => {
+    if (fileInputRef.current && data.images.galleryPhotos) {
+      const dataTransfer = new DataTransfer();
+
+      Array.from(data.images.galleryPhotos).forEach((file) => {
+        dataTransfer.items.add(file);
+      });
+      fileInputRef.current.files = dataTransfer.files;
+    }
+  }, [data.images.galleryPhotos]);
+
+  const handleGalleryPhotosChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const files = event.target.files;
+    if (files && files.length > 20) {
+      toast({
+        title: "Você não pode selecionar mais de 20 imagens",
+        variant: "destructive",
+        duration: 3000,
+      });
+      return;
+    }
+
+    updateFormData("images", {
+      galleryPhotos: files as unknown as FileList,
+    });
+  };
+
   return (
     <>
       <DialogHeader>
@@ -90,13 +123,14 @@ export function ImagesStep({
         </div>
         <div>
           <Label htmlFor="name">Fotos do aplicativo</Label>
-
           <Input
+            ref={fileInputRef}
             className="cursor-pointer"
             placeholder="Selecione até 20 imagens"
             type="file"
             accept="image/*"
             multiple
+            onChange={handleGalleryPhotosChange}
           />
         </div>
       </div>

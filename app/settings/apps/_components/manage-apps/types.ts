@@ -9,7 +9,7 @@ export interface AppFormData {
     imageUrlWithoutS3: string;
     emojiAvatar: string;
     emojiAvatarType: "emoji" | "lucide" | "image";
-    galleryPhotos: null;
+    galleryPhotos: FileList;
   };
   principalLink: {
     title: string;
