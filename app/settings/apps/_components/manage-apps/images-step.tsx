@@ -15,9 +15,14 @@ interface ImagesStepProps {
     section: keyof AppFormData,
     updates: Partial<AppFormData[keyof AppFormData]>
   ) => void;
+  setStepValidation: (isValid: boolean) => void;
 }
 
-export function ImagesStep({ data, updateFormData }: ImagesStepProps) {
+export function ImagesStep({
+  data,
+  updateFormData,
+  setStepValidation,
+}: ImagesStepProps) {
   const handleAvatarChange = (avatar: {
     value: string;
     type: "image" | "emoji" | "lucide";
@@ -49,6 +54,8 @@ export function ImagesStep({ data, updateFormData }: ImagesStepProps) {
         });
         break;
     }
+
+    setStepValidation(true);
   };
 
   return (
@@ -82,7 +89,7 @@ export function ImagesStep({ data, updateFormData }: ImagesStepProps) {
           />
         </div>
         <div>
-          <Label htmlFor="name">Fotos do aplicativo *</Label>
+          <Label htmlFor="name">Fotos do aplicativo</Label>
 
           <Input
             className="cursor-pointer"

@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+import { z } from "zod";
 import {
   DialogDescription,
   DialogHeader,
@@ -15,14 +17,32 @@ interface GetPrincipalLinkProps {
     updates: Partial<AppFormData[keyof AppFormData]>
   ) => void;
   isSublink?: boolean;
+  setStepValidation: (isValid: boolean) => void;
 }
+
+const principalLinkSchema = z.object({
+  title: z.string().min(1, "Título é obrigatório"),
+  link: z.string().url("Link inválido").min(1, "Link é obrigatório"),
+});
 
 export function GetPrincipalLink({
   data,
   updateFormData,
   isSublink,
+  setStepValidation,
 }: GetPrincipalLinkProps) {
   const { title, link, type } = data.principalLink;
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const validationResult = principalLinkSchema.safeParse(
+        data.principalLink
+      );
+      setStepValidation(validationResult.success);
+    }, 0);
+
+    return () => clearTimeout(timer);
+  }, [data.principalLink, setStepValidation]);
 
   const handleChange = (field: string, value: string) => {
     updateFormData("principalLink", { [field]: value });

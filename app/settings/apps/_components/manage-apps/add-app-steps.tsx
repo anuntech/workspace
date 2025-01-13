@@ -40,7 +40,7 @@ export function AddAppStepsDialog() {
     {
       id: 2,
       content: ImagesStep,
-      validation: true,
+      validation: false,
     },
     {
       id: 3,
