@@ -6,6 +6,9 @@ import { ImagesStep } from "./images-step";
 import { GetPrincipalLink } from "./get-principal-link";
 import { AppFormData } from "./types";
 import { ManageSettingsOrPrincipalStep } from "./manage-settings-or-principal/manage-settings-or-principal-step";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import api from "@/libs/api";
+import { toast } from "@/hooks/use-toast";
 
 const initialFormData: AppFormData = {
   basicInformation: {
@@ -26,6 +29,7 @@ const initialFormData: AppFormData = {
     type: "none",
   },
   sublinks: [],
+  workspaceAllowed: [],
 };
 
 export function AddAppStepsDialog() {
@@ -55,6 +59,30 @@ export function AddAppStepsDialog() {
   ]);
   const [currentStep, setCurrentStep] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
+  const queryClient = useQueryClient();
+  const saveApplicationMutation = useMutation({
+    mutationFn: async (data: FormData) => api.post("/api/applications", data),
+    onSuccess: () => {
+      queryClient.refetchQueries({
+        queryKey: ["workspace"],
+        type: "all",
+      });
+      toast({
+        description: "Aplicativo salvo com sucesso.",
+        duration: 5000,
+      });
+      setIsOpen(false);
+      setData(initialFormData);
+      setCurrentStep(0);
+    },
+    onError: () => {
+      toast({
+        description: "Algo deu errado ao salvar o aplicativo.",
+        duration: 5000,
+        variant: "destructive",
+      });
+    },
+  });
 
   const goToNextStep = () => {
     if (currentStep < steps.length - 1) {
@@ -90,6 +118,51 @@ export function AddAppStepsDialog() {
     );
   };
 
+  const handleSave = () => {
+    const formData = new FormData();
+
+    // Basic Information
+    formData.append("name", data.basicInformation.name);
+    formData.append("subtitle", data.basicInformation.subtitle);
+    formData.append("description", data.basicInformation.description);
+    formData.append("cta", data.basicInformation.subtitle || "");
+    formData.append("title", data.basicInformation.name || "");
+    formData.append("iframeUrl", data.principalLink.link || "");
+
+    // Images
+    if (!data.images.icon) {
+      toast({
+        title: "É necessário selecionar um avatar!",
+        variant: "destructive",
+        duration: 3000,
+      });
+      return;
+    }
+
+    formData.append("icon", data.images.icon.get("icon"));
+    formData.append("iconType", data.images.emojiAvatarType);
+
+    if (data.images.galleryPhotos && data.images.galleryPhotos.length > 0) {
+      Array.from(data.images.galleryPhotos).forEach((file) => {
+        formData.append("galeryPhotos", file);
+      });
+    }
+
+    formData.append("workspacesAllowed", JSON.stringify(data.workspaceAllowed));
+    formData.append(
+      "fields",
+      JSON.stringify(
+        data.sublinks.map((sub) => ({
+          key: sub.title,
+          value: sub.link,
+        }))
+      )
+    ); // Adding empty fields array to match structure
+    formData.append("category", "free");
+
+    saveApplicationMutation.mutate(formData);
+  };
+
   return (
     <Dialog
       open={isOpen}
@@ -121,7 +194,15 @@ export function AddAppStepsDialog() {
             Anterior
           </Button>
           {currentStep === steps.length - 1 ? (
-            <Button>Salvar</Button>
+            <Button
+              onClick={handleSave}
+              disabled={
+                !steps[currentStep].validation ||
+                saveApplicationMutation.isPending
+              }
+            >
+              {saveApplicationMutation.isPending ? "Salvando..." : "Salvar"}
+            </Button>
           ) : (
             <Button
               onClick={goToNextStep}

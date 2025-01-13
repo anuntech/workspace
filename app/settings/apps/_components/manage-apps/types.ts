@@ -21,4 +21,5 @@ export interface AppFormData {
     link: string;
     type: "none" | "iframe" | "newWindow" | "sameWindow";
   }>;
+  workspaceAllowed: string[];
 }

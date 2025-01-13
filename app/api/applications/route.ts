@@ -79,6 +79,14 @@ export async function POST(request: Request) {
         };
     }
 
+    console.log(body.get("workspacesAllowed") as string);
+
+    const workspacesAllowed = body.get("workspacesAllowed");
+    const workspacesAllowedIds = workspacesAllowed
+      ? JSON.parse(workspacesAllowed as string).map(
+          (id: string) => new mongoose.Types.ObjectId(id)
+        )
+      : [];
     const application = await Applications.create({
       name: body.get("name"),
       cta: body.get("cta"),
@@ -87,9 +95,7 @@ export async function POST(request: Request) {
       avatarFallback: body.get("name").slice(0, 2),
       icon,
       applicationUrl: body.get("iframeUrl"),
-      workspacesAllowed: JSON.parse(
-        body.get("workspacesAllowed") as string
-      ).map((id: string) => new mongoose.Types.ObjectId(id)),
+      workspacesAllowed: [],
       galleryPhotos: galleryPhotosIds,
       workspaceAccess: body.get("category"),
       priceId: body.get("priceId"),

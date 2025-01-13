@@ -42,6 +42,7 @@ export function ImagesStep({
           icon: formData,
           imageUrlWithoutS3: URL.createObjectURL(blob),
           emojiAvatar: "",
+          emojiAvatarType: avatar.type,
         });
         break;
       }
