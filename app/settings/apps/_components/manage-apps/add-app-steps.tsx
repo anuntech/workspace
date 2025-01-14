@@ -34,7 +34,6 @@ const initialFormData: AppFormData = {
 
 export function AddAppStepsDialog() {
   const [data, setData] = useState<AppFormData>(initialFormData);
-  console.log(data);
   const [steps, setSteps] = useState([
     {
       id: 1,
