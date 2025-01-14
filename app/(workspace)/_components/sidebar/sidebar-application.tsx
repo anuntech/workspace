@@ -40,7 +40,24 @@ export function SidebarApplication({
   const [isHovering, setIsHovering] = useState(false);
   const buttonRef = useRef<HTMLDivElement>(null);
 
-  console.log(data);
+  let LinkRedirection: { href: string; target?: string } = { href: "" };
+  switch (data.applicationUrlType) {
+    case "iframe":
+      LinkRedirection = { href: `/service/${data.id}?workspace=${workspace}` };
+      break;
+    case "newWindow":
+      LinkRedirection = {
+        href: data.applicationUrl,
+        target: "_blank",
+      };
+      break;
+    case "sameWindow":
+      LinkRedirection = { href: data.applicationUrl };
+      break;
+    default:
+      LinkRedirection = { href: `/service/${data.id}?workspace=${workspace}` };
+      break;
+  }
 
   return (
     <SidebarMenuItem>
@@ -56,7 +73,7 @@ export function SidebarApplication({
             >
               <div className="flex items-center justify-between w-full">
                 <Link
-                  href={`/service/${data.id}?workspace=${workspace}`}
+                  {...LinkRedirection}
                   passHref
                   className="flex items-center"
                 >
