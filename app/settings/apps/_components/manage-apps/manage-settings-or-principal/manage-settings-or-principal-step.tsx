@@ -2,6 +2,7 @@
 import { AppFormData } from "../types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PrincipalOption } from "./principal-option";
+import { ConfigurationOption } from "./configuration-option";
 
 interface ManageSettingsOrPrincipalStepProps {
   data: AppFormData;
@@ -27,7 +28,9 @@ export function ManageSettingsOrPrincipalStep({
           <TabsContent value="principal">
             <PrincipalOption updateFormData={updateFormData} data={data} />
           </TabsContent>
-          <TabsContent value="settings">Change your password here.</TabsContent>
+          <TabsContent value="settings">
+            <ConfigurationOption updateFormData={updateFormData} data={data} />
+          </TabsContent>
         </Tabs>
       </div>
     </>
