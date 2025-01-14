@@ -168,7 +168,10 @@ export function AddAppStepsDialog() {
       open={isOpen}
       onOpenChange={(open) => {
         setIsOpen(open);
-        if (!open) setCurrentStep(0);
+        if (!open) {
+          setData(initialFormData);
+          setCurrentStep(0);
+        }
       }}
     >
       <DialogTrigger asChild>

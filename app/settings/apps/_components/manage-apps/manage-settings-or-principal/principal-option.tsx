@@ -92,8 +92,7 @@ export function PrincipalOption({
                   name={data.images.emojiAvatar}
                 />
               )}
-              {(data.images.emojiAvatarType === "image" ||
-                !data.images.imageUrlWithoutS3) && (
+              {data.images.emojiAvatarType === "image" && (
                 <Avatar className="size-5">
                   {data.images.imageUrlWithoutS3 ? (
                     <AvatarImage
