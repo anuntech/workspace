@@ -79,8 +79,6 @@ export async function POST(request: Request) {
         };
     }
 
-    console.log(body.get("workspacesAllowed") as string);
-
     const workspacesAllowed = body.get("workspacesAllowed");
     const workspacesAllowedIds = workspacesAllowed
       ? JSON.parse(workspacesAllowed as string).map(
@@ -100,6 +98,7 @@ export async function POST(request: Request) {
       workspaceAccess: body.get("category"),
       priceId: body.get("priceId"),
       fields: JSON.parse(body.get("fields") as string),
+      applicationUrlType: body.get("applicationUrlType"),
     });
 
     return NextResponse.json(application);

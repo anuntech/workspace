@@ -121,13 +121,13 @@ export function AddAppStepsDialog() {
   const handleSave = () => {
     const formData = new FormData();
 
-    // Basic Information
     formData.append("name", data.basicInformation.name);
     formData.append("subtitle", data.basicInformation.subtitle);
     formData.append("description", data.basicInformation.description);
     formData.append("cta", data.basicInformation.subtitle || "");
     formData.append("title", data.basicInformation.name || "");
     formData.append("iframeUrl", data.principalLink.link || "");
+    formData.append("applicationUrlType", data.principalLink.type || "");
 
     // Images
     if (!data.images.icon) {
@@ -155,6 +155,7 @@ export function AddAppStepsDialog() {
         data.sublinks.map((sub) => ({
           key: sub.title,
           value: sub.link,
+          redirectType: sub.type,
         }))
       )
     ); // Adding empty fields array to match structure

@@ -109,11 +109,8 @@ export function AddSublinkDialog({
               value={form.watch("type")}
               onValueChange={(value) => form.setValue("type", value as any)}
               className="space-y-2"
+              defaultValue="iframe"
             >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="none" id="r1" />
-                <Label htmlFor="r1">Nenhum</Label>
-              </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="iframe" id="r2" />
                 <Label htmlFor="r2">Iframe</Label>
