@@ -21,11 +21,6 @@ interface GetPrincipalLinkProps {
   setStepValidation: (isValid: boolean) => void;
 }
 
-const principalLinkSchema = z.object({
-  title: z.string().min(1, "Título é obrigatório"),
-  link: z.string().url("Link inválido").min(1, "Link é obrigatório"),
-});
-
 export function GetPrincipalLink({
   data,
   updateFormData,
@@ -34,18 +29,36 @@ export function GetPrincipalLink({
 }: GetPrincipalLinkProps) {
   const { title, link, type } = data.principalLink;
 
+  const principalLinkSchema = z.object({
+    title: z.string().min(1, "Título é obrigatório"),
+    link: z.string().refine(
+      (value) => {
+        if (data.principalLink.type === "none") return true;
+        return value.length > 0 && /^https?:\/\/.*/.test(value);
+      },
+      {
+        message: "Link inválido",
+      }
+    ),
+  });
+
   useEffect(() => {
     const timer = setTimeout(() => {
       const validationResult = principalLinkSchema.safeParse(
         data.principalLink
       );
+
       setStepValidation(validationResult.success);
     }, 0);
 
     return () => clearTimeout(timer);
-  }, [data.principalLink, setStepValidation]);
+  }, [data.principalLink]);
 
   const handleChange = (field: string, value: string) => {
+    if (value == "none") {
+      updateFormData("principalLink", { link: "" });
+    }
+
     updateFormData("principalLink", { [field]: value });
   };
 
@@ -78,8 +91,10 @@ export function GetPrincipalLink({
             placeholder="https://seu-aplicativo.com"
             value={link}
             onChange={(e) => handleChange("link", e.target.value)}
+            disabled={type === "none"}
           />
         </div>
+
         <div className="space-y-4">
           <Label htmlFor="type">
             Tipo de {!isSublink ? "link" : "sublink"} *

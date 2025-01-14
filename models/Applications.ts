@@ -47,7 +47,6 @@ const applicationSchema = new mongoose.Schema<IApplications>(
     applicationUrl: {
       type: String,
       trim: true,
-      required: true,
     },
     applicationUrlType: {
       type: String,
@@ -74,8 +73,8 @@ const applicationSchema = new mongoose.Schema<IApplications>(
     galleryPhotos: {
       type: [String],
       validate: {
-        validator: (v: string[]) => v.length <= 10,
-        message: "Não pode haver mais de 10 imagens.",
+        validator: (v: string[]) => v.length <= 20,
+        message: "Não pode haver mais de 20 imagens.",
       },
     },
     avatarFallback: {

@@ -40,6 +40,8 @@ export function SidebarApplication({
   const [isHovering, setIsHovering] = useState(false);
   const buttonRef = useRef<HTMLDivElement>(null);
 
+  console.log(data);
+
   return (
     <SidebarMenuItem>
       <Accordion type="multiple">
