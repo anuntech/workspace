@@ -111,20 +111,44 @@ export function SidebarApplication({
             </SidebarMenuButton>
 
             <AccordionContent className="pb-0">
-              {data.fields.map((field: any) => (
-                <Link
-                  key={field.key}
-                  href={`/service/${data.id}?workspace=${workspace}&fieldSubScreen=${field.key}`}
-                >
-                  <Button
-                    id={field.key}
-                    variant="ghost"
-                    className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150 w-full justify-start pl-10 relative before:content-['•'] before:absolute before:left-6 before:text-gray-500 h-4 py-4"
-                  >
-                    {field.key}
-                  </Button>
-                </Link>
-              ))}
+              {data.fields.map((field: any) => {
+                let LinkRedirection: { href: string; target?: string } = {
+                  href: "",
+                };
+                switch (field.redirectType) {
+                  case "iframe":
+                    LinkRedirection = {
+                      href: `/service/${data.id}?workspace=${workspace}&fieldSubScreen=${field.key}`,
+                    };
+                    break;
+                  case "newWindow":
+                    LinkRedirection = {
+                      href: field.value,
+                      target: "_blank",
+                    };
+                    break;
+                  case "sameWindow":
+                    LinkRedirection = { href: field.value };
+                    break;
+                  default:
+                    LinkRedirection = {
+                      href: `/service/${data.id}?workspace=${workspace}&fieldSubScreen=${field.key}`,
+                    };
+                    break;
+                }
+
+                return (
+                  <Link key={field.key} {...LinkRedirection}>
+                    <Button
+                      id={field.key}
+                      variant="ghost"
+                      className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150 w-full justify-start pl-10 relative before:content-['•'] before:absolute before:left-6 before:text-gray-500 h-4 py-4"
+                    >
+                      {field.key}
+                    </Button>
+                  </Link>
+                );
+              })}
             </AccordionContent>
           </AccordionItem>
         ) : (
@@ -139,11 +163,7 @@ export function SidebarApplication({
               className="flex items-center justify-between w-full"
               ref={buttonRef}
             >
-              <Link
-                href={`/service/${data.id}?workspace=${workspace}`}
-                passHref
-                className="flex items-center"
-              >
+              <Link {...LinkRedirection} passHref className="flex items-center">
                 <div className="flex w-5 items-center justify-center">
                   {data.icon?.type === "emoji" && (
                     <p className=" pointer-events-none">{data.icon.value}</p>

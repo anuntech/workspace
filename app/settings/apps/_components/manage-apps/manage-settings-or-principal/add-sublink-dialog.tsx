@@ -42,7 +42,7 @@ export function AddSublinkDialog({
     defaultValues: {
       title: "",
       link: "",
-      type: "none",
+      type: "iframe",
     },
   });
 
