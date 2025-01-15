@@ -14,6 +14,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Pencil } from "lucide-react";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 
 interface AddSublinkDialogProps {
   data: AppFormData;
@@ -21,6 +23,13 @@ interface AddSublinkDialogProps {
     section: keyof AppFormData,
     updates: Partial<AppFormData[keyof AppFormData]>
   ) => void;
+  editIndex?: number;
+  initialValues?: {
+    title: string;
+    link: string;
+    type: "none" | "iframe" | "newWindow" | "sameWindow";
+  };
+  onClose?: () => void;
 }
 
 const sublinkSchema = z.object({
@@ -34,12 +43,22 @@ type SublinkForm = z.infer<typeof sublinkSchema>;
 export function AddSublinkDialog({
   data,
   updateFormData,
+  editIndex,
+  initialValues,
+  onClose,
 }: AddSublinkDialogProps) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(editIndex !== undefined);
+
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+    if (!open && onClose) {
+      onClose();
+    }
+  };
 
   const form = useForm<SublinkForm>({
     resolver: zodResolver(sublinkSchema),
-    defaultValues: {
+    defaultValues: initialValues || {
       title: "",
       link: "",
       type: "iframe",
@@ -53,21 +72,34 @@ export function AddSublinkDialog({
       type: values.type,
     };
 
-    updateFormData("sublinks", [...(data.sublinks || []), newSublink]);
+    if (editIndex !== undefined) {
+      const newSublinks = [...data.sublinks];
+      newSublinks[editIndex] = newSublink;
+      updateFormData("sublinks", newSublinks);
+    } else {
+      updateFormData("sublinks", [...(data.sublinks || []), newSublink]);
+    }
+
     setIsOpen(false);
     form.reset();
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="w-48 mt-3">
-          Adicionar sublink
-        </Button>
+        {!editIndex && (
+          <Button variant="outline" className="w-48 mt-3">
+            Adicionar sublink
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="max-w-lg p-6">
         <DialogHeader>
-          <DialogTitle>Adicionar sublink ao aplicativo</DialogTitle>
+          <DialogTitle>
+            {editIndex !== undefined
+              ? "Editar sublink"
+              : "Adicionar sublink ao aplicativo"}
+          </DialogTitle>
           <DialogDescription>
             Adicione um sublink ao aplicativo, que será exibido abaixo do link
             principal.

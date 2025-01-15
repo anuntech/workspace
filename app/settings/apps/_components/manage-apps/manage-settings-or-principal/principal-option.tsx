@@ -47,6 +47,9 @@ export function PrincipalOption({
   updateFormData,
 }: PrincipalOptionProps) {
   const [sublinkToDelete, setSublinkToDelete] = useState<number | null>(null);
+  const [editingSublinkIndex, setEditingSublinkIndex] = useState<number | null>(
+    null
+  );
 
   const moveSublink = (index: number, direction: "up" | "down") => {
     if (!Array.isArray(data.sublinks)) return;
@@ -145,7 +148,9 @@ export function PrincipalOption({
                       <Trash2 className="mr-2 size-4" />
                       <span>Excluir</span>
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => setEditingSublinkIndex(index)}
+                    >
                       <Pencil className="mr-2 size-4" />
                       <span>Editar</span>
                     </DropdownMenuItem>
@@ -173,6 +178,20 @@ export function PrincipalOption({
 
         <AddSublinkDialog data={data} updateFormData={updateFormData} />
       </div>
+
+      {editingSublinkIndex !== null && (
+        <AddSublinkDialog
+          data={data}
+          updateFormData={updateFormData}
+          editIndex={editingSublinkIndex}
+          initialValues={{
+            title: data.sublinks[editingSublinkIndex].title,
+            link: data.sublinks[editingSublinkIndex].link,
+            type: data.sublinks[editingSublinkIndex].type,
+          }}
+          onClose={() => setEditingSublinkIndex(null)}
+        />
+      )}
 
       <AlertDialog
         open={sublinkToDelete !== null}
