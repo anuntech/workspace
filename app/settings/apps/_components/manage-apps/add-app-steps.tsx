@@ -30,6 +30,7 @@ const initialFormData: AppFormData = {
   },
   sublinks: [],
   workspaceAllowed: [],
+  configurationOptions: [],
 };
 
 export function AddAppStepsDialog() {

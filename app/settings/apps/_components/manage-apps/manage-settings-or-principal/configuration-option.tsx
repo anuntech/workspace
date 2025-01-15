@@ -12,9 +12,10 @@ import {
   MoreHorizontal,
   MoveDown,
   MoveUp,
+  X,
 } from "lucide-react";
 import { AppFormData } from "../types";
-import { AddSublinkDialog } from "./add-sublink-dialog";
+import { AddConfigurationDialog } from "./add-configuration-dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -52,56 +53,33 @@ export function ConfigurationOption({
 
   return (
     <>
-      <Button
-        variant="ghost"
-        asChild
-        className="bg-gray-200 mb-1 text-gray-900 hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
-      >
-        <div className="flex items-center justify-between  w-56 h-4">
-          <Link href={``} passHref className="flex items-center">
-            <div className="flex items-center justify-center">
-              {data.images.emojiAvatarType === "emoji" && (
-                <p className="pointer-events-none">{data.images.emojiAvatar}</p>
-              )}
-              {data.images.emojiAvatarType === "lucide" && (
-                <IconComponent
-                  className="size-5 pointer-events-none"
-                  name={data.images.emojiAvatar}
-                />
-              )}
-              {data.images.emojiAvatarType === "image" && (
-                <Avatar className="size-5">
-                  {data.images.imageUrlWithoutS3 ? (
-                    <AvatarImage
-                      src={data.images.imageUrlWithoutS3}
-                      alt="Avatar"
-                      width={20}
-                      height={20}
-                    />
-                  ) : (
-                    <AvatarFallback>AB</AvatarFallback>
-                  )}
-                </Avatar>
-              )}
+      <div className="flex flex-col space-y-2">
+        {data.configurationOptions.map((config, index) => (
+          <Button
+            key={index}
+            variant="ghost"
+            asChild
+            className="bg-gray-200 mb-1 text-gray-900 hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
+          >
+            <div className="flex items-center justify-between w-56 h-4">
+              <Link href={config.link} passHref className="flex items-center">
+                <span className="ml-3">{config.title}</span>
+              </Link>
+              <div>
+                <Button size="icon" variant="ghost">
+                  <Pencil className="text-muted-foreground cursor-pointer" />
+                </Button>
+                <Button size="icon" variant="ghost">
+                  <X className="text-muted-foreground cursor-pointer" />
+                </Button>
+              </div>
             </div>
-            <span className="ml-3">{data.principalLink.title}</span>
-          </Link>
+          </Button>
+        ))}
 
-          <div className="flex items-center gap-2">
-            <DropdownApplication
-              isHover={true}
-              applicationId={"123"}
-              className="text-muted-foreground"
-            />
-            {data.sublinks.length > 0 && (
-              <ChevronUp className="text-muted-foreground cursor-pointer" />
-            )}
-          </div>
+        <div className="flex flex-col">
+          <AddConfigurationDialog data={data} updateFormData={updateFormData} />
         </div>
-      </Button>
-
-      <div className="flex flex-col">
-        <AddSublinkDialog data={data} updateFormData={updateFormData} />
       </div>
 
       <AlertDialog

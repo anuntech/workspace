@@ -22,4 +22,9 @@ export interface AppFormData {
     type: "none" | "iframe" | "newWindow" | "sameWindow";
   }>;
   workspaceAllowed: string[];
+  configurationOptions: Array<{
+    title: string;
+    link: string;
+    type: "none" | "iframe" | "newWindow" | "sameWindow";
+  }>;
 }
