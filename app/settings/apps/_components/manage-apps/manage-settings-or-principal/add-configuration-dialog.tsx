@@ -21,6 +21,13 @@ interface AddConfigurationDialogProps {
     section: keyof AppFormData,
     updates: Partial<AppFormData[keyof AppFormData]>
   ) => void;
+  editIndex?: number;
+  initialValues?: {
+    title: string;
+    link: string;
+    type: "none" | "iframe" | "newWindow" | "sameWindow";
+  };
+  onClose?: () => void;
 }
 
 const configurationSchema = z.object({
@@ -34,12 +41,15 @@ type ConfigurationForm = z.infer<typeof configurationSchema>;
 export function AddConfigurationDialog({
   data,
   updateFormData,
+  editIndex,
+  initialValues,
+  onClose,
 }: AddConfigurationDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const form = useForm<ConfigurationForm>({
     resolver: zodResolver(configurationSchema),
-    defaultValues: {
+    defaultValues: initialValues || {
       title: "",
       link: "",
       type: "iframe",
@@ -53,26 +63,53 @@ export function AddConfigurationDialog({
       type: values.type,
     };
 
-    updateFormData("configurationOptions", [
-      ...(data.configurationOptions || []),
-      newConfiguration,
-    ]);
-    setIsOpen(false);
+    if (editIndex !== undefined) {
+      // Modo de edição
+      const updatedConfigurations = [...(data.configurationOptions || [])];
+      updatedConfigurations[editIndex] = newConfiguration;
+      updateFormData("configurationOptions", updatedConfigurations);
+      onClose?.();
+    } else {
+      // Modo de adição
+      updateFormData("configurationOptions", [
+        ...(data.configurationOptions || []),
+        newConfiguration,
+      ]);
+      setIsOpen(false);
+    }
     form.reset();
   };
 
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+    if (!open && onClose) {
+      onClose();
+    }
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline" className="w-48 mt-3">
-          Adicionar configuração
-        </Button>
-      </DialogTrigger>
+    <Dialog
+      open={editIndex !== undefined ? true : isOpen}
+      onOpenChange={handleOpenChange}
+    >
+      {!editIndex && (
+        <DialogTrigger asChild>
+          <Button variant="outline" className="w-48 mt-3">
+            Adicionar configuração
+          </Button>
+        </DialogTrigger>
+      )}
       <DialogContent className="max-w-lg p-6">
         <DialogHeader>
-          <DialogTitle>Adicionar opção de configuração</DialogTitle>
+          <DialogTitle>
+            {editIndex !== undefined
+              ? "Editar configuração"
+              : "Adicionar opção de configuração"}
+          </DialogTitle>
           <DialogDescription>
-            Adicione uma opção de configuração ao aplicativo.
+            {editIndex !== undefined
+              ? "Edite os detalhes da configuração."
+              : "Adicione uma opção de configuração ao aplicativo."}
           </DialogDescription>
         </DialogHeader>
 
@@ -129,7 +166,11 @@ export function AddConfigurationDialog({
           </div>
 
           <div className="flex justify-end mt-4">
-            <Button type="submit">Adicionar configuração</Button>
+            <Button type="submit">
+              {editIndex !== undefined
+                ? "Salvar alterações"
+                : "Adicionar configuração"}
+            </Button>
           </div>
         </form>
       </DialogContent>

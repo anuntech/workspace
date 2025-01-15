@@ -50,37 +50,76 @@ export function ConfigurationOption({
   const [configurationToDelete, setConfigurationToDelete] = useState<
     number | null
   >(null);
+  const [editingConfigIndex, setEditingConfigIndex] = useState<number | null>(
+    null
+  );
+
+  const deleteConfiguration = (index: number) => {
+    if (!Array.isArray(data.configurationOptions)) return;
+    const newConfigs = data.configurationOptions.filter((_, i) => i !== index);
+    updateFormData("configurationOptions", newConfigs);
+  };
 
   return (
     <>
       <div className="flex flex-col space-y-2">
         {data.configurationOptions.map((config, index) => (
-          <Button
-            key={index}
-            variant="ghost"
-            asChild
-            className="bg-gray-200 mb-1 text-gray-900 hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
-          >
-            <div className="flex items-center justify-between w-56 h-4">
-              <Link href={config.link} passHref className="flex items-center">
-                <span className="ml-3">{config.title}</span>
-              </Link>
-              <div>
-                <Button size="icon" variant="ghost">
-                  <Pencil className="text-muted-foreground cursor-pointer" />
-                </Button>
-                <Button size="icon" variant="ghost">
-                  <X className="text-muted-foreground cursor-pointer" />
-                </Button>
+          <div key={index} className="flex w-full justify-between">
+            <Button
+              variant="ghost"
+              asChild
+              className="bg-gray-200 mb-1 text-gray-900 hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
+            >
+              <div className="flex items-center justify-between w-56 h-4">
+                <Link href={config.link} passHref className="flex items-center">
+                  <span className="ml-3">{config.title}</span>
+                </Link>
+                <div className="flex items-center">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="h-8 w-8 p-0">
+                        <MoreHorizontal className="size-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem
+                        onClick={() => setConfigurationToDelete(index)}
+                      >
+                        <Trash2 className="mr-2 size-4" />
+                        <span>Excluir</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => setEditingConfigIndex(index)}
+                      >
+                        <Pencil className="mr-2 size-4" />
+                        <span>Editar</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
               </div>
-            </div>
-          </Button>
+            </Button>
+          </div>
         ))}
 
         <div className="flex flex-col">
           <AddConfigurationDialog data={data} updateFormData={updateFormData} />
         </div>
       </div>
+
+      {editingConfigIndex !== null && (
+        <AddConfigurationDialog
+          data={data}
+          updateFormData={updateFormData}
+          editIndex={editingConfigIndex}
+          initialValues={{
+            title: data.configurationOptions[editingConfigIndex].title,
+            link: data.configurationOptions[editingConfigIndex].link,
+            type: data.configurationOptions[editingConfigIndex].type,
+          }}
+          onClose={() => setEditingConfigIndex(null)}
+        />
+      )}
 
       <AlertDialog
         open={configurationToDelete !== null}
@@ -91,7 +130,7 @@ export function ConfigurationOption({
             <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
             <AlertDialogDescription>
               Esta ação não pode ser desfeita. Isso excluirá permanentemente
-              este sublink.
+              esta configuração.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -99,7 +138,7 @@ export function ConfigurationOption({
             <AlertDialogAction
               onClick={() => {
                 if (configurationToDelete !== null) {
-                  //   deleteSublink(configurationToDelete);
+                  deleteConfiguration(configurationToDelete);
                 }
                 setConfigurationToDelete(null);
               }}
