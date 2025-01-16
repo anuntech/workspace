@@ -176,6 +176,12 @@ export function AddAppStepsDialog() {
         if (!open) {
           setData(initialFormData);
           setCurrentStep(0);
+          setSteps((prev) =>
+            prev.map((step) => ({
+              ...step,
+              validation: false,
+            }))
+          );
         }
       }}
     >
