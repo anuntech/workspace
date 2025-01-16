@@ -5,8 +5,10 @@ import {
   ChevronLeft,
   CircleMinus,
   CirclePlus,
+  MoreHorizontal,
   Settings,
   UserPlus,
+  Trash2,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -28,6 +30,24 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { IconComponent } from "@/components/get-lucide-icons";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useState } from "react";
 
 export default function AppPage({ params }: { params: { slug: string } }) {
   const searchParams = useSearchParams();
@@ -50,6 +70,8 @@ export default function AppPage({ params }: { params: { slug: string } }) {
   const queryClient = useQueryClient();
 
   const router = useRouter();
+
+  const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false);
 
   const getApplicationMutation = useMutation({
     mutationFn: async () =>
@@ -88,6 +110,19 @@ export default function AppPage({ params }: { params: { slug: string } }) {
     },
     onSuccess: () => {
       applicationsQuery.refetch();
+    },
+  });
+
+  const adminDeleteApplicationMutation = useMutation({
+    mutationFn: async () =>
+      api.delete(`/api/applications/manage/${params.slug}`),
+    onSuccess: async () => {
+      await queryClient.refetchQueries({
+        queryKey: ["allApplications"],
+        type: "all",
+      });
+      setIsDeleteAlertOpen(false);
+      router.push(`/settings/apps?workspace=${workspace}`);
     },
   });
 
@@ -294,11 +329,72 @@ export default function AppPage({ params }: { params: { slug: string } }) {
                 <AvatarFallback>{application.avatarFallback}</AvatarFallback>
               </Avatar>
             )}
-            <div className="flex flex-col">
-              <span>{application.name}</span>
-              <span className="text-sm text-muted-foreground">
-                {application.cta}
-              </span>
+            <div className="flex justify-between w-full">
+              <div className="flex flex-col">
+                <span>{application.name}</span>
+                <span className="text-sm text-muted-foreground">
+                  {application.cta}
+                </span>
+              </div>
+              <div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button size="icon" variant="ghost">
+                      <MoreHorizontal />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem>
+                      <Link
+                        href={`/settings/manage-apps/${application._id}?workspace=${workspace}`}
+                        className="flex items-center"
+                      >
+                        <Settings className="mr-2 size-4" />
+                        Editar
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      className="text-destructive"
+                      onClick={() => setIsDeleteAlertOpen(true)}
+                    >
+                      <span className="flex items-center">
+                        <Trash2 className="mr-2 size-4" />
+                        Deletar
+                      </span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                <AlertDialog
+                  open={isDeleteAlertOpen}
+                  onOpenChange={(open) => {
+                    setIsDeleteAlertOpen(open);
+                    setTimeout(
+                      () => (document.body.style.pointerEvents = ""),
+                      500
+                    );
+                  }}
+                >
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Esta ação não pode ser desfeita. Isso excluirá
+                        permanentemente o aplicativo.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => adminDeleteApplicationMutation.mutate()}
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      >
+                        Deletar
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
             </div>
           </section>
           <section className="space-y-5 rounded-md border p-5">
