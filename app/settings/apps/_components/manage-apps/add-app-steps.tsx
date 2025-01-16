@@ -171,15 +171,9 @@ export function AddAppStepsDialog() {
   const setInitialSteps = () => {
     setSteps((prev) =>
       prev.map((step) => {
-        if (step.id === 4) {
-          return {
-            ...step,
-            validation: true,
-          };
-        }
         return {
           ...step,
-          validation: false,
+          validation: step.id != 4,
         };
       })
     );
