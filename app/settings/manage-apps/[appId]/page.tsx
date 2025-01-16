@@ -57,11 +57,39 @@ export default function MembersPage({ params }: { params: { appId: string } }) {
               <TabsTrigger value="members-manager">
                 Gerencenciar membros
               </TabsTrigger>
-              {application?.configurationOptions.map((option: any) => (
-                <TabsTrigger key={option.id} value={option.id}>
-                  {option.title}
-                </TabsTrigger>
-              ))}
+              {application?.configurationOptions.map((option: any) => {
+                switch (option.type) {
+                  case "iframe":
+                    return (
+                      <TabsTrigger key={option.id} value={option.id}>
+                        {option.title}
+                      </TabsTrigger>
+                    );
+                  case "sameWindow":
+                    return (
+                      <a href={option.link} className="w-full">
+                        <TabsTrigger
+                          key={option.id}
+                          value={option.id}
+                          className="w-full"
+                        >
+                          {option.title}
+                        </TabsTrigger>
+                      </a>
+                    );
+                  case "newWindow":
+                    return (
+                      <button
+                        onClick={() => window.open(option.link, "_blank")}
+                        className="w-full text-left"
+                      >
+                        <div className="px-3 py-1.5 text-sm font-medium">
+                          {option.title}
+                        </div>
+                      </button>
+                    );
+                }
+              })}
             </TabsList>
             <TabsContent value="members-manager">
               <MembersManager params={params} />
