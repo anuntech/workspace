@@ -48,6 +48,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useState } from "react";
+import config from "@/config";
 
 export default function AppPage({ params }: { params: { slug: string } }) {
   const searchParams = useSearchParams();
@@ -66,6 +67,13 @@ export default function AppPage({ params }: { params: { slug: string } }) {
     queryKey: ["applications"],
     queryFn: async () => await api.get(`/api/applications/${workspace}`),
   });
+
+  const userQuery = useQuery({
+    queryKey: ["user"],
+    queryFn: () => fetch("/api/user").then((res) => res.json()),
+  });
+  const emailDomain = userQuery.data?.email?.split("@")[1];
+  const isAnuntechUser = emailDomain === config.domainName;
 
   const queryClient = useQueryClient();
 
@@ -337,63 +345,69 @@ export default function AppPage({ params }: { params: { slug: string } }) {
                 </span>
               </div>
               <div>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button size="icon" variant="ghost">
-                      <MoreHorizontal />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem>
-                      <Link
-                        href={`/settings/manage-apps/${application._id}?workspace=${workspace}`}
-                        className="flex items-center"
-                      >
-                        <Settings className="mr-2 size-4" />
-                        Editar
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      className="text-destructive"
-                      onClick={() => setIsDeleteAlertOpen(true)}
-                    >
-                      <span className="flex items-center">
-                        <Trash2 className="mr-2 size-4" />
-                        Deletar
-                      </span>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                {isAnuntechUser && (
+                  <>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button size="icon" variant="ghost">
+                          <MoreHorizontal />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        <DropdownMenuItem>
+                          <Link
+                            href={`/settings/manage-apps/${application._id}?workspace=${workspace}`}
+                            className="flex items-center"
+                          >
+                            <Settings className="mr-2 size-4" />
+                            Editar
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          className="text-destructive"
+                          onClick={() => setIsDeleteAlertOpen(true)}
+                        >
+                          <span className="flex items-center">
+                            <Trash2 className="mr-2 size-4" />
+                            Deletar
+                          </span>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
 
-                <AlertDialog
-                  open={isDeleteAlertOpen}
-                  onOpenChange={(open) => {
-                    setIsDeleteAlertOpen(open);
-                    setTimeout(
-                      () => (document.body.style.pointerEvents = ""),
-                      500
-                    );
-                  }}
-                >
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Esta ação não pode ser desfeita. Isso excluirá
-                        permanentemente o aplicativo.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={() => adminDeleteApplicationMutation.mutate()}
-                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                      >
-                        Deletar
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                    <AlertDialog
+                      open={isDeleteAlertOpen}
+                      onOpenChange={(open) => {
+                        setIsDeleteAlertOpen(open);
+                        setTimeout(
+                          () => (document.body.style.pointerEvents = ""),
+                          500
+                        );
+                      }}
+                    >
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Esta ação não pode ser desfeita. Isso excluirá
+                            permanentemente o aplicativo.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() =>
+                              adminDeleteApplicationMutation.mutate()
+                            }
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          >
+                            Deletar
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </>
+                )}
               </div>
             </div>
           </section>

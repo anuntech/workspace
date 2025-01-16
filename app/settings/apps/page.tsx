@@ -175,7 +175,7 @@ export default function AppsPage() {
                   {applicationsQuery?.data?.data
                     .filter((app: any) => app.status === "disabled")
                     ?.map((app: any) => (
-                      <App app={app} workspace={workspace} />
+                      <App key={app._id} app={app} workspace={workspace} />
                     ))}
                 </div>
               </section>
@@ -187,7 +187,7 @@ export default function AppsPage() {
                   app.name.toLowerCase().includes(inputValue.toLowerCase())
                 )
                 ?.map((app: any) => (
-                  <App app={app} workspace={workspace} />
+                  <App key={app._id} app={app} workspace={workspace} />
                 ))}
             </section>
           )}
