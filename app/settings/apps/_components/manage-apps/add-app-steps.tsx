@@ -168,6 +168,23 @@ export function AddAppStepsDialog() {
     saveApplicationMutation.mutate(formData);
   };
 
+  const setInitialSteps = () => {
+    setSteps((prev) =>
+      prev.map((step) => {
+        if (step.id === 4) {
+          return {
+            ...step,
+            validation: true,
+          };
+        }
+        return {
+          ...step,
+          validation: false,
+        };
+      })
+    );
+  };
+
   return (
     <Dialog
       open={isOpen}
@@ -176,12 +193,7 @@ export function AddAppStepsDialog() {
         if (!open) {
           setData(initialFormData);
           setCurrentStep(0);
-          setSteps((prev) =>
-            prev.map((step) => ({
-              ...step,
-              validation: false,
-            }))
-          );
+          setInitialSteps();
         }
       }}
     >
