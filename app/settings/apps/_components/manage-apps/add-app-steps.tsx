@@ -128,6 +128,10 @@ export function AddAppStepsDialog() {
     formData.append("title", data.basicInformation.name || "");
     formData.append("iframeUrl", data.principalLink.link || "");
     formData.append("applicationUrlType", data.principalLink.type || "");
+    formData.append(
+      "configurationOptions",
+      JSON.stringify(data.configurationOptions)
+    );
 
     // Images
     if (!data.images.icon) {

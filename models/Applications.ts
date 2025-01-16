@@ -25,6 +25,11 @@ export interface IApplications extends mongoose.Document {
     redirectType: "iframe" | "newWindow" | "sameWindow";
   }[];
   applicationUrlType: "none" | "iframe" | "newWindow" | "sameWindow";
+  configurationOptions: Array<{
+    title: string;
+    link: string;
+    type: "iframe" | "newWindow" | "sameWindow";
+  }>;
 }
 
 const applicationSchema = new mongoose.Schema<IApplications>(
@@ -119,6 +124,27 @@ const applicationSchema = new mongoose.Schema<IApplications>(
         },
       },
     ],
+    configurationOptions: {
+      type: [
+        {
+          title: {
+            type: String,
+            required: true,
+          },
+          link: {
+            type: String,
+            required: true,
+          },
+          type: {
+            type: String,
+            enum: ["iframe", "newWindow", "sameWindow"],
+            default: "iframe",
+            required: true,
+          },
+        },
+      ],
+      required: true,
+    },
   },
   {
     toJSON: { virtuals: true },

@@ -99,6 +99,9 @@ export async function POST(request: Request) {
       priceId: body.get("priceId"),
       fields: JSON.parse(body.get("fields") as string),
       applicationUrlType: body.get("applicationUrlType"),
+      configurationOptions: JSON.parse(
+        body.get("configurationOptions") as string
+      ),
     });
 
     return NextResponse.json(application);
