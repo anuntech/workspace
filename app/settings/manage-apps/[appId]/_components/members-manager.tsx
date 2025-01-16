@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -21,6 +21,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Trash2 } from "lucide-react";
+import Image from "next/image";
 
 type User = {
   _id: string;
@@ -139,7 +140,7 @@ export function MembersManager({ params }: { params: { appId: string } }) {
                     {member.icon.type == "emoji" ? (
                       member.icon.value
                     ) : (
-                      <img
+                      <Image
                         className="rounded-full"
                         width={54}
                         height={54}
@@ -292,7 +293,7 @@ export function UserSearchInput({
                     {user.icon.type == "emoji" ? (
                       user.icon.value
                     ) : (
-                      <img
+                      <Image
                         className="rounded-full"
                         width={54}
                         height={54}

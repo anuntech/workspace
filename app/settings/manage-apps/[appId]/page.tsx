@@ -14,10 +14,22 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import api from "@/libs/api";
 
 export default function MembersPage({ params }: { params: { appId: string } }) {
   const searchParams = useSearchParams();
   const workspace = searchParams.get("workspace");
+
+  const applicationsQuery = useQuery({
+    queryKey: ["applications"],
+    queryFn: async () => await api.get(`/api/applications/${workspace}`),
+  });
+
+  const application = applicationsQuery.data?.data.find(
+    (app: any) => app._id === params.appId
+  );
+
+  console.log(application);
 
   return (
     <>
@@ -37,7 +49,7 @@ export default function MembersPage({ params }: { params: { appId: string } }) {
         </Breadcrumb>
       </header>
       <main className="flex flex-col items-center p-10">
-        <div className="w-full max-w-3xl space-y-5">
+        <div className="w-full max-w-3xl space-y-5 h-full">
           <h1 className="text-2xl flex gap-3">Membros</h1>
           <Separator />
           <Tabs defaultValue="members-manager" className="space-y-10">
@@ -45,10 +57,25 @@ export default function MembersPage({ params }: { params: { appId: string } }) {
               <TabsTrigger value="members-manager">
                 Gerencenciar membros
               </TabsTrigger>
+              {application?.configurationOptions.map((option: any) => (
+                <TabsTrigger key={option.id} value={option.id}>
+                  {option.title}
+                </TabsTrigger>
+              ))}
             </TabsList>
             <TabsContent value="members-manager">
               <MembersManager params={params} />
             </TabsContent>
+            {application?.configurationOptions.map((option: any) => (
+              <TabsContent key={option.id} value={option.id}>
+                <iframe
+                  src={option.link}
+                  width="100%"
+                  style={{ border: "none", height: "70vh" }}
+                  title="Roteiro Digital"
+                />
+              </TabsContent>
+            ))}
           </Tabs>
         </div>
       </main>

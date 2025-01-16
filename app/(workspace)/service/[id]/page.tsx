@@ -24,17 +24,17 @@ export default function ServicePage({ params }: { params: { id: string } }) {
   const sideBar = useSidebar();
   const [isIframeLoading, setIsIframeLoading] = useState(true);
 
-  if (!params.id) {
-    router.push("/");
-    return;
-  }
-
   const applicationsQuery = useQuery({
     queryKey: ["applications"],
     queryFn: async () => {
       return await api.get(`/api/applications/${workspace}`);
     },
   });
+
+  if (!params.id) {
+    router.push("/");
+    return;
+  }
 
   if (applicationsQuery.isPending) {
     return (
