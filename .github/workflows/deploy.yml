@@ -1,0 +1,25 @@
+name: Deploy to Server
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  deploy:
+    name: Deploy Application
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Install Dependencies
+        run: |
+          npm install
+
+      - name: Deploy Application
+        run: |
+          echo "Starting deployment..."
+          chmod +x ./deploy.sh
+          ./deploy.sh

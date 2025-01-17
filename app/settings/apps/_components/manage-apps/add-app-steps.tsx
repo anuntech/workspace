@@ -173,7 +173,7 @@ export function AddAppStepsDialog() {
       prev.map((step) => {
         return {
           ...step,
-          validation: step.id != 4,
+          validation: step.id == 4, // Only the last step is validated
         };
       })
     );
