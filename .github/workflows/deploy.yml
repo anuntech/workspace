@@ -14,6 +14,15 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      - name: Load Node.js via NVM
+        run: |
+          export NVM_DIR="$HOME/.nvm"
+          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+          nvm install 21
+          nvm use 21
+          node -v
+          npm -v
+
       - name: Install Dependencies
         run: |
           npm install
