@@ -22,6 +22,7 @@ import { useQuery } from "@tanstack/react-query";
 import api from "@/libs/api";
 import { useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { NavLinks } from "./nav-links";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const sideBar = useSidebar();
@@ -52,6 +53,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavMain />
         {isThereFavorite && <NavFavorites />}
         <NavProjects />
+        <NavLinks />
       </SidebarContent>
       <SidebarFooter>
         <NavFooterOptions />
