@@ -7,6 +7,7 @@ import { toast } from "@/hooks/use-toast";
 import { LinkFormData } from "./types";
 import { Plus } from "lucide-react";
 import { BasicLinkInformation } from "./basic-link-informations";
+import { PrincipalOption } from "./principal-option";
 
 const initialFormData: LinkFormData = {
   images: {
@@ -32,11 +33,11 @@ export function CreateLinkStepsDialog() {
       content: BasicLinkInformation,
       validation: false,
     },
-    // {
-    //   id: 2,
-    //   content: ImagesStep,
-    //   validation: false,
-    // },
+    {
+      id: 2,
+      content: PrincipalOption,
+      validation: false,
+    },
   ]);
   const [currentStep, setCurrentStep] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
