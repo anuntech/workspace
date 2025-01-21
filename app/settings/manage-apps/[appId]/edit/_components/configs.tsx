@@ -85,7 +85,7 @@ export const Configs = ({ data, id }: Props) => {
 		},
 		onSuccess: () => {
 			queryClient.refetchQueries({
-				queryKey: ["workspace"],
+				queryKey: ["applications"],
 				type: "all",
 			});
 			toast({
@@ -255,7 +255,7 @@ export const Configs = ({ data, id }: Props) => {
 					{...register("description")}
 				/>
 			</div>
-			<Button type="submit" disabled={!isValid} className="max-w-32 w-full">Salvar</Button>
+			<Button type="submit" disabled={!isValid} className="max-w-24 w-full">Salvar</Button>
 		</form>
 	);
 }
