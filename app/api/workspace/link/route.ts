@@ -28,6 +28,23 @@ export async function POST(request: Request) {
       );
     }
 
+    const memberRole = workspace.members.find(
+      (member) => member.memberId.toString() === session.user.id.toString()
+    )?.role;
+
+    if (
+      workspace.owner.toString() !== session.user.id &&
+      memberRole !== "admin"
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            "You do not have permission to create a link for this workspace",
+        },
+        { status: 403 }
+      );
+    }
+
     const profilePhoto = body.get("icon") as File;
     const profilePhotoId = randomUUID().toString();
 
