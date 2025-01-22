@@ -82,8 +82,8 @@ export async function POST(request: Request) {
     const workspacesAllowed = body.get("workspacesAllowed");
     const workspacesAllowedIds = workspacesAllowed
       ? JSON.parse(workspacesAllowed as string).map(
-          (id: string) => new mongoose.Types.ObjectId(id)
-        )
+        (id: string) => new mongoose.Types.ObjectId(id)
+      )
       : [];
     const application = await Applications.create({
       name: body.get("name"),

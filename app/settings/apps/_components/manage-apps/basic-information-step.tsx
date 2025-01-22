@@ -8,19 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { AppFormData } from "./types";
-import { z } from "zod";
-
-const basicInformationSchema = z.object({
-  name: z.string().min(1, "Nome é obrigatório").max(50, "Nome muito longo"),
-  subtitle: z
-    .string()
-    .min(1, "Subtítulo é obrigatório")
-    .max(100, "Subtítulo muito longo"),
-  description: z
-    .string()
-    .min(1, "Descrição é obrigatória")
-    .max(500, "Descrição muito longa"),
-});
+import { basicInformationSchema } from "@/schemas/basic-information"
 
 interface BasicInformationStepProps {
   data: AppFormData;
