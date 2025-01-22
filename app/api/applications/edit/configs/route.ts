@@ -108,6 +108,9 @@ export async function PUT(request: Request) {
 				avatarFallback: formData.get("name").slice(0, 2),
 				icon,
 				galleryPhotos: galleryPhotosIds,
+			},
+			{
+				new: true,
 			}
 		);
 
@@ -116,7 +119,9 @@ export async function PUT(request: Request) {
 			{ status: 404 }
 		);
 
-		return NextResponse.json(application);
+		return NextResponse.json(application, {
+			status: 200
+		});
 	} catch (e) {
 		console.error(e);
 		return NextResponse.json({ error: e?.message }, { status: 500 });

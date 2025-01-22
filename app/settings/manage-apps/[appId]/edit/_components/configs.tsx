@@ -84,7 +84,7 @@ export const Configs = ({ data, id }: Props) => {
 			api.put("/api/applications/edit/configs", formData)
 		},
 		onSuccess: () => {
-			queryClient.refetchQueries({
+			queryClient.invalidateQueries({
 				queryKey: ["applications"],
 				type: "all",
 			});

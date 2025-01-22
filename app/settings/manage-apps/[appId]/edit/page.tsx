@@ -47,6 +47,8 @@ export default function EditPage({ params }: { params: { appId: string } }) {
 	const applicationsQuery = useQuery({
 		queryKey: ["applications"],
 		queryFn: async () => await api.get(`/api/applications/${workspace}`),
+		staleTime: 0,
+		retryDelay: 100,
 	});
 
 	const application = applicationsQuery.data?.data.find(
