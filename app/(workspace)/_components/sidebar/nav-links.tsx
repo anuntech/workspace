@@ -97,16 +97,12 @@ export function NavLinks() {
 
   return (
     <>
-      {enabledApplications?.length > 0 && (
-        <Separator className="mx-2 hidden group-data-[collapsible=icon]:block" />
-      )}
+      <Separator className="mx-2 hidden group-data-[collapsible=icon]:block" />
       <SidebarGroup>
-        {enabledApplications?.length > 0 && (
-          <SidebarGroupLabel className="flex items-center justify-between group-data-[collapsible=icon]:hidden pr-0">
-            <p>Links</p>
-            <CreateLinkStepsDialog />
-          </SidebarGroupLabel>
-        )}
+        <SidebarGroupLabel className="flex items-center justify-between group-data-[collapsible=icon]:hidden pr-0">
+          <p>Links</p>
+          <CreateLinkStepsDialog />
+        </SidebarGroupLabel>
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="droppable" direction="vertical">
             {(provided) => (

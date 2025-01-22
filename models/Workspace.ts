@@ -2,12 +2,12 @@ import mongoose from "mongoose";
 import toJSON from "./plugins/toJSON";
 import { Model } from "mongoose";
 
-interface members extends Document {
+interface members extends mongoose.Document {
   memberId: mongoose.Schema.Types.ObjectId;
   role: "admin" | "member";
 }
 
-export interface IWorkspace extends Document {
+export interface IWorkspace extends mongoose.Document {
   name: string;
   icon: {
     type: "image" | "emoji" | "lucide";
@@ -36,6 +36,20 @@ export interface IWorkspace extends Document {
   };
   tutorial: {
     name: string;
+  }[];
+  links: {
+    title: string;
+    url: string;
+    icon: {
+      type: "image" | "emoji" | "lucide";
+      value: string;
+    };
+    applicationUrlType: "none" | "iframe" | "newWindow" | "sameWindow";
+    fields: {
+      key: string;
+      value: string;
+      redirectType: "iframe" | "newWindow" | "sameWindow";
+    }[];
   }[];
 }
 
@@ -147,6 +161,54 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
         },
       ],
     },
+    links: [
+      {
+        title: {
+          type: String,
+          required: [true, "O título do link é obrigatório."],
+        },
+        url: {
+          type: String,
+          required: [true, "A URL do link é obrigatória."],
+        },
+        icon: {
+          type: {
+            type: String,
+            enum: ["image", "emoji", "lucide"],
+            required: true,
+          },
+          value: {
+            type: String,
+            trim: true,
+            maxlength: 100,
+          },
+        },
+        urlType: {
+          type: String,
+          enum: ["none", "iframe", "newWindow", "sameWindow"],
+          default: "none",
+          required: true,
+        },
+        fields: [
+          {
+            key: {
+              type: String,
+              required: true,
+            },
+            value: {
+              type: String,
+              required: true,
+            },
+            redirectType: {
+              type: String,
+              enum: ["iframe", "newWindow", "sameWindow"],
+              default: "iframe",
+              required: true,
+            },
+          },
+        ],
+      },
+    ],
   },
   {
     toJSON: { virtuals: true },
