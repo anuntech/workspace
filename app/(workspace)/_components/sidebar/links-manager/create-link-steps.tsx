@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -8,6 +10,7 @@ import { LinkFormData } from "./types";
 import { Plus } from "lucide-react";
 import { BasicLinkInformation } from "./basic-link-informations";
 import { PrincipalOption } from "./principal-option";
+import { useSearchParams } from "next/navigation";
 
 const initialFormData: LinkFormData = {
   images: {
@@ -26,6 +29,8 @@ const initialFormData: LinkFormData = {
 };
 
 export function CreateLinkStepsDialog() {
+  const urlParams = useSearchParams();
+  const workspaceId = urlParams.get("workspace");
   const [data, setData] = useState<LinkFormData>(initialFormData);
   const [steps, setSteps] = useState([
     {
@@ -36,21 +41,21 @@ export function CreateLinkStepsDialog() {
     {
       id: 2,
       content: PrincipalOption,
-      validation: false,
+      validation: true,
     },
   ]);
   const [currentStep, setCurrentStep] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const queryClient = useQueryClient();
-  const saveApplicationMutation = useMutation({
-    mutationFn: async (data: FormData) => api.post("/api/applications", data),
+  const saveLinkMutation = useMutation({
+    mutationFn: async (data: FormData) => api.post("/api/workspace/link", data),
     onSuccess: () => {
       queryClient.refetchQueries({
         queryKey: ["workspace"],
         type: "all",
       });
       toast({
-        description: "Aplicativo salvo com sucesso.",
+        description: "Link salvo com sucesso.",
         duration: 5000,
       });
       setIsOpen(false);
@@ -103,8 +108,8 @@ export function CreateLinkStepsDialog() {
   const handleSave = () => {
     const formData = new FormData();
 
-    formData.append("iframeUrl", data.principalLink.link || "");
-    formData.append("applicationUrlType", data.principalLink.type || "");
+    formData.append("url", data.principalLink.link || "");
+    formData.append("urlType", data.principalLink.type || "");
 
     // Images
     if (!data.images.icon) {
@@ -119,12 +124,6 @@ export function CreateLinkStepsDialog() {
     formData.append("icon", data.images.icon.get("icon"));
     formData.append("iconType", data.images.emojiAvatarType);
 
-    if (data.images.galleryPhotos && data.images.galleryPhotos.length > 0) {
-      Array.from(data.images.galleryPhotos).forEach((file) => {
-        formData.append("galeryPhotos", file);
-      });
-    }
-
     formData.append(
       "fields",
       JSON.stringify(
@@ -135,8 +134,10 @@ export function CreateLinkStepsDialog() {
         }))
       )
     );
+    formData.append("workspaceId", workspaceId);
+    formData.append("title", data.principalLink.title);
 
-    saveApplicationMutation.mutate(formData);
+    saveLinkMutation.mutate(formData);
   };
 
   const setInitialSteps = () => {
@@ -192,11 +193,10 @@ export function CreateLinkStepsDialog() {
             <Button
               onClick={handleSave}
               disabled={
-                !steps[currentStep].validation ||
-                saveApplicationMutation.isPending
+                !steps[currentStep].validation || saveLinkMutation.isPending
               }
             >
-              {saveApplicationMutation.isPending ? "Salvando..." : "Salvar"}
+              {saveLinkMutation.isPending ? "Salvando..." : "Salvar"}
             </Button>
           ) : (
             <Button

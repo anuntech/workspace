@@ -2,56 +2,60 @@ import mongoose from "mongoose";
 import toJSON from "./plugins/toJSON";
 import { Model } from "mongoose";
 
-interface members extends mongoose.Document {
+interface WorkspaceMember extends mongoose.Document {
   memberId: mongoose.Schema.Types.ObjectId;
   role: "admin" | "member";
 }
 
+interface WorkspaceIcon {
+  type: "image" | "emoji" | "lucide";
+  value: string;
+}
+
+interface WorkspaceInvite {
+  invitedAt: Date;
+  email: string;
+}
+
+interface WorkspaceRule {
+  appId: mongoose.Schema.Types.ObjectId;
+  members: { memberId: mongoose.Schema.Types.ObjectId }[];
+}
+
+interface WorkspaceLink {
+  title: string;
+  url: string;
+  icon: WorkspaceIcon;
+  urlType: "none" | "iframe" | "newWindow" | "sameWindow";
+  fields: {
+    key: string;
+    value: string;
+    redirectType: "iframe" | "newWindow" | "sameWindow";
+  }[];
+}
+
 export interface IWorkspace extends mongoose.Document {
   name: string;
-  icon: {
-    type: "image" | "emoji" | "lucide";
-    value: string;
-  };
+  icon: WorkspaceIcon;
   owner: mongoose.Schema.Types.ObjectId;
-  members: members[];
-  invitedMembersEmail: {
-    invitedAt: Date;
-    email: string;
-  }[];
+  members: WorkspaceMember[];
+  invitedMembersEmail: WorkspaceInvite[];
   plan: "premium" | "free";
   priceId: string;
   boughtApplications: mongoose.Types.ObjectId[];
   rules: {
-    allowedMemberApps: [
-      {
-        appId: mongoose.Schema.Types.ObjectId;
-        members: [
-          {
-            memberId: mongoose.Schema.Types.ObjectId;
-          }
-        ];
-      }
-    ];
+    allowedMemberApps: WorkspaceRule[];
   };
   tutorial: {
-    name: string;
+    name: "workspace" | "invitation" | "application";
   }[];
-  links: {
-    title: string;
-    url: string;
-    icon: {
-      type: "image" | "emoji" | "lucide";
-      value: string;
-    };
-    applicationUrlType: "none" | "iframe" | "newWindow" | "sameWindow";
-    fields: {
-      key: string;
-      value: string;
-      redirectType: "iframe" | "newWindow" | "sameWindow";
-    }[];
-  }[];
+  links: WorkspaceLink[];
 }
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PRICE_ID_REGEX = /^price_/;
+const MAX_NAME_LENGTH = 50;
+const MAX_ICON_VALUE_LENGTH = 100;
 
 const workspaceSchema = new mongoose.Schema<IWorkspace>(
   {
@@ -59,7 +63,7 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
       type: String,
       trim: true,
       required: true,
-      maxlength: 50,
+      maxlength: MAX_NAME_LENGTH,
     },
     icon: {
       type: {
@@ -70,7 +74,7 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
       value: {
         type: String,
         trim: true,
-        maxlength: 100,
+        maxlength: MAX_ICON_VALUE_LENGTH,
       },
     },
     owner: {
@@ -106,8 +110,7 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
             type: String,
             required: true,
             validate: {
-              validator: (email: string) =>
-                /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email),
+              validator: (email: string) => EMAIL_REGEX.test(email),
               message: "O email é inválido.",
             },
           },
@@ -123,7 +126,7 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
     priceId: {
       type: String,
       validate: {
-        validator: (v: string) => /^price_/.test(v),
+        validator: (v: string) => PRICE_ID_REGEX.test(v),
         message: "O priceId deve começar com 'price_'.",
       },
     },
@@ -169,7 +172,6 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
         },
         url: {
           type: String,
-          required: [true, "A URL do link é obrigatória."],
         },
         icon: {
           type: {
@@ -180,7 +182,7 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
           value: {
             type: String,
             trim: true,
-            maxlength: 100,
+            maxlength: MAX_ICON_VALUE_LENGTH,
           },
         },
         urlType: {
@@ -216,24 +218,25 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
   }
 );
 
-workspaceSchema.pre("save", function (next) {
-  if (this.isModified("name")) {
-    this.name = this.name.trim();
-  }
-  if (this.isModified("icon.value")) {
-    this.icon.value = this.icon.value.trim();
-  }
+workspaceSchema.pre("save", async function (next) {
+  try {
+    if (this.isModified("name")) {
+      this.name = this.name.trim();
+    }
+    if (this.isModified("icon.value")) {
+      this.icon.value = this.icon.value.trim();
+    }
 
-  if (this.isModified("tutorial") && Array.isArray(this.tutorial)) {
-    // Remove duplicatas de tutorial
-    const uniquePages = this.tutorial.reduce((acc, current) => {
-      const isDuplicate = acc.find((item) => item.name === current.name);
-      if (!isDuplicate) acc.push(current);
-      return acc;
-    }, []);
-    this.tutorial = uniquePages;
+    if (this.isModified("tutorial") && Array.isArray(this.tutorial)) {
+      const uniquePages = Array.from(
+        new Set(this.tutorial.map((t) => t.name))
+      ).map((name) => ({ name }));
+      this.tutorial = uniquePages;
+    }
+    next();
+  } catch (error) {
+    next(error);
   }
-  next();
 });
 
 // Helper function to remove workspace references from Applications
@@ -313,6 +316,26 @@ workspaceSchema.pre("deleteMany", async function (next) {
     next(error);
   }
 });
+
+// Add index for common queries
+workspaceSchema.index({ owner: 1 });
+workspaceSchema.index({ "members.memberId": 1 });
+
+// Add method to check if user is member
+workspaceSchema.methods.isMember = function (
+  userId: mongoose.Types.ObjectId
+): boolean {
+  return this.members.some((member: any) => member.memberId.equals(userId));
+};
+
+// Add method to check if user is admin
+workspaceSchema.methods.isAdmin = function (
+  userId: mongoose.Types.ObjectId
+): boolean {
+  return this.members.some(
+    (member: any) => member.memberId.equals(userId) && member.role === "admin"
+  );
+};
 
 workspaceSchema.plugin(toJSON as any);
 

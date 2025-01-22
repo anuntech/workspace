@@ -4,36 +4,15 @@ import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  useSidebar,
 } from "@/components/ui/sidebar";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "@/libs/api";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Skeleton } from "../../../../components/ui/skeleton";
-import Link from "next/link";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "../../../../components/ui/avatar";
-import { getS3Image } from "@/libs/s3-client";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { useRef, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { IconComponent } from "@/components/get-lucide-icons";
+import { useSearchParams } from "next/navigation";
+import { Skeleton } from "@/components/ui/skeleton";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
-import { DropdownApplication } from "./dropdown-application";
 import { SidebarApplication } from "./sidebar-application";
-import { Plus } from "lucide-react";
 import { CreateLinkStepsDialog } from "./links-manager/create-link-steps";
+import { Separator } from "@radix-ui/react-separator";
 
 export function NavLinks() {
   const urlParams = useSearchParams();
@@ -97,7 +76,9 @@ export function NavLinks() {
 
   return (
     <>
-      <Separator className="mx-2 hidden group-data-[collapsible=icon]:block" />
+      {enabledApplications?.length > 0 && (
+        <Separator className="mx-2 hidden group-data-[collapsible=icon]:block" />
+      )}
       <SidebarGroup>
         <SidebarGroupLabel className="flex items-center justify-between group-data-[collapsible=icon]:hidden pr-0">
           <p>Links</p>
