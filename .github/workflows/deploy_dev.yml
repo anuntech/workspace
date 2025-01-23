@@ -12,9 +12,9 @@ jobs:
     environment: env
 
     steps:
-      - name: Fix permissions for .next directory
+      - name: Clean .next directory
         run: |
-          chmod -R u+rwx $GITHUB_WORKSPACE/.next
+          rm -rf $GITHUB_WORKSPACE/.next
 
       - name: Checkout Code
         uses: actions/checkout@v3
