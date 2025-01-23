@@ -26,12 +26,13 @@ interface Props {
 	}
 	id: string;
 	fieldId?: string;
-	type: "principal-link" | "sub-link-edit" | "sub-link-create";
+	menuType: "menu-main" | "menu-config";
+	linkType: "principal-link" | "sub-link-edit" | "sub-link-create";
 	openButtonText?: string
 }
 
 
-export const LinkFormComponent = ({ data, id, fieldId, type, openButtonText }: Props) => {
+export const LinkFormComponent = ({ data, id, fieldId, menuType, linkType, openButtonText }: Props) => {
 	const [isOpen, setIsOpen] = useState(false)
 
 	const form = useForm<PrincipalLinkForm>(
@@ -60,20 +61,20 @@ export const LinkFormComponent = ({ data, id, fieldId, type, openButtonText }: P
 
 			formData.append("id", id)
 
-			if (type !== "principal-link" && fieldId) {
+			if (linkType !== "principal-link" && fieldId) {
 				formData.append("fieldId", fieldId)
 			}
 
 			let dataUpdated;
 
-			if (type === "sub-link-create") {
-				const { data } = await api.post("/api/applications/edit/menu-main", formData)
+			if (linkType === "sub-link-create") {
+				const { data } = await api.post(`/api/applications/edit/${menuType}`, formData)
 
 				dataUpdated = data
 			}
 
-			if (type !== "sub-link-create") {
-				const { data } = await api.put("/api/applications/edit/menu-main", formData)
+			if (linkType === "sub-link-edit") {
+				const { data } = await api.put(`/api/applications/edit/${menuType}`, formData)
 
 				dataUpdated = data
 			}
@@ -140,8 +141,8 @@ export const LinkFormComponent = ({ data, id, fieldId, type, openButtonText }: P
 				}}
 			>
 				<DialogTrigger asChild>
-					<Button variant={(openButtonText && type !== "principal-link") ? "outline" : "ghost"} onClick={() => setIsOpen(true)} className={(openButtonText && type === "sub-link-create") ? "max-w-32 w-full" : "w-full flex items-start justify-start"}>
-						{(openButtonText && type !== "principal-link") ? <span>
+					<Button variant={(openButtonText && linkType !== "principal-link") ? "outline" : "ghost"} onClick={() => setIsOpen(true)} className={(openButtonText && linkType === "sub-link-create") ? "max-w-32 w-full" : "w-full flex items-start justify-start"}>
+						{(openButtonText && linkType !== "principal-link") ? <span>
 							{openButtonText}
 						</span> : <Ellipsis />}
 					</Button>
@@ -153,10 +154,10 @@ export const LinkFormComponent = ({ data, id, fieldId, type, openButtonText }: P
 					<form onSubmit={handleSubmit(onSubmit)}>
 						<DialogHeader>
 							<DialogTitle>
-								{type === "sub-link-create" ? "Adicionar" : "Atualizar"} {type === "principal-link" ? "link principal" : "sublink"} ao aplicativo
+								{linkType === "sub-link-create" ? "Adicionar" : "Atualizar"} {linkType === "principal-link" ? "link principal" : "sublink"} ao aplicativo
 							</DialogTitle>
 							<DialogDescription>
-								{type === "sub-link-create" ? "Adicione" : "Atualize"} o {type === "principal-link" ? "link principal" : "sublink"} do aplicativo,
+								{linkType === "sub-link-create" ? "Adicione" : "Atualize"} o {linkType === "principal-link" ? "link principal" : "sublink"} do aplicativo,
 								que será o link que o usuário irá usar para acessar a tela principal
 								do aplicativo.
 							</DialogDescription>
@@ -169,7 +170,7 @@ export const LinkFormComponent = ({ data, id, fieldId, type, openButtonText }: P
 									render={({ field }) => (
 										<FormItem>
 											<FormLabel>
-												Título {type !== "principal-link" && "do sublink"} *
+												Título {linkType !== "principal-link" && "do sublink"} *
 											</FormLabel>
 											<FormControl>
 												<Input
@@ -190,7 +191,7 @@ export const LinkFormComponent = ({ data, id, fieldId, type, openButtonText }: P
 									render={({ field }) => (
 										<FormItem>
 											<FormLabel>
-												Link {type === "principal-link" ? " do aplicativo" : "do sublink"} *
+												Link {linkType === "principal-link" ? " do aplicativo" : "do sublink"} *
 											</FormLabel>
 											<FormControl>
 												<Input
@@ -207,14 +208,14 @@ export const LinkFormComponent = ({ data, id, fieldId, type, openButtonText }: P
 							</div>
 							<div className="w-full space-y-4">
 								<Label htmlFor="type">
-									Tipo {type === "principal-link" ? " de link" : "de sublink"} *
+									Tipo {linkType === "principal-link" ? " de link" : "de sublink"} *
 								</Label>
 								<RadioGroup
 									value={watchedType}
 									defaultValue={data.link.applicationUrlType}
 									className="space-y-2"
 								>
-									{type === "principal-link" && (
+									{linkType === "principal-link" && (
 										<div className="flex items-center space-x-2">
 											<RadioGroupItem value="none" id="r1" onClick={() => handleRadioGroupChange("none")} />
 											<Label htmlFor="r1">Nenhum</Label>
@@ -236,10 +237,10 @@ export const LinkFormComponent = ({ data, id, fieldId, type, openButtonText }: P
 							</div>
 						</div>
 						<DialogFooter >
-							{type === "sub-link-edit" && (
-								<DeleteButton id={id} fieldId={fieldId} type={type} setMainDialogState={setIsOpen} />
+							{linkType === "sub-link-edit" && (
+								<DeleteButton id={id} fieldId={fieldId} menuType={menuType} linkType={linkType} setMainDialogState={setIsOpen} />
 							)}
-							<Button type="submit" disabled={!isValid} className="max-w-24 w-full">{type === "sub-link-create" ? "Adicionar" : "Salvar"}</Button>
+							<Button type="submit" disabled={!isValid} className="max-w-24 w-full">{linkType === "sub-link-create" ? "Adicionar" : "Salvar"}</Button>
 						</DialogFooter>
 					</form>
 				</DialogContent>

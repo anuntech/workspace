@@ -8,11 +8,12 @@ import { Button } from "@/components/ui/button";
 interface Props {
 	id: string;
 	fieldId?: string;
-	type: "principal-link" | "sub-link-edit" | "sub-link-create";
+	menuType: "menu-main" | "menu-config";
+	linkType: "principal-link" | "sub-link-edit" | "sub-link-create";
 	setMainDialogState: Dispatch<SetStateAction<boolean>>
 }
 
-export const DeleteButton = ({ id, fieldId, type, setMainDialogState }: Props) => {
+export const DeleteButton = ({ id, fieldId, menuType, linkType, setMainDialogState }: Props) => {
 	const [isOpen, setIsOpen] = useState(false)
 
 	const queryClient = useQueryClient();
@@ -23,11 +24,11 @@ export const DeleteButton = ({ id, fieldId, type, setMainDialogState }: Props) =
 
 			formData.append("id", id)
 
-			if (type !== "principal-link" && fieldId) {
+			if (linkType !== "principal-link" && fieldId) {
 				formData.append("fieldId", fieldId)
 			}
 
-			const { data } = await api.delete("/api/applications/edit/menu-main", { data: formData })
+			const { data } = await api.delete(`/api/applications/edit/${menuType}`, { data: formData })
 
 			return data
 		},

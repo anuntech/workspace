@@ -16,11 +16,19 @@ import {
 import api from "@/libs/api";
 import { Configs } from "./_components/configs";
 import { MenuMain } from "./_components/menu-main";
+import { MenuConfig } from "./_components/menu-config";
 
 export interface Field {
 	key: string
 	redirectType: "none" | "iframe" | "newWindow" | "sameWindow";
 	value: string;
+	_id: string;
+}
+
+export interface Config {
+	title: string;
+	link: string;
+	type: "none" | "iframe" | "newWindow" | "sameWindow";
 	_id: string;
 }
 
@@ -38,6 +46,7 @@ interface IApp {
 	galleryPhotos?: FileList;
 	fields: Array<Field>
 	_id: string;
+	configurationOptions: Array<Config>;
 }
 
 export default function EditPage({ params }: { params: { appId: string } }) {
@@ -117,6 +126,11 @@ export default function EditPage({ params }: { params: { appId: string } }) {
 									applicationUrlType: application.applicationUrlType,
 								},
 								subLinks: application.fields
+							}} id={application._id} />
+						</TabsContent>
+						<TabsContent value="menu-configs">
+							<MenuConfig data={{
+								subLinks: application.configurationOptions
 							}} id={application._id} />
 						</TabsContent>
 					</Tabs>
