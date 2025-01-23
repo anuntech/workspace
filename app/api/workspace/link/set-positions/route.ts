@@ -19,16 +19,14 @@ import { NextResponse } from "next/server";
  * ]
  *
  * */
-export async function POST(
-	request: Request,
-	{ params }: { params: { workspaceId: string } }
-) {
+export async function POST(request: Request) {
 	try {
 		const session = await getServerSession(authOptions);
 
 		await connectMongo();
+		const body = await request.json();
 
-		const workspace = await Workspace.findById(params.workspaceId);
+		const workspace = await Workspace.findById(body.workspaceId);
 
 		if (!workspace) {
 			return NextResponse.json(
@@ -37,9 +35,7 @@ export async function POST(
 			);
 		}
 
-		const body = await request.json();
-
-		if (!body || !Array.isArray(body)) {
+		if (!body.data || !Array.isArray(body.data)) {
 			return NextResponse.json({ error: "Body is invalid" }, { status: 400 });
 		}
 
@@ -64,11 +60,11 @@ export async function POST(
 			);
 		}
 
-		if (body.length != workspace.links.length) {
+		if (body.data.length != workspace.links.length) {
 			return NextResponse.json({ error: "Body is invalid" }, { status: 400 });
 		}
 
-		const positions = body.map((app) => app.position);
+		const positions = body.data.map((app: any) => app.position);
 		const sortedPositions = [...positions].sort((a, b) => a - b);
 		const expectedPositions = Array.from(
 			{ length: sortedPositions.length },
@@ -85,13 +81,15 @@ export async function POST(
 			);
 		}
 
-		for (const app of body) {
+		for (const app of body.data) {
 			if (!app.linkId || app.position == undefined) {
 				return NextResponse.json({ error: "Body is invalid" }, { status: 400 });
 			}
 
 			if (
-				!workspace.links.some((id) => id.toString() === app.linkId.toString())
+				!workspace.links.some(
+					(link) => link._id.toString() === app.linkId.toString()
+				)
 			) {
 				return NextResponse.json(
 					{ error: "Application not found" },
@@ -100,18 +98,18 @@ export async function POST(
 			}
 		}
 
-		const positionMap = body.reduce((acc, item) => {
+		const positionMap = body.data.reduce((acc: any, item: any) => {
 			acc[item.linkId] = item.position;
 			return acc;
 		}, {});
 
 		workspace.links.sort((a, b) => {
-			return positionMap[a.toString()] - positionMap[b.toString()];
+			return positionMap[a._id.toString()] - positionMap[b._id.toString()];
 		});
 
 		await workspace.save();
 
-		return NextResponse.json(workspace);
+		return NextResponse.json({ message: "Positions set successfully" });
 	} catch (e) {
 		console.error(e);
 		return NextResponse.json({ error: e?.message }, { status: 500 });
