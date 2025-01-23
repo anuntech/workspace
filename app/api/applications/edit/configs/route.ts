@@ -14,6 +14,7 @@ export async function PUT(request: Request) {
 		const session = await getServerSession(authOptions);
 
 		const user = await User.findById(session.user.id);
+
 		if (user.email.split("@")[1] !== config.domainName) {
 			return NextResponse.json(
 				{ error: "You have no permission" },
@@ -55,15 +56,13 @@ export async function PUT(request: Request) {
 
 					await s3Client.send(command);
 
-					return
+					break
 				}
 
 				if (photoType === "[object String]") {
 					const photoId = photo as string;
 
 					galleryPhotosIds.push(photoId);
-
-					return
 				}
 			}
 		}
@@ -109,16 +108,20 @@ export async function PUT(request: Request) {
 				avatarFallback: formData.get("name").slice(0, 2),
 				icon,
 				galleryPhotos: galleryPhotosIds,
+			},
+			{
+				new: true,
 			}
 		);
-
 
 		if (application === null) return NextResponse.json(
 			{ error: "Application not found" },
 			{ status: 404 }
 		);
 
-		return NextResponse.json(application);
+		return NextResponse.json(application, {
+			status: 200
+		});
 	} catch (e) {
 		console.error(e);
 		return NextResponse.json({ error: e?.message }, { status: 500 });

@@ -81,11 +81,13 @@ export const Configs = ({ data, id }: Props) => {
 
 			formData.append("id", id)
 
-			api.put("/api/applications/edit/configs", formData)
+			const { data: dataUpdated } = await api.put("/api/applications/edit/configs", formData)
+
+			return dataUpdated
 		},
 		onSuccess: () => {
-			queryClient.refetchQueries({
-				queryKey: ["workspace"],
+			queryClient.invalidateQueries({
+				queryKey: ["applications"],
 				type: "all",
 			});
 			toast({
@@ -255,7 +257,7 @@ export const Configs = ({ data, id }: Props) => {
 					{...register("description")}
 				/>
 			</div>
-			<Button type="submit" disabled={!isValid} className="max-w-32 w-full">Salvar</Button>
+			<Button type="submit" disabled={!isValid} className="max-w-24 w-full">Salvar</Button>
 		</form>
 	);
 }
