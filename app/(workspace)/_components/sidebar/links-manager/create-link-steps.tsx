@@ -149,7 +149,7 @@ export function CreateLinkStepsDialog() {
 			prev.map((step) => {
 				return {
 					...step,
-					validation: step.id == 4, // Only the last step is validated
+					validation: step.id == 2, // Only the last step is validated
 				};
 			})
 		);
