@@ -51,3 +51,7 @@ jobs:
           nvm use 21
           chmod +x ./deploy.sh
           ./deploy.sh
+
+      - name: Clean up old Docker images
+        run: |
+          docker image prune -a -f --filter "until=504h"
