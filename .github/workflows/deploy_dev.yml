@@ -14,7 +14,7 @@ jobs:
     steps:
       - name: Clean .next directory
         run: |
-          sudo rm -rf $GITHUB_WORKSPACE/.next
+          rm -rf $GITHUB_WORKSPACE/.next
 
       - name: Checkout Code
         uses: actions/checkout@v3
