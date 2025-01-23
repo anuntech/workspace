@@ -36,10 +36,10 @@ export function NavLinks() {
 
 	const setPositionsMutation = useMutation({
 		mutationFn: async (data: any) =>
-			api.post(`/api/workspace/link/${workspace}/set-positions`, data),
-		onSuccess: () => {
-			linksQuery.refetch();
-		},
+			api.post(`/api/workspace/link/set-positions`, {
+				data,
+				workspaceId: workspace,
+			}),
 	});
 
 	if (linksQuery.isPending) {
