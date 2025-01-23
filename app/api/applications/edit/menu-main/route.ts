@@ -44,7 +44,9 @@ export async function POST(request: Request) {
 				$push: {
 					fields: newField,
 				}
-			}
+			}, {
+			new: true
+		}
 		);
 
 		if (application === null) return NextResponse.json(
@@ -52,7 +54,9 @@ export async function POST(request: Request) {
 			{ status: 404 }
 		);
 
-		return NextResponse.json(application);
+		return NextResponse.json(application, {
+			status: 200
+		});
 	} catch (e) {
 		console.error(e);
 		return NextResponse.json({ error: e?.message }, { status: 500 });
@@ -97,15 +101,20 @@ export async function PUT(request: Request) {
 					"fields.$.value": applicationUrl,
 					"fields.$.redirectType": applicationUrlType,
 				}
+			}, {
+				new: true,
 			})
 		}
 
 		if (!fieldId) {
-			application = await Applications.findByIdAndUpdate(formData.get("id"),
+			application = await Applications.findByIdAndUpdate(id,
 				{
 					name,
 					applicationUrl,
 					applicationUrlType,
+				},
+				{
+					new: true,
 				}
 			);
 		}
@@ -115,7 +124,9 @@ export async function PUT(request: Request) {
 			{ status: 404 }
 		);
 
-		return NextResponse.json(application);
+		return NextResponse.json(application, {
+			status: 200
+		});
 	} catch (e) {
 		console.error(e);
 		return NextResponse.json({ error: e?.message }, { status: 500 });
@@ -153,7 +164,9 @@ export async function DELETE(request: Request) {
 				fields: {
 					"_id": fieldId
 				}
-			}
+			},
+		}, {
+			new: true,
 		})
 
 		if (application === null) return NextResponse.json(
@@ -161,7 +174,9 @@ export async function DELETE(request: Request) {
 			{ status: 404 }
 		);
 
-		return NextResponse.json(application);
+		return NextResponse.json(application, {
+			status: 200
+		});
 	} catch (e) {
 		console.error(e);
 		return NextResponse.json({ error: e?.message }, { status: 500 });

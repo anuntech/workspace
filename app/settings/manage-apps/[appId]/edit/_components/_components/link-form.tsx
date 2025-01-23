@@ -73,7 +73,7 @@ export const LinkFormComponent = ({ data, id, fieldId, type, openButtonText }: P
 			}
 		},
 		onSuccess: () => {
-			queryClient.refetchQueries({
+			queryClient.invalidateQueries({
 				queryKey: ["applications"],
 				type: "all",
 			});
