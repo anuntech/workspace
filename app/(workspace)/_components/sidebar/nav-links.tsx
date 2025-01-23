@@ -109,6 +109,7 @@ export function NavLinks() {
 												}}
 											>
 												<SidebarApplication
+													isLink
 													key={data.title}
 													data={{
 														...data,

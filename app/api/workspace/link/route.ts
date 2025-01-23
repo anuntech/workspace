@@ -153,3 +153,75 @@ export async function GET(request: Request) {
 		);
 	}
 }
+
+export async function DELETE(request: Request) {
+	try {
+		const session = await getServerSession(authOptions);
+		if (!session) {
+			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+		}
+
+		await connectMongo();
+
+		const { searchParams } = new URL(request.url);
+		const workspaceId = searchParams.get("workspaceId");
+
+		if (!workspaceId) {
+			return NextResponse.json(
+				{ error: "workspaceId is required" },
+				{ status: 400 }
+			);
+		}
+
+		const linkId = searchParams.get("linkId");
+		if (!linkId) {
+			return NextResponse.json(
+				{ error: "linkId is required" },
+				{ status: 400 }
+			);
+		}
+
+		const workspace = await Workspace.findById(workspaceId);
+		if (!workspace) {
+			return NextResponse.json(
+				{ error: "Workspace not found" },
+				{ status: 404 }
+			);
+		}
+
+		const memberRole = workspace.members.find(
+			(member) => member.memberId.toString() === session.user.id.toString()
+		)?.role;
+
+		if (
+			workspace.owner.toString() !== session.user.id &&
+			memberRole !== "admin"
+		) {
+			return NextResponse.json(
+				{
+					error:
+						"You do not have permission to create a link for this workspace",
+				},
+				{ status: 403 }
+			);
+		}
+
+		const linkIndex = workspace.links.findIndex(
+			(link) => link._id.toString() === linkId
+		);
+		if (linkIndex === -1) {
+			return NextResponse.json({ error: "Link not found" }, { status: 404 });
+		}
+
+		workspace.links.splice(linkIndex, 1);
+		await workspace.save();
+
+		return NextResponse.json({ links: workspace.links || [] });
+	} catch (e) {
+		console.error(e);
+		return NextResponse.json(
+			{ error: e?.message || "Internal server error" },
+			{ status: 500 }
+		);
+	}
+}
