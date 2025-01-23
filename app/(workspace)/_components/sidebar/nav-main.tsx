@@ -21,7 +21,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "../../../../components/ui/skeleton";
 import Link from "next/link";
-import { NavLink } from "./nav-link";
 
 export function NavMain() {
   const urlParams = useSearchParams();

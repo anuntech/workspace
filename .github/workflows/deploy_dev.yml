@@ -32,7 +32,6 @@ jobs:
           echo "HETZNER_S3_REGION=${{ vars.HETZNER_S3_REGION }}" >> .env
           echo "NEXT_PUBLIC_HETZNER_S3_ENDPOINT=${{ vars.NEXT_PUBLIC_HETZNER_S3_ENDPOINT }}" >> .env
           echo "NEXTAUTH_URL=${{ vars.NEXTAUTH_URL }}" >> .env
-          echo "${{secrets.GOOGLE_SECRET}}"
 
       - name: Install Dependencies
         run: |
