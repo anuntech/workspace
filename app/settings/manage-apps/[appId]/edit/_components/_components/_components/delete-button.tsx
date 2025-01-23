@@ -27,7 +27,9 @@ export const DeleteButton = ({ id, fieldId, type, setMainDialogState }: Props) =
 				formData.append("fieldId", fieldId)
 			}
 
-			api.delete("/api/applications/edit/menu-main", { data: formData })
+			const { data } = await api.delete("/api/applications/edit/menu-main", { data: formData })
+
+			return data
 		},
 		onSuccess: () => {
 			queryClient.refetchQueries({

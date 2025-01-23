@@ -64,13 +64,21 @@ export const LinkFormComponent = ({ data, id, fieldId, type, openButtonText }: P
 				formData.append("fieldId", fieldId)
 			}
 
+			let dataUpdated;
+
 			if (type === "sub-link-create") {
-				api.post("/api/applications/edit/menu-main", formData)
+				const { data } = await api.post("/api/applications/edit/menu-main", formData)
+
+				dataUpdated = data
 			}
 
 			if (type !== "sub-link-create") {
-				api.put("/api/applications/edit/menu-main", formData)
+				const { data } = await api.put("/api/applications/edit/menu-main", formData)
+
+				dataUpdated = data
 			}
+
+			return dataUpdated
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({

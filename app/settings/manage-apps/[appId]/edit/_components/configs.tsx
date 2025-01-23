@@ -81,7 +81,9 @@ export const Configs = ({ data, id }: Props) => {
 
 			formData.append("id", id)
 
-			api.put("/api/applications/edit/configs", formData)
+			const { data: dataUpdated } = await api.put("/api/applications/edit/configs", formData)
+
+			return dataUpdated
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({
