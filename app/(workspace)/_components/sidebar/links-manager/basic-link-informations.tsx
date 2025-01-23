@@ -1,3 +1,4 @@
+/* eslint-disable no-mixed-spaces-and-tabs */
 /* eslint-disable no-unused-vars */
 import { useEffect } from "react";
 import { z } from "zod";
@@ -9,19 +10,21 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { AppFormData } from "./types";
+import { LinkFormData } from "./types";
+import { AvatarSelector } from "@/components/avatar-selector";
+import { base64ToBlob } from "@/lib/utils";
 
 interface GetPrincipalLinkProps {
-	data: AppFormData;
+	data: LinkFormData;
 	updateFormData: (
-		section: keyof AppFormData,
-		updates: Partial<AppFormData[keyof AppFormData]>
+		section: keyof LinkFormData,
+		updates: Partial<LinkFormData[keyof LinkFormData]>
 	) => void;
 	isSublink?: boolean;
 	setStepValidation: (isValid: boolean) => void;
 }
 
-export function GetPrincipalLink({
+export function BasicLinkInformation({
 	data,
 	updateFormData,
 	isSublink,
@@ -42,17 +45,53 @@ export function GetPrincipalLink({
 		),
 	});
 
+	const handleAvatarChange = (avatar: {
+		value: string;
+		type: "image" | "emoji" | "lucide";
+	}) => {
+		const formData = new FormData();
+
+		switch (avatar.type) {
+			case "image": {
+				const blob = base64ToBlob(avatar.value);
+				formData.append("icon", blob, "avatar.jpeg");
+				formData.append("iconType", avatar.type);
+
+				updateFormData("images", {
+					icon: formData,
+					imageUrlWithoutS3: URL.createObjectURL(blob),
+					emojiAvatar: "",
+					emojiAvatarType: avatar.type,
+				});
+				break;
+			}
+			case "emoji":
+			case "lucide":
+				formData.append("icon", avatar.value);
+				formData.append("iconType", avatar.type);
+				updateFormData("images", {
+					icon: formData,
+					imageUrlWithoutS3: "",
+					emojiAvatar: avatar.value,
+					emojiAvatarType: avatar.type,
+				});
+				break;
+		}
+	};
+
 	useEffect(() => {
 		const timer = setTimeout(() => {
 			const validationResult = principalLinkSchema.safeParse(
 				data.principalLink
 			);
 
-			setStepValidation(validationResult.success);
+			console.log(data.images);
+
+			setStepValidation(validationResult.success && !!data.images.icon);
 		}, 0);
 
 		return () => clearTimeout(timer);
-	}, [data.principalLink]);
+	}, [data.principalLink, data.images]);
 
 	const handleChange = (field: string, value: string) => {
 		if (value == "none") {
@@ -76,6 +115,29 @@ export function GetPrincipalLink({
 			</DialogHeader>
 			<div className="grid gap-4">
 				<div>
+					<Label htmlFor="title">Ícone do link *</Label>
+					<div>
+						<AvatarSelector
+							data={
+								data.images.emojiAvatar
+									? {
+											value: data.images.emojiAvatar,
+											type: data.images.emojiAvatarType,
+									  }
+									: null
+							}
+							className="w-[120px]"
+							emojiSize="4rem"
+							imageUrlWithoutS3={
+								data.images.imageUrlWithoutS3
+									? data.images.imageUrlWithoutS3
+									: null
+							}
+							onAvatarChange={handleAvatarChange}
+						/>
+					</div>
+				</div>
+				<div>
 					<Label htmlFor="title">Título *</Label>
 					<Input
 						id="title"
@@ -94,7 +156,6 @@ export function GetPrincipalLink({
 						disabled={type === "none"}
 					/>
 				</div>
-
 				<div className="space-y-4">
 					<Label htmlFor="type">
 						Tipo de {!isSublink ? "link" : "sublink"} *
