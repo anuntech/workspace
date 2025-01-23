@@ -41,7 +41,7 @@ export const MenuMain = ({ data, id }: Props) => {
 								<LinkFormComponent data={{
 									basicInformation: data.basicInformation,
 									link: data.principalLink,
-								}} id={id} type="principal-link" />
+								}} id={id} menuType="menu-main" linkType="principal-link" />
 								<CollapsibleTrigger asChild>
 									<Button variant="ghost">
 										<ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
@@ -67,7 +67,7 @@ export const MenuMain = ({ data, id }: Props) => {
 													applicationUrl: item.value,
 													applicationUrlType: item.redirectType,
 												},
-											}} id={id} fieldId={item._id} type="sub-link-edit" openButtonText={item.key} />
+											}} id={id} fieldId={item._id} menuType="menu-main" linkType="sub-link-edit" openButtonText={item.key} />
 										</SidebarMenuButton>
 									</SidebarMenuItem>
 								))}
@@ -80,7 +80,7 @@ export const MenuMain = ({ data, id }: Props) => {
 									applicationUrl: "",
 									applicationUrlType: "iframe"
 								},
-							}} id={id} type="sub-link-create" openButtonText="Adicionar sublink" />
+							}} id={id} menuType="menu-main" linkType="sub-link-create" openButtonText="Adicionar sublink" />
 						</SidebarGroupContent>
 					</CollapsibleContent>
 				</SidebarGroup>
