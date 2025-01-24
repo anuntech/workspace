@@ -257,7 +257,7 @@ export const Configs = ({ data, id }: Props) => {
 					{...register("description")}
 				/>
 			</div>
-			<Button type="submit" disabled={!isValid} className="max-w-24 w-full">Salvar</Button>
+			<Button type="submit" disabled={!isValid || saveApplicationMutation.isPending} className="max-w-24 w-full">Salvar</Button>
 		</form>
 	);
 }
