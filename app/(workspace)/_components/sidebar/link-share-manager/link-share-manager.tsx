@@ -15,13 +15,14 @@ export function LinkShareManager({
 	linkId,
 	isOpen,
 	setIsOpen,
+	workspaceId,
 }: {
 	linkId: string;
 	isOpen: boolean;
 	setIsOpen: (open: boolean) => void;
+	workspaceId: string;
 }) {
 	const [selectedUsers, setSelectedUsers] = useState<IUser[]>([]);
-	const workspaceId = "yourWorkspaceId"; // Replace with actual workspace ID logic
 
 	const handleShare = () => {
 		// Implement your share logic here
@@ -37,8 +38,8 @@ export function LinkShareManager({
 			}}
 		>
 			<DialogTrigger asChild></DialogTrigger>
-			<DialogContent>
-				<DialogHeader>
+			<DialogContent className="h-2/4 flex flex-col">
+				<DialogHeader className="h-max">
 					<DialogTitle>Adicionar membros para um link?</DialogTitle>
 					<DialogDescription>
 						Adicione os membros da sua equipe para que eles possam acessar a

@@ -128,6 +128,7 @@ export function DropdownLink({
 				linkId={linkId}
 				isOpen={isLinkShareOpen}
 				setIsOpen={setIsLinkShareOpen}
+				workspaceId={workspace}
 			/>
 		</>
 	);
