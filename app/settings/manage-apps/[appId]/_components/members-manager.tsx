@@ -23,20 +23,10 @@ import {
 import { Trash2 } from "lucide-react";
 import Image from "next/image";
 import { UserSearchInput } from "@/components/user-search-input";
-
-type User = {
-	_id: string;
-	name: string;
-	email: string;
-	image: string;
-	icon?: {
-		value: string;
-		type: "image" | "emoji" | "lucide";
-	};
-};
+import { IUser } from "@/models/User";
 
 export function MembersManager({ params }: { params: { appId: string } }) {
-	const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
+	const [selectedUsers, setSelectedUsers] = useState<IUser[]>([]);
 	const searchParams = useSearchParams();
 	const workspace = searchParams.get("workspace");
 

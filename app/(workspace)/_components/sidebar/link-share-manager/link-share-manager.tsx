@@ -6,11 +6,10 @@ import {
 	DialogHeader,
 	DialogTitle,
 	DialogDescription,
-	DialogFooter,
 } from "@/components/ui/dialog";
+import { UserSearchInput } from "@/components/user-search-input";
+import { IUser } from "@/models/User";
 import { Button } from "@/components/ui/button";
-import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { Share2 } from "lucide-react";
 
 export function LinkShareManager({
 	linkId,
@@ -21,6 +20,9 @@ export function LinkShareManager({
 	isOpen: boolean;
 	setIsOpen: (open: boolean) => void;
 }) {
+	const [selectedUsers, setSelectedUsers] = useState<IUser[]>([]);
+	const workspaceId = "yourWorkspaceId"; // Replace with actual workspace ID logic
+
 	const handleShare = () => {
 		// Implement your share logic here
 		console.log("Sharing link:", linkId);
@@ -43,6 +45,21 @@ export function LinkShareManager({
 						esse link
 					</DialogDescription>
 				</DialogHeader>
+				<div className="flex gap-2 items-center">
+					<UserSearchInput
+						selectedUsers={selectedUsers}
+						setSelectedUsers={setSelectedUsers}
+						workspaceId={workspaceId}
+						// Optionally, add excludedUsers if needed
+						// excludedUsers={excludedUsers}
+					/>
+					<Button
+						onClick={() => handleShare()}
+						disabled={selectedUsers.length < 1}
+					>
+						Adicionar
+					</Button>
+				</div>
 			</DialogContent>
 		</Dialog>
 	);
