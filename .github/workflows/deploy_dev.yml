@@ -36,6 +36,7 @@ jobs:
           echo "HETZNER_S3_REGION=${{ vars.HETZNER_S3_REGION }}" >> .env
           echo "NEXT_PUBLIC_HETZNER_S3_ENDPOINT=${{ vars.NEXT_PUBLIC_HETZNER_S3_ENDPOINT }}" >> .env
           echo "NEXTAUTH_URL=${{ vars.NEXTAUTH_URL }}" >> .env
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
 
       - name: Install Dependencies
         run: |
