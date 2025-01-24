@@ -154,3 +154,78 @@ export async function GET(request: Request) {
 		return NextResponse.json({ error: e?.message }, { status: 500 });
 	}
 }
+
+export async function DELETE(request: Request) {
+	try {
+		const session = await getServerSession(authOptions);
+
+		await connectMongo();
+		const { searchParams } = new URL(request.url);
+		const workspaceId = searchParams.get("workspaceId");
+		const linkId = searchParams.get("linkId");
+		const memberId = searchParams.get("memberId");
+
+		if (!workspaceId) {
+			return NextResponse.json(
+				{ error: "Workspace not found" },
+				{ status: 404 }
+			);
+		}
+
+		const workspace = await Workspace.findById(workspaceId);
+
+		if (!workspace) {
+			return NextResponse.json(
+				{ error: "Workspace not found" },
+				{ status: 404 }
+			);
+		}
+
+		if (!memberId) {
+			return NextResponse.json(
+				{ error: "Please provide a member ID" },
+				{ status: 400 }
+			);
+		}
+
+		const memberRole = workspace.members.find(
+			(m) => m.memberId.toString() === session.user.id.toString()
+		)?.role;
+
+		if (
+			memberRole !== "admin" &&
+			workspace.owner.toString() !== session.user.id
+		) {
+			return NextResponse.json(
+				{ error: "You do not have permission to remove members" },
+				{ status: 403 }
+			);
+		}
+
+		const link = workspace.links.find((link) => link._id.toString() === linkId);
+
+		if (!link) {
+			return NextResponse.json({ error: "Link not found" }, { status: 404 });
+		}
+
+		const memberObjectId = new mongoose.Types.ObjectId(memberId);
+		const memberIndex = link.membersAllowed.findIndex(
+			(id) => id.toString() === memberObjectId.toString()
+		);
+		if (memberIndex === -1) {
+			return NextResponse.json(
+				{ error: `Member ${memberId} does not exist` },
+				{ status: 400 }
+			);
+		}
+
+		link.membersAllowed.splice(memberIndex, 1);
+
+		await workspace.save();
+
+		return NextResponse.json({ message: "Member removed successfully" });
+	} catch (e) {
+		console.error(e);
+		return NextResponse.json({ error: e?.message }, { status: 500 });
+	}
+}

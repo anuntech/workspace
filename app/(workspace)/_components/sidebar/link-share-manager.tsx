@@ -26,6 +26,8 @@ import {
 	AlertDialogTitle,
 	AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import Image from "next/image";
+import { getS3Image } from "@/libs/s3-client";
 
 export function LinkShareManager({
 	linkId,
@@ -70,8 +72,30 @@ export function LinkShareManager({
 		},
 	});
 
+	const deleteMemberMutation = useMutation({
+		mutationFn: (memberId: string) =>
+			api.delete(
+				`/api/workspace/link/manage-members-allowed?linkId=${linkId}&memberId=${memberId}&workspaceId=${workspaceId}`
+			),
+		onSuccess: () => {
+			toast({
+				title: "Membro removido com sucesso",
+			});
+			membersAllowed.refetch();
+		},
+		onError: () => {
+			toast({
+				title: "Erro ao remover membro",
+			});
+		},
+	});
+
 	const handleShare = () => {
 		manageMembersAllowedMutation.mutate();
+	};
+
+	const handleDelete = (memberId: string) => {
+		deleteMemberMutation.mutate(memberId);
 	};
 
 	return (
@@ -114,17 +138,17 @@ export function LinkShareManager({
 							<div className="flex items-center space-x-4">
 								{member.icon && (
 									<div className="text-[1.3rem]">
-										{/* {member.icon.type == "emoji" ? (
-										member.icon.value
-									) : (
-										<Image
-											className="rounded-full"
-											width={54}
-											height={54}
-											src={getS3Image(member.icon.value)}
-											alt=""
-										/>
-									)} */}
+										{member.icon.type == "emoji" ? (
+											member.icon.value
+										) : (
+											<Image
+												className="rounded-full"
+												width={54}
+												height={54}
+												src={getS3Image(member.icon.value)}
+												alt=""
+											/>
+										)}
 									</div>
 								)}
 								{!member.icon && (
@@ -166,7 +190,9 @@ export function LinkShareManager({
 										</AlertDialogHeader>
 										<AlertDialogFooter>
 											<AlertDialogCancel>Cancelar</AlertDialogCancel>
-											<AlertDialogAction onClick={() => console.log("deletar")}>
+											<AlertDialogAction
+												onClick={() => handleDelete(member.id)}
+											>
 												Continuar
 											</AlertDialogAction>
 										</AlertDialogFooter>
