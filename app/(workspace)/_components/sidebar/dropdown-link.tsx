@@ -26,6 +26,7 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { LinkShareManager } from "./link-share-manager/link-share-manager";
 
 export function DropdownLink({
 	isHover,
@@ -38,6 +39,7 @@ export function DropdownLink({
 }) {
 	const [isOpen, setIsOpen] = useState(false);
 	const [isOpenAlert, setIsOpenAlert] = useState(false);
+	const [isLinkShareOpen, setIsLinkShareOpen] = useState(false);
 	const urlParams = useSearchParams();
 	const workspace = urlParams.get("workspace");
 	const queryClient = useQueryClient();
@@ -103,13 +105,7 @@ export function DropdownLink({
 						{roleQuery.data?.data?.role !== "member" &&
 							!roleQuery.isPending && (
 								<>
-									<DropdownMenuItem
-										onClick={() =>
-											router.push(
-												`/settings/manage-apps/${linkId}?workspace=${workspace}`
-											)
-										}
-									>
+									<DropdownMenuItem onClick={() => setIsLinkShareOpen(true)}>
 										<Share2 />
 										Compartilhar
 									</DropdownMenuItem>
@@ -127,6 +123,11 @@ export function DropdownLink({
 				isOpen={isOpenAlert}
 				setIsOpen={setIsOpenAlert}
 				linkId={linkId}
+			/>
+			<LinkShareManager
+				linkId={linkId}
+				isOpen={isLinkShareOpen}
+				setIsOpen={setIsLinkShareOpen}
 			/>
 		</>
 	);
