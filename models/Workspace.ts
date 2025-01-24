@@ -210,6 +210,11 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
 						},
 					},
 				],
+				membersAllowed: {
+					type: [mongoose.Schema.Types.ObjectId],
+					ref: "User",
+					default: [],
+				},
 			},
 		],
 	},

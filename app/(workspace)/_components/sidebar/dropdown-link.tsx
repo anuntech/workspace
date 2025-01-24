@@ -26,7 +26,7 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { LinkShareManager } from "./link-share-manager/link-share-manager";
+import { LinkShareManager } from "./link-share-manager";
 
 export function DropdownLink({
 	isHover,
