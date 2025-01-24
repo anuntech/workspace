@@ -240,7 +240,7 @@ export const LinkFormComponent = ({ data, id, fieldId, menuType, linkType, openB
 							{linkType === "sub-link-edit" && (
 								<DeleteButton id={id} fieldId={fieldId} menuType={menuType} linkType={linkType} setMainDialogState={setIsOpen} />
 							)}
-							<Button type="submit" disabled={!isValid} className="max-w-24 w-full">{linkType === "sub-link-create" ? "Adicionar" : "Salvar"}</Button>
+							<Button type="submit" disabled={!isValid || saveApplicationMutation.isPending} className="max-w-24 w-full">{linkType === "sub-link-create" ? "Adicionar" : "Salvar"}</Button>
 						</DialogFooter>
 					</form>
 				</DialogContent>

@@ -95,6 +95,10 @@ export default function AppPage({ params }: { params: { slug: string } }) {
 				queryKey: ["workspace"],
 				type: "all",
 			});
+			toast({
+				description: "Redirecionando para a tela do app...",
+				duration: 5000,
+			});
 			router.push(`/service/${params.slug}?workspace=${workspace}`);
 		},
 		onError: (err: AxiosError) => {
@@ -214,7 +218,10 @@ export default function AppPage({ params }: { params: { slug: string } }) {
 				onClick={() => deleteApplicationMutation.mutate()}
 				variant="destructive"
 				disabled={
-					deleteApplicationMutation.isPending || applicationsQuery.isRefetching
+					deleteApplicationMutation.isPending ||
+					applicationsQuery.isRefetching ||
+					getApplicationMutation.isPending ||
+					getApplicationMutation.isSuccess
 				}
 			>
 				<CircleMinus className="mr-2 size-5" />
