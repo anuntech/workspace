@@ -10,6 +10,22 @@ import {
 import { UserSearchInput } from "@/components/user-search-input";
 import { IUser } from "@/models/User";
 import { Button } from "@/components/ui/button";
+import api from "@/libs/api";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { toast } from "@/hooks/use-toast";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Trash2 } from "lucide-react";
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+	AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export function LinkShareManager({
 	linkId,
@@ -19,14 +35,43 @@ export function LinkShareManager({
 }: {
 	linkId: string;
 	isOpen: boolean;
+	// eslint-disable-next-line no-unused-vars
 	setIsOpen: (open: boolean) => void;
 	workspaceId: string;
 }) {
 	const [selectedUsers, setSelectedUsers] = useState<IUser[]>([]);
 
+	const membersAllowed = useQuery({
+		queryKey: ["links"],
+		queryFn: () =>
+			api.get(
+				`/api/workspace/link/manage-members-allowed?workspaceId=${workspaceId}&linkId=${linkId}`
+			),
+	});
+
+	const manageMembersAllowedMutation = useMutation({
+		mutationFn: () =>
+			api.post(`/api/workspace/link/manage-members-allowed`, {
+				linkId,
+				membersId: selectedUsers.map((user) => user._id),
+				workspaceId,
+			}),
+		onSuccess: () => {
+			toast({
+				title: "Membro(s) adicionado(s) com sucesso",
+			});
+			setSelectedUsers([]);
+			membersAllowed.refetch();
+		},
+		onError: () => {
+			toast({
+				title: "Erro ao adicionar membro(s)",
+			});
+		},
+	});
+
 	const handleShare = () => {
-		// Implement your share logic here
-		console.log("Sharing link:", linkId);
+		manageMembersAllowedMutation.mutate();
 	};
 
 	return (
@@ -51,8 +96,7 @@ export function LinkShareManager({
 						selectedUsers={selectedUsers}
 						setSelectedUsers={setSelectedUsers}
 						workspaceId={workspaceId}
-						// Optionally, add excludedUsers if needed
-						// excludedUsers={excludedUsers}
+						excludedUsers={membersAllowed.data?.data}
 					/>
 					<Button
 						onClick={() => handleShare()}
@@ -60,6 +104,77 @@ export function LinkShareManager({
 					>
 						Adicionar
 					</Button>
+				</div>
+				<div className="max-h-[90%] overflow-y-auto">
+					{membersAllowed.data?.data?.map((member: any) => (
+						<div
+							key={member._id}
+							className="flex items-center justify-between space-x-4 hover:bg-gray-100 p-4 rounded-lg"
+						>
+							<div className="flex items-center space-x-4">
+								{member.icon && (
+									<div className="text-[1.3rem]">
+										{/* {member.icon.type == "emoji" ? (
+										member.icon.value
+									) : (
+										<Image
+											className="rounded-full"
+											width={54}
+											height={54}
+											src={getS3Image(member.icon.value)}
+											alt=""
+										/>
+									)} */}
+									</div>
+								)}
+								{!member.icon && (
+									<Avatar className="size-10">
+										<AvatarImage
+											src={member?.image || "/shad.png"}
+											alt="@shadcn"
+										/>
+										<AvatarFallback>SC</AvatarFallback>
+									</Avatar>
+								)}
+								<div>
+									<p className="text-sm font-medium leading-none">
+										{member.name}
+									</p>
+									<p className="text-sm text-muted-foreground">
+										{member.email}
+									</p>
+								</div>
+							</div>
+							<div className="flex items-center gap-2">
+								<AlertDialog>
+									<AlertDialogTrigger asChild>
+										<Button
+											variant="outline"
+											size="icon"
+											className="group hover:border-red-500 hover:bg-red-50"
+										>
+											<Trash2 className="size-4 group-hover:text-red-500" />
+										</Button>
+									</AlertDialogTrigger>
+									<AlertDialogContent>
+										<AlertDialogHeader>
+											<AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+											<AlertDialogDescription>
+												Esta ação não pode ser desfeita. Isso excluirá
+												permanentemente o membro de seu workspace.
+											</AlertDialogDescription>
+										</AlertDialogHeader>
+										<AlertDialogFooter>
+											<AlertDialogCancel>Cancelar</AlertDialogCancel>
+											<AlertDialogAction onClick={() => console.log("deletar")}>
+												Continuar
+											</AlertDialogAction>
+										</AlertDialogFooter>
+									</AlertDialogContent>
+								</AlertDialog>
+							</div>
+						</div>
+					))}
 				</div>
 			</DialogContent>
 		</Dialog>

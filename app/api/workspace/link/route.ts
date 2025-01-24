@@ -94,6 +94,7 @@ export async function POST(request: Request) {
 				| "newWindow"
 				| "sameWindow",
 			fields: JSON.parse(body.get("fields") as string),
+			membersAllowed: [],
 		});
 
 		await workspace.save();

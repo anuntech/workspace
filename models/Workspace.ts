@@ -33,6 +33,7 @@ interface WorkspaceLink {
 		value: string;
 		redirectType: "iframe" | "newWindow" | "sameWindow";
 	}[];
+	membersAllowed: mongoose.Schema.Types.ObjectId[];
 }
 
 export interface IWorkspace extends mongoose.Document {
