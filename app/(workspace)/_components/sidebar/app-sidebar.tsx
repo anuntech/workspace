@@ -42,7 +42,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	});
 
 	const isThereFavorite = applicationsQuery.data?.data?.favorites.some(
-		(a: any) => a.userId == session.data?.user?.id
+		(a: any) => a.userId == session.data?.user?.id,
 	);
 
 	const isThereApplicationAllow = applicationsAllowQuery.data?.data?.length > 0;

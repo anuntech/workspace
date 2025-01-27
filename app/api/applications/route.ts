@@ -19,7 +19,7 @@ export async function POST(request: Request) {
 		if (user.email.split("@")[1] !== config.domainName) {
 			return NextResponse.json(
 				{ error: "You have no permission" },
-				{ status: 403 }
+				{ status: 403 },
 			);
 		}
 
@@ -82,8 +82,8 @@ export async function POST(request: Request) {
 		const workspacesAllowed = body.get("workspacesAllowed");
 		const workspacesAllowedIds = workspacesAllowed
 			? JSON.parse(workspacesAllowed as string).map(
-				(id: string) => new mongoose.Types.ObjectId(id)
-			)
+					(id: string) => new mongoose.Types.ObjectId(id),
+				)
 			: [];
 
 		const application = await Applications.create({
@@ -101,7 +101,7 @@ export async function POST(request: Request) {
 			fields: JSON.parse(body.get("fields") as string),
 			applicationUrlType: body.get("applicationUrlType"),
 			configurationOptions: JSON.parse(
-				body.get("configurationOptions") as string
+				body.get("configurationOptions") as string,
 			),
 		});
 
@@ -120,7 +120,7 @@ export async function GET(request: Request) {
 		if (user.email.split("@")[1] !== config.domainName) {
 			return NextResponse.json(
 				{ error: "You have no permission" },
-				{ status: 403 }
+				{ status: 403 },
 			);
 		}
 

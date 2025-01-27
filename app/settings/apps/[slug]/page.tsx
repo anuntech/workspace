@@ -60,7 +60,7 @@ export default function AppPage({ params }: { params: { slug: string } }) {
 	});
 
 	const actualWorkspace = workspaceQuery.data?.data?.find(
-		(v: any) => v.id === workspace
+		(v: any) => v.id === workspace,
 	);
 
 	const applicationsQuery = useQuery({
@@ -165,7 +165,7 @@ export default function AppPage({ params }: { params: { slug: string } }) {
 	}
 
 	const application = applicationsQuery.data?.data.find(
-		(app: any) => app._id === params.slug
+		(app: any) => app._id === params.slug,
 	);
 
 	const alreadyEnabled = application.status === "enabled";
@@ -338,7 +338,7 @@ export default function AppPage({ params }: { params: { slug: string } }) {
 							<Avatar>
 								<AvatarImage
 									src={getS3Image(
-										application.icon?.value || application.avatarSrc
+										application.icon?.value || application.avatarSrc,
 									)}
 								/>
 								<AvatarFallback>{application.avatarFallback}</AvatarFallback>
@@ -388,7 +388,7 @@ export default function AppPage({ params }: { params: { slug: string } }) {
 												setIsDeleteAlertOpen(open);
 												setTimeout(
 													() => (document.body.style.pointerEvents = ""),
-													500
+													500,
 												);
 											}}
 										>

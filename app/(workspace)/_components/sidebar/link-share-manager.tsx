@@ -47,7 +47,7 @@ export function LinkShareManager({
 		queryKey: ["links"],
 		queryFn: () =>
 			api.get(
-				`/api/workspace/link/manage-members-allowed?workspaceId=${workspaceId}&linkId=${linkId}`
+				`/api/workspace/link/manage-members-allowed?workspaceId=${workspaceId}&linkId=${linkId}`,
 			),
 	});
 
@@ -75,7 +75,7 @@ export function LinkShareManager({
 	const deleteMemberMutation = useMutation({
 		mutationFn: (memberId: string) =>
 			api.delete(
-				`/api/workspace/link/manage-members-allowed?linkId=${linkId}&memberId=${memberId}&workspaceId=${workspaceId}`
+				`/api/workspace/link/manage-members-allowed?linkId=${linkId}&memberId=${memberId}&workspaceId=${workspaceId}`,
 			),
 		onSuccess: () => {
 			toast({

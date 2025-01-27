@@ -26,7 +26,7 @@ export default function MembersPage({ params }: { params: { appId: string } }) {
 	});
 
 	const application = applicationsQuery.data?.data.find(
-		(app: any) => app._id === params.appId
+		(app: any) => app._id === params.appId,
 	);
 
 	console.log(application);

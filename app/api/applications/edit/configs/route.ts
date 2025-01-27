@@ -18,7 +18,7 @@ export async function PUT(request: Request) {
 		if (user.email.split("@")[1] !== config.domainName) {
 			return NextResponse.json(
 				{ error: "You have no permission" },
-				{ status: 403 }
+				{ status: 403 },
 			);
 		}
 
@@ -26,17 +26,15 @@ export async function PUT(request: Request) {
 
 		const formData = await request.formData();
 
-		if (formData === null) return NextResponse.json(
-			{ error: "Data not found" },
-			{ status: 404 }
-		);
+		if (formData === null)
+			return NextResponse.json({ error: "Data not found" }, { status: 404 });
 
 		const galleryPhotos = formData.getAll("galeryPhotos");
 		const galleryPhotosIds = [] as Array<string>;
 
 		if (galleryPhotos && galleryPhotos.length > 0) {
 			for (const photo of Array.from(galleryPhotos)) {
-				const photoType = Object.prototype.toString.call(photo)
+				const photoType = Object.prototype.toString.call(photo);
 
 				if (photoType === "[object File]") {
 					const file = photo as File;
@@ -56,7 +54,7 @@ export async function PUT(request: Request) {
 
 					await s3Client.send(command);
 
-					break
+					break;
 				}
 
 				if (photoType === "[object String]") {
@@ -99,7 +97,8 @@ export async function PUT(request: Request) {
 				};
 		}
 
-		const application = await Applications.findByIdAndUpdate(formData.get("id"),
+		const application = await Applications.findByIdAndUpdate(
+			formData.get("id"),
 			{
 				name: formData.get("name"),
 				cta: formData.get("subtitle"),
@@ -111,16 +110,17 @@ export async function PUT(request: Request) {
 			},
 			{
 				new: true,
-			}
+			},
 		);
 
-		if (application === null) return NextResponse.json(
-			{ error: "Application not found" },
-			{ status: 404 }
-		);
+		if (application === null)
+			return NextResponse.json(
+				{ error: "Application not found" },
+				{ status: 404 },
+			);
 
 		return NextResponse.json(application, {
-			status: 200
+			status: 200,
 		});
 	} catch (e) {
 		console.error(e);

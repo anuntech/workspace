@@ -53,7 +53,7 @@ export function MembersManager({ params }: { params: { appId: string } }) {
 		queryKey: ["appMembers"],
 		queryFn: async () => {
 			const res = await api.get(
-				`/api/workspace/rules/members/${workspace}?appId=${params.appId}`
+				`/api/workspace/rules/members/${workspace}?appId=${params.appId}`,
 			);
 			return res;
 		},
@@ -64,7 +64,7 @@ export function MembersManager({ params }: { params: { appId: string } }) {
 	const deleteMutation = useMutation({
 		mutationFn: (data: { userId: string }) =>
 			api.delete(
-				`/api/workspace/rules/members/${workspace}/${data.userId}/${params.appId}`
+				`/api/workspace/rules/members/${workspace}/${data.userId}/${params.appId}`,
 			),
 		onSuccess: () => {
 			queryClient.refetchQueries({

@@ -80,7 +80,7 @@ const userSchema = new mongoose.Schema(
 	{
 		timestamps: true,
 		toJSON: { virtuals: true },
-	}
+	},
 );
 
 userSchema.pre("save", function (next) {

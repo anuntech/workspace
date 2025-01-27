@@ -6,27 +6,27 @@ import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 export async function GET(
-  request: Request,
-  { params }: { params: { invite: string } }
+	request: Request,
+	{ params }: { params: { invite: string } },
 ) {
-  try {
-    const session = await getServerSession(authOptions);
+	try {
+		const session = await getServerSession(authOptions);
 
-    await connectMongo();
+		await connectMongo();
 
-    const { invite } = params;
+		const { invite } = params;
 
-    const data = verifyWorkspaceInviteToken(invite) as any;
+		const data = verifyWorkspaceInviteToken(invite) as any;
 
-    if (!data) {
-      return NextResponse.json({ error: "Invalid token" }, { status: 400 });
-    }
+		if (!data) {
+			return NextResponse.json({ error: "Invalid token" }, { status: 400 });
+		}
 
-    const workspace = await Workspace.findById(data.workspaceId);
+		const workspace = await Workspace.findById(data.workspaceId);
 
-    return NextResponse.json({ ...data, name: workspace.name });
-  } catch (e) {
-    console.error(e);
-    return NextResponse.json({ error: e?.message }, { status: 500 });
-  }
+		return NextResponse.json({ ...data, name: workspace.name });
+	} catch (e) {
+		console.error(e);
+		return NextResponse.json({ error: e?.message }, { status: 500 });
+	}
 }

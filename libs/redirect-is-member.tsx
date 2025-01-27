@@ -6,39 +6,39 @@ import { useRouter, useSearchParams } from "next/navigation";
 import api from "./api";
 
 export function RedirectIsMember({
-  children,
+	children,
 }: Readonly<{
-  children: React.ReactNode;
+	children: React.ReactNode;
 }>) {
-  const searchParams = useSearchParams();
-  const workspaceId = searchParams.get("workspace");
-  const router = useRouter();
+	const searchParams = useSearchParams();
+	const workspaceId = searchParams.get("workspace");
+	const router = useRouter();
 
-  // Query for workspaces
-  const workspacesQuery = useQuery({
-    queryKey: ["workspace"],
-    queryFn: async () => api.get("/api/workspace"),
-  });
+	// Query for workspaces
+	const workspacesQuery = useQuery({
+		queryKey: ["workspace"],
+		queryFn: async () => api.get("/api/workspace"),
+	});
 
-  const userQuery = useQuery({
-    queryKey: ["user"],
-    queryFn: () => fetch("/api/user").then((res) => res.json()),
-  });
+	const userQuery = useQuery({
+		queryKey: ["user"],
+		queryFn: () => fetch("/api/user").then((res) => res.json()),
+	});
 
-  if (!workspacesQuery.isPending && !userQuery.isPending && workspaceId) {
-    const selectedWorkspace = workspacesQuery.data.data.find(
-      (w: any) => w.id === workspaceId
-    );
+	if (!workspacesQuery.isPending && !userQuery.isPending && workspaceId) {
+		const selectedWorkspace = workspacesQuery.data.data.find(
+			(w: any) => w.id === workspaceId,
+		);
 
-    if (selectedWorkspace) {
-      const isMember =
-        selectedWorkspace.members.find(
-          (w: any) => w.memberId === userQuery?.data?._id
-        )?.role == "member";
+		if (selectedWorkspace) {
+			const isMember =
+				selectedWorkspace.members.find(
+					(w: any) => w.memberId === userQuery?.data?._id,
+				)?.role == "member";
 
-      if (isMember) router.push(`/?workspace=${workspaceId}`);
-    }
-  }
+			if (isMember) router.push(`/?workspace=${workspaceId}`);
+		}
+	}
 
-  return children;
+	return children;
 }

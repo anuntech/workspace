@@ -1,3 +1,3 @@
 export default function GooglePage() {
-  return <h1>Google Page</h1>
+	return <h1>Google Page</h1>;
 }

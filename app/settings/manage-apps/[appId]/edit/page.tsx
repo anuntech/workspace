@@ -19,7 +19,7 @@ import { MenuMain } from "./_components/menu-main";
 import { MenuConfig } from "./_components/menu-config";
 
 export interface Field {
-	key: string
+	key: string;
 	redirectType: "none" | "iframe" | "newWindow" | "sameWindow";
 	value: string;
 	_id: string;
@@ -35,16 +35,16 @@ export interface Config {
 interface IApp {
 	applicationUrl: string;
 	applicationUrlType: "none" | "iframe" | "newWindow" | "sameWindow";
-	name: string
+	name: string;
 	cta: string;
 	description: string;
 	avatarSrc: string;
 	icon: {
 		type: "emoji" | "lucide";
 		value: string;
-	}
+	};
 	galleryPhotos?: FileList;
-	fields: Array<Field>
+	fields: Array<Field>;
 	_id: string;
 	configurationOptions: Array<Config>;
 }
@@ -61,10 +61,10 @@ export default function EditPage({ params }: { params: { appId: string } }) {
 	});
 
 	const application = applicationsQuery.data?.data.find(
-		(app: any) => app._id === params.appId
+		(app: any) => app._id === params.appId,
 	) as IApp;
 
-	if (!application) return <></>
+	if (!application) return <></>;
 
 	console.log(application);
 
@@ -91,47 +91,52 @@ export default function EditPage({ params }: { params: { appId: string } }) {
 					<Separator />
 					<Tabs defaultValue="configs" className="space-y-10">
 						<TabsList className="gap-2">
-							<TabsTrigger value="configs">
-								Configurações
-							</TabsTrigger>
-							<TabsTrigger value="menu-main">
-								Menu principal
-							</TabsTrigger>
+							<TabsTrigger value="configs">Configurações</TabsTrigger>
+							<TabsTrigger value="menu-main">Menu principal</TabsTrigger>
 							<TabsTrigger value="menu-configs">
 								Menu de configurações
 							</TabsTrigger>
 						</TabsList>
 						<TabsContent value="configs">
-							<Configs data={{
-								basicInformation: {
-									name: application.name,
-									subtitle: application.cta,
-									description: application.description,
-								},
-								images: {
-									imageUrlWithoutS3: application.avatarSrc,
-									emojiAvatar: application.icon.value,
-									emojiAvatarType: application.icon.type,
-									galleryPhotos: application.galleryPhotos,
-								}
-							}} id={application._id} />
+							<Configs
+								data={{
+									basicInformation: {
+										name: application.name,
+										subtitle: application.cta,
+										description: application.description,
+									},
+									images: {
+										imageUrlWithoutS3: application.avatarSrc,
+										emojiAvatar: application.icon.value,
+										emojiAvatarType: application.icon.type,
+										galleryPhotos: application.galleryPhotos,
+									},
+								}}
+								id={application._id}
+							/>
 						</TabsContent>
 						<TabsContent value="menu-main">
-							<MenuMain data={{
-								basicInformation: {
-									name: application.name,
-								},
-								principalLink: {
-									applicationUrl: application.applicationUrl,
-									applicationUrlType: application.applicationUrlType,
-								},
-								subLinks: application.fields
-							}} id={application._id} />
+							<MenuMain
+								data={{
+									basicInformation: {
+										name: application.name,
+									},
+									principalLink: {
+										applicationUrl: application.applicationUrl,
+										applicationUrlType: application.applicationUrlType,
+									},
+									subLinks: application.fields,
+								}}
+								id={application._id}
+							/>
 						</TabsContent>
 						<TabsContent value="menu-configs">
-							<MenuConfig data={{
-								subLinks: application.configurationOptions
-							}} id={application._id} />
+							<MenuConfig
+								data={{
+									subLinks: application.configurationOptions,
+								}}
+								id={application._id}
+							/>
 						</TabsContent>
 					</Tabs>
 				</div>

@@ -1,18 +1,36 @@
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { api } from "@/libs/api"
-import { PrincipalLinkForm, principalLinkSchema } from "@/schemas/principal-link"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { useForm } from "react-hook-form"
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { api } from "@/libs/api";
+import {
+	PrincipalLinkForm,
+	principalLinkSchema,
+} from "@/schemas/principal-link";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
 import { toast } from "@/hooks/use-toast";
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Ellipsis } from "lucide-react"
-import { useState } from "react"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { DeleteButton } from "./_components/delete-button"
+import { Button } from "@/components/ui/button";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@/components/ui/dialog";
+import { Ellipsis } from "lucide-react";
+import { useState } from "react";
+import {
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "@/components/ui/form";
+import { DeleteButton } from "./_components/delete-button";
 
 interface Props {
 	data: {
@@ -22,32 +40,44 @@ interface Props {
 		link: {
 			applicationUrl: string;
 			applicationUrlType: "none" | "iframe" | "newWindow" | "sameWindow";
-		}
-	}
+		};
+	};
 	id: string;
 	fieldId?: string;
 	menuType: "menu-main" | "menu-config";
 	linkType: "principal-link" | "sub-link-edit" | "sub-link-create";
-	openButtonText?: string
+	openButtonText?: string;
 }
 
+export const LinkFormComponent = ({
+	data,
+	id,
+	fieldId,
+	menuType,
+	linkType,
+	openButtonText,
+}: Props) => {
+	const [isOpen, setIsOpen] = useState(false);
 
-export const LinkFormComponent = ({ data, id, fieldId, menuType, linkType, openButtonText }: Props) => {
-	const [isOpen, setIsOpen] = useState(false)
+	const form = useForm<PrincipalLinkForm>({
+		defaultValues: {
+			title: data.basicInformation.name,
+			link: data.link.applicationUrl,
+			type: data.link.applicationUrlType,
+		},
+		resolver: zodResolver(principalLinkSchema),
+		mode: "onChange",
+	});
 
-	const form = useForm<PrincipalLinkForm>(
-		{
-			defaultValues: {
-				title: data.basicInformation.name,
-				link: data.link.applicationUrl,
-				type: data.link.applicationUrlType,
-			},
-			resolver: zodResolver(principalLinkSchema),
-			mode: "onChange",
-		}
-	)
-
-	const { handleSubmit, formState: { isValid, }, watch, setValue, control, clearErrors, setError } = form
+	const {
+		handleSubmit,
+		formState: { isValid },
+		watch,
+		setValue,
+		control,
+		clearErrors,
+		setError,
+	} = form;
 
 	const queryClient = useQueryClient();
 
@@ -59,27 +89,33 @@ export const LinkFormComponent = ({ data, id, fieldId, menuType, linkType, openB
 			formData.append("applicationUrl", data.link);
 			formData.append("applicationUrlType", data.type);
 
-			formData.append("id", id)
+			formData.append("id", id);
 
 			if (linkType !== "principal-link" && fieldId) {
-				formData.append("fieldId", fieldId)
+				formData.append("fieldId", fieldId);
 			}
 
 			let dataUpdated;
 
 			if (linkType === "sub-link-create") {
-				const { data } = await api.post(`/api/applications/edit/${menuType}`, formData)
+				const { data } = await api.post(
+					`/api/applications/edit/${menuType}`,
+					formData,
+				);
 
-				dataUpdated = data
+				dataUpdated = data;
 			}
 
 			if (linkType === "sub-link-edit") {
-				const { data } = await api.put(`/api/applications/edit/${menuType}`, formData)
+				const { data } = await api.put(
+					`/api/applications/edit/${menuType}`,
+					formData,
+				);
 
-				dataUpdated = data
+				dataUpdated = data;
 			}
 
-			return dataUpdated
+			return dataUpdated;
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({
@@ -90,7 +126,7 @@ export const LinkFormComponent = ({ data, id, fieldId, menuType, linkType, openB
 				description: "Aplicativo salvo com sucesso.",
 				duration: 5000,
 			});
-			setIsOpen(false)
+			setIsOpen(false);
 		},
 		onError: () => {
 			toast({
@@ -101,36 +137,35 @@ export const LinkFormComponent = ({ data, id, fieldId, menuType, linkType, openB
 		},
 	});
 
-
-
 	const onSubmit = (data: PrincipalLinkForm) => {
-		if (!isValid) return
+		if (!isValid) return;
 
-		console.log(data)
+		console.log(data);
 
-		saveApplicationMutation.mutate(data)
-	}
+		saveApplicationMutation.mutate(data);
+	};
 
-	const watchedType = watch("type")
-	const watchedLink = watch("link")
+	const watchedType = watch("type");
+	const watchedLink = watch("link");
 
 	const handleRadioGroupChange = (value: string) => {
-		setValue("type", value, { shouldValidate: true, shouldDirty: true })
+		setValue("type", value, { shouldValidate: true, shouldDirty: true });
 
 		if (value === "none") {
-			clearErrors("link")
+			clearErrors("link");
 
-			return
+			return;
 		}
 
-		const linkTest = watchedLink.length > 0 && /^https?:\/\/.*/.test(watchedLink)
+		const linkTest =
+			watchedLink.length > 0 && /^https?:\/\/.*/.test(watchedLink);
 
 		if (!linkTest) {
 			setError("link", {
 				message: "Link inválido",
-			})
+			});
 		}
-	}
+	};
 
 	return (
 		<Form {...form}>
@@ -141,10 +176,24 @@ export const LinkFormComponent = ({ data, id, fieldId, menuType, linkType, openB
 				}}
 			>
 				<DialogTrigger asChild>
-					<Button variant={(openButtonText && linkType !== "principal-link") ? "outline" : "ghost"} onClick={() => setIsOpen(true)} className={(openButtonText && linkType === "sub-link-create") ? "max-w-32 w-full" : "w-full flex items-start justify-start"}>
-						{(openButtonText && linkType !== "principal-link") ? <span>
-							{openButtonText}
-						</span> : <Ellipsis />}
+					<Button
+						variant={
+							openButtonText && linkType !== "principal-link"
+								? "outline"
+								: "ghost"
+						}
+						onClick={() => setIsOpen(true)}
+						className={
+							openButtonText && linkType === "sub-link-create"
+								? "max-w-32 w-full"
+								: "w-full flex items-start justify-start"
+						}
+					>
+						{openButtonText && linkType !== "principal-link" ? (
+							<span>{openButtonText}</span>
+						) : (
+							<Ellipsis />
+						)}
 					</Button>
 				</DialogTrigger>
 				<DialogContent
@@ -154,12 +203,15 @@ export const LinkFormComponent = ({ data, id, fieldId, menuType, linkType, openB
 					<form onSubmit={handleSubmit(onSubmit)}>
 						<DialogHeader>
 							<DialogTitle>
-								{linkType === "sub-link-create" ? "Adicionar" : "Atualizar"} {linkType === "principal-link" ? "link principal" : "sublink"} ao aplicativo
+								{linkType === "sub-link-create" ? "Adicionar" : "Atualizar"}{" "}
+								{linkType === "principal-link" ? "link principal" : "sublink"}{" "}
+								ao aplicativo
 							</DialogTitle>
 							<DialogDescription>
-								{linkType === "sub-link-create" ? "Adicione" : "Atualize"} o {linkType === "principal-link" ? "link principal" : "sublink"} do aplicativo,
-								que será o link que o usuário irá usar para acessar a tela principal
-								do aplicativo.
+								{linkType === "sub-link-create" ? "Adicione" : "Atualize"} o{" "}
+								{linkType === "principal-link" ? "link principal" : "sublink"}{" "}
+								do aplicativo, que será o link que o usuário irá usar para
+								acessar a tela principal do aplicativo.
 							</DialogDescription>
 						</DialogHeader>
 						<div className="flex flex-col w-full max-w-lg gap-4 items-end">
@@ -191,7 +243,11 @@ export const LinkFormComponent = ({ data, id, fieldId, menuType, linkType, openB
 									render={({ field }) => (
 										<FormItem>
 											<FormLabel>
-												Link {linkType === "principal-link" ? " do aplicativo" : "do sublink"} *
+												Link{" "}
+												{linkType === "principal-link"
+													? " do aplicativo"
+													: "do sublink"}{" "}
+												*
 											</FormLabel>
 											<FormControl>
 												<Input
@@ -208,7 +264,8 @@ export const LinkFormComponent = ({ data, id, fieldId, menuType, linkType, openB
 							</div>
 							<div className="w-full space-y-4">
 								<Label htmlFor="type">
-									Tipo {linkType === "principal-link" ? " de link" : "de sublink"} *
+									Tipo{" "}
+									{linkType === "principal-link" ? " de link" : "de sublink"} *
 								</Label>
 								<RadioGroup
 									value={watchedType}
@@ -217,34 +274,62 @@ export const LinkFormComponent = ({ data, id, fieldId, menuType, linkType, openB
 								>
 									{linkType === "principal-link" && (
 										<div className="flex items-center space-x-2">
-											<RadioGroupItem value="none" id="r1" onClick={() => handleRadioGroupChange("none")} />
+											<RadioGroupItem
+												value="none"
+												id="r1"
+												onClick={() => handleRadioGroupChange("none")}
+											/>
 											<Label htmlFor="r1">Nenhum</Label>
 										</div>
 									)}
 									<div className="flex items-center space-x-2">
-										<RadioGroupItem value="iframe" id="r2" onClick={() => handleRadioGroupChange("iframe")} />
+										<RadioGroupItem
+											value="iframe"
+											id="r2"
+											onClick={() => handleRadioGroupChange("iframe")}
+										/>
 										<Label htmlFor="r2">Iframe</Label>
 									</div>
 									<div className="flex items-center space-x-2">
-										<RadioGroupItem value="newWindow" id="r3" onClick={() => handleRadioGroupChange("newWindow")} />
+										<RadioGroupItem
+											value="newWindow"
+											id="r3"
+											onClick={() => handleRadioGroupChange("newWindow")}
+										/>
 										<Label htmlFor="r3">Nova janela</Label>
 									</div>
 									<div className="flex items-center space-x-2">
-										<RadioGroupItem value="sameWindow" id="r3" onClick={() => handleRadioGroupChange("sameWindow")} />
+										<RadioGroupItem
+											value="sameWindow"
+											id="r3"
+											onClick={() => handleRadioGroupChange("sameWindow")}
+										/>
 										<Label htmlFor="r3">Mesma janela</Label>
 									</div>
 								</RadioGroup>
 							</div>
 						</div>
-						<DialogFooter >
+						<DialogFooter>
 							{linkType === "sub-link-edit" && (
-								<DeleteButton id={id} fieldId={fieldId} menuType={menuType} linkType={linkType} setMainDialogState={setIsOpen} />
+								<DeleteButton
+									id={id}
+									fieldId={fieldId}
+									menuType={menuType}
+									linkType={linkType}
+									setMainDialogState={setIsOpen}
+								/>
 							)}
-							<Button type="submit" disabled={!isValid || saveApplicationMutation.isPending} className="max-w-24 w-full">{linkType === "sub-link-create" ? "Adicionar" : "Salvar"}</Button>
+							<Button
+								type="submit"
+								disabled={!isValid || saveApplicationMutation.isPending}
+								className="max-w-24 w-full"
+							>
+								{linkType === "sub-link-create" ? "Adicionar" : "Salvar"}
+							</Button>
 						</DialogFooter>
 					</form>
 				</DialogContent>
 			</Dialog>
 		</Form>
-	)
-}
+	);
+};

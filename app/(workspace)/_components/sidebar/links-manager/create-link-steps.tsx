@@ -66,7 +66,7 @@ export function CreateLinkStepsDialog({
 	});
 
 	const link = linksQuery.data?.data?.links.find(
-		(link: any) => link._id === linkId
+		(link: any) => link._id === linkId,
 	);
 
 	useEffect(() => {
@@ -133,7 +133,7 @@ export function CreateLinkStepsDialog({
 		mutationFn: async (data: FormData) =>
 			api.put(
 				`/api/workspace/link?linkId=${linkId}&workspaceId=${workspaceId}`,
-				data
+				data,
 			),
 		onSuccess: async () => {
 			await queryClient.refetchQueries({
@@ -177,7 +177,7 @@ export function CreateLinkStepsDialog({
 
 	const updateFormData = (
 		section: keyof LinkFormData,
-		updates: Partial<LinkFormData[keyof LinkFormData]>
+		updates: Partial<LinkFormData[keyof LinkFormData]>,
 	) => {
 		setData((prev: LinkFormData) => ({
 			...prev,
@@ -190,8 +190,8 @@ export function CreateLinkStepsDialog({
 	const setStepValidation = (isValid: boolean) => {
 		setSteps((prev) =>
 			prev.map((step, idx) =>
-				idx === currentStep ? { ...step, validation: isValid } : step
-			)
+				idx === currentStep ? { ...step, validation: isValid } : step,
+			),
 		);
 	};
 
@@ -225,8 +225,8 @@ export function CreateLinkStepsDialog({
 					key: sub.title,
 					value: sub.link,
 					redirectType: sub.type,
-				}))
-			)
+				})),
+			),
 		);
 		formData.append("workspaceId", workspaceId);
 		formData.append("title", data.principalLink.title);
@@ -251,7 +251,7 @@ export function CreateLinkStepsDialog({
 					...step,
 					validation: step.id == 2, // Only the last step is validated
 				};
-			})
+			}),
 		);
 	};
 

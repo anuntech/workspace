@@ -25,12 +25,12 @@ export async function POST(request: Request) {
 		if (!workspace) {
 			return NextResponse.json(
 				{ error: "Workspace not found" },
-				{ status: 404 }
+				{ status: 404 },
 			);
 		}
 
 		const memberRole = workspace.members.find(
-			(member) => member.memberId.toString() === session.user.id.toString()
+			(member) => member.memberId.toString() === session.user.id.toString(),
 		)?.role;
 
 		if (
@@ -42,7 +42,7 @@ export async function POST(request: Request) {
 					error:
 						"You do not have permission to create a link for this workspace",
 				},
-				{ status: 403 }
+				{ status: 403 },
 			);
 		}
 
@@ -122,7 +122,7 @@ export async function GET(request: Request) {
 		if (!workspaceId) {
 			return NextResponse.json(
 				{ error: "Workspace ID is required" },
-				{ status: 400 }
+				{ status: 400 },
 			);
 		}
 
@@ -130,24 +130,24 @@ export async function GET(request: Request) {
 		if (!workspace) {
 			return NextResponse.json(
 				{ error: "Workspace not found" },
-				{ status: 404 }
+				{ status: 404 },
 			);
 		}
 
 		const isMember = workspace.members.some(
-			(member) => member.memberId.toString() === session.user.id.toString()
+			(member) => member.memberId.toString() === session.user.id.toString(),
 		);
 		const isOwner = workspace.owner.toString() === session.user.id;
 
 		if (!isOwner && !isMember) {
 			return NextResponse.json(
 				{ error: "You do not have permission to view this workspace's links" },
-				{ status: 403 }
+				{ status: 403 },
 			);
 		}
 
 		const memberRole = workspace.members.find(
-			(member) => member.memberId.toString() === session.user.id.toString()
+			(member) => member.memberId.toString() === session.user.id.toString(),
 		)?.role;
 		const isAdminOrOwner =
 			workspace.owner.toString() === session.user.id || memberRole === "admin";
@@ -156,16 +156,16 @@ export async function GET(request: Request) {
 			? workspace.links
 			: workspace.links.filter((link) =>
 					link.membersAllowed.some(
-						(memberId) => memberId.toString() === session.user.id.toString()
-					)
-			  );
+						(memberId) => memberId.toString() === session.user.id.toString(),
+					),
+				);
 
 		return NextResponse.json({ links: permittedLinks });
 	} catch (e) {
 		console.error(e);
 		return NextResponse.json(
 			{ error: e?.message || "Internal server error" },
-			{ status: 500 }
+			{ status: 500 },
 		);
 	}
 }
@@ -185,7 +185,7 @@ export async function DELETE(request: Request) {
 		if (!workspaceId) {
 			return NextResponse.json(
 				{ error: "workspaceId is required" },
-				{ status: 400 }
+				{ status: 400 },
 			);
 		}
 
@@ -193,7 +193,7 @@ export async function DELETE(request: Request) {
 		if (!linkId) {
 			return NextResponse.json(
 				{ error: "linkId is required" },
-				{ status: 400 }
+				{ status: 400 },
 			);
 		}
 
@@ -201,12 +201,12 @@ export async function DELETE(request: Request) {
 		if (!workspace) {
 			return NextResponse.json(
 				{ error: "Workspace not found" },
-				{ status: 404 }
+				{ status: 404 },
 			);
 		}
 
 		const memberRole = workspace.members.find(
-			(member) => member.memberId.toString() === session.user.id.toString()
+			(member) => member.memberId.toString() === session.user.id.toString(),
 		)?.role;
 
 		if (
@@ -218,12 +218,12 @@ export async function DELETE(request: Request) {
 					error:
 						"You do not have permission to create a link for this workspace",
 				},
-				{ status: 403 }
+				{ status: 403 },
 			);
 		}
 
 		const linkIndex = workspace.links.findIndex(
-			(link) => link._id.toString() === linkId
+			(link) => link._id.toString() === linkId,
 		);
 		if (linkIndex === -1) {
 			return NextResponse.json({ error: "Link not found" }, { status: 404 });
@@ -237,7 +237,7 @@ export async function DELETE(request: Request) {
 		console.error(e);
 		return NextResponse.json(
 			{ error: e?.message || "Internal server error" },
-			{ status: 500 }
+			{ status: 500 },
 		);
 	}
 }
@@ -258,7 +258,7 @@ export async function PUT(request: Request) {
 		if (!workspaceId || !linkId) {
 			return NextResponse.json(
 				{ error: "workspaceId and linkId are required" },
-				{ status: 400 }
+				{ status: 400 },
 			);
 		}
 
@@ -266,12 +266,12 @@ export async function PUT(request: Request) {
 		if (!workspace) {
 			return NextResponse.json(
 				{ error: "Workspace not found" },
-				{ status: 404 }
+				{ status: 404 },
 			);
 		}
 
 		const memberRole = workspace.members.find(
-			(member) => member.memberId.toString() === session.user.id.toString()
+			(member) => member.memberId.toString() === session.user.id.toString(),
 		)?.role;
 
 		if (
@@ -283,12 +283,12 @@ export async function PUT(request: Request) {
 					error:
 						"You do not have permission to update a link for this workspace",
 				},
-				{ status: 403 }
+				{ status: 403 },
 			);
 		}
 
 		const linkIndex = workspace.links.findIndex(
-			(link) => link._id.toString() === linkId
+			(link) => link._id.toString() === linkId,
 		);
 		if (linkIndex === -1) {
 			return NextResponse.json({ error: "Link not found" }, { status: 404 });
@@ -348,7 +348,7 @@ export async function PUT(request: Request) {
 		console.error(e);
 		return NextResponse.json(
 			{ error: e?.message || "Internal server error" },
-			{ status: 500 }
+			{ status: 500 },
 		);
 	}
 }

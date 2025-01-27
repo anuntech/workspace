@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { Button } from "@/components/ui/button";
 
@@ -7,9 +7,9 @@ import { LinkFormComponent } from "./_components/link-form";
 
 interface Props {
 	data: {
-		subLinks: Array<Config>
-	}
-	id: string
+		subLinks: Array<Config>;
+	};
+	id: string;
 }
 
 export const MenuConfig = ({ data, id }: Props) => {
@@ -22,28 +22,41 @@ export const MenuConfig = ({ data, id }: Props) => {
 							className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
 							asChild
 						>
-							<LinkFormComponent data={{
-								basicInformation: {
-									name: item.title
-								},
-								link: {
-									applicationUrl: item.link,
-									applicationUrlType: item.type,
-								},
-							}} id={id} fieldId={item._id} menuType="menu-config" linkType="sub-link-edit" openButtonText={item.title} />
+							<LinkFormComponent
+								data={{
+									basicInformation: {
+										name: item.title,
+									},
+									link: {
+										applicationUrl: item.link,
+										applicationUrlType: item.type,
+									},
+								}}
+								id={id}
+								fieldId={item._id}
+								menuType="menu-config"
+								linkType="sub-link-edit"
+								openButtonText={item.title}
+							/>
 						</Button>
 					</div>
 				))}
 			</div>
-			<LinkFormComponent data={{
-				basicInformation: {
-					name: ""
-				},
-				link: {
-					applicationUrl: "",
-					applicationUrlType: "iframe"
-				},
-			}} id={id} menuType="menu-config" linkType="sub-link-create" openButtonText="Adicionar sublink" />
+			<LinkFormComponent
+				data={{
+					basicInformation: {
+						name: "",
+					},
+					link: {
+						applicationUrl: "",
+						applicationUrlType: "iframe",
+					},
+				}}
+				id={id}
+				menuType="menu-config"
+				linkType="sub-link-create"
+				openButtonText="Adicionar sublink"
+			/>
 		</div>
 	);
-}
+};

@@ -2,11 +2,11 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/libs/next-auth";
 
 export default async function OnboardingLayout({
-  children,
+	children,
 }: Readonly<{
-  children: React.ReactNode;
+	children: React.ReactNode;
 }>) {
-  const session = await getServerSession(authOptions);
+	const session = await getServerSession(authOptions);
 
-  return children;
+	return children;
 }

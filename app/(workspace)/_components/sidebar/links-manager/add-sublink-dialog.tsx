@@ -21,7 +21,7 @@ interface AddSublinkDialogProps {
 	data: LinkFormData;
 	updateFormData: (
 		section: keyof LinkFormData,
-		updates: Partial<LinkFormData[keyof LinkFormData]>
+		updates: Partial<LinkFormData[keyof LinkFormData]>,
 	) => void;
 	editIndex?: number;
 	initialValues?: {

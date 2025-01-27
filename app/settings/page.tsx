@@ -43,7 +43,7 @@ type Workspace = {
 };
 
 export default function SettingsPage() {
-	const [alertDialogIsOpen, setAlertDialogIsOpen] = useState(false)
+	const [alertDialogIsOpen, setAlertDialogIsOpen] = useState(false);
 
 	const workspaceQuery = useQuery({
 		queryKey: ["find-workspace"],
@@ -99,9 +99,11 @@ export default function SettingsPage() {
 
 	const deleteWorkspaceMutation = useMutation({
 		mutationFn: async (data: { workspaceId: string }) => {
-			const { data: dataUpdated } = await api.delete(`/api/workspace/${data.workspaceId}`)
+			const { data: dataUpdated } = await api.delete(
+				`/api/workspace/${data.workspaceId}`,
+			);
 
-			return dataUpdated
+			return dataUpdated;
 		},
 		onSuccess: async () => {
 			queryClient.refetchQueries({
@@ -110,7 +112,8 @@ export default function SettingsPage() {
 			});
 			toast({
 				title: "Workspace deletado",
-				description: "O workspace foi deletado com sucesso, estamos redirecionando você.",
+				description:
+					"O workspace foi deletado com sucesso, estamos redirecionando você.",
 				duration: 5000,
 			});
 			router.push("/");
@@ -122,7 +125,7 @@ export default function SettingsPage() {
 				duration: 5000,
 				variant: "destructive",
 			});
-			setAlertDialogIsOpen(false)
+			setAlertDialogIsOpen(false);
 		},
 	});
 
@@ -240,7 +243,7 @@ export default function SettingsPage() {
 							<div className="flex justify-center items-center w-full">
 								<div className="flex justify-center w-28 h-28">
 									{workspaceQuery.isPending ||
-										changeWorkspaceAvatarMutation.isPending ? (
+									changeWorkspaceAvatarMutation.isPending ? (
 										<Skeleton className="w-full h-full" />
 									) : (
 										<AvatarSelector
@@ -286,14 +289,20 @@ export default function SettingsPage() {
 								</span>
 							</div>
 							<div className="flex justify-end">
-								<AlertDialog open={alertDialogIsOpen} onOpenChange={(open) => {
-									setAlertDialogIsOpen(open);
-								}}>
+								<AlertDialog
+									open={alertDialogIsOpen}
+									onOpenChange={(open) => {
+										setAlertDialogIsOpen(open);
+									}}
+								>
 									<AlertDialogTrigger asChild>
 										<Button
 											variant="destructive"
 											disabled={
-												roleQuery.data?.role != "owner" || mutation.isPending || deleteWorkspaceMutation.isPending || deleteWorkspaceMutation.isSuccess
+												roleQuery.data?.role != "owner" ||
+												mutation.isPending ||
+												deleteWorkspaceMutation.isPending ||
+												deleteWorkspaceMutation.isSuccess
 											}
 										>
 											Deletar workspace
@@ -308,14 +317,26 @@ export default function SettingsPage() {
 											</AlertDialogDescription>
 										</AlertDialogHeader>
 										<AlertDialogFooter>
-											<Button disabled={deleteWorkspaceMutation.isPending || deleteWorkspaceMutation.isSuccess} onClick={() => setAlertDialogIsOpen(false)} variant="outline">Cancelar</Button>
+											<Button
+												disabled={
+													deleteWorkspaceMutation.isPending ||
+													deleteWorkspaceMutation.isSuccess
+												}
+												onClick={() => setAlertDialogIsOpen(false)}
+												variant="outline"
+											>
+												Cancelar
+											</Button>
 											<Button
 												onClick={() => {
 													deleteWorkspaceMutation.mutate({
 														workspaceId: workspace,
 													});
 												}}
-												disabled={deleteWorkspaceMutation.isPending || deleteWorkspaceMutation.isSuccess}
+												disabled={
+													deleteWorkspaceMutation.isPending ||
+													deleteWorkspaceMutation.isSuccess
+												}
 											>
 												Continuar
 											</Button>

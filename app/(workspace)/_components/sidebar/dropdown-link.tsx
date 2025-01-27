@@ -63,7 +63,7 @@ export function DropdownLink({
 	});
 
 	const isThisAnFavoriteApp = applicationsQuery.data?.data.favorites.some(
-		(a: any) => a.userId == session.data?.user?.id && a?.linkId?.id == linkId
+		(a: any) => a.userId == session.data?.user?.id && a?.linkId?.id == linkId,
 	);
 
 	const changeFavoriteMutation = useMutation({
@@ -170,7 +170,7 @@ function AlertDialogDemo({
 	const deleteLinkMutation = useMutation({
 		mutationFn: async () =>
 			api.delete(
-				`/api/workspace/link?workspaceId=${workspace}&linkId=${linkId}`
+				`/api/workspace/link?workspaceId=${workspace}&linkId=${linkId}`,
 			),
 		onSuccess: async () => {
 			await queryClient.refetchQueries({

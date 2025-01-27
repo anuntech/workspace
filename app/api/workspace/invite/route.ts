@@ -23,7 +23,7 @@ export async function POST(request: Request) {
 		if (!worksPace) {
 			return NextResponse.json(
 				{ error: "Workspace not found" },
-				{ status: 404 }
+				{ status: 404 },
 			);
 		}
 
@@ -33,16 +33,19 @@ export async function POST(request: Request) {
 				{
 					error: "Email inválido",
 				},
-				{ status: 404 }
+				{ status: 404 },
 			);
 		}
 
-		const isAuthorizedToInviteUser = getAuthorizationToInviteUser(worksPace, session)
+		const isAuthorizedToInviteUser = getAuthorizationToInviteUser(
+			worksPace,
+			session,
+		);
 
 		if (!isAuthorizedToInviteUser) {
 			return NextResponse.json(
 				{ error: "Você não possui permissão para convidar usuários" },
-				{ status: 403 }
+				{ status: 403 },
 			);
 		}
 
@@ -51,14 +54,14 @@ export async function POST(request: Request) {
 		if (worksPace.members.length >= plan.membersLimit) {
 			return NextResponse.json(
 				{ error: "This workspace is full" },
-				{ status: 403 }
+				{ status: 403 },
 			);
 		}
 
 		if (worksPace.invitedMembersEmail.length >= 30) {
 			return NextResponse.json(
 				{ error: "O limite de convites foi atingido" },
-				{ status: 403 }
+				{ status: 403 },
 			);
 		}
 
@@ -66,17 +69,17 @@ export async function POST(request: Request) {
 		if (sameEmail.email == email) {
 			return NextResponse.json(
 				{ error: "Você não pode convidar para o workspace a si mesmo" },
-				{ status: 403 }
+				{ status: 403 },
 			);
 		}
 		const user = await User.findOne({ email });
 
 		const alreadyIn = worksPace.members?.find(
-			(member) => member.memberId.toString() === user?.id
+			(member) => member.memberId.toString() === user?.id,
 		);
 
 		const alreadyInvited = worksPace.invitedMembersEmail?.find(
-			(invited) => invited.email === email
+			(invited) => invited.email === email,
 		);
 
 		if (alreadyIn || alreadyInvited) {
@@ -84,7 +87,7 @@ export async function POST(request: Request) {
 				{
 					error: "Esse usuário já está no workspace ou já foi convidado",
 				},
-				{ status: 403 }
+				{ status: 403 },
 			);
 		}
 
@@ -104,7 +107,7 @@ export async function POST(request: Request) {
 				},
 				{
 					state: "expired",
-				}
+				},
 			);
 		}
 
@@ -132,14 +135,14 @@ export async function DELETE(request: Request) {
 		if (!worksPace) {
 			return NextResponse.json(
 				{ error: "Workspace not found" },
-				{ status: 404 }
+				{ status: 404 },
 			);
 		}
 
 		if (worksPace.owner.toString() !== session.user.id) {
 			return NextResponse.json(
 				{ error: "You do not have permission to remove this invite" },
-				{ status: 403 }
+				{ status: 403 },
 			);
 		}
 

@@ -31,7 +31,7 @@ export async function POST(request: Request) {
 		if (!workspace) {
 			return NextResponse.json(
 				{ error: "Workspace not found" },
-				{ status: 404 }
+				{ status: 404 },
 			);
 		}
 
@@ -42,12 +42,12 @@ export async function POST(request: Request) {
 		if (!workspace.links.length) {
 			return NextResponse.json(
 				{ error: "You do not have permission to set positions" },
-				{ status: 403 }
+				{ status: 403 },
 			);
 		}
 
 		const memberRole = workspace.members.find(
-			(member) => member.memberId.toString() === session.user.id.toString()
+			(member) => member.memberId.toString() === session.user.id.toString(),
 		)?.role;
 
 		if (
@@ -56,7 +56,7 @@ export async function POST(request: Request) {
 		) {
 			return NextResponse.json(
 				{ error: "You do not have permission to uninstall this application" },
-				{ status: 403 }
+				{ status: 403 },
 			);
 		}
 
@@ -68,7 +68,7 @@ export async function POST(request: Request) {
 		const sortedPositions = [...positions].sort((a, b) => a - b);
 		const expectedPositions = Array.from(
 			{ length: sortedPositions.length },
-			(_, i) => i
+			(_, i) => i,
 		);
 
 		if (
@@ -77,7 +77,7 @@ export async function POST(request: Request) {
 		) {
 			return NextResponse.json(
 				{ error: "Positions must be sequential starting from 0" },
-				{ status: 400 }
+				{ status: 400 },
 			);
 		}
 
@@ -88,12 +88,12 @@ export async function POST(request: Request) {
 
 			if (
 				!workspace.links.some(
-					(link) => link._id.toString() === app.linkId.toString()
+					(link) => link._id.toString() === app.linkId.toString(),
 				)
 			) {
 				return NextResponse.json(
 					{ error: "Application not found" },
-					{ status: 400 }
+					{ status: 400 },
 				);
 			}
 		}

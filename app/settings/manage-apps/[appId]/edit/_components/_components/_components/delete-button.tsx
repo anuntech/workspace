@@ -1,4 +1,12 @@
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@/components/ui/dialog";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Dispatch, SetStateAction, useState } from "react";
 import { toast } from "@/hooks/use-toast";
@@ -10,11 +18,17 @@ interface Props {
 	fieldId?: string;
 	menuType: "menu-main" | "menu-config";
 	linkType: "principal-link" | "sub-link-edit" | "sub-link-create";
-	setMainDialogState: Dispatch<SetStateAction<boolean>>
+	setMainDialogState: Dispatch<SetStateAction<boolean>>;
 }
 
-export const DeleteButton = ({ id, fieldId, menuType, linkType, setMainDialogState }: Props) => {
-	const [isOpen, setIsOpen] = useState(false)
+export const DeleteButton = ({
+	id,
+	fieldId,
+	menuType,
+	linkType,
+	setMainDialogState,
+}: Props) => {
+	const [isOpen, setIsOpen] = useState(false);
 
 	const queryClient = useQueryClient();
 
@@ -22,15 +36,17 @@ export const DeleteButton = ({ id, fieldId, menuType, linkType, setMainDialogSta
 		mutationFn: async () => {
 			const formData = new FormData();
 
-			formData.append("id", id)
+			formData.append("id", id);
 
 			if (linkType !== "principal-link" && fieldId) {
-				formData.append("fieldId", fieldId)
+				formData.append("fieldId", fieldId);
 			}
 
-			const { data } = await api.delete(`/api/applications/edit/${menuType}`, { data: formData })
+			const { data } = await api.delete(`/api/applications/edit/${menuType}`, {
+				data: formData,
+			});
 
-			return data
+			return data;
 		},
 		onSuccess: () => {
 			queryClient.refetchQueries({
@@ -41,8 +57,8 @@ export const DeleteButton = ({ id, fieldId, menuType, linkType, setMainDialogSta
 				description: "Aplicativo deletado com sucesso.",
 				duration: 5000,
 			});
-			setIsOpen(false)
-			setMainDialogState(false)
+			setIsOpen(false);
+			setMainDialogState(false);
 		},
 		onError: () => {
 			toast({
@@ -54,30 +70,53 @@ export const DeleteButton = ({ id, fieldId, menuType, linkType, setMainDialogSta
 	});
 
 	const handleDeleteSublink = () => {
-		deleteApplicationMutation.mutate()
-	}
+		deleteApplicationMutation.mutate();
+	};
 
 	return (
-		<Dialog open={isOpen}
+		<Dialog
+			open={isOpen}
 			onOpenChange={(open) => {
 				setIsOpen(open);
-			}}>
+			}}
+		>
 			<DialogTrigger asChild>
-				<Button onClick={() => setIsOpen(true)} type="button" className="max-w-24 w-full" variant="destructive">Deletar
+				<Button
+					onClick={() => setIsOpen(true)}
+					type="button"
+					className="max-w-24 w-full"
+					variant="destructive"
+				>
+					Deletar
 				</Button>
 			</DialogTrigger>
 			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>Você tem certeza?</DialogTitle>
 					<DialogDescription>
-						Esta ação não pode ser desfeita. Isso excluirá permanentemente este sublink.
+						Esta ação não pode ser desfeita. Isso excluirá permanentemente este
+						sublink.
 					</DialogDescription>
 				</DialogHeader>
 				<DialogFooter>
-					<Button type="button" className="max-w-24 w-full" variant="outline" onClick={() => setIsOpen(false)}>Cancelar</Button>
-					<Button type="button" className="max-w-24 w-full" variant="destructive" onClick={handleDeleteSublink}>Confirmar</Button>
+					<Button
+						type="button"
+						className="max-w-24 w-full"
+						variant="outline"
+						onClick={() => setIsOpen(false)}
+					>
+						Cancelar
+					</Button>
+					<Button
+						type="button"
+						className="max-w-24 w-full"
+						variant="destructive"
+						onClick={handleDeleteSublink}
+					>
+						Confirmar
+					</Button>
 				</DialogFooter>
 			</DialogContent>
 		</Dialog>
-	)
-}
+	);
+};
