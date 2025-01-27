@@ -7,15 +7,30 @@ import { Input } from "@/components/ui/input";
 import { signIn } from "next-auth/react";
 import { Loader2 } from "lucide-react";
 import { EmailForm, emailSchema } from "@/schemas/email";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export function SignInWithEmailForm({ csrfToken }: { csrfToken: string }) {
+	const [isLoading, setIsLoading] = useState(true)
+
+	const searchParams = useSearchParams()
+
+	const email = searchParams.get("email") || ""
+
 	const {
 		register,
 		handleSubmit,
 		formState: { errors, isValid, isSubmitting, isSubmitSuccessful },
 	} = useForm<EmailForm>({
+		defaultValues: {
+			email,
+		},
 		resolver: zodResolver(emailSchema),
 	});
+
+	useEffect(() => {
+		setIsLoading(false)
+	}, [])
 
 	async function onSubmit(data: EmailForm) {
 		try {
@@ -36,7 +51,7 @@ export function SignInWithEmailForm({ csrfToken }: { csrfToken: string }) {
 					placeholder="exemplo@company.com"
 					{...register("email")}
 					className="py-6"
-					disabled={isSubmitting}
+					disabled={isSubmitting || isLoading}
 				/>
 				{errors.email && (
 					<p className="text-red-500 text-sm mt-1">
