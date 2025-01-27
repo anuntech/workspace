@@ -100,6 +100,7 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
 				},
 			],
 			default: [],
+			unique: true,
 		},
 		invitedMembersEmail: {
 			type: [
