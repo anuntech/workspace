@@ -177,6 +177,7 @@ export function CreateLinkStepsDialog({
 					setCurrentStep(0);
 					setInitialSteps();
 				}
+				setTimeout(() => (document.body.style.pointerEvents = ""), 500);
 			}}
 		>
 			{!linkId && (
