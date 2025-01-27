@@ -1,3 +1,4 @@
+/* eslint-disable no-mixed-spaces-and-tabs */
 import config from "@/config";
 import conf from "@/config";
 import connectMongo from "@/libs/mongoose";
@@ -94,6 +95,7 @@ export async function POST(request: Request) {
 				| "newWindow"
 				| "sameWindow",
 			fields: JSON.parse(body.get("fields") as string),
+			membersAllowed: [],
 		});
 
 		await workspace.save();
@@ -144,7 +146,21 @@ export async function GET(request: Request) {
 			);
 		}
 
-		return NextResponse.json({ links: workspace.links || [] });
+		const memberRole = workspace.members.find(
+			(member) => member.memberId.toString() === session.user.id.toString()
+		)?.role;
+		const isAdminOrOwner =
+			workspace.owner.toString() === session.user.id || memberRole === "admin";
+
+		const permittedLinks = isAdminOrOwner
+			? workspace.links
+			: workspace.links.filter((link) =>
+					link.membersAllowed.some(
+						(memberId) => memberId.toString() === session.user.id.toString()
+					)
+			  );
+
+		return NextResponse.json({ links: permittedLinks });
 	} catch (e) {
 		console.error(e);
 		return NextResponse.json(

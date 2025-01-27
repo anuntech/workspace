@@ -1,14 +1,20 @@
-"use client";
-
 import React, { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+	Dialog,
+	DialogTrigger,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+	DialogDescription,
+} from "@/components/ui/dialog";
+import { UserSearchInput } from "@/components/user-search-input";
+import { IUser } from "@/models/User";
 import { Button } from "@/components/ui/button";
 import api from "@/libs/api";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useSearchParams } from "next/navigation";
-import { getS3Image } from "@/libs/s3-client";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { toast } from "@/hooks/use-toast";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Trash2 } from "lucide-react";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -20,107 +26,111 @@ import {
 	AlertDialogTitle,
 	AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Trash2 } from "lucide-react";
 import Image from "next/image";
-import { UserSearchInput } from "@/components/user-search-input";
-import { IUser } from "@/models/User";
+import { getS3Image } from "@/libs/s3-client";
 
-export function MembersManager({ params }: { params: { appId: string } }) {
+export function LinkShareManager({
+	linkId,
+	isOpen,
+	setIsOpen,
+	workspaceId,
+}: {
+	linkId: string;
+	isOpen: boolean;
+	// eslint-disable-next-line no-unused-vars
+	setIsOpen: (open: boolean) => void;
+	workspaceId: string;
+}) {
 	const [selectedUsers, setSelectedUsers] = useState<IUser[]>([]);
-	const searchParams = useSearchParams();
-	const workspace = searchParams.get("workspace");
 
-	const appMembersMutation = useMutation({
-		mutationFn: (data: { workspaceId: string; memberId: string }) =>
-			api.post(`/api/workspace/rules/members`, {
-				workspaceId: data.workspaceId,
-				memberId: data.memberId,
-				appId: params.appId,
+	const membersAllowed = useQuery({
+		queryKey: ["links"],
+		queryFn: () =>
+			api.get(
+				`/api/workspace/link/manage-members-allowed?workspaceId=${workspaceId}&linkId=${linkId}`
+			),
+	});
+
+	const manageMembersAllowedMutation = useMutation({
+		mutationFn: () =>
+			api.post(`/api/workspace/link/manage-members-allowed`, {
+				linkId,
+				membersId: selectedUsers.map((user) => user._id),
+				workspaceId,
 			}),
-		onError: (error) => {
-			console.error("Erro ao adicionar membro:", error);
-		},
 		onSuccess: () => {
-			queryClient.refetchQueries({
-				queryKey: ["appMembers"],
-				type: "active",
+			toast({
+				title: "Membro(s) adicionado(s) com sucesso",
 			});
 			setSelectedUsers([]);
+			membersAllowed.refetch();
 		},
-	});
-
-	const appMembersQuery = useQuery({
-		queryKey: ["appMembers"],
-		queryFn: async () => {
-			const res = await api.get(
-				`/api/workspace/rules/members/${workspace}?appId=${params.appId}`
-			);
-			return res;
-		},
-	});
-
-	const queryClient = useQueryClient();
-
-	const deleteMutation = useMutation({
-		mutationFn: (data: { userId: string }) =>
-			api.delete(
-				`/api/workspace/rules/members/${workspace}/${data.userId}/${params.appId}`
-			),
-		onSuccess: () => {
-			queryClient.refetchQueries({
-				queryKey: ["appMembers"],
-				type: "active",
+		onError: () => {
+			toast({
+				title: "Erro ao adicionar membro(s)",
 			});
 		},
 	});
 
-	const handleAddMembers = async () => {
-		appMembersMutation.mutate({
-			memberId: selectedUsers[0]._id,
-			workspaceId: workspace,
-		});
+	const deleteMemberMutation = useMutation({
+		mutationFn: (memberId: string) =>
+			api.delete(
+				`/api/workspace/link/manage-members-allowed?linkId=${linkId}&memberId=${memberId}&workspaceId=${workspaceId}`
+			),
+		onSuccess: () => {
+			toast({
+				title: "Membro removido com sucesso",
+			});
+			membersAllowed.refetch();
+		},
+		onError: () => {
+			toast({
+				title: "Erro ao remover membro",
+			});
+		},
+	});
+
+	const handleShare = () => {
+		manageMembersAllowedMutation.mutate();
 	};
 
-	const handleDeleteMember = async (id: string) => {
-		deleteMutation.mutate({
-			userId: id,
-		});
+	const handleDelete = (memberId: string) => {
+		deleteMemberMutation.mutate(memberId);
 	};
 
-	const members = appMembersQuery.data?.data?.find((ap: any) => ap.appId);
 	return (
-		<div className="space-y-5 h-96">
-			<section>
-				<h2 className="text-lg font-bold">
-					Adicionar membros para um aplicativo
-				</h2>
-				<span className="text-sm text-zinc-500">
-					Adicione os membros da sua equipe para terem acesso a esse app.
-				</span>
-			</section>
-			<section>
+		<Dialog
+			open={isOpen}
+			onOpenChange={(open) => {
+				setIsOpen(open);
+				setTimeout(() => (document.body.style.pointerEvents = ""), 500);
+			}}
+		>
+			<DialogTrigger asChild></DialogTrigger>
+			<DialogContent className="h-2/4 flex flex-col">
+				<DialogHeader className="h-max">
+					<DialogTitle>Adicionar membros para um link?</DialogTitle>
+					<DialogDescription>
+						Adicione os membros da sua equipe para que eles possam acessar a
+						esse link
+					</DialogDescription>
+				</DialogHeader>
 				<div className="flex gap-2 items-center">
 					<UserSearchInput
 						selectedUsers={selectedUsers}
 						setSelectedUsers={setSelectedUsers}
-						workspaceId={workspace}
-						excludedUsers={members?.members}
+						workspaceId={workspaceId}
+						excludedUsers={membersAllowed.data?.data}
 					/>
 					<Button
-						onClick={() => handleAddMembers()}
-						className="h-full"
-						disabled={
-							selectedUsers.length < 1 ||
-							deleteMutation.isPending ||
-							appMembersQuery.isPending ||
-							appMembersMutation.isPending
-						}
+						onClick={() => handleShare()}
+						disabled={selectedUsers.length < 1}
 					>
 						Adicionar
 					</Button>
 				</div>
-				<div className="mt-7">
-					{members?.members.map((member: any) => (
+				<div className="max-h-[90%] overflow-y-auto">
+					{membersAllowed.data?.data?.map((member: any) => (
 						<div
 							key={member._id}
 							className="flex items-center justify-between space-x-4 hover:bg-gray-100 p-4 rounded-lg"
@@ -181,7 +191,7 @@ export function MembersManager({ params }: { params: { appId: string } }) {
 										<AlertDialogFooter>
 											<AlertDialogCancel>Cancelar</AlertDialogCancel>
 											<AlertDialogAction
-												onClick={() => handleDeleteMember(member.id)}
+												onClick={() => handleDelete(member.id)}
 											>
 												Continuar
 											</AlertDialogAction>
@@ -192,7 +202,7 @@ export function MembersManager({ params }: { params: { appId: string } }) {
 						</div>
 					))}
 				</div>
-			</section>
-		</div>
+			</DialogContent>
+		</Dialog>
 	);
 }

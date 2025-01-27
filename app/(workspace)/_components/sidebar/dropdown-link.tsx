@@ -26,7 +26,7 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { LinkShareManager } from "./link-share-manager/link-share-manager";
+import { LinkShareManager } from "./link-share-manager";
 
 export function DropdownLink({
 	isHover,
@@ -128,6 +128,7 @@ export function DropdownLink({
 				linkId={linkId}
 				isOpen={isLinkShareOpen}
 				setIsOpen={setIsLinkShareOpen}
+				workspaceId={workspace}
 			/>
 		</>
 	);

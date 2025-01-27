@@ -7,17 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getS3Image } from "@/libs/s3-client";
 
 import Image from "next/image";
-
-type User = {
-	_id: string;
-	name: string;
-	email: string;
-	image: string;
-	icon?: {
-		value: string;
-		type: "image" | "emoji" | "lucide";
-	};
-};
+import { IUser } from "@/models/User";
 
 export function UserSearchInput({
 	selectedUsers,
@@ -25,8 +15,8 @@ export function UserSearchInput({
 	workspaceId,
 	excludedUsers = [],
 }: {
-	selectedUsers: User[];
-	setSelectedUsers: React.Dispatch<React.SetStateAction<User[]>>;
+	selectedUsers: IUser[];
+	setSelectedUsers: React.Dispatch<React.SetStateAction<IUser[]>>;
 	workspaceId: string;
 	excludedUsers?: any[];
 }) {
@@ -50,7 +40,7 @@ export function UserSearchInput({
 		)
 		.filter((user: any) => user.role !== "admin");
 
-	const handleSelectUser = (user: User) => {
+	const handleSelectUser = (user: IUser) => {
 		if (!selectedUsers.find((u) => u._id === user._id)) {
 			setSelectedUsers((prev) => [...prev, user]);
 			setQuery("");
