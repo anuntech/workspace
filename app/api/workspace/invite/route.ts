@@ -8,6 +8,7 @@ import User from "@/models/User";
 import Workspace from "@/models/Workspace";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
+import { getAuthorizationToInviteUser } from "./_utils/get-authorization-to-invite-user";
 
 export async function POST(request: Request) {
 	try {
@@ -36,7 +37,9 @@ export async function POST(request: Request) {
 			);
 		}
 
-		if (worksPace.owner.toString() !== session.user.id) {
+		const isAuthorizedToInviteUser = getAuthorizationToInviteUser(worksPace, session)
+
+		if (!isAuthorizedToInviteUser) {
 			return NextResponse.json(
 				{ error: "Você não possui permissão para convidar usuários" },
 				{ status: 403 }
