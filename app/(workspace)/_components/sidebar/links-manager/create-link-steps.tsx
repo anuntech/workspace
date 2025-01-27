@@ -71,9 +71,17 @@ export function CreateLinkStepsDialog({
 
 	useEffect(() => {
 		if (linkId && link) {
+			const formData = new FormData();
+			formData.append("icon", link.icon.value);
+			formData.append("iconType", link.icon.type);
+			formData.append("fields", JSON.stringify(link.fields));
+			formData.append("title", link.title);
+			formData.append("url", link.url);
+			formData.append("urlType", link.urlType);
+
 			setData({
 				images: {
-					icon: link.icon,
+					icon: formData,
 					imageUrlWithoutS3: link.imageUrlWithoutS3 || "",
 					emojiAvatar: link.icon.value || "",
 					emojiAvatarType: link.icon.type || "emoji",
@@ -96,6 +104,37 @@ export function CreateLinkStepsDialog({
 	const queryClient = useQueryClient();
 	const saveLinkMutation = useMutation({
 		mutationFn: async (data: FormData) => api.post("/api/workspace/link", data),
+		onSuccess: async () => {
+			await queryClient.refetchQueries({
+				queryKey: ["workspace"],
+				type: "all",
+			});
+			await queryClient.refetchQueries({
+				queryKey: ["workspace/links"],
+				type: "all",
+			});
+			toast({
+				description: "Link salvo com sucesso.",
+				duration: 5000,
+			});
+			setIsOpen(false);
+			setData(initialFormData);
+			setCurrentStep(0);
+		},
+		onError: () => {
+			toast({
+				description: "Algo deu errado ao salvar o aplicativo.",
+				duration: 5000,
+				variant: "destructive",
+			});
+		},
+	});
+	const editLinkMutation = useMutation({
+		mutationFn: async (data: FormData) =>
+			api.put(
+				`/api/workspace/link?linkId=${linkId}&workspaceId=${workspaceId}`,
+				data
+			),
 		onSuccess: async () => {
 			await queryClient.refetchQueries({
 				queryKey: ["workspace"],
@@ -157,13 +196,14 @@ export function CreateLinkStepsDialog({
 	};
 
 	const handleSave = () => {
+		console.log("handleSave");
 		const formData = new FormData();
 
 		formData.append("url", data.principalLink.link || "");
 		formData.append("urlType", data.principalLink.type || "");
 
 		// Images
-		if (!data.images.icon) {
+		if (!data.images.icon || !(data.images.icon instanceof FormData)) {
 			toast({
 				title: "É necessário selecionar um avatar!",
 				variant: "destructive",
@@ -172,7 +212,10 @@ export function CreateLinkStepsDialog({
 			return;
 		}
 
-		formData.append("icon", data.images.icon.get("icon"));
+		const icon = data.images.icon.get("icon");
+		if (icon) {
+			formData.append("icon", icon);
+		}
 		formData.append("iconType", data.images.emojiAvatarType);
 
 		formData.append(
@@ -188,7 +231,17 @@ export function CreateLinkStepsDialog({
 		formData.append("workspaceId", workspaceId);
 		formData.append("title", data.principalLink.title);
 
+		if (linkId) {
+			editLinkMutation.mutate(formData);
+			setIsOpen(false);
+			setTimeout(() => (document.body.style.pointerEvents = ""), 500);
+			return;
+		}
+
 		saveLinkMutation.mutate(formData);
+
+		setIsOpen(false);
+		setTimeout(() => (document.body.style.pointerEvents = ""), 500);
 	};
 
 	const setInitialSteps = () => {
