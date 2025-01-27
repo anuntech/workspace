@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "@/libs/api";
 import { toast } from "@/hooks/use-toast";
 import { LinkFormData } from "./types";
@@ -28,7 +28,16 @@ const initialFormData: LinkFormData = {
 	sublinks: [],
 };
 
-export function CreateLinkStepsDialog() {
+export function CreateLinkStepsDialog({
+	linkId,
+	isOpen: propIsOpen,
+	setIsOpen: propSetIsOpen,
+}: {
+	linkId?: string;
+	isOpen?: boolean;
+	setIsOpen?: (open: boolean) => void;
+	workspaceId?: string;
+}) {
 	const urlParams = useSearchParams();
 	const workspaceId = urlParams.get("workspace");
 	const [data, setData] = useState<LinkFormData>(initialFormData);
@@ -45,10 +54,87 @@ export function CreateLinkStepsDialog() {
 		},
 	]);
 	const [currentStep, setCurrentStep] = useState(0);
-	const [isOpen, setIsOpen] = useState(false);
+
+	const [internalIsOpen, setInternalIsOpen] = useState(false);
+	const isOpen = propIsOpen ? propIsOpen : internalIsOpen;
+	const setIsOpen = propSetIsOpen ? propSetIsOpen : setInternalIsOpen;
+
+	const linksQuery = useQuery({
+		queryKey: ["workspace/links"],
+		queryFn: async () =>
+			api.get(`/api/workspace/link?workspaceId=${workspaceId}`),
+	});
+
+	const link = linksQuery.data?.data?.links.find(
+		(link: any) => link._id === linkId
+	);
+
+	useEffect(() => {
+		if (linkId && link) {
+			const formData = new FormData();
+			formData.append("icon", link.icon.value);
+			formData.append("iconType", link.icon.type);
+			formData.append("fields", JSON.stringify(link.fields));
+			formData.append("title", link.title);
+			formData.append("url", link.url);
+			formData.append("urlType", link.urlType);
+
+			setData({
+				images: {
+					icon: formData,
+					imageUrlWithoutS3: link.imageUrlWithoutS3 || "",
+					emojiAvatar: link.icon.value || "",
+					emojiAvatarType: link.icon.type || "emoji",
+					galleryPhotos: null,
+				},
+				principalLink: {
+					title: link.title,
+					link: link.url,
+					type: link.urlType,
+				},
+				sublinks: link.fields.map((field: any) => ({
+					title: field.key,
+					link: field.value,
+					type: field.redirectType,
+				})),
+			});
+		}
+	}, [linksQuery.data, linkId, link]);
+
 	const queryClient = useQueryClient();
 	const saveLinkMutation = useMutation({
 		mutationFn: async (data: FormData) => api.post("/api/workspace/link", data),
+		onSuccess: async () => {
+			await queryClient.refetchQueries({
+				queryKey: ["workspace"],
+				type: "all",
+			});
+			await queryClient.refetchQueries({
+				queryKey: ["workspace/links"],
+				type: "all",
+			});
+			toast({
+				description: "Link salvo com sucesso.",
+				duration: 5000,
+			});
+			setIsOpen(false);
+			setData(initialFormData);
+			setCurrentStep(0);
+		},
+		onError: () => {
+			toast({
+				description: "Algo deu errado ao salvar o aplicativo.",
+				duration: 5000,
+				variant: "destructive",
+			});
+		},
+	});
+	const editLinkMutation = useMutation({
+		mutationFn: async (data: FormData) =>
+			api.put(
+				`/api/workspace/link?linkId=${linkId}&workspaceId=${workspaceId}`,
+				data
+			),
 		onSuccess: async () => {
 			await queryClient.refetchQueries({
 				queryKey: ["workspace"],
@@ -110,13 +196,14 @@ export function CreateLinkStepsDialog() {
 	};
 
 	const handleSave = () => {
+		console.log("handleSave");
 		const formData = new FormData();
 
 		formData.append("url", data.principalLink.link || "");
 		formData.append("urlType", data.principalLink.type || "");
 
 		// Images
-		if (!data.images.icon) {
+		if (!data.images.icon || !(data.images.icon instanceof FormData)) {
 			toast({
 				title: "É necessário selecionar um avatar!",
 				variant: "destructive",
@@ -125,7 +212,10 @@ export function CreateLinkStepsDialog() {
 			return;
 		}
 
-		formData.append("icon", data.images.icon.get("icon"));
+		const icon = data.images.icon.get("icon");
+		if (icon) {
+			formData.append("icon", icon);
+		}
 		formData.append("iconType", data.images.emojiAvatarType);
 
 		formData.append(
@@ -141,7 +231,17 @@ export function CreateLinkStepsDialog() {
 		formData.append("workspaceId", workspaceId);
 		formData.append("title", data.principalLink.title);
 
+		if (linkId) {
+			editLinkMutation.mutate(formData);
+			setIsOpen(false);
+			setTimeout(() => (document.body.style.pointerEvents = ""), 500);
+			return;
+		}
+
 		saveLinkMutation.mutate(formData);
+
+		setIsOpen(false);
+		setTimeout(() => (document.body.style.pointerEvents = ""), 500);
 	};
 
 	const setInitialSteps = () => {
@@ -160,22 +260,25 @@ export function CreateLinkStepsDialog() {
 			open={isOpen}
 			onOpenChange={(open) => {
 				setIsOpen(open);
-				if (!open) {
+				if (!open && !linkId) {
 					setData(initialFormData);
 					setCurrentStep(0);
 					setInitialSteps();
 				}
+				setTimeout(() => (document.body.style.pointerEvents = ""), 500);
 			}}
 		>
-			<DialogTrigger asChild>
-				<Button
-					size="icon"
-					variant="ghost"
-					className="text-muted-foreground -mr-[0.15rem]"
-				>
-					<Plus />
-				</Button>
-			</DialogTrigger>
+			{!linkId && (
+				<DialogTrigger asChild>
+					<Button
+						size="icon"
+						variant="ghost"
+						className="text-muted-foreground -mr-[0.15rem]"
+					>
+						<Plus />
+					</Button>
+				</DialogTrigger>
+			)}
 			<DialogContent
 				className="max-w-lg p-6 space-y-4"
 				onInteractOutside={(event) => event.preventDefault()}

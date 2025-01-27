@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -13,7 +14,14 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Heart, MoreHorizontal, PackageX, Share2, Trash } from "lucide-react";
+import {
+	Heart,
+	MoreHorizontal,
+	PackageX,
+	Share2,
+	Trash,
+	Pencil,
+} from "lucide-react";
 import { useSession } from "next-auth/react";
 
 import {
@@ -27,6 +35,7 @@ import {
 	AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { LinkShareManager } from "./link-share-manager";
+import { CreateLinkStepsDialog } from "./links-manager/create-link-steps";
 
 export function DropdownLink({
 	isHover,
@@ -40,6 +49,8 @@ export function DropdownLink({
 	const [isOpen, setIsOpen] = useState(false);
 	const [isOpenAlert, setIsOpenAlert] = useState(false);
 	const [isLinkShareOpen, setIsLinkShareOpen] = useState(false);
+	const [isEditLinkOpen, setIsEditLinkOpen] = useState(false);
+
 	const urlParams = useSearchParams();
 	const workspace = urlParams.get("workspace");
 	const queryClient = useQueryClient();
@@ -101,10 +112,13 @@ export function DropdownLink({
 							<Heart />
 							{isThisAnFavoriteApp ? "Remover dos" : "Adicionar aos"} favoritos
 						</DropdownMenuItem>
-
 						{roleQuery.data?.data?.role !== "member" &&
 							!roleQuery.isPending && (
 								<>
+									<DropdownMenuItem onClick={() => setIsEditLinkOpen(true)}>
+										<Pencil />
+										Editar
+									</DropdownMenuItem>
 									<DropdownMenuItem onClick={() => setIsLinkShareOpen(true)}>
 										<Share2 />
 										Compartilhar
@@ -128,6 +142,12 @@ export function DropdownLink({
 				linkId={linkId}
 				isOpen={isLinkShareOpen}
 				setIsOpen={setIsLinkShareOpen}
+				workspaceId={workspace}
+			/>
+			<CreateLinkStepsDialog
+				linkId={linkId}
+				isOpen={isEditLinkOpen}
+				setIsOpen={setIsEditLinkOpen}
 				workspaceId={workspace}
 			/>
 		</>
