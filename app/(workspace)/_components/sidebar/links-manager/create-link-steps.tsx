@@ -28,7 +28,15 @@ const initialFormData: LinkFormData = {
 	sublinks: [],
 };
 
-export function CreateLinkStepsDialog({ linkId }: { linkId?: string }) {
+export function CreateLinkStepsDialog({
+	linkId,
+	isOpen: propIsOpen,
+	setIsOpen: propSetIsOpen,
+}: {
+	linkId?: string;
+	isOpen?: boolean;
+	setIsOpen?: (open: boolean) => void;
+}) {
 	const urlParams = useSearchParams();
 	const workspaceId = urlParams.get("workspace");
 	const [data, setData] = useState<LinkFormData>(initialFormData);
@@ -45,7 +53,11 @@ export function CreateLinkStepsDialog({ linkId }: { linkId?: string }) {
 		},
 	]);
 	const [currentStep, setCurrentStep] = useState(0);
-	const [isOpen, setIsOpen] = useState(false);
+
+	const [internalIsOpen, setInternalIsOpen] = useState(false);
+	const isOpen = propIsOpen ? propIsOpen : internalIsOpen;
+	const setIsOpen = propSetIsOpen ? propSetIsOpen : setInternalIsOpen;
+
 	const queryClient = useQueryClient();
 	const saveLinkMutation = useMutation({
 		mutationFn: async (data: FormData) => api.post("/api/workspace/link", data),

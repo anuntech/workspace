@@ -49,6 +49,8 @@ export function DropdownLink({
 	const [isOpen, setIsOpen] = useState(false);
 	const [isOpenAlert, setIsOpenAlert] = useState(false);
 	const [isLinkShareOpen, setIsLinkShareOpen] = useState(false);
+	const [isEditLinkOpen, setIsEditLinkOpen] = useState(false);
+
 	const urlParams = useSearchParams();
 	const workspace = urlParams.get("workspace");
 	const queryClient = useQueryClient();
@@ -110,14 +112,13 @@ export function DropdownLink({
 							<Heart />
 							{isThisAnFavoriteApp ? "Remover dos" : "Adicionar aos"} favoritos
 						</DropdownMenuItem>
-						<DropdownMenuItem>
-							<Pencil />
-							Editar
-						</DropdownMenuItem>
-
 						{roleQuery.data?.data?.role !== "member" &&
 							!roleQuery.isPending && (
 								<>
+									<DropdownMenuItem onClick={() => setIsEditLinkOpen(true)}>
+										<Pencil />
+										Editar
+									</DropdownMenuItem>
 									<DropdownMenuItem onClick={() => setIsLinkShareOpen(true)}>
 										<Share2 />
 										Compartilhar
@@ -143,7 +144,11 @@ export function DropdownLink({
 				setIsOpen={setIsLinkShareOpen}
 				workspaceId={workspace}
 			/>
-			<CreateLinkStepsDialog linkId={linkId} />
+			<CreateLinkStepsDialog
+				linkId={linkId}
+				isOpen={isEditLinkOpen}
+				setIsOpen={setIsEditLinkOpen}
+			/>
 		</>
 	);
 }
