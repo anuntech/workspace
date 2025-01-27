@@ -68,6 +68,10 @@ export async function POST(request: Request) {
 			return NextResponse.json({ error: "Links not found" }, { status: 404 });
 		}
 
+		if (!body.linkId) {
+			return NextResponse.json({ error: "Link not found" }, { status: 404 });
+		}
+
 		for (const memberId of body.membersId) {
 			const member = await User.findById(memberId);
 			const link = workspace.links.find(
