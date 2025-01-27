@@ -52,7 +52,7 @@ export function DropdownLink({
 	});
 
 	const isThisAnFavoriteApp = applicationsQuery.data?.data.favorites.some(
-		(a: any) => a.userId == session.data?.user?.id && a.linkId.id == linkId
+		(a: any) => a.userId == session.data?.user?.id && a?.linkId?.id == linkId
 	);
 
 	const changeFavoriteMutation = useMutation({
