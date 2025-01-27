@@ -60,14 +60,29 @@ export async function POST(request: Request) {
 			);
 		}
 
+		if (!body.membersId.length) {
+			return NextResponse.json({ error: "Members not found" }, { status: 404 });
+		}
+
+		if (workspace.links.length === 0) {
+			return NextResponse.json({ error: "Links not found" }, { status: 404 });
+		}
+
 		for (const memberId of body.membersId) {
 			const member = await User.findById(memberId);
+			const link = workspace.links.find(
+				(link) => link._id.toString() === body.linkId
+			);
 
-			if (
-				workspace.links
-					.find((link) => link._id.toString() === body.linkId)
-					?.membersAllowed.includes(memberId)
-			) {
+			if (!link) {
+				return NextResponse.json({ error: "Link not found" }, { status: 404 });
+			}
+
+			if (!link.membersAllowed) {
+				link.membersAllowed = [];
+			}
+
+			if (link.membersAllowed.includes(memberId)) {
 				return NextResponse.json(
 					{ error: `Member ${member._id} already exists` },
 					{ status: 400 }
@@ -77,10 +92,6 @@ export async function POST(request: Request) {
 			if (!member) {
 				return NextResponse.json({ error: "User not found" }, { status: 404 });
 			}
-
-			const link = workspace.links.find(
-				(link) => link._id.toString() === body.linkId
-			);
 
 			if (!link.membersAllowed) link.membersAllowed = [];
 			link.membersAllowed.push(member._id);
