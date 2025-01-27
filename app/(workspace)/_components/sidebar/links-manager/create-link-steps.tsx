@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "@/libs/api";
 import { toast } from "@/hooks/use-toast";
 import { LinkFormData } from "./types";
@@ -36,6 +36,7 @@ export function CreateLinkStepsDialog({
 	linkId?: string;
 	isOpen?: boolean;
 	setIsOpen?: (open: boolean) => void;
+	workspaceId?: string;
 }) {
 	const urlParams = useSearchParams();
 	const workspaceId = urlParams.get("workspace");
@@ -57,6 +58,40 @@ export function CreateLinkStepsDialog({
 	const [internalIsOpen, setInternalIsOpen] = useState(false);
 	const isOpen = propIsOpen ? propIsOpen : internalIsOpen;
 	const setIsOpen = propSetIsOpen ? propSetIsOpen : setInternalIsOpen;
+
+	const linksQuery = useQuery({
+		queryKey: ["workspace/links"],
+		queryFn: async () =>
+			api.get(`/api/workspace/link?workspaceId=${workspaceId}`),
+	});
+
+	const link = linksQuery.data?.data?.links.find(
+		(link: any) => link._id === linkId
+	);
+
+	useEffect(() => {
+		if (linkId && link) {
+			setData({
+				images: {
+					icon: link.icon,
+					imageUrlWithoutS3: link.imageUrlWithoutS3 || "",
+					emojiAvatar: link.icon.value || "",
+					emojiAvatarType: link.icon.type || "emoji",
+					galleryPhotos: null,
+				},
+				principalLink: {
+					title: link.title,
+					link: link.url,
+					type: link.urlType,
+				},
+				sublinks: link.fields.map((field: any) => ({
+					title: field.key,
+					link: field.value,
+					type: field.redirectType,
+				})),
+			});
+		}
+	}, [linksQuery.data, linkId, link]);
 
 	const queryClient = useQueryClient();
 	const saveLinkMutation = useMutation({
@@ -172,7 +207,7 @@ export function CreateLinkStepsDialog({
 			open={isOpen}
 			onOpenChange={(open) => {
 				setIsOpen(open);
-				if (!open) {
+				if (!open && !linkId) {
 					setData(initialFormData);
 					setCurrentStep(0);
 					setInitialSteps();
