@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -28,7 +28,7 @@ const initialFormData: LinkFormData = {
 	sublinks: [],
 };
 
-export function CreateLinkStepsDialog() {
+export function CreateLinkStepsDialog({ linkId }: { linkId?: string }) {
 	const urlParams = useSearchParams();
 	const workspaceId = urlParams.get("workspace");
 	const [data, setData] = useState<LinkFormData>(initialFormData);
@@ -167,15 +167,17 @@ export function CreateLinkStepsDialog() {
 				}
 			}}
 		>
-			<DialogTrigger asChild>
-				<Button
-					size="icon"
-					variant="ghost"
-					className="text-muted-foreground -mr-[0.15rem]"
-				>
-					<Plus />
-				</Button>
-			</DialogTrigger>
+			{!linkId && (
+				<DialogTrigger asChild>
+					<Button
+						size="icon"
+						variant="ghost"
+						className="text-muted-foreground -mr-[0.15rem]"
+					>
+						<Plus />
+					</Button>
+				</DialogTrigger>
+			)}
 			<DialogContent
 				className="max-w-lg p-6 space-y-4"
 				onInteractOutside={(event) => event.preventDefault()}

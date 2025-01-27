@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -13,7 +14,14 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Heart, MoreHorizontal, PackageX, Share2, Trash } from "lucide-react";
+import {
+	Heart,
+	MoreHorizontal,
+	PackageX,
+	Share2,
+	Trash,
+	Pencil,
+} from "lucide-react";
 import { useSession } from "next-auth/react";
 
 import {
@@ -27,6 +35,7 @@ import {
 	AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { LinkShareManager } from "./link-share-manager";
+import { CreateLinkStepsDialog } from "./links-manager/create-link-steps";
 
 export function DropdownLink({
 	isHover,
@@ -101,6 +110,10 @@ export function DropdownLink({
 							<Heart />
 							{isThisAnFavoriteApp ? "Remover dos" : "Adicionar aos"} favoritos
 						</DropdownMenuItem>
+						<DropdownMenuItem>
+							<Pencil />
+							Editar
+						</DropdownMenuItem>
 
 						{roleQuery.data?.data?.role !== "member" &&
 							!roleQuery.isPending && (
@@ -130,6 +143,7 @@ export function DropdownLink({
 				setIsOpen={setIsLinkShareOpen}
 				workspaceId={workspace}
 			/>
+			<CreateLinkStepsDialog linkId={linkId} />
 		</>
 	);
 }
