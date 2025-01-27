@@ -298,7 +298,7 @@ export async function PUT(request: Request) {
 		const profilePhoto = body.get("icon") as File;
 		let icon = workspace.links[linkIndex].icon;
 
-		if (body.get("iconType") === "image" && profilePhoto) {
+		if (body.get("iconType") === "image" && profilePhoto instanceof File) {
 			const profilePhotoId = randomUUID().toString();
 			const form = {
 				Bucket: process.env.NEXT_PUBLIC_HETZNER_BUCKET_NAME!,
@@ -315,7 +315,7 @@ export async function PUT(request: Request) {
 				type: "image",
 				value: profilePhotoId,
 			};
-		} else if (body.get("iconType")) {
+		} else if (body.get("iconType") && body.get("iconType") !== "image") {
 			icon = {
 				type: body.get("iconType") as "image" | "emoji" | "lucide",
 				value: body.get("icon") as string,
