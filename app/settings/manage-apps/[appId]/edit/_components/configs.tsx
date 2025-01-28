@@ -1,10 +1,13 @@
-"use client"
+"use client";
 
 import { AvatarSelector } from "@/components/avatar-selector";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { BasicInformationForm, basicInformationSchema } from "@/schemas/basic-information";
+import {
+	BasicInformationForm,
+	basicInformationSchema,
+} from "@/schemas/basic-information";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "@/hooks/use-toast";
 import { base64ToBlob } from "@/lib/utils";
@@ -27,8 +30,8 @@ interface Props {
 			galleryPhotos?: FileList;
 			imageUrlWithoutS3: string;
 		};
-	}
-	id: string
+	};
+	id: string;
 }
 
 interface BasicInformationWithImagesForm extends BasicInformationForm {
@@ -38,28 +41,33 @@ interface BasicInformationWithImagesForm extends BasicInformationForm {
 		emojiAvatar: string;
 		emojiAvatarType: "emoji" | "lucide" | "image";
 		galleryPhotos?: FileList;
-	}
+	};
 }
 
 export const Configs = ({ data, id }: Props) => {
-	const { handleSubmit, register, formState: { isValid }, setValue, getValues, watch } = useForm<BasicInformationWithImagesForm>(
-		{
-			defaultValues: {
-				name: data.basicInformation.name,
-				subtitle: data.basicInformation.subtitle,
-				description: data.basicInformation.description,
-				images: {
-					icon: null,
-					imageUrlWithoutS3: data.images.imageUrlWithoutS3,
-					emojiAvatar: data.images.emojiAvatar,
-					emojiAvatarType: data.images.emojiAvatarType,
-					galleryPhotos: data.images.galleryPhotos,
-				},
+	const {
+		handleSubmit,
+		register,
+		formState: { isValid },
+		setValue,
+		getValues,
+		watch,
+	} = useForm<BasicInformationWithImagesForm>({
+		defaultValues: {
+			name: data.basicInformation.name,
+			subtitle: data.basicInformation.subtitle,
+			description: data.basicInformation.description,
+			images: {
+				icon: null,
+				imageUrlWithoutS3: data.images.imageUrlWithoutS3,
+				emojiAvatar: data.images.emojiAvatar,
+				emojiAvatarType: data.images.emojiAvatarType,
+				galleryPhotos: data.images.galleryPhotos,
 			},
-			resolver: zodResolver(basicInformationSchema),
-			mode: "onChange",
-		}
-	)
+		},
+		resolver: zodResolver(basicInformationSchema),
+		mode: "onChange",
+	});
 
 	const queryClient = useQueryClient();
 
@@ -71,7 +79,7 @@ export const Configs = ({ data, id }: Props) => {
 			formData.append("subtitle", data.subtitle);
 			formData.append("description", data.description);
 			formData.append("icon", data.images.icon.get("icon"));
-			formData.append("iconType", data.images.emojiAvatarType)
+			formData.append("iconType", data.images.emojiAvatarType);
 
 			if (data.images.galleryPhotos && data.images.galleryPhotos.length > 0) {
 				Array.from(data.images.galleryPhotos).forEach((file) => {
@@ -79,11 +87,14 @@ export const Configs = ({ data, id }: Props) => {
 				});
 			}
 
-			formData.append("id", id)
+			formData.append("id", id);
 
-			const { data: dataUpdated } = await api.put("/api/applications/edit/configs", formData)
+			const { data: dataUpdated } = await api.put(
+				"/api/applications/edit/configs",
+				formData,
+			);
 
-			return dataUpdated
+			return dataUpdated;
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({
@@ -104,42 +115,42 @@ export const Configs = ({ data, id }: Props) => {
 		},
 	});
 
-	const handleAvatarChange = useCallback((avatar: {
-		value: string;
-		type: "image" | "emoji" | "lucide";
-	}) => {
-		const formData = new FormData();
+	const handleAvatarChange = useCallback(
+		(avatar: { value: string; type: "image" | "emoji" | "lucide" }) => {
+			const formData = new FormData();
 
-		switch (avatar.type) {
-			case "image": {
-				const blob = base64ToBlob(avatar.value);
-				formData.append("icon", blob, "avatar.jpeg");
-				formData.append("iconType", avatar.type);
+			switch (avatar.type) {
+				case "image": {
+					const blob = base64ToBlob(avatar.value);
+					formData.append("icon", blob, "avatar.jpeg");
+					formData.append("iconType", avatar.type);
 
-				setValue("images.icon", formData)
-				setValue("images.imageUrlWithoutS3", URL.createObjectURL(blob))
-				setValue("images.emojiAvatar", avatar.value)
-				setValue("images.emojiAvatarType", avatar.type)
+					setValue("images.icon", formData);
+					setValue("images.imageUrlWithoutS3", URL.createObjectURL(blob));
+					setValue("images.emojiAvatar", avatar.value);
+					setValue("images.emojiAvatarType", avatar.type);
 
-				break;
+					break;
+				}
+				case "emoji":
+				case "lucide":
+					formData.append("icon", avatar.value);
+					formData.append("iconType", avatar.type);
+
+					setValue("images.icon", formData);
+					setValue("images.imageUrlWithoutS3", "");
+					setValue("images.emojiAvatar", avatar.value);
+					setValue("images.emojiAvatarType", avatar.type);
+
+					break;
 			}
-			case "emoji":
-			case "lucide":
-				formData.append("icon", avatar.value);
-				formData.append("iconType", avatar.type);
+		},
+		[setValue],
+	);
 
-				setValue("images.icon", formData)
-				setValue("images.imageUrlWithoutS3", "")
-				setValue("images.emojiAvatar", avatar.value)
-				setValue("images.emojiAvatarType", avatar.type)
-
-				break;
-		}
-	}, [setValue]);
-
-	const watchedEmojiAvatar = watch("images.emojiAvatar")
-	const watchedEmojiAvatarType = watch("images.emojiAvatarType")
-	const watchedImageUrlWithoutS3 = watch("images.imageUrlWithoutS3")
+	const watchedEmojiAvatar = watch("images.emojiAvatar");
+	const watchedEmojiAvatarType = watch("images.emojiAvatarType");
+	const watchedImageUrlWithoutS3 = watch("images.imageUrlWithoutS3");
 
 	useEffect(() => {
 		const formData = new FormData();
@@ -147,16 +158,20 @@ export const Configs = ({ data, id }: Props) => {
 		formData.append("icon", data.images.emojiAvatar);
 		formData.append("iconType", data.images.emojiAvatarType);
 
-		setValue("images.icon", formData)
-		setValue("images.imageUrlWithoutS3", data.images.imageUrlWithoutS3)
-		setValue("images.emojiAvatar", data.images.emojiAvatar)
-		setValue("images.emojiAvatarType", data.images.emojiAvatarType)
-
-	}, [data.images.emojiAvatar, data.images.emojiAvatarType, data.images.imageUrlWithoutS3, setValue])
+		setValue("images.icon", formData);
+		setValue("images.imageUrlWithoutS3", data.images.imageUrlWithoutS3);
+		setValue("images.emojiAvatar", data.images.emojiAvatar);
+		setValue("images.emojiAvatarType", data.images.emojiAvatarType);
+	}, [
+		data.images.emojiAvatar,
+		data.images.emojiAvatarType,
+		data.images.imageUrlWithoutS3,
+		setValue,
+	]);
 
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
-	const watchedGalleryPhotos = watch("images.galleryPhotos")
+	const watchedGalleryPhotos = watch("images.galleryPhotos");
 
 	useEffect(() => {
 		if (fileInputRef.current && watchedGalleryPhotos) {
@@ -170,39 +185,40 @@ export const Configs = ({ data, id }: Props) => {
 	}, [setValue, watchedGalleryPhotos]);
 
 	const onSubmit = (data: BasicInformationForm) => {
-		if (!isValid) return
+		if (!isValid) return;
 
-		console.log(data)
+		console.log(data);
 
 		const dataWithImages = {
 			...data,
 			images: getValues("images"),
-		}
+		};
 
-		console.log(dataWithImages)
+		console.log(dataWithImages);
 
-		saveApplicationMutation.mutate(dataWithImages)
-	}
+		saveApplicationMutation.mutate(dataWithImages);
+	};
 
 	return (
-		<form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-full max-w-lg gap-4 items-end">
+		<form
+			onSubmit={handleSubmit(onSubmit)}
+			className="flex flex-col w-full max-w-lg gap-4 items-end"
+		>
 			<div className="w-full">
 				<Label htmlFor="name">Ícone do aplicativo *</Label>
 				<AvatarSelector
 					data={
 						data.images.emojiAvatar
 							? {
-								value: watchedEmojiAvatar,
-								type: watchedEmojiAvatarType,
-							}
+									value: watchedEmojiAvatar,
+									type: watchedEmojiAvatarType,
+								}
 							: null
 					}
 					className="w-[80px]"
 					emojiSize="4rem"
 					imageUrlWithoutS3={
-						watchedImageUrlWithoutS3
-							? watchedImageUrlWithoutS3
-							: null
+						watchedImageUrlWithoutS3 ? watchedImageUrlWithoutS3 : null
 					}
 					onAvatarChange={handleAvatarChange}
 				/>
@@ -257,7 +273,13 @@ export const Configs = ({ data, id }: Props) => {
 					{...register("description")}
 				/>
 			</div>
-			<Button type="submit" disabled={!isValid || saveApplicationMutation.isPending} className="max-w-24 w-full">Salvar</Button>
+			<Button
+				type="submit"
+				disabled={!isValid || saveApplicationMutation.isPending}
+				className="max-w-24 w-full"
+			>
+				Salvar
+			</Button>
 		</form>
 	);
-}
+};

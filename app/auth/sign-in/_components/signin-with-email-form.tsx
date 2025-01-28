@@ -11,11 +11,11 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export function SignInWithEmailForm({ csrfToken }: { csrfToken: string }) {
-	const [isLoading, setIsLoading] = useState(true)
+	const [isLoading, setIsLoading] = useState(true);
 
-	const searchParams = useSearchParams()
+	const searchParams = useSearchParams();
 
-	const email = searchParams.get("email") || ""
+	const email = searchParams.get("email") || "";
 
 	const {
 		register,
@@ -29,8 +29,8 @@ export function SignInWithEmailForm({ csrfToken }: { csrfToken: string }) {
 	});
 
 	useEffect(() => {
-		setIsLoading(false)
-	}, [])
+		setIsLoading(false);
+	}, []);
 
 	async function onSubmit(data: EmailForm) {
 		try {
@@ -64,7 +64,9 @@ export function SignInWithEmailForm({ csrfToken }: { csrfToken: string }) {
 				disabled={!isValid || isSubmitting || isSubmitSuccessful}
 				className="w-full py-6 flex items-center justify-center"
 			>
-				{(isSubmitting || isSubmitSuccessful) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+				{(isSubmitting || isSubmitSuccessful) && (
+					<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+				)}
 				Continuar com o e-mail
 			</Button>
 		</form>

@@ -31,7 +31,7 @@ export async function POST(request: Request) {
 		if (!workspace) {
 			return NextResponse.json(
 				{ error: "Workspace not found" },
-				{ status: 404 }
+				{ status: 404 },
 			);
 		}
 
@@ -42,12 +42,12 @@ export async function POST(request: Request) {
 		if (!Array.isArray(body.membersId)) {
 			return NextResponse.json(
 				{ error: "MembersId is not an array" },
-				{ status: 400 }
+				{ status: 400 },
 			);
 		}
 
 		const memberRole = workspace.members.find(
-			(m) => m.memberId.toString() === session.user.id.toString()
+			(m) => m.memberId.toString() === session.user.id.toString(),
 		)?.role;
 
 		if (
@@ -56,7 +56,7 @@ export async function POST(request: Request) {
 		) {
 			return NextResponse.json(
 				{ error: "You do not have permission to add members" },
-				{ status: 403 }
+				{ status: 403 },
 			);
 		}
 
@@ -75,7 +75,7 @@ export async function POST(request: Request) {
 		for (const memberId of body.membersId) {
 			const member = await User.findById(memberId);
 			const link = workspace.links.find(
-				(link) => link._id.toString() === body.linkId
+				(link) => link._id.toString() === body.linkId,
 			);
 
 			if (!link) {
@@ -89,7 +89,7 @@ export async function POST(request: Request) {
 			if (link.membersAllowed.includes(memberId)) {
 				return NextResponse.json(
 					{ error: `Member ${member._id} already exists` },
-					{ status: 400 }
+					{ status: 400 },
 				);
 			}
 
@@ -121,7 +121,7 @@ export async function GET(request: Request) {
 		if (!workspaceId) {
 			return NextResponse.json(
 				{ error: "Workspace not found" },
-				{ status: 404 }
+				{ status: 404 },
 			);
 		}
 
@@ -135,12 +135,12 @@ export async function GET(request: Request) {
 		if (!workspace) {
 			return NextResponse.json(
 				{ error: "Workspace not found" },
-				{ status: 404 }
+				{ status: 404 },
 			);
 		}
 
 		const memberRole = workspace.members.find(
-			(m) => m.memberId.toString() === session.user.id.toString()
+			(m) => m.memberId.toString() === session.user.id.toString(),
 		)?.role;
 
 		if (
@@ -149,7 +149,7 @@ export async function GET(request: Request) {
 		) {
 			return NextResponse.json(
 				{ error: "You do not have permission to see this members" },
-				{ status: 403 }
+				{ status: 403 },
 			);
 		}
 
@@ -183,7 +183,7 @@ export async function DELETE(request: Request) {
 		if (!workspaceId) {
 			return NextResponse.json(
 				{ error: "Workspace not found" },
-				{ status: 404 }
+				{ status: 404 },
 			);
 		}
 
@@ -192,19 +192,19 @@ export async function DELETE(request: Request) {
 		if (!workspace) {
 			return NextResponse.json(
 				{ error: "Workspace not found" },
-				{ status: 404 }
+				{ status: 404 },
 			);
 		}
 
 		if (!memberId) {
 			return NextResponse.json(
 				{ error: "Please provide a member ID" },
-				{ status: 400 }
+				{ status: 400 },
 			);
 		}
 
 		const memberRole = workspace.members.find(
-			(m) => m.memberId.toString() === session.user.id.toString()
+			(m) => m.memberId.toString() === session.user.id.toString(),
 		)?.role;
 
 		if (
@@ -213,7 +213,7 @@ export async function DELETE(request: Request) {
 		) {
 			return NextResponse.json(
 				{ error: "You do not have permission to remove members" },
-				{ status: 403 }
+				{ status: 403 },
 			);
 		}
 
@@ -225,12 +225,12 @@ export async function DELETE(request: Request) {
 
 		const memberObjectId = new mongoose.Types.ObjectId(memberId);
 		const memberIndex = link.membersAllowed.findIndex(
-			(id) => id.toString() === memberObjectId.toString()
+			(id) => id.toString() === memberObjectId.toString(),
 		);
 		if (memberIndex === -1) {
 			return NextResponse.json(
 				{ error: `Member ${memberId} does not exist` },
-				{ status: 400 }
+				{ status: 400 },
 			);
 		}
 

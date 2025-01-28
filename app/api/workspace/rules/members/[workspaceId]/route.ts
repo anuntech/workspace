@@ -7,50 +7,50 @@ import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
-  request: NextRequest,
-  {
-    params,
-  }: {
-    params: { workspaceId: string };
-  }
+	request: NextRequest,
+	{
+		params,
+	}: {
+		params: { workspaceId: string };
+	},
 ) {
-  try {
-    const session = await getServerSession(authOptions);
+	try {
+		const session = await getServerSession(authOptions);
 
-    await connectMongo();
+		await connectMongo();
 
-    const { workspaceId } = params;
-    const appId = request.nextUrl.searchParams.get("appId");
-    const app = await Applications.findById(appId);
-    if (!app) {
-      return NextResponse.json({ error: "App not found" }, { status: 404 });
-    }
+		const { workspaceId } = params;
+		const appId = request.nextUrl.searchParams.get("appId");
+		const app = await Applications.findById(appId);
+		if (!app) {
+			return NextResponse.json({ error: "App not found" }, { status: 404 });
+		}
 
-    const workspace = await Workspace.findOne({ _id: workspaceId });
-    if (!workspace) {
-      return NextResponse.json(
-        { error: "Workspace not found" },
-        { status: 404 }
-      );
-    }
+		const workspace = await Workspace.findOne({ _id: workspaceId });
+		if (!workspace) {
+			return NextResponse.json(
+				{ error: "Workspace not found" },
+				{ status: 404 },
+			);
+		}
 
-    const res = await Promise.all(
-      workspace.rules.allowedMemberApps.map(async (app) => ({
-        members: await Promise.all(
-          app.members.map(async (member) => {
-            const m = await User.findOne({ _id: member.memberId });
-            return m;
-          })
-        ),
-        appId: app.appId,
-      }))
-    );
+		const res = await Promise.all(
+			workspace.rules.allowedMemberApps.map(async (app) => ({
+				members: await Promise.all(
+					app.members.map(async (member) => {
+						const m = await User.findOne({ _id: member.memberId });
+						return m;
+					}),
+				),
+				appId: app.appId,
+			})),
+		);
 
-    const filtered = res.filter((app) => app.appId.toString() === appId);
+		const filtered = res.filter((app) => app.appId.toString() === appId);
 
-    return NextResponse.json(filtered);
-  } catch (e) {
-    console.error(e);
-    return NextResponse.json({ error: e?.message }, { status: 500 });
-  }
+		return NextResponse.json(filtered);
+	} catch (e) {
+		console.error(e);
+		return NextResponse.json({ error: e?.message }, { status: 500 });
+	}
 }

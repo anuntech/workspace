@@ -42,7 +42,7 @@ export function NavFavorites() {
 
 	if (applicationsQuery?.data?.data && applicationsQuery.data.status === 200) {
 		enabledApplications = applicationsQuery.data.data?.favorites.map(
-			(a: any) => a.applicationId
+			(a: any) => a.applicationId,
 		);
 	}
 

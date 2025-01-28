@@ -8,64 +8,64 @@ import mongoose from "mongoose";
 import Workspace from "@/models/Workspace";
 
 export async function POST(request: Request) {
-  try {
-    const session = await getServerSession(authOptions);
+	try {
+		const session = await getServerSession(authOptions);
 
-    const body = await request.json();
+		const body = await request.json();
 
-    if (!["workspace", "invitation", "application"].includes(body.pageOpened)) {
-      return NextResponse.json(
-        { error: "pageOpened inválido" },
-        { status: 400 }
-      );
-    }
+		if (!["workspace", "invitation", "application"].includes(body.pageOpened)) {
+			return NextResponse.json(
+				{ error: "pageOpened inválido" },
+				{ status: 400 },
+			);
+		}
 
-    await connectMongo();
+		await connectMongo();
 
-    const user = await User.findById(session?.user?.id);
+		const user = await User.findById(session?.user?.id);
 
-    const workspace = await Workspace.findById(body.workspaceId);
+		const workspace = await Workspace.findById(body.workspaceId);
 
-    if (!workspace) {
-      return NextResponse.json(
-        { error: "Workspace not found" },
-        { status: 404 }
-      );
-    }
+		if (!workspace) {
+			return NextResponse.json(
+				{ error: "Workspace not found" },
+				{ status: 404 },
+			);
+		}
 
-    if (user?.pagesOpened?.find((el: any) => el.name == body.pageOpened)) {
-      return NextResponse.json(
-        { error: "pageOpened already added" },
-        { status: 400 }
-      );
-    }
+		if (user?.pagesOpened?.find((el: any) => el.name == body.pageOpened)) {
+			return NextResponse.json(
+				{ error: "pageOpened already added" },
+				{ status: 400 },
+			);
+		}
 
-    const isAdminOrOwner =
-      workspace?.owner.toString() == user?._id ||
-      workspace.members.find(
-        (member: any) => member.userId == user?._id && member.role == "admin"
-      );
+		const isAdminOrOwner =
+			workspace?.owner.toString() == user?._id ||
+			workspace.members.find(
+				(member: any) => member.userId == user?._id && member.role == "admin",
+			);
 
-    if (!isAdminOrOwner) {
-      return NextResponse.json(
-        { error: "You don't have permission to open this page." },
-        { status: 400 }
-      );
-    }
+		if (!isAdminOrOwner) {
+			return NextResponse.json(
+				{ error: "You don't have permission to open this page." },
+				{ status: 400 },
+			);
+		}
 
-    if (!workspace?.tutorial) {
-      workspace.tutorial = [];
-    }
+		if (!workspace?.tutorial) {
+			workspace.tutorial = [];
+		}
 
-    workspace?.tutorial?.push({
-      name: body.pageOpened,
-    });
+		workspace?.tutorial?.push({
+			name: body.pageOpened,
+		});
 
-    await workspace.save();
+		await workspace.save();
 
-    return NextResponse.json(workspace);
-  } catch (e) {
-    console.error(e);
-    return NextResponse.json({ error: e?.message }, { status: 500 });
-  }
+		return NextResponse.json(workspace);
+	} catch (e) {
+		console.error(e);
+		return NextResponse.json({ error: e?.message }, { status: 500 });
+	}
 }

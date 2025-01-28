@@ -1,8 +1,19 @@
-"use client"
+"use client";
 
 import { Button } from "@/components/ui/button";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
+import {
+	Collapsible,
+	CollapsibleContent,
+	CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import {
+	SidebarGroup,
+	SidebarGroupContent,
+	SidebarGroupLabel,
+	SidebarMenu,
+	SidebarMenuButton,
+	SidebarMenuItem,
+} from "@/components/ui/sidebar";
 import { ChevronRight } from "lucide-react";
 
 import { Field } from "../page";
@@ -16,10 +27,10 @@ interface Props {
 		principalLink: {
 			applicationUrl: string;
 			applicationUrlType: "none" | "iframe" | "newWindow" | "sameWindow";
-		}
-		subLinks: Array<Field>
-	}
-	id: string
+		};
+		subLinks: Array<Field>;
+	};
+	id: string;
 }
 
 export const MenuMain = ({ data, id }: Props) => {
@@ -38,10 +49,15 @@ export const MenuMain = ({ data, id }: Props) => {
 						<div className="flex items-center justify-between w-full">
 							{data.basicInformation.name}
 							<div className="flex items-center justify-center">
-								<LinkFormComponent data={{
-									basicInformation: data.basicInformation,
-									link: data.principalLink,
-								}} id={id} menuType="menu-main" linkType="principal-link" />
+								<LinkFormComponent
+									data={{
+										basicInformation: data.basicInformation,
+										link: data.principalLink,
+									}}
+									id={id}
+									menuType="menu-main"
+									linkType="principal-link"
+								/>
 								<CollapsibleTrigger asChild>
 									<Button variant="ghost">
 										<ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
@@ -59,32 +75,45 @@ export const MenuMain = ({ data, id }: Props) => {
 											className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
 											asChild
 										>
-											<LinkFormComponent data={{
-												basicInformation: {
-													name: item.key
-												},
-												link: {
-													applicationUrl: item.value,
-													applicationUrlType: item.redirectType,
-												},
-											}} id={id} fieldId={item._id} menuType="menu-main" linkType="sub-link-edit" openButtonText={item.key} />
+											<LinkFormComponent
+												data={{
+													basicInformation: {
+														name: item.key,
+													},
+													link: {
+														applicationUrl: item.value,
+														applicationUrlType: item.redirectType,
+													},
+												}}
+												id={id}
+												fieldId={item._id}
+												menuType="menu-main"
+												linkType="sub-link-edit"
+												openButtonText={item.key}
+											/>
 										</SidebarMenuButton>
 									</SidebarMenuItem>
 								))}
 							</SidebarMenu>
-							<LinkFormComponent data={{
-								basicInformation: {
-									name: ""
-								},
-								link: {
-									applicationUrl: "",
-									applicationUrlType: "iframe"
-								},
-							}} id={id} menuType="menu-main" linkType="sub-link-create" openButtonText="Adicionar sublink" />
+							<LinkFormComponent
+								data={{
+									basicInformation: {
+										name: "",
+									},
+									link: {
+										applicationUrl: "",
+										applicationUrlType: "iframe",
+									},
+								}}
+								id={id}
+								menuType="menu-main"
+								linkType="sub-link-create"
+								openButtonText="Adicionar sublink"
+							/>
 						</SidebarGroupContent>
 					</CollapsibleContent>
 				</SidebarGroup>
 			</Collapsible>
 		</div>
 	);
-}
+};

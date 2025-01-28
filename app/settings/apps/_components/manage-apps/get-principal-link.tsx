@@ -15,7 +15,7 @@ interface GetPrincipalLinkProps {
 	data: AppFormData;
 	updateFormData: (
 		section: keyof AppFormData,
-		updates: Partial<AppFormData[keyof AppFormData]>
+		updates: Partial<AppFormData[keyof AppFormData]>,
 	) => void;
 	isSublink?: boolean;
 	setStepValidation: (isValid: boolean) => void;
@@ -38,14 +38,14 @@ export function GetPrincipalLink({
 			},
 			{
 				message: "Link inválido",
-			}
+			},
 		),
 	});
 
 	useEffect(() => {
 		const timer = setTimeout(() => {
 			const validationResult = principalLinkSchema.safeParse(
-				data.principalLink
+				data.principalLink,
 			);
 
 			setStepValidation(validationResult.success);

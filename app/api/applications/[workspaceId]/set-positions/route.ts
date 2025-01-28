@@ -20,106 +20,106 @@ import { NextResponse } from "next/server";
  *
  * */
 export async function POST(
-  request: Request,
-  { params }: { params: { workspaceId: string } }
+	request: Request,
+	{ params }: { params: { workspaceId: string } },
 ) {
-  try {
-    const session = await getServerSession(authOptions);
+	try {
+		const session = await getServerSession(authOptions);
 
-    await connectMongo();
+		await connectMongo();
 
-    const workspace = await Workspace.findById(params.workspaceId);
+		const workspace = await Workspace.findById(params.workspaceId);
 
-    if (!workspace) {
-      return NextResponse.json(
-        { error: "Workspace not found" },
-        { status: 404 }
-      );
-    }
+		if (!workspace) {
+			return NextResponse.json(
+				{ error: "Workspace not found" },
+				{ status: 404 },
+			);
+		}
 
-    const body = await request.json();
+		const body = await request.json();
 
-    if (!body || !Array.isArray(body)) {
-      return NextResponse.json({ error: "Body is invalid" }, { status: 400 });
-    }
+		if (!body || !Array.isArray(body)) {
+			return NextResponse.json({ error: "Body is invalid" }, { status: 400 });
+		}
 
-    const myApplications = await MyApplications.findOne({
-      workspaceId: params.workspaceId,
-    });
+		const myApplications = await MyApplications.findOne({
+			workspaceId: params.workspaceId,
+		});
 
-    if (!myApplications) {
-      return NextResponse.json(
-        { error: "You do not have permission to set positions" },
-        { status: 403 }
-      );
-    }
+		if (!myApplications) {
+			return NextResponse.json(
+				{ error: "You do not have permission to set positions" },
+				{ status: 403 },
+			);
+		}
 
-    const memberRole = workspace.members.find(
-      (member) => member.memberId.toString() === session.user.id.toString()
-    )?.role;
+		const memberRole = workspace.members.find(
+			(member) => member.memberId.toString() === session.user.id.toString(),
+		)?.role;
 
-    if (
-      memberRole !== "admin" &&
-      workspace.owner.toString() !== session.user.id
-    ) {
-      return NextResponse.json(
-        { error: "You do not have permission to uninstall this application" },
-        { status: 403 }
-      );
-    }
+		if (
+			memberRole !== "admin" &&
+			workspace.owner.toString() !== session.user.id
+		) {
+			return NextResponse.json(
+				{ error: "You do not have permission to uninstall this application" },
+				{ status: 403 },
+			);
+		}
 
-    if (body.length != myApplications.allowedApplicationsId.length) {
-      return NextResponse.json({ error: "Body is invalid" }, { status: 400 });
-    }
+		if (body.length != myApplications.allowedApplicationsId.length) {
+			return NextResponse.json({ error: "Body is invalid" }, { status: 400 });
+		}
 
-    const positions = body.map((app) => app.position);
-    const sortedPositions = [...positions].sort((a, b) => a - b);
-    const expectedPositions = Array.from(
-      { length: sortedPositions.length },
-      (_, i) => i
-    );
+		const positions = body.map((app) => app.position);
+		const sortedPositions = [...positions].sort((a, b) => a - b);
+		const expectedPositions = Array.from(
+			{ length: sortedPositions.length },
+			(_, i) => i,
+		);
 
-    if (
-      sortedPositions.length !== expectedPositions.length ||
-      !sortedPositions.every((pos, index) => pos === expectedPositions[index])
-    ) {
-      return NextResponse.json(
-        { error: "Positions must be sequential starting from 0" },
-        { status: 400 }
-      );
-    }
+		if (
+			sortedPositions.length !== expectedPositions.length ||
+			!sortedPositions.every((pos, index) => pos === expectedPositions[index])
+		) {
+			return NextResponse.json(
+				{ error: "Positions must be sequential starting from 0" },
+				{ status: 400 },
+			);
+		}
 
-    for (const app of body) {
-      if (!app.appId || app.position == undefined) {
-        return NextResponse.json({ error: "Body is invalid" }, { status: 400 });
-      }
+		for (const app of body) {
+			if (!app.appId || app.position == undefined) {
+				return NextResponse.json({ error: "Body is invalid" }, { status: 400 });
+			}
 
-      if (
-        !myApplications.allowedApplicationsId.some(
-          (id) => id.toString() === app.appId.toString()
-        )
-      ) {
-        return NextResponse.json(
-          { error: "Application not found" },
-          { status: 400 }
-        );
-      }
-    }
+			if (
+				!myApplications.allowedApplicationsId.some(
+					(id) => id.toString() === app.appId.toString(),
+				)
+			) {
+				return NextResponse.json(
+					{ error: "Application not found" },
+					{ status: 400 },
+				);
+			}
+		}
 
-    const positionMap = body.reduce((acc, item) => {
-      acc[item.appId] = item.position;
-      return acc;
-    }, {});
+		const positionMap = body.reduce((acc, item) => {
+			acc[item.appId] = item.position;
+			return acc;
+		}, {});
 
-    myApplications.allowedApplicationsId.sort((a, b) => {
-      return positionMap[a.toString()] - positionMap[b.toString()];
-    });
+		myApplications.allowedApplicationsId.sort((a, b) => {
+			return positionMap[a.toString()] - positionMap[b.toString()];
+		});
 
-    await myApplications.save();
+		await myApplications.save();
 
-    return NextResponse.json(myApplications);
-  } catch (e) {
-    console.error(e);
-    return NextResponse.json({ error: e?.message }, { status: 500 });
-  }
+		return NextResponse.json(myApplications);
+	} catch (e) {
+		console.error(e);
+		return NextResponse.json({ error: e?.message }, { status: 500 });
+	}
 }

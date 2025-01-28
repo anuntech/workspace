@@ -7,58 +7,58 @@ import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
-  try {
-    const session = await getServerSession(authOptions);
+	try {
+		const session = await getServerSession(authOptions);
 
-    await connectMongo();
+		await connectMongo();
 
-    const { workspaceId, userId } = await request.json();
-    const user = await User.findById(new mongoose.Types.ObjectId(userId));
+		const { workspaceId, userId } = await request.json();
+		const user = await User.findById(new mongoose.Types.ObjectId(userId));
 
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
+		if (!user) {
+			return NextResponse.json({ error: "User not found" }, { status: 404 });
+		}
 
-    const worksPace = await Workspace.findById(
-      new mongoose.Types.ObjectId(workspaceId)
-    );
+		const worksPace = await Workspace.findById(
+			new mongoose.Types.ObjectId(workspaceId),
+		);
 
-    if (!worksPace) {
-      return NextResponse.json(
-        { error: "Workspace not found" },
-        { status: 404 }
-      );
-    }
+		if (!worksPace) {
+			return NextResponse.json(
+				{ error: "Workspace not found" },
+				{ status: 404 },
+			);
+		}
 
-    if (worksPace.owner.toString() !== session.user.id) {
-      return NextResponse.json(
-        { error: "You do not have permission to transfer this workspace" },
-        { status: 403 }
-      );
-    }
+		if (worksPace.owner.toString() !== session.user.id) {
+			return NextResponse.json(
+				{ error: "You do not have permission to transfer this workspace" },
+				{ status: 403 },
+			);
+		}
 
-    const removeMember = Workspace.findByIdAndUpdate(workspaceId, {
-      $pull: {
-        members: {
-          memberId: new mongoose.Types.ObjectId(userId),
-        },
-      },
-    });
-    const updateOwner = worksPace.updateOne({ $set: { owner: user._id } });
-    const moveOwnerToAdmin = Workspace.findByIdAndUpdate(workspaceId, {
-      $push: {
-        members: {
-          memberId: new mongoose.Types.ObjectId(session.user.id),
-          role: "admin",
-        },
-      },
-    });
+		const removeMember = Workspace.findByIdAndUpdate(workspaceId, {
+			$pull: {
+				members: {
+					memberId: new mongoose.Types.ObjectId(userId),
+				},
+			},
+		});
+		const updateOwner = worksPace.updateOne({ $set: { owner: user._id } });
+		const moveOwnerToAdmin = Workspace.findByIdAndUpdate(workspaceId, {
+			$push: {
+				members: {
+					memberId: new mongoose.Types.ObjectId(session.user.id),
+					role: "admin",
+				},
+			},
+		});
 
-    await Promise.all([removeMember, updateOwner, moveOwnerToAdmin]);
+		await Promise.all([removeMember, updateOwner, moveOwnerToAdmin]);
 
-    return NextResponse.json(user);
-  } catch (e) {
-    console.error(e);
-    return NextResponse.json({ error: e?.message }, { status: 500 });
-  }
+		return NextResponse.json(user);
+	} catch (e) {
+		console.error(e);
+		return NextResponse.json({ error: e?.message }, { status: 500 });
+	}
 }

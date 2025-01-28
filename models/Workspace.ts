@@ -223,7 +223,7 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
 	{
 		toJSON: { virtuals: true },
 		timestamps: true,
-	}
+	},
 );
 
 workspaceSchema.pre("save", async function (next) {
@@ -237,7 +237,7 @@ workspaceSchema.pre("save", async function (next) {
 
 		if (this.isModified("tutorial") && Array.isArray(this.tutorial)) {
 			const uniquePages = Array.from(
-				new Set(this.tutorial.map((t) => t.name))
+				new Set(this.tutorial.map((t) => t.name)),
 			).map((name) => ({ name }));
 			this.tutorial = uniquePages;
 		}
@@ -249,19 +249,19 @@ workspaceSchema.pre("save", async function (next) {
 
 // Helper function to remove workspace references from Applications
 async function removeWorkspaceFromApplications(
-	workspaceId: mongoose.Schema.Types.ObjectId
+	workspaceId: mongoose.Schema.Types.ObjectId,
 ) {
 	await mongoose
 		.model("Applications")
 		.updateMany(
 			{ workspacesAllowed: workspaceId },
-			{ $pull: { workspacesAllowed: workspaceId } }
+			{ $pull: { workspacesAllowed: workspaceId } },
 		);
 }
 
 // Helper function to delete MyApplications documents with the workspaceId
 async function deleteMyApplicationsWithWorkspace(
-	workspaceId: mongoose.Types.ObjectId
+	workspaceId: mongoose.Types.ObjectId,
 ) {
 	await mongoose.model("MyApplications").deleteMany({ workspaceId });
 }
@@ -298,7 +298,7 @@ workspaceSchema.pre(
 		} catch (error) {
 			next(error);
 		}
-	}
+	},
 );
 
 // Middleware for deleteMany
@@ -312,7 +312,7 @@ workspaceSchema.pre("deleteMany", async function (next) {
 					.model("Applications")
 					.updateMany(
 						{ workspacesAllowed: { $in: workspaceIds } },
-						{ $pull: { workspacesAllowed: { $in: workspaceIds } } }
+						{ $pull: { workspacesAllowed: { $in: workspaceIds } } },
 					),
 				mongoose
 					.model("MyApplications")
@@ -331,17 +331,17 @@ workspaceSchema.index({ "members.memberId": 1 });
 
 // Add method to check if user is member
 workspaceSchema.methods.isMember = function (
-	userId: mongoose.Types.ObjectId
+	userId: mongoose.Types.ObjectId,
 ): boolean {
 	return this.members.some((member: any) => member.memberId.equals(userId));
 };
 
 // Add method to check if user is admin
 workspaceSchema.methods.isAdmin = function (
-	userId: mongoose.Types.ObjectId
+	userId: mongoose.Types.ObjectId,
 ): boolean {
 	return this.members.some(
-		(member: any) => member.memberId.equals(userId) && member.role === "admin"
+		(member: any) => member.memberId.equals(userId) && member.role === "admin",
 	);
 };
 

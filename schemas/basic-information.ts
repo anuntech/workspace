@@ -1,4 +1,4 @@
-import z from "zod"
+import z from "zod";
 
 export const basicInformationSchema = z.object({
 	name: z.string().min(1, "Nome é obrigatório").max(50, "Nome muito longo"),

@@ -39,22 +39,22 @@ export const authOptions: NextAuthOptionsExtended = {
 		// Requires a MongoDB database. Set MONOGODB_URI env variable.
 		...(connectMongo
 			? [
-				EmailProvider({
-					server: process.env.EMAIL_SERVER,
-					from: config.mailgun.fromNoReply,
-					async sendVerificationRequest({
-						identifier: email,
-						url,
-						provider,
-					}) {
-						const { host } = new URL(url);
-						const transport = nodemailer.createTransport(provider.server);
-						await transport.sendMail({
-							to: email,
-							from: provider.from,
-							subject: `Acesse sua conta na Anuntech`,
-							text: `Acesse sua conta na Anuntech\n${url}\n\n`,
-							html: `
+					EmailProvider({
+						server: process.env.EMAIL_SERVER,
+						from: config.mailgun.fromNoReply,
+						async sendVerificationRequest({
+							identifier: email,
+							url,
+							provider,
+						}) {
+							const { host } = new URL(url);
+							const transport = nodemailer.createTransport(provider.server);
+							await transport.sendMail({
+								to: email,
+								from: provider.from,
+								subject: `Acesse sua conta na Anuntech`,
+								text: `Acesse sua conta na Anuntech\n${url}\n\n`,
+								html: `
                   <body style="background-color: #f9f9f9; font-family: Arial, sans-serif; color: #333;">
                     <div style="max-width: 600px; margin: auto; padding: 20px; background-color: #ffffff; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
                       <div style="text-align: center;">
@@ -71,10 +71,10 @@ export const authOptions: NextAuthOptionsExtended = {
                     </div>
                   </body>
                 `,
-						});
-					},
-				}),
-			]
+							});
+						},
+					}),
+				]
 			: []),
 	],
 	// New users will be saved in Database (MongoDB Atlas). Each user (model) has some fields like name, email, image, etc..

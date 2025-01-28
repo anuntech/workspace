@@ -18,7 +18,7 @@ interface GetPrincipalLinkProps {
 	data: LinkFormData;
 	updateFormData: (
 		section: keyof LinkFormData,
-		updates: Partial<LinkFormData[keyof LinkFormData]>
+		updates: Partial<LinkFormData[keyof LinkFormData]>,
 	) => void;
 	isSublink?: boolean;
 	setStepValidation: (isValid: boolean) => void;
@@ -41,7 +41,7 @@ export function BasicLinkInformation({
 			},
 			{
 				message: "Link inválido",
-			}
+			},
 		),
 	});
 
@@ -82,7 +82,7 @@ export function BasicLinkInformation({
 	useEffect(() => {
 		const timer = setTimeout(() => {
 			const validationResult = principalLinkSchema.safeParse(
-				data.principalLink
+				data.principalLink,
 			);
 
 			console.log(data.images);
@@ -123,7 +123,7 @@ export function BasicLinkInformation({
 									? {
 											value: data.images.emojiAvatar,
 											type: data.images.emojiAvatarType,
-									  }
+										}
 									: null
 							}
 							className="w-[120px]"

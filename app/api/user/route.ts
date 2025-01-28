@@ -7,75 +7,75 @@ import clientPromise from "@/libs/mongo";
 import mongoose from "mongoose";
 
 export async function GET(request: Request) {
-  try {
-    const session = await getServerSession(authOptions);
+	try {
+		const session = await getServerSession(authOptions);
 
-    await connectMongo();
+		await connectMongo();
 
-    const user = await User.findById(session?.user?.id).lean();
+		const user = await User.findById(session?.user?.id).lean();
 
-    const accountsCollection = mongoose.connection.collection("accounts");
-    const account = await accountsCollection.findOne({
-      userId: new mongoose.Types.ObjectId(session?.user?.id),
-    });
+		const accountsCollection = mongoose.connection.collection("accounts");
+		const account = await accountsCollection.findOne({
+			userId: new mongoose.Types.ObjectId(session?.user?.id),
+		});
 
-    if (account?.provider == "google") {
-      return NextResponse.json({ ...user, isGoogle: true });
-    }
+		if (account?.provider == "google") {
+			return NextResponse.json({ ...user, isGoogle: true });
+		}
 
-    return NextResponse.json(user);
-  } catch (e) {
-    console.error(e);
-    return NextResponse.json({ error: e?.message }, { status: 500 });
-  }
+		return NextResponse.json(user);
+	} catch (e) {
+		console.error(e);
+		return NextResponse.json({ error: e?.message }, { status: 500 });
+	}
 }
 
 export async function PATCH(request: Request) {
-  try {
-    const session = await getServerSession(authOptions);
+	try {
+		const session = await getServerSession(authOptions);
 
-    await connectMongo();
+		await connectMongo();
 
-    const body = await request.json();
+		const body = await request.json();
 
-    const accountsCollection = mongoose.connection.collection("accounts");
-    // const account = await accountsCollection.findOne({
-    //   userId: new mongoose.Types.ObjectId(session?.user?.id),
-    // });
+		const accountsCollection = mongoose.connection.collection("accounts");
+		// const account = await accountsCollection.findOne({
+		//   userId: new mongoose.Types.ObjectId(session?.user?.id),
+		// });
 
-    const user = await User.findById(session.user.id);
+		const user = await User.findById(session.user.id);
 
-    if (body.email && body.email != user.email) {
-      return NextResponse.json(
-        { error: "Email can't be changed" },
-        { status: 400 }
-      );
-    }
+		if (body.email && body.email != user.email) {
+			return NextResponse.json(
+				{ error: "Email can't be changed" },
+				{ status: 400 },
+			);
+		}
 
-    if (body.icon && body.icon != "") {
-      return NextResponse.json(
-        { error: "Icon can't be changed" },
-        { status: 400 }
-      );
-    }
+		if (body.icon && body.icon != "") {
+			return NextResponse.json(
+				{ error: "Icon can't be changed" },
+				{ status: 400 },
+			);
+		}
 
-    const updatedUser = await User.findByIdAndUpdate(session.user.id, body, {
-      new: true,
-      runValidators: true,
-    });
+		const updatedUser = await User.findByIdAndUpdate(session.user.id, body, {
+			new: true,
+			runValidators: true,
+		});
 
-    if (!updatedUser) {
-      return NextResponse.json(
-        { error: "Usuário não encontrado" },
-        { status: 404 }
-      );
-    }
+		if (!updatedUser) {
+			return NextResponse.json(
+				{ error: "Usuário não encontrado" },
+				{ status: 404 },
+			);
+		}
 
-    return NextResponse.json(updatedUser);
-  } catch (e) {
-    console.error(e);
-    return NextResponse.json({ error: e?.message }, { status: 500 });
-  }
+		return NextResponse.json(updatedUser);
+	} catch (e) {
+		console.error(e);
+		return NextResponse.json({ error: e?.message }, { status: 500 });
+	}
 }
 
 // import { NextResponse, NextRequest } from "next/server";

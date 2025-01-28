@@ -32,23 +32,26 @@ export async function POST(request: Request) {
 				{
 					error: "Email inválido",
 				},
-				{ status: 404 }
+				{ status: 404 },
 			);
 		}
 
 		if (!worksPace) {
 			return NextResponse.json(
 				{ error: "Workspace not found" },
-				{ status: 404 }
+				{ status: 404 },
 			);
 		}
 
-		const isAuthorizedToInviteUser = getAuthorizationToInviteUser(worksPace, session)
+		const isAuthorizedToInviteUser = getAuthorizationToInviteUser(
+			worksPace,
+			session,
+		);
 
 		if (!isAuthorizedToInviteUser) {
 			return NextResponse.json(
 				{ error: "Você não possui permissão para convidar usuários" },
-				{ status: 403 }
+				{ status: 403 },
 			);
 		}
 
@@ -57,21 +60,21 @@ export async function POST(request: Request) {
 		if (worksPace.members.length >= plan.membersLimit) {
 			return NextResponse.json(
 				{ error: "This workspace is full" },
-				{ status: 403 }
+				{ status: 403 },
 			);
 		}
 
 		if (worksPace.invitedMembersEmail.length >= 30) {
 			return NextResponse.json(
 				{ error: "O limite de convites foi atingido" },
-				{ status: 403 }
+				{ status: 403 },
 			);
 		}
 
 		const user = await User.findOne({ email });
 
 		const alreadyIn = worksPace.members?.find(
-			(member) => member.memberId.toString() === user?.id
+			(member) => member.memberId.toString() === user?.id,
 		);
 
 		const alreadyInvited = worksPace.invitedMembersEmail
@@ -83,7 +86,7 @@ export async function POST(request: Request) {
 		}
 
 		const invitedAt = worksPace.invitedMembersEmail.find(
-			(e) => e.email === email
+			(e) => e.email === email,
 		).invitedAt;
 
 		const now = new Date();
@@ -99,7 +102,7 @@ export async function POST(request: Request) {
 				{
 					error: `Você precisa esperar ${minutesLeft} segundo(s) para enviar outro convite.`,
 				},
-				{ status: 429 }
+				{ status: 429 },
 			);
 		}
 
@@ -118,7 +121,7 @@ export async function POST(request: Request) {
 				},
 				{
 					state: "expired",
-				}
+				},
 			);
 		}
 

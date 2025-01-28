@@ -14,7 +14,7 @@ export async function POST(request: Request) {
 		if (user.email.split("@")[1] !== config.domainName) {
 			return NextResponse.json(
 				{ error: "You have no permission" },
-				{ status: 403 }
+				{ status: 403 },
 			);
 		}
 
@@ -22,40 +22,40 @@ export async function POST(request: Request) {
 
 		const formData = await request.formData();
 
-		if (formData === null) return NextResponse.json(
-			{ error: "Data not found" },
-			{ status: 404 }
-		);
+		if (formData === null)
+			return NextResponse.json({ error: "Data not found" }, { status: 404 });
 
-		const name = formData.get("title")
-		const applicationUrlType = formData.get("applicationUrlType")
+		const name = formData.get("title");
+		const applicationUrlType = formData.get("applicationUrlType");
 		const applicationUrl = formData.get("applicationUrl");
-		const id = formData.get("id")
+		const id = formData.get("id");
 
 		const newField = {
 			key: name,
 			value: applicationUrl,
-			redirectType: applicationUrlType
-		}
+			redirectType: applicationUrlType,
+		};
 
-
-		const application = await Applications.findByIdAndUpdate(id,
+		const application = await Applications.findByIdAndUpdate(
+			id,
 			{
 				$push: {
 					fields: newField,
-				}
-			}, {
-			new: true
-		}
+				},
+			},
+			{
+				new: true,
+			},
 		);
 
-		if (application === null) return NextResponse.json(
-			{ error: "Application not found" },
-			{ status: 404 }
-		);
+		if (application === null)
+			return NextResponse.json(
+				{ error: "Application not found" },
+				{ status: 404 },
+			);
 
 		return NextResponse.json(application, {
-			status: 200
+			status: 200,
 		});
 	} catch (e) {
 		console.error(e);
@@ -71,7 +71,7 @@ export async function PUT(request: Request) {
 		if (user.email.split("@")[1] !== config.domainName) {
 			return NextResponse.json(
 				{ error: "You have no permission" },
-				{ status: 403 }
+				{ status: 403 },
 			);
 		}
 
@@ -79,35 +79,40 @@ export async function PUT(request: Request) {
 
 		const formData = await request.formData();
 
-		if (formData === null) return NextResponse.json(
-			{ error: "Data not found" },
-			{ status: 404 }
-		);
+		if (formData === null)
+			return NextResponse.json({ error: "Data not found" }, { status: 404 });
 
-		const name = formData.get("title")
-		const applicationUrlType = formData.get("applicationUrlType")
-		const applicationUrl = applicationUrlType === "none" ? "" : formData.get("applicationUrl");
-		const id = formData.get("id")
-		const fieldId = formData.get("fieldId")
+		const name = formData.get("title");
+		const applicationUrlType = formData.get("applicationUrlType");
+		const applicationUrl =
+			applicationUrlType === "none" ? "" : formData.get("applicationUrl");
+		const id = formData.get("id");
+		const fieldId = formData.get("fieldId");
 
 		let application;
 
 		if (fieldId) {
-			application = await Applications.findOneAndUpdate({
-				_id: id, "fields._id": fieldId
-			}, {
-				$set: {
-					"fields.$.key": name,
-					"fields.$.value": applicationUrl,
-					"fields.$.redirectType": applicationUrlType,
-				}
-			}, {
-				new: true,
-			})
+			application = await Applications.findOneAndUpdate(
+				{
+					_id: id,
+					"fields._id": fieldId,
+				},
+				{
+					$set: {
+						"fields.$.key": name,
+						"fields.$.value": applicationUrl,
+						"fields.$.redirectType": applicationUrlType,
+					},
+				},
+				{
+					new: true,
+				},
+			);
 		}
 
 		if (!fieldId) {
-			application = await Applications.findByIdAndUpdate(id,
+			application = await Applications.findByIdAndUpdate(
+				id,
 				{
 					name,
 					applicationUrl,
@@ -115,17 +120,18 @@ export async function PUT(request: Request) {
 				},
 				{
 					new: true,
-				}
+				},
 			);
 		}
 
-		if (application === null) return NextResponse.json(
-			{ error: "Application not found" },
-			{ status: 404 }
-		);
+		if (application === null)
+			return NextResponse.json(
+				{ error: "Application not found" },
+				{ status: 404 },
+			);
 
 		return NextResponse.json(application, {
-			status: 200
+			status: 200,
 		});
 	} catch (e) {
 		console.error(e);
@@ -141,7 +147,7 @@ export async function DELETE(request: Request) {
 		if (user.email.split("@")[1] !== config.domainName) {
 			return NextResponse.json(
 				{ error: "You have no permission" },
-				{ status: 403 }
+				{ status: 403 },
 			);
 		}
 
@@ -149,33 +155,37 @@ export async function DELETE(request: Request) {
 
 		const formData = await request.formData();
 
-		if (formData === null) return NextResponse.json(
-			{ error: "Data not found" },
-			{ status: 404 }
-		);
+		if (formData === null)
+			return NextResponse.json({ error: "Data not found" }, { status: 404 });
 
-		const id = formData.get("id")
-		const fieldId = formData.get("fieldId")
+		const id = formData.get("id");
+		const fieldId = formData.get("fieldId");
 
-		const application = await Applications.findOneAndUpdate({
-			_id: id, "fields._id": fieldId
-		}, {
-			$pull: {
-				fields: {
-					"_id": fieldId
-				}
+		const application = await Applications.findOneAndUpdate(
+			{
+				_id: id,
+				"fields._id": fieldId,
 			},
-		}, {
-			new: true,
-		})
-
-		if (application === null) return NextResponse.json(
-			{ error: "Application not found" },
-			{ status: 404 }
+			{
+				$pull: {
+					fields: {
+						_id: fieldId,
+					},
+				},
+			},
+			{
+				new: true,
+			},
 		);
+
+		if (application === null)
+			return NextResponse.json(
+				{ error: "Application not found" },
+				{ status: 404 },
+			);
 
 		return NextResponse.json(application, {
-			status: 200
+			status: 200,
 		});
 	} catch (e) {
 		console.error(e);

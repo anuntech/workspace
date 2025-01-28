@@ -2,17 +2,17 @@ import jwt from "jsonwebtoken";
 import { sendEmail } from "./mailgun";
 
 export async function sendInviteWorkspaceEmail(
-  email: string,
-  workspaceId: string,
-  name: string
+	email: string,
+	workspaceId: string,
+	name: string,
 ) {
-  const tokenToJoin = generateInviteWorkspaceToken(email, workspaceId);
+	const tokenToJoin = generateInviteWorkspaceToken(email, workspaceId);
 
-  await sendEmail({
-    to: email,
-    subject: "🎉 Você foi convidado para um workspace!",
-    text: `Você foi convidado para o workspace ${name}`,
-    html: `
+	await sendEmail({
+		to: email,
+		subject: "🎉 Você foi convidado para um workspace!",
+		text: `Você foi convidado para o workspace ${name}`,
+		html: `
           <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; background-color: #f9f9f9; border-radius: 10px; border: 1px solid #eaeaea;">
             <div style="text-align: center; margin-bottom: 20px;">
               <h2 style="color: #333;">🚀 Convite para o Workspace</h2>
@@ -41,22 +41,22 @@ export async function sendInviteWorkspaceEmail(
             </div>
           </div>
         `,
-  });
+	});
 }
 
 export function generateInviteWorkspaceToken(
-  email: string,
-  workspaceId: string
+	email: string,
+	workspaceId: string,
 ) {
-  return jwt.sign({ email, workspaceId }, process.env.JWT_SECRET, {
-    expiresIn: "7d",
-  });
+	return jwt.sign({ email, workspaceId }, process.env.JWT_SECRET, {
+		expiresIn: "7d",
+	});
 }
 
 export function verifyWorkspaceInviteToken(token: string) {
-  try {
-    return jwt.verify(token, process.env.JWT_SECRET);
-  } catch (error) {
-    return null;
-  }
+	try {
+		return jwt.verify(token, process.env.JWT_SECRET);
+	} catch (error) {
+		return null;
+	}
 }

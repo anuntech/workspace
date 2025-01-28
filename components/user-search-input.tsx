@@ -36,7 +36,7 @@ export function UserSearchInput({
 				!selectedUsers.some((selected) => selected._id === user._id) &&
 				!excludedUsers.some((excluded) => excluded.id === user._id) &&
 				(user.name.toLowerCase().includes(query.toLowerCase()) ||
-					user.email.toLowerCase().includes(query.toLowerCase()))
+					user.email.toLowerCase().includes(query.toLowerCase())),
 		)
 		.filter((user: any) => user.role !== "admin");
 
@@ -86,7 +86,7 @@ export function UserSearchInput({
 							<div
 								key={user._id}
 								className={cn(
-									"flex items-center px-4 py-2 space-x-3 hover:bg-blue-100 cursor-pointer transition-colors"
+									"flex items-center px-4 py-2 space-x-3 hover:bg-blue-100 cursor-pointer transition-colors",
 								)}
 								onMouseDown={(e) => e.preventDefault()}
 								onClick={() => handleSelectUser(user)}

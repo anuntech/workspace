@@ -39,7 +39,7 @@ interface PrincipalOptionProps {
 	data: LinkFormData;
 	updateFormData: (
 		section: keyof LinkFormData,
-		updates: Partial<LinkFormData[keyof LinkFormData]>
+		updates: Partial<LinkFormData[keyof LinkFormData]>,
 	) => void;
 }
 
@@ -49,7 +49,7 @@ export function PrincipalOption({
 }: PrincipalOptionProps) {
 	const [sublinkToDelete, setSublinkToDelete] = useState<number | null>(null);
 	const [editingSublinkIndex, setEditingSublinkIndex] = useState<number | null>(
-		null
+		null,
 	);
 
 	const moveSublink = (index: number, direction: "up" | "down") => {
