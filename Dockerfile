@@ -3,17 +3,15 @@ FROM node:21-alpine AS builder
 
 WORKDIR /app
 
-COPY package.json ./
+COPY package.json package-lock.json ./
 
-RUN npm install -g bun
-
-RUN bun install --production
+RUN npm install --production
 
 COPY . .
 
 RUN rm -rf .next
 
-RUN bun run build
+RUN npm run build
 
 EXPOSE 3000
 
