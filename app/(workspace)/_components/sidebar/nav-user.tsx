@@ -26,7 +26,7 @@ import { IconComponent } from "@/components/get-lucide-icons";
 
 export function NavUser() {
 	const { isMobile } = useSidebar();
-	const { isPending, data } = useQuery({
+	const { data } = useQuery({
 		queryKey: ["user"],
 		queryFn: () => fetch("/api/user").then((res) => res.json()),
 	});
@@ -40,6 +40,8 @@ export function NavUser() {
 	});
 
 	const hasNewNotification = isThereNewNotificationQuery.data?.data;
+
+	const workspace = searchParams.get("workspace");
 
 	return (
 		<SidebarMenu>
@@ -134,13 +136,21 @@ export function NavUser() {
 						<DropdownMenuSeparator />
 						<DropdownMenuGroup>
 							<DropdownMenuItem
-								onClick={() => router.push("/settings/account")}
+								onClick={() =>
+									router.push(
+										`/settings/account?workspaceIdSelected=${workspace}`,
+									)
+								}
 							>
 								<BadgeCheck />
 								Perfil
 							</DropdownMenuItem>
 							<DropdownMenuItem
-								onClick={() => router.push("/settings/account/notifications")}
+								onClick={() =>
+									router.push(
+										`/settings/account/notifications?workspaceIdSelected=${workspace}`,
+									)
+								}
 							>
 								<Bell />
 								<div className="flex items-center w-full justify-between">
