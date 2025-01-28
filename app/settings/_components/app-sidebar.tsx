@@ -34,7 +34,11 @@ export function AppSidebar({ ...props }) {
 	const [searchQuery, setSearchQuery] = useState("");
 
 	const urlParams = useSearchParams();
-	const workspace = urlParams.get("workspace") || "";
+	const workspaceIdSelected = urlParams.get("workspaceIdSelected");
+	const workspace = urlParams.get("workspace") || workspaceIdSelected;
+	const redirectQueryUrl = workspaceIdSelected
+		? "workspaceIdSelected"
+		: "workspace";
 
 	const userQuery = useQuery({
 		queryKey: ["user"],
@@ -97,14 +101,17 @@ export function AppSidebar({ ...props }) {
 	const filteredWorkspaceMenuItems = filterMenuItems(workspaceMenuItems);
 
 	const accountMenuItems = [
-		{ label: "Meu perfil", href: `/settings/account?workspace=${workspace}` },
+		{
+			label: "Meu perfil",
+			href: `/settings/account?${redirectQueryUrl}=${workspace}`,
+		},
 		{
 			label: "Workspaces",
-			href: `/settings/account/workspaces?workspace=${workspace}`,
+			href: `/settings/account/workspaces?${redirectQueryUrl}=${workspace}`,
 		},
 		{
 			label: "Notificações",
-			href: `/settings/account/notifications?workspace=${workspace}`,
+			href: `/settings/account/notifications?${redirectQueryUrl}=${workspace}`,
 			hasNotification: isThereNewNotificationQuery.data?.data,
 		},
 	];
@@ -144,7 +151,7 @@ export function AppSidebar({ ...props }) {
 				/>
 			</SidebarHeader>
 			<SidebarContent className="gap-0">
-				{filteredWorkspaceMenuItems.length > 0 && (
+				{filteredWorkspaceMenuItems.length > 0 && !workspaceIdSelected && (
 					<Collapsible
 						title="Workspace"
 						defaultOpen
@@ -267,7 +274,7 @@ export function AppSidebar({ ...props }) {
 					</Collapsible>
 				)}
 
-				{filteredApplications?.length > 0 && (
+				{filteredApplications?.length > 0 && !workspaceIdSelected && (
 					<Collapsible
 						title="Aplicativos"
 						defaultOpen
