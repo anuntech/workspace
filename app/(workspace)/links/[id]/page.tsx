@@ -75,7 +75,7 @@ export default function ServicePage({ params }: { params: { id: string } }) {
 							</BreadcrumbItem>
 							<BreadcrumbSeparator className="hidden md:block" />
 							<BreadcrumbItem>
-								<BreadcrumbPage>{app?.name}</BreadcrumbPage>
+								<BreadcrumbPage>{app?.title}</BreadcrumbPage>
 							</BreadcrumbItem>
 						</BreadcrumbList>
 					</Breadcrumb>
