@@ -45,50 +45,26 @@ export function SidebarApplication({
 
 	let LinkRedirection: { href: string; target?: string } = { href: "" };
 
-	if (!isLink) {
-		switch (data.applicationUrlType) {
-			case "iframe":
-				LinkRedirection = {
-					href: `/service/${data.id}?workspace=${workspace}`,
-				};
-				break;
-			case "newWindow":
-				LinkRedirection = {
-					href: data.applicationUrl,
-					target: "_blank",
-				};
-				break;
-			case "sameWindow":
-				LinkRedirection = { href: data.applicationUrl };
-				break;
-			default:
-				LinkRedirection = {
-					href: `/service/${data.id}?workspace=${workspace}`,
-				};
-				break;
-		}
-	} else {
-		switch (data.applicationUrlType) {
-			case "iframe":
-				LinkRedirection = {
-					href: `/links/${data.id}?workspace=${workspace}`,
-				};
-				break;
-			case "newWindow":
-				LinkRedirection = {
-					href: data.applicationUrl,
-					target: "_blank",
-				};
-				break;
-			case "sameWindow":
-				LinkRedirection = { href: data.applicationUrl };
-				break;
-			default:
-				LinkRedirection = {
-					href: `/links/${data.id}?workspace=${workspace}`,
-				};
-				break;
-		}
+	switch (data.applicationUrlType) {
+		case "iframe":
+			LinkRedirection = {
+				href: `/${isLink ? "links" : "service"}/${data.id}?workspace=${workspace}`,
+			};
+			break;
+		case "newWindow":
+			LinkRedirection = {
+				href: data.applicationUrl,
+				target: "_blank",
+			};
+			break;
+		case "sameWindow":
+			LinkRedirection = { href: data.applicationUrl };
+			break;
+		default:
+			LinkRedirection = {
+				href: `/${isLink ? "links" : "service"}/${data.id}?workspace=${workspace}`,
+			};
+			break;
 	}
 
 	return (
@@ -158,7 +134,7 @@ export function SidebarApplication({
 								switch (field.redirectType) {
 									case "iframe":
 										LinkRedirection = {
-											href: `/service/${data.id}?workspace=${workspace}&fieldSubScreen=${field.key}`,
+											href: `/${isLink ? "links" : "service"}/${data.id}?workspace=${workspace}&fieldSubScreen=${field.key}`,
 										};
 										break;
 									case "newWindow":
@@ -172,7 +148,7 @@ export function SidebarApplication({
 										break;
 									default:
 										LinkRedirection = {
-											href: `/service/${data.id}?workspace=${workspace}&fieldSubScreen=${field.key}`,
+											href: `/${isLink ? "links" : "service"}/${data.id}?workspace=${workspace}&fieldSubScreen=${field.key}`,
 										};
 										break;
 								}
