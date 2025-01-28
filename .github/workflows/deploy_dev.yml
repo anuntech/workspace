@@ -1,0 +1,60 @@
+name: Deploy to Server
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  deploy_dev:
+    name: Deploy Application in develop environment
+    runs-on: develop
+    environment: env
+
+    steps:
+      - name: Clean .next directory
+        run: |
+          rm -rf $GITHUB_WORKSPACE/.next
+
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up .env file
+        run: |
+          echo "EMAIL_SERVER=${{ secrets.EMAIL_SERVER }}" >> .env
+          echo "GOOGLE_ID=${{ secrets.GOOGLE_ID }}" >> .env
+          echo "GOOGLE_SECRET=${{ secrets.GOOGLE_SECRET }}" >> .env
+          echo "HETZNER_S3_ACCESS_KEY_ID=${{ secrets.HETZNER_S3_ACCESS_KEY_ID }}" >> .env
+          echo "HETZNER_S3_SECRET_ACCESS_KEY=${{ secrets.HETZNER_S3_SECRET_ACCESS_KEY }}" >> .env
+          echo "MAILGUN_API_KEY=${{ secrets.MAILGUN_API_KEY }}" >> .env
+          echo "MONGODB_URI=${{ secrets.MONGODB_URI }}" >> .env
+          echo "NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}" >> .env
+          echo "NEXT_PUBLIC_HETZNER_BUCKET_NAME=${{ secrets.NEXT_PUBLIC_HETZNER_BUCKET_NAME }}" >> .env
+          echo "STRIPE_PUBLIC_KEY=${{ secrets.STRIPE_PUBLIC_KEY }}" >> .env
+          echo "STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}" >> .env
+          echo "STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET }}" >> .env
+          echo "HETZNER_S3_REGION=${{ vars.HETZNER_S3_REGION }}" >> .env
+          echo "NEXT_PUBLIC_HETZNER_S3_ENDPOINT=${{ vars.NEXT_PUBLIC_HETZNER_S3_ENDPOINT }}" >> .env
+          echo "NEXTAUTH_URL=${{ vars.NEXTAUTH_URL }}" >> .env
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
+
+      - name: Install Dependencies
+        run: |
+          export NVM_DIR="$HOME/.nvm"
+          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+          nvm install 21
+          nvm use 21
+          npm install
+
+      - name: Deploy Application
+        run: |
+          echo "Starting deployment..."
+          export NVM_DIR="$HOME/.nvm"
+          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+          nvm install 21
+          nvm use 21
+          npm run build && docker compose up -d --build
+
+      - name: Clean up old Docker images
+        run: |
+          docker image prune -a -f --filter "until=504h"

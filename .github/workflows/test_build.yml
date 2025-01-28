@@ -1,0 +1,23 @@
+name: Deploy to Server
+
+on:
+  push:
+    branches-ignore:
+      - develop
+      - master
+
+jobs:
+  deploy_dev:
+    name: Deploy Application
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Install Dependencies
+        run: |
+          export NVM_DIR="$HOME/.nvm"
+          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+          nvm install 21
+          nvm use 21
+          npm install

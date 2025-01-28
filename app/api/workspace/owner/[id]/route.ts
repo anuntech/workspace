@@ -7,32 +7,32 @@ import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
+	request: Request,
+	{ params }: { params: { id: string } },
 ) {
-  try {
-    await getServerSession(authOptions);
+	try {
+		await getServerSession(authOptions);
 
-    await connectMongo();
+		await connectMongo();
 
-    const { id } = params;
+		const { id } = params;
 
-    const worksPace = await Workspace.findById(new mongoose.Types.ObjectId(id));
+		const worksPace = await Workspace.findById(new mongoose.Types.ObjectId(id));
 
-    if (!worksPace) {
-      return NextResponse.json(
-        { error: "Workspace not found" },
-        { status: 404 }
-      );
-    }
+		if (!worksPace) {
+			return NextResponse.json(
+				{ error: "Workspace not found" },
+				{ status: 404 },
+			);
+		}
 
-    const user = await User.findOne({
-      _id: worksPace.owner,
-    });
+		const user = await User.findOne({
+			_id: worksPace.owner,
+		});
 
-    return NextResponse.json(user);
-  } catch (e) {
-    console.error(e);
-    return NextResponse.json({ error: e?.message }, { status: 500 });
-  }
+		return NextResponse.json(user);
+	} catch (e) {
+		console.error(e);
+		return NextResponse.json({ error: e?.message }, { status: 500 });
+	}
 }
