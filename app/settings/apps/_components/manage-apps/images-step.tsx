@@ -85,9 +85,11 @@ export function ImagesStep({
 				variant: "destructive",
 				duration: 3000,
 			});
+			setStepValidation(false);
 			return;
 		}
 
+		setStepValidation(true);
 		updateFormData("images", {
 			galleryPhotos: files as unknown as FileList,
 		});

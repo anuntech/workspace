@@ -258,7 +258,10 @@ export default function NotificationsPage() {
 									Anterior
 								</Button>
 								<span>
-									Página {notificationsQuery.data?.data.pagination.currentPage}{" "}
+									Página{" "}
+									{notificationsQuery.data?.data.pagination.totalPages === 0
+										? "0"
+										: notificationsQuery.data?.data.pagination.currentPage}{" "}
 									de {notificationsQuery.data?.data.pagination.totalPages}
 								</span>
 								<Button
