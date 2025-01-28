@@ -34,19 +34,37 @@ export async function GET(request: Request) {
 				const fromUser = await User.findOne({ _id: v.from });
 				const workspace = await Workspace.findOne({ _id: v.workspaceId });
 
+				let notification = v;
+
+				if (!workspace?.name && notification.state !== "expired") {
+					notification = await Notifications.findOneAndUpdate(
+						{
+							_id: v._id,
+						},
+						{
+							$set: {
+								state: "expired",
+							},
+						},
+						{
+							isNew: true,
+						},
+					);
+				}
+
 				return {
-					id: v._id,
+					id: notification._id,
 					user: fromUser?.name || "Unknown User",
 					avatar: fromUser?.image,
 					icon: fromUser?.icon,
 					message: `convidou você para o workspace ${
 						workspace?.name || "Invalid Workspace"
 					}`,
-					workspaceId: v.workspaceId,
-					state: v.state,
-					isNew: v.isNew,
-					isInvite: v.isInvite,
-					time: formatDistanceToNow(new Date((v as any).updatedAt), {
+					workspaceId: notification.workspaceId,
+					state: notification.state,
+					isNew: notification.isNew,
+					isInvite: notification.isInvite,
+					time: formatDistanceToNow(new Date((notification as any).updatedAt), {
 						addSuffix: true,
 						locale: ptBR,
 					}),
