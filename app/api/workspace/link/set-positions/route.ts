@@ -1,6 +1,7 @@
 import config from "@/config";
 import connectMongo from "@/libs/mongoose";
 import { authOptions } from "@/libs/next-auth";
+import { routeWrapper } from "@/libs/routeWrapper";
 import Applications from "@/models/Applications";
 import MyApplications from "@/models/MyApplications";
 import User from "@/models/User";
@@ -19,99 +20,96 @@ import { NextResponse } from "next/server";
  * ]
  *
  * */
-export async function POST(request: Request) {
-	try {
-		const session = await getServerSession(authOptions);
+export const POST = routeWrapper(
+	POSTHandler,
+	"/api/workspace/link/set-positions",
+);
 
-		await connectMongo();
-		const body = await request.json();
+async function POSTHandler(request: Request) {
+	const session = await getServerSession(authOptions);
 
-		const workspace = await Workspace.findById(body.workspaceId);
+	await connectMongo();
+	const body = await request.json();
 
-		if (!workspace) {
-			return NextResponse.json(
-				{ error: "Workspace not found" },
-				{ status: 404 },
-			);
-		}
+	const workspace = await Workspace.findById(body.workspaceId);
 
-		if (!body.data || !Array.isArray(body.data)) {
-			return NextResponse.json({ error: "Body is invalid" }, { status: 400 });
-		}
+	if (!workspace) {
+		return NextResponse.json({ error: "Workspace not found" }, { status: 404 });
+	}
 
-		if (!workspace.links.length) {
-			return NextResponse.json(
-				{ error: "You do not have permission to set positions" },
-				{ status: 403 },
-			);
-		}
+	if (!body.data || !Array.isArray(body.data)) {
+		return NextResponse.json({ error: "Body is invalid" }, { status: 400 });
+	}
 
-		const memberRole = workspace.members.find(
-			(member) => member.memberId.toString() === session.user.id.toString(),
-		)?.role;
-
-		if (
-			memberRole !== "admin" &&
-			workspace.owner.toString() !== session.user.id
-		) {
-			return NextResponse.json(
-				{ error: "You do not have permission to uninstall this application" },
-				{ status: 403 },
-			);
-		}
-
-		if (body.data.length != workspace.links.length) {
-			return NextResponse.json({ error: "Body is invalid" }, { status: 400 });
-		}
-
-		const positions = body.data.map((app: any) => app.position);
-		const sortedPositions = [...positions].sort((a, b) => a - b);
-		const expectedPositions = Array.from(
-			{ length: sortedPositions.length },
-			(_, i) => i,
+	if (!workspace.links.length) {
+		return NextResponse.json(
+			{ error: "You do not have permission to set positions" },
+			{ status: 403 },
 		);
+	}
+
+	const memberRole = workspace.members.find(
+		(member) => member.memberId.toString() === session.user.id.toString(),
+	)?.role;
+
+	if (
+		memberRole !== "admin" &&
+		workspace.owner.toString() !== session.user.id
+	) {
+		return NextResponse.json(
+			{ error: "You do not have permission to uninstall this application" },
+			{ status: 403 },
+		);
+	}
+
+	if (body.data.length != workspace.links.length) {
+		return NextResponse.json({ error: "Body is invalid" }, { status: 400 });
+	}
+
+	const positions = body.data.map((app: any) => app.position);
+	const sortedPositions = [...positions].sort((a, b) => a - b);
+	const expectedPositions = Array.from(
+		{ length: sortedPositions.length },
+		(_, i) => i,
+	);
+
+	if (
+		sortedPositions.length !== expectedPositions.length ||
+		!sortedPositions.every((pos, index) => pos === expectedPositions[index])
+	) {
+		return NextResponse.json(
+			{ error: "Positions must be sequential starting from 0" },
+			{ status: 400 },
+		);
+	}
+
+	for (const app of body.data) {
+		if (!app.linkId || app.position == undefined) {
+			return NextResponse.json({ error: "Body is invalid" }, { status: 400 });
+		}
 
 		if (
-			sortedPositions.length !== expectedPositions.length ||
-			!sortedPositions.every((pos, index) => pos === expectedPositions[index])
+			!workspace.links.some(
+				(link) => link._id.toString() === app.linkId.toString(),
+			)
 		) {
 			return NextResponse.json(
-				{ error: "Positions must be sequential starting from 0" },
+				{ error: "Application not found" },
 				{ status: 400 },
 			);
 		}
-
-		for (const app of body.data) {
-			if (!app.linkId || app.position == undefined) {
-				return NextResponse.json({ error: "Body is invalid" }, { status: 400 });
-			}
-
-			if (
-				!workspace.links.some(
-					(link) => link._id.toString() === app.linkId.toString(),
-				)
-			) {
-				return NextResponse.json(
-					{ error: "Application not found" },
-					{ status: 400 },
-				);
-			}
-		}
-
-		const positionMap = body.data.reduce((acc: any, item: any) => {
-			acc[item.linkId] = item.position;
-			return acc;
-		}, {});
-
-		workspace.links.sort((a, b) => {
-			return positionMap[a._id.toString()] - positionMap[b._id.toString()];
-		});
-
-		await workspace.save();
-
-		return NextResponse.json({ message: "Positions set successfully" });
-	} catch (e) {
-		console.error(e);
-		return NextResponse.json({ error: e?.message }, { status: 500 });
 	}
+
+	const positionMap = body.data.reduce((acc: any, item: any) => {
+		acc[item.linkId] = item.position;
+		return acc;
+	}, {});
+
+	workspace.links.sort((a, b) => {
+		return positionMap[a._id.toString()] - positionMap[b._id.toString()];
+	});
+
+	await workspace.save();
+
+	return NextResponse.json({ message: "Positions set successfully" });
 }

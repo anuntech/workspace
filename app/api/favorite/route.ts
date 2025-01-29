@@ -8,8 +8,9 @@ import Workspace from "@/models/Workspace";
 import Applications from "@/models/Applications";
 import MyApplications from "@/models/MyApplications";
 import mongoose, { MongooseError } from "mongoose";
+import { routeWrapper } from "@/libs/routeWrapper";
 
-export async function POST(req: NextRequest) {
+async function POSTHandler(req: NextRequest) {
 	const body = await req.json();
 	const session = await getServerSession(authOptions);
 
@@ -38,125 +39,113 @@ export async function POST(req: NextRequest) {
 		);
 	}
 
-	try {
-		await connectMongo();
-		const myApplications = await MyApplications.findOne({
-			workspaceId: new mongoose.Types.ObjectId(body.workspaceId),
+	await connectMongo();
+	const myApplications = await MyApplications.findOne({
+		workspaceId: new mongoose.Types.ObjectId(body.workspaceId),
+	});
+
+	const favoriteIndex = myApplications.favoriteApplications.findIndex(
+		(a) =>
+			a.applicationId.toString() === application.id.toString() &&
+			a.userId.toString() === session.user.id,
+	);
+
+	if (favoriteIndex == -1) {
+		myApplications?.favoriteApplications.push({
+			userId: new mongoose.Types.ObjectId(session.user.id),
+			applicationId: application.id,
 		});
-
-		const favoriteIndex = myApplications.favoriteApplications.findIndex(
-			(a) =>
-				a.applicationId.toString() === application.id.toString() &&
-				a.userId.toString() === session.user.id,
-		);
-
-		if (favoriteIndex == -1) {
-			myApplications?.favoriteApplications.push({
-				userId: new mongoose.Types.ObjectId(session.user.id),
-				applicationId: application.id,
-			});
-			await myApplications.save();
-
-			return NextResponse.json(myApplications);
-		}
-
-		myApplications.favoriteApplications.splice(favoriteIndex, 1);
 		await myApplications.save();
 
 		return NextResponse.json(myApplications);
-	} catch (e) {
-		console.error(e);
-		return NextResponse.json({ error: e?.message }, { status: 500 });
 	}
+
+	myApplications.favoriteApplications.splice(favoriteIndex, 1);
+	await myApplications.save();
+
+	return NextResponse.json(myApplications);
 }
 
-export async function GET(req: NextRequest) {
-	try {
-		const { searchParams } = new URL(req.url);
-		const workspaceId = searchParams.get("workspaceId");
+export const POST = routeWrapper(POSTHandler, "/api/favorite");
 
-		if (!workspaceId) {
-			return NextResponse.json(
-				{ error: "Workspace ID is required" },
-				{ status: 400 },
-			);
-		}
+async function GETHandler(req: NextRequest) {
+	const { searchParams } = new URL(req.url);
+	const workspaceId = searchParams.get("workspaceId");
 
-		const session = await getServerSession(authOptions);
-		if (!session || !session.user?.id) {
-			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-		}
-
-		await connectMongo();
-
-		const workspace = await Workspace.findById(workspaceId);
-		if (!workspace) {
-			return NextResponse.json(
-				{ error: "Workspace not found" },
-				{ status: 404 },
-			);
-		}
-
-		const isOwner = workspace.owner.toString() === session.user.id.toString();
-		const isMember = workspace.members.some(
-			(m) => m.memberId.toString() === session.user.id.toString(),
+	if (!workspaceId) {
+		return NextResponse.json(
+			{ error: "Workspace ID is required" },
+			{ status: 400 },
 		);
-
-		if (!isOwner && !isMember) {
-			return NextResponse.json(
-				{
-					error:
-						"You do not have permission to view favorites in this workspace",
-				},
-				{ status: 403 },
-			);
-		}
-
-		const myApplications = await MyApplications.findOne({
-			workspaceId: new mongoose.Types.ObjectId(workspaceId),
-		}).populate("favoriteApplications.applicationId");
-
-		if (!myApplications) {
-			return NextResponse.json(
-				{ error: "No applications found for this workspace" },
-				{ status: 404 },
-			);
-		}
-
-		let userFavorites = myApplications.favoriteApplications.filter(
-			(fav) => fav.userId.toString() === session.user.id.toString(),
-		);
-
-		const memberRole = workspace.members.find(
-			(member) => member.memberId.toString() === session.user.id.toString(),
-		)?.role;
-
-		const isNotAdminAndOwner =
-			memberRole !== "admin" && workspace.owner.toString() !== session.user.id;
-
-		if (isNotAdminAndOwner) {
-			// This is the condition that allows the user to see only the applications that he has permission to see
-			const applicationsIdsThatUserHasPermission =
-				workspace.rules.allowedMemberApps
-					.filter(
-						(app) =>
-							!!app.members.find(
-								(m) => m.memberId.toString() == session.user.id,
-							),
-					)
-					.map((app) => app.appId.toString());
-			userFavorites = userFavorites.filter((app) =>
-				applicationsIdsThatUserHasPermission.includes(
-					app.applicationId._id.toString(),
-				),
-			);
-		}
-
-		return NextResponse.json({
-			favorites: userFavorites,
-		});
-	} catch (e: any) {
-		console.error(e);
-		return NextResponse.json({ error: e?.message }, { status: 500 });
 	}
+
+	const session = await getServerSession(authOptions);
+	if (!session || !session.user?.id) {
+		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+	}
+
+	await connectMongo();
+
+	const workspace = await Workspace.findById(workspaceId);
+	if (!workspace) {
+		return NextResponse.json({ error: "Workspace not found" }, { status: 404 });
+	}
+
+	const isOwner = workspace.owner.toString() === session.user.id.toString();
+	const isMember = workspace.members.some(
+		(m) => m.memberId.toString() === session.user.id.toString(),
+	);
+
+	if (!isOwner && !isMember) {
+		return NextResponse.json(
+			{
+				error: "You do not have permission to view favorites in this workspace",
+			},
+			{ status: 403 },
+		);
+	}
+
+	const myApplications = await MyApplications.findOne({
+		workspaceId: new mongoose.Types.ObjectId(workspaceId),
+	}).populate("favoriteApplications.applicationId");
+
+	if (!myApplications) {
+		return NextResponse.json(
+			{ error: "No applications found for this workspace" },
+			{ status: 404 },
+		);
+	}
+
+	let userFavorites = myApplications.favoriteApplications.filter(
+		(fav) => fav.userId.toString() === session.user.id.toString(),
+	);
+
+	const memberRole = workspace.members.find(
+		(member) => member.memberId.toString() === session.user.id.toString(),
+	)?.role;
+
+	const isNotAdminAndOwner =
+		memberRole !== "admin" && workspace.owner.toString() !== session.user.id;
+
+	if (isNotAdminAndOwner) {
+		// This is the condition that allows the user to see only the applications that he has permission to see
+		const applicationsIdsThatUserHasPermission =
+			workspace.rules.allowedMemberApps
+				.filter(
+					(app) =>
+						!!app.members.find((m) => m.memberId.toString() == session.user.id),
+				)
+				.map((app) => app.appId.toString());
+		userFavorites = userFavorites.filter((app) =>
+			applicationsIdsThatUserHasPermission.includes(
+				app.applicationId._id.toString(),
+			),
+		);
+	}
+
+	return NextResponse.json({
+		favorites: userFavorites,
+	});
 }
+
+export const GET = routeWrapper(GETHandler, "/api/favorite");

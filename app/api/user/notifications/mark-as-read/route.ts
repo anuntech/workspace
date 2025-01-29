@@ -3,24 +3,25 @@ import { authOptions } from "@/libs/next-auth";
 import { NextResponse } from "next/server";
 import connectMongo from "@/libs/mongoose";
 import Notifications from "@/models/Notification";
+import { routeWrapper } from "@/libs/routeWrapper";
 
-export async function POST(request: Request) {
-	try {
-		const session = await getServerSession(authOptions);
-		await connectMongo();
+export const POST = routeWrapper(
+	POSTHandler,
+	"/api/user/notifications/mark-as-read",
+);
 
-		const result = await Notifications.updateMany(
-			{
-				userId: session.user.id,
-			},
-			{
-				isNew: false,
-			},
-		);
+async function POSTHandler(request: Request) {
+	const session = await getServerSession(authOptions);
+	await connectMongo();
 
-		return NextResponse.json({ updatedCount: result.matchedCount });
-	} catch (e) {
-		console.error(e);
-		return NextResponse.json({ error: e?.message }, { status: 500 });
-	}
+	const result = await Notifications.updateMany(
+		{
+			userId: session.user.id,
+		},
+		{
+			isNew: false,
+		},
+	);
+
+	return NextResponse.json({ updatedCount: result.matchedCount });
 }

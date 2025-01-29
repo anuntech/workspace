@@ -4,18 +4,16 @@ import { NextResponse } from "next/server";
 import connectMongo from "@/libs/mongoose";
 import Workspace from "@/models/Workspace";
 import Plans from "@/models/Plans";
+import { routeWrapper } from "@/libs/routeWrapper";
 
-export async function GET(request: Request) {
-	try {
-		await getServerSession(authOptions);
+export const GET = routeWrapper(GETHandler, "/api/workspace/plans");
 
-		await connectMongo();
+async function GETHandler(request: Request) {
+	const session = await getServerSession(authOptions);
 
-		const plans = await Plans.find();
+	await connectMongo();
 
-		return NextResponse.json(plans);
-	} catch (e) {
-		console.error(e);
-		return NextResponse.json({ error: e?.message }, { status: 500 });
-	}
+	const plans = await Plans.find();
+
+	return NextResponse.json(plans);
 }

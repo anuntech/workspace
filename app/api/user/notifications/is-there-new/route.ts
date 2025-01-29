@@ -3,21 +3,22 @@ import { authOptions } from "@/libs/next-auth";
 import { NextResponse } from "next/server";
 import connectMongo from "@/libs/mongoose";
 import Notifications from "@/models/Notification";
+import { routeWrapper } from "@/libs/routeWrapper";
 
-export async function GET(request: Request) {
-	try {
-		const session = await getServerSession(authOptions);
-		await connectMongo();
+export const GET = routeWrapper(
+	GETHandler,
+	"/api/user/notifications/is-there-new",
+);
 
-		const notifications = await Notifications.find({
-			userId: session.user.id,
-		});
+async function GETHandler(request: Request) {
+	const session = await getServerSession(authOptions);
+	await connectMongo();
 
-		const isThereNewNotification = notifications.find((v) => v.isNew);
+	const notifications = await Notifications.find({
+		userId: session.user.id,
+	});
 
-		return NextResponse.json(!!isThereNewNotification);
-	} catch (e) {
-		console.error(e);
-		return NextResponse.json({ error: e?.message }, { status: 500 });
-	}
+	const isThereNewNotification = notifications.find((v) => v.isNew);
+
+	return NextResponse.json(!!isThereNewNotification);
 }

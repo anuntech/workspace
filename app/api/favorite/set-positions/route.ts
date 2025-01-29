@@ -1,6 +1,7 @@
 import config from "@/config";
 import connectMongo from "@/libs/mongoose";
 import { authOptions } from "@/libs/next-auth";
+import { routeWrapper } from "@/libs/routeWrapper";
 import Applications from "@/models/Applications";
 import MyApplications from "@/models/MyApplications";
 import User from "@/models/User";
@@ -19,119 +20,114 @@ import { NextResponse } from "next/server";
  * ]
  *
  * */
-export async function POST(request: Request) {
-	try {
-		const session = await getServerSession(authOptions);
 
-		await connectMongo();
+async function POSTHandler(request: Request) {
+	const session = await getServerSession(authOptions);
 
-		const body = await request.json();
+	await connectMongo();
 
-		const workspace = await Workspace.findById(body.workspaceId);
+	const body = await request.json();
 
-		if (!workspace) {
-			return NextResponse.json(
-				{ error: "Workspace not found" },
-				{ status: 404 },
-			);
-		}
+	const workspace = await Workspace.findById(body.workspaceId);
 
-		if (!body.data || !Array.isArray(body.data)) {
-			return NextResponse.json({ error: "Body is invalid" }, { status: 400 });
-		}
+	if (!workspace) {
+		return NextResponse.json({ error: "Workspace not found" }, { status: 404 });
+	}
 
-		const myApplications = await MyApplications.findOne({
-			workspaceId: body.workspaceId,
-		});
+	if (!body.data || !Array.isArray(body.data)) {
+		return NextResponse.json({ error: "Body is invalid" }, { status: 400 });
+	}
 
-		if (!myApplications) {
-			return NextResponse.json(
-				{ error: "You do not have permission to set positions" },
-				{ status: 403 },
-			);
-		}
+	const myApplications = await MyApplications.findOne({
+		workspaceId: body.workspaceId,
+	});
 
-		if (
-			body.data.length !=
-			myApplications.favoriteApplications.filter(
-				(a) => a.userId.toString() === session.user.id.toString(),
-			).length
-		) {
-			return NextResponse.json({ error: "Body is invalid" }, { status: 400 });
-		}
-
-		const positions = body.data.map((app: any) => app.position);
-		const sortedPositions = [...positions].sort((a, b) => a - b);
-		const expectedPositions = Array.from(
-			{ length: sortedPositions.length },
-			(_, i) => i,
+	if (!myApplications) {
+		return NextResponse.json(
+			{ error: "You do not have permission to set positions" },
+			{ status: 403 },
 		);
+	}
+
+	if (
+		body.data.length !=
+		myApplications.favoriteApplications.filter(
+			(a) => a.userId.toString() === session.user.id.toString(),
+		).length
+	) {
+		return NextResponse.json({ error: "Body is invalid" }, { status: 400 });
+	}
+
+	const positions = body.data.map((app: any) => app.position);
+	const sortedPositions = [...positions].sort((a, b) => a - b);
+	const expectedPositions = Array.from(
+		{ length: sortedPositions.length },
+		(_, i) => i,
+	);
+
+	if (
+		sortedPositions.length !== expectedPositions.length ||
+		!sortedPositions.every((pos, index) => pos === expectedPositions[index])
+	) {
+		return NextResponse.json(
+			{ error: "Positions must be sequential starting from 0" },
+			{ status: 400 },
+		);
+	}
+
+	for (const app of body.data) {
+		if (!app.appId || app.position == undefined) {
+			return NextResponse.json({ error: "Body is invalid" }, { status: 400 });
+		}
 
 		if (
-			sortedPositions.length !== expectedPositions.length ||
-			!sortedPositions.every((pos, index) => pos === expectedPositions[index])
+			!myApplications.favoriteApplications.some(
+				(favo) =>
+					favo.applicationId.toString() === app.appId.toString() &&
+					favo.userId.toString() === session.user.id.toString(),
+			)
 		) {
 			return NextResponse.json(
-				{ error: "Positions must be sequential starting from 0" },
+				{ error: "Application not found" },
 				{ status: 400 },
 			);
 		}
-
-		for (const app of body.data) {
-			if (!app.appId || app.position == undefined) {
-				return NextResponse.json({ error: "Body is invalid" }, { status: 400 });
-			}
-
-			if (
-				!myApplications.favoriteApplications.some(
-					(favo) =>
-						favo.applicationId.toString() === app.appId.toString() &&
-						favo.userId.toString() === session.user.id.toString(),
-				)
-			) {
-				return NextResponse.json(
-					{ error: "Application not found" },
-					{ status: 400 },
-				);
-			}
-		}
-
-		const positionMap = body.data.reduce((acc: any, item: any) => {
-			acc[item.appId] = item.position;
-			return acc;
-		}, {});
-
-		const userId = session.user.id.toString();
-
-		// 1) Separe os favoritos do usuário logado dos favoritos dos outros usuários
-		const favoritesOfCurrentUser = myApplications.favoriteApplications.filter(
-			(item) => item.userId.toString() === userId,
-		);
-		const favoritesOfOthers = myApplications.favoriteApplications.filter(
-			(item) => item.userId.toString() !== userId,
-		);
-
-		// 2) Reordene somente os favoritos do usuário logado
-		favoritesOfCurrentUser.sort((a, b) => {
-			return (
-				positionMap[a.applicationId.toString()] -
-				positionMap[b.applicationId.toString()]
-			);
-		});
-
-		// 3) "Rejunte" tudo
-		myApplications.favoriteApplications = [
-			...favoritesOfCurrentUser,
-			...favoritesOfOthers,
-		];
-
-		// 4) Salve
-
-		await myApplications.save();
-
-		return NextResponse.json(myApplications);
-	} catch (e) {
-		console.error(e);
-		return NextResponse.json({ error: e?.message }, { status: 500 });
 	}
+
+	const positionMap = body.data.reduce((acc: any, item: any) => {
+		acc[item.appId] = item.position;
+		return acc;
+	}, {});
+
+	const userId = session.user.id.toString();
+
+	// 1) Separe os favoritos do usuário logado dos favoritos dos outros usuários
+	const favoritesOfCurrentUser = myApplications.favoriteApplications.filter(
+		(item) => item.userId.toString() === userId,
+	);
+	const favoritesOfOthers = myApplications.favoriteApplications.filter(
+		(item) => item.userId.toString() !== userId,
+	);
+
+	// 2) Reordene somente os favoritos do usuário logado
+	favoritesOfCurrentUser.sort((a, b) => {
+		return (
+			positionMap[a.applicationId.toString()] -
+			positionMap[b.applicationId.toString()]
+		);
+	});
+
+	// 3) "Rejunte" tudo
+	myApplications.favoriteApplications = [
+		...favoritesOfCurrentUser,
+		...favoritesOfOthers,
+	];
+
+	// 4) Salve
+
+	await myApplications.save();
+
+	return NextResponse.json(myApplications);
 }
+
+export const POST = routeWrapper(POSTHandler, "/api/favorite/set-positions");

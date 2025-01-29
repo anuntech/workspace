@@ -4,8 +4,14 @@ import { NextResponse } from "next/server";
 import connectMongo from "@/libs/mongoose";
 import Workspace from "@/models/Workspace";
 import mongoose from "mongoose";
+import { routeWrapper } from "@/libs/routeWrapper";
 
-export async function DELETE(
+export const DELETE = routeWrapper(
+	DELETEHandler,
+	"/api/workspace/leave/[workspaceId]",
+);
+
+async function DELETEHandler(
 	request: Request,
 	{ params }: { params: { workspaceId: string; memberId: string } },
 ) {
