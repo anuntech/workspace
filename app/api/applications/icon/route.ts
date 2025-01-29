@@ -11,6 +11,7 @@ import imageType from "image-type";
 import Applications from "@/models/Applications";
 import User from "@/models/User";
 import config from "@/config";
+import { routeWrapper } from "@/libs/routeWrapper";
 
 async function PATCHHandler(request: Request) {
 	const session = await getServerSession(authOptions);
