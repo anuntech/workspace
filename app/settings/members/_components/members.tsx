@@ -122,7 +122,7 @@ export function Members() {
 		});
 	};
 
-	const [isOpen, setIsOpen] = useState(false);
+	const [openStates, setOpenStates] = useState<Record<string, boolean>>({});
 
 	const handleTransferOwner = async (memberId: string) => {
 		transferOwnerMutation.mutate({
@@ -244,8 +244,10 @@ export function Members() {
 							</div>
 							<div className="flex items-center gap-2">
 								<Select
-									open={isOpen}
-									onOpenChange={(open) => setIsOpen(open)}
+									open={openStates[member._id] || false}
+									onOpenChange={(open) =>
+										setOpenStates((prev) => ({ ...prev, [member._id]: open }))
+									}
 									defaultValue={member.role}
 									onValueChange={(props) => handleRoleChange(member._id, props)}
 									disabled={yourMemberInfo?.role == "member"}
