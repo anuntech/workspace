@@ -107,10 +107,11 @@ export function DropdownLink({
 				</DropdownMenuTrigger>
 				<DropdownMenuContent className="w-56">
 					<DropdownMenuGroup>
-						<DropdownMenuItem onClick={() => changeFavoriteMutation.mutate()}>
+						{/* Disable feature of favorite links while not working */}
+						{/* <DropdownMenuItem onClick={() => changeFavoriteMutation.mutate()}>
 							<Heart />
 							{isThisAnFavoriteApp ? "Remover dos" : "Adicionar aos"} favoritos
-						</DropdownMenuItem>
+						</DropdownMenuItem> */}
 						{roleQuery.data?.data?.role !== "member" &&
 							!roleQuery.isPending && (
 								<>
