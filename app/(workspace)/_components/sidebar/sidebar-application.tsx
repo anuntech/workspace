@@ -62,7 +62,7 @@ export function SidebarApplication({
 			break;
 		default:
 			LinkRedirection = {
-				href: `/${isLink ? "links" : "service"}/${data.id}?workspace=${workspace}`,
+				href: "#",
 			};
 			break;
 	}
