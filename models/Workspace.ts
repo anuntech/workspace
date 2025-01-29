@@ -91,6 +91,7 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
 						type: mongoose.Schema.Types.ObjectId,
 						ref: "User",
 						required: true,
+						unique: true,
 					},
 					role: {
 						type: String,
@@ -100,7 +101,6 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
 				},
 			],
 			default: [],
-			unique: true,
 		},
 		invitedMembersEmail: {
 			type: [
@@ -116,6 +116,7 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
 							validator: (email: string) => EMAIL_REGEX.test(email),
 							message: "O email é inválido.",
 						},
+						unique: true,
 					},
 				},
 			],
