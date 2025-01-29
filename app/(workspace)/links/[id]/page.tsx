@@ -30,12 +30,14 @@ export default function ServicePage({ params }: { params: { id: string } }) {
 			api.get(`/api/workspace/link?workspaceId=${workspace}`),
 	});
 
+	const route = useRouter();
+
 	if (!params.id) {
 		router.push("/");
 		return;
 	}
 
-	if (linksQuery.isPending) {
+	if (linksQuery.isPending || linksQuery.isRefetching) {
 		return (
 			<div className="h-[100vh] flex justify-center items-center">
 				<LoaderCircle className="m-auto animate-spin" />
@@ -43,11 +45,17 @@ export default function ServicePage({ params }: { params: { id: string } }) {
 		);
 	}
 
-	const app = linksQuery.data.data.find((app: any) => app._id === params.id);
-	console.log(app);
-	const subFieldUrl = app.fields.find(
+	const app = linksQuery?.data?.data?.links?.find(
+		(app: any) => app._id === params.id,
+	);
+	const subFieldUrl = app?.fields?.find(
 		(field: any) => field.key === fieldSubScreen,
 	)?.value;
+
+	if (!app) {
+		route.push(`/?workspace=${workspace}`);
+		return;
+	}
 
 	return (
 		<>
@@ -67,7 +75,7 @@ export default function ServicePage({ params }: { params: { id: string } }) {
 							</BreadcrumbItem>
 							<BreadcrumbSeparator className="hidden md:block" />
 							<BreadcrumbItem>
-								<BreadcrumbPage>{app.name}</BreadcrumbPage>
+								<BreadcrumbPage>{app?.title}</BreadcrumbPage>
 							</BreadcrumbItem>
 						</BreadcrumbList>
 					</Breadcrumb>
@@ -79,7 +87,7 @@ export default function ServicePage({ params }: { params: { id: string } }) {
 				</div>
 			)}
 			<iframe
-				src={!subFieldUrl ? app.applicationUrl : subFieldUrl}
+				src={!subFieldUrl ? app.url : subFieldUrl}
 				width="100%"
 				height="100%"
 				style={{ border: "none" }}

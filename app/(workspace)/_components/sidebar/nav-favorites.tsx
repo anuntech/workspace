@@ -21,14 +21,13 @@ export function NavFavorites() {
 	const session = useSession();
 
 	const applicationsQuery = useQuery({
-		queryKey: ["applications/favorite"],
-		queryFn: async () =>
-			api.get(`/api/applications/favorite?workspaceId=${workspace}`),
+		queryKey: ["/favorite"],
+		queryFn: async () => api.get(`/api//favorite?workspaceId=${workspace}`),
 	});
 
 	const setPositionsMutation = useMutation({
 		mutationFn: async (data: any) =>
-			api.post(`/api/applications/favorite/set-positions`, {
+			api.post(`/api//favorite/set-positions`, {
 				data,
 				workspaceId: workspace,
 			}),
@@ -57,7 +56,7 @@ export function NavFavorites() {
 		const [movedItem] = reorderedApplications.splice(source.index, 1);
 		reorderedApplications.splice(destination.index, 0, movedItem);
 
-		queryClient.setQueryData(["applications/favorite"], (oldData: any) => {
+		queryClient.setQueryData(["/favorite"], (oldData: any) => {
 			if (!oldData) return;
 			return {
 				...oldData,

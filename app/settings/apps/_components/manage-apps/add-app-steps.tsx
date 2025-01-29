@@ -61,8 +61,16 @@ export function AddAppStepsDialog() {
 	const [isOpen, setIsOpen] = useState(false);
 	const queryClient = useQueryClient();
 	const saveApplicationMutation = useMutation({
-		mutationFn: async (data: FormData) => api.post("/api/applications", data),
+		mutationFn: async (data: FormData) => {
+			const response = await api.post("/api/applications", data);
+
+			return response.data;
+		},
 		onSuccess: () => {
+			queryClient.refetchQueries({
+				queryKey: ["applications"],
+				type: "all",
+			});
 			queryClient.refetchQueries({
 				queryKey: ["workspace"],
 				type: "all",

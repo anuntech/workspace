@@ -23,9 +23,9 @@ const config = {
 				priceId:
 					process.env.NODE_ENV === "development"
 						? "price_1QDATbDt9rgw0merdExAQP6j"
-						: "price_1QDATbDt9rgw0merdExAQP6j",
+						: "price_1PIzblDt9rgw0merPasD5R4m",
 				//  REQUIRED - Name of the plan, displayed on the pricing page
-				name: "Workspace",
+				name: "Workspace Mensal",
 				// A friendly description of the plan, displayed on the pricing page. Tip: explain why this plan and not others
 				description: "Perfect for small projects",
 				// The price you want to display, the one user will be charged on Stripe.
@@ -46,9 +46,9 @@ const config = {
 				priceId:
 					process.env.NODE_ENV === "development"
 						? "price_1QG2taDt9rgw0mera1J81f09"
-						: "price_1QG2taDt9rgw0mera1J81f09",
+						: "price_1PvmfsDt9rgw0merrFqNh1Nc",
 				//  REQUIRED - Name of the plan, displayed on the pricing page
-				name: "Workspace",
+				name: "Workspace Anual",
 				// A friendly description of the plan, displayed on the pricing page. Tip: explain why this plan and not others
 				description: "Perfect for small projects",
 				// The price you want to display, the one user will be charged on Stripe.

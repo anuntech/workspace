@@ -44,9 +44,12 @@ export function SidebarApplication({
 	const buttonRef = useRef<HTMLDivElement>(null);
 
 	let LinkRedirection: { href: string; target?: string } = { href: "" };
+
 	switch (data.applicationUrlType) {
 		case "iframe":
-			LinkRedirection = { href: `/service/${data.id}?workspace=${workspace}` };
+			LinkRedirection = {
+				href: `/${isLink ? "links" : "service"}/${data.id}?workspace=${workspace}`,
+			};
 			break;
 		case "newWindow":
 			LinkRedirection = {
@@ -58,7 +61,9 @@ export function SidebarApplication({
 			LinkRedirection = { href: data.applicationUrl };
 			break;
 		default:
-			LinkRedirection = { href: `/service/${data.id}?workspace=${workspace}` };
+			LinkRedirection = {
+				href: "#",
+			};
 			break;
 	}
 
@@ -129,7 +134,7 @@ export function SidebarApplication({
 								switch (field.redirectType) {
 									case "iframe":
 										LinkRedirection = {
-											href: `/service/${data.id}?workspace=${workspace}&fieldSubScreen=${field.key}`,
+											href: `/${isLink ? "links" : "service"}/${data.id}?workspace=${workspace}&fieldSubScreen=${field.key}`,
 										};
 										break;
 									case "newWindow":
@@ -143,7 +148,7 @@ export function SidebarApplication({
 										break;
 									default:
 										LinkRedirection = {
-											href: `/service/${data.id}?workspace=${workspace}&fieldSubScreen=${field.key}`,
+											href: `/${isLink ? "links" : "service"}/${data.id}?workspace=${workspace}&fieldSubScreen=${field.key}`,
 										};
 										break;
 								}
