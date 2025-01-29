@@ -246,6 +246,24 @@ workspaceSchema.pre("save", async function (next) {
 	}
 });
 
+workspaceSchema.pre("validate", async function (next) {
+	try {
+		const emails = this.invitedMembersEmail.map((invite) => invite.email);
+		if (new Set(emails).size !== emails.length) {
+			throw new Error("Emails convidados devem ser únicos");
+		}
+
+		const memberIds = this.members.map((member) => member.memberId.toString());
+		if (new Set(memberIds).size !== memberIds.length) {
+			throw new Error("IDs de membros devem ser únicos");
+		}
+
+		next();
+	} catch (error) {
+		next(error);
+	}
+});
+
 // Helper function to remove workspace references from Applications
 async function removeWorkspaceFromApplications(
 	workspaceId: mongoose.Schema.Types.ObjectId,
