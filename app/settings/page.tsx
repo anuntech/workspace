@@ -230,8 +230,6 @@ export default function SettingsPage() {
 			<form action="POST" onSubmit={handleSubmit(onSubmit)}>
 				<div className="flex flex-col  items-center p-10">
 					<div className="w-full max-w-3xl space-y-5">
-						<h1 className="text-2xl">Geral</h1>
-						<Separator />
 						<section className="grid grid-cols-2 gap-8 py-5">
 							<div>
 								<p>Avatar do workspace</p>

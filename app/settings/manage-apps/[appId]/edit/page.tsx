@@ -17,6 +17,8 @@ import api from "@/libs/api";
 import { Configs } from "./_components/configs";
 import { MenuMain } from "./_components/menu-main";
 import { MenuConfig } from "./_components/menu-config";
+import Link from "next/link";
+import { ChevronLeft } from "lucide-react";
 
 export interface Field {
 	key: string;
@@ -80,6 +82,14 @@ export default function EditPage({ params }: { params: { appId: string } }) {
 						</BreadcrumbItem>
 						<BreadcrumbSeparator className="hidden md:block" />
 						<BreadcrumbItem>
+							<BreadcrumbPage>Loja de aplicativos</BreadcrumbPage>
+						</BreadcrumbItem>
+						<BreadcrumbSeparator className="hidden md:block" />
+						<BreadcrumbItem>
+							<BreadcrumbPage>{application.name}</BreadcrumbPage>
+						</BreadcrumbItem>
+						<BreadcrumbSeparator className="hidden md:block" />
+						<BreadcrumbItem>
 							<BreadcrumbPage>Editar</BreadcrumbPage>
 						</BreadcrumbItem>
 					</BreadcrumbList>
@@ -87,7 +97,13 @@ export default function EditPage({ params }: { params: { appId: string } }) {
 			</header>
 			<main className="flex flex-col items-center p-10">
 				<div className="w-full max-w-3xl space-y-5 h-full">
-					<h1 className="text-2xl flex gap-3 text-muted-foreground">Tabs</h1>
+					<Link
+						href={`/settings/apps/${application._id}?workspace=${workspace}`}
+						className="flex w-max items-center gap-2 text-sm"
+					>
+						<ChevronLeft className="size-4" />
+						{application.name}
+					</Link>
 					<Separator />
 					<Tabs defaultValue="configs" className="space-y-10">
 						<TabsList className="gap-2">

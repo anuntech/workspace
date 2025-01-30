@@ -88,11 +88,14 @@ export default function AppsPage() {
 			</header>
 			<div className="flex flex-col items-center p-10">
 				<div className="w-full max-w-3xl space-y-5">
-					<div className="flex items-center justify-between">
-						<h1 className="text-2xl">Loja de aplicativos</h1>
-						{isAnuntechUser && <AddAppStepsDialog />}
-					</div>
-					<Separator />
+					{isAnuntechUser && (
+						<>
+							<div className="flex flex-col items-end justify-end">
+								<AddAppStepsDialog />
+							</div>
+							<Separator />
+						</>
+					)}
 					<section className="relative flex items-center">
 						<Search className="absolute left-4 size-4" />
 						<Input
