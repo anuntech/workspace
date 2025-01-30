@@ -113,6 +113,7 @@ export function NavFavorites() {
 													key={data.name}
 													data={data}
 													workspace={workspace}
+													isLink={data.type === "link"}
 												/>
 											</div>
 										)}
