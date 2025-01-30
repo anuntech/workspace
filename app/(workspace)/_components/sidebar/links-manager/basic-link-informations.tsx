@@ -13,6 +13,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { LinkFormData } from "./types";
 import { AvatarSelector } from "@/components/avatar-selector";
 import { base64ToBlob } from "@/lib/utils";
+import { getFavicon } from "@/utils/get-favicon";
 
 interface GetPrincipalLinkProps {
 	data: LinkFormData;
@@ -85,8 +86,6 @@ export function BasicLinkInformation({
 				data.principalLink,
 			);
 
-			console.log(data.images);
-
 			setStepValidation(validationResult.success && !!data.images.icon);
 		}, 0);
 
@@ -96,6 +95,24 @@ export function BasicLinkInformation({
 	const handleChange = (field: string, value: string) => {
 		if (value == "none") {
 			updateFormData("principalLink", { link: "" });
+		}
+
+		if (field === "link") {
+			const favicon = getFavicon(value);
+
+			if (favicon) {
+				const formData = new FormData();
+
+				formData.append("icon", favicon);
+				formData.append("iconType", "favicon");
+
+				updateFormData("images", {
+					icon: formData,
+					emojiAvatar: favicon,
+					imageUrlWithoutS3: "",
+					emojiAvatarType: "favicon",
+				});
+			}
 		}
 
 		updateFormData("principalLink", { [field]: value });
