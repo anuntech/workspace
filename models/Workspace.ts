@@ -8,7 +8,7 @@ interface WorkspaceMember extends mongoose.Document {
 }
 
 interface WorkspaceIcon {
-	type: "image" | "emoji" | "lucide";
+	type: "image" | "emoji" | "lucide" | "favicon";
 	value: string;
 }
 
@@ -180,7 +180,7 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
 				icon: {
 					type: {
 						type: String,
-						enum: ["image", "emoji", "lucide"],
+						enum: ["image", "emoji", "lucide", "favicon"],
 						required: true,
 					},
 					value: {

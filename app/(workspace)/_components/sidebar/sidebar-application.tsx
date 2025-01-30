@@ -190,6 +190,12 @@ export function SidebarApplication({
 											name={data.icon.value}
 										/>
 									)}
+									{data.icon?.type === "favicon" && (
+										<Avatar className="size-5">
+											<AvatarImage src={data.icon?.value || data.avatarSrc} />
+											<AvatarFallback>{data.avatarFallback}</AvatarFallback>
+										</Avatar>
+									)}
 									{(data.icon?.type === "image" || !data.icon) && (
 										<Avatar className="size-5">
 											<AvatarImage
