@@ -45,7 +45,7 @@ export function DropdownApplication({
 
 	const applicationsQuery = useQuery({
 		queryKey: ["/favorite"],
-		queryFn: async () => api.get(`/api//favorite?workspaceId=${workspace}`),
+		queryFn: async () => api.get(`/api/favorite?workspaceId=${workspace}`),
 	});
 
 	const isThisAnFavoriteApp = applicationsQuery.data?.data.favorites.some(
@@ -55,9 +55,10 @@ export function DropdownApplication({
 
 	const changeFavoriteMutation = useMutation({
 		mutationFn: async () =>
-			api.post(`/api//favorite`, {
+			api.post(`/api/favorite`, {
 				applicationId,
 				workspaceId: workspace,
+				type: "application",
 			}),
 		onSuccess: async () => {
 			await queryClient.refetchQueries({
