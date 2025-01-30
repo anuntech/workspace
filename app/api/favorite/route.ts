@@ -185,6 +185,8 @@ async function GETHandler(req: NextRequest) {
 					fields: link.fields,
 					icon: link.icon,
 					type: "link",
+					id: link._id.toString(),
+					_id: link._id.toString(),
 				};
 			}
 
