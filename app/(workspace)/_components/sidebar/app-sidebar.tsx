@@ -32,7 +32,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const workspace = urlParams.get("workspace");
 	const applicationsQuery = useQuery({
 		queryKey: ["/favorite"],
-		queryFn: async () => api.get(`/api//favorite?workspaceId=${workspace}`),
+		queryFn: async () => api.get(`/api/favorite?workspaceId=${workspace}`),
 	});
 
 	const applicationsAllowQuery = useQuery({
@@ -40,9 +40,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 		queryFn: async () => api.get(`/api/applications/${workspace}/allow`),
 	});
 
-	const isThereFavorite = applicationsQuery.data?.data?.favorites.some(
-		(a: any) => a.userId == session.data?.user?.id,
-	);
+	const isThereFavorite = applicationsQuery.data?.data?.favorites.length > 0;
 
 	const isThereApplicationAllow = applicationsAllowQuery.data?.data?.length > 0;
 
