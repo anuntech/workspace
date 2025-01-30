@@ -58,4 +58,4 @@ jobs:
 
       - name: Clean up old Docker images
         run: |
-          docker image prune -a -f --filter "until=24h"
+          docker image prune -a -f
