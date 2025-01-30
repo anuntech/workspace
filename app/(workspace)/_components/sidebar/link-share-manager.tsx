@@ -44,7 +44,7 @@ export function LinkShareManager({
 	const [selectedUsers, setSelectedUsers] = useState<IUser[]>([]);
 
 	const membersAllowed = useQuery({
-		queryKey: ["links"],
+		queryKey: ["links", linkId],
 		queryFn: () =>
 			api.get(
 				`/api/workspace/link/manage-members-allowed?workspaceId=${workspaceId}&linkId=${linkId}`,
@@ -101,9 +101,10 @@ export function LinkShareManager({
 	return (
 		<Dialog
 			open={isOpen}
-			onOpenChange={(open) => {
+			onOpenChange={async (open) => {
 				setIsOpen(open);
 				setTimeout(() => (document.body.style.pointerEvents = ""), 500);
+				await membersAllowed.refetch();
 			}}
 		>
 			<DialogTrigger asChild></DialogTrigger>
