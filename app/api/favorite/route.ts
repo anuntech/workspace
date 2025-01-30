@@ -38,6 +38,15 @@ async function POSTHandler(req: NextRequest) {
 		return NextResponse.json({ error: "Workspace not found" }, { status: 404 });
 	}
 
+	if (body.type === "link") {
+		const link = workspace.links.find(
+			(link) => link._id.toString() === body.applicationId.toString(),
+		);
+		if (!link) {
+			return NextResponse.json({ error: "Link not found" }, { status: 404 });
+		}
+	}
+
 	if (
 		workspace.owner.toString() != session.user.id &&
 		!workspace.members.some(
@@ -179,14 +188,14 @@ async function GETHandler(req: NextRequest) {
 				);
 				return {
 					...link,
-					name: link.title,
-					applicationUrlType: link.urlType,
-					applicationUrl: link.url,
-					fields: link.fields,
-					icon: link.icon,
+					name: link?.title,
+					applicationUrlType: link?.urlType,
+					applicationUrl: link?.url,
+					fields: link?.fields,
+					icon: link?.icon,
 					type: "link",
-					id: link._id.toString(),
-					_id: link._id.toString(),
+					id: link?._id.toString(),
+					_id: link?._id.toString(),
 				};
 			}
 
