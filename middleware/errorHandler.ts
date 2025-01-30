@@ -12,24 +12,45 @@ export async function errorHandler(
 		const session = await getServerSession(authOptions);
 		const url = new URL(request.url);
 
-		const errorLog = new ErrorLog({
+		const errorDetails = {
 			route,
 			method: request.method,
 			error: error?.message || "Unknown error",
 			stack: error?.stack,
 			user: session?.user?.id,
 			workspace: url.searchParams.get("workspaceId"),
-			requestBody: request.body ? await request.json() : null,
+			requestBody: request.body ? await request.clone().json() : null,
 			queryParams: Object.fromEntries(url.searchParams),
-		});
+			timestamp: new Date(),
+			errorType: error?.name || "Error",
+			statusCode: error?.statusCode || 500,
+			headers: Object.fromEntries(request.headers),
+		};
 
+		const errorLog = new ErrorLog(errorDetails);
 		await errorLog.save();
+
+		if (process.env.NODE_ENV === "development") {
+			console.error("Error Details:", errorDetails);
+		}
 	} catch (loggingError) {
 		console.error("Failed to save error log:", loggingError);
 	}
 
 	return NextResponse.json(
-		{ error: error?.message || "An unexpected error occurred" },
-		{ status: 500 },
+		{
+			error: error?.message || "An unexpected error occurred",
+			...(process.env.NODE_ENV === "development" && {
+				stack: error?.stack,
+				details: error?.details,
+			}),
+		},
+		{
+			status: error?.statusCode || 500,
+			headers: {
+				"Content-Type": "application/json",
+				"X-Error-Type": error?.name || "InternalServerError",
+			},
+		},
 	);
 }
