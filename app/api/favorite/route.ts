@@ -85,7 +85,7 @@ async function POSTHandler(req: NextRequest) {
 	return NextResponse.json(myApplications);
 }
 
-export const POST = POSTHandler;
+export const POST = routeWrapper(POSTHandler, "/api/favorite");
 
 async function GETHandler(req: NextRequest) {
 	const { searchParams } = new URL(req.url);
