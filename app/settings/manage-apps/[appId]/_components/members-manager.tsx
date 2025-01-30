@@ -89,7 +89,7 @@ export function MembersManager({ params }: { params: { appId: string } }) {
 
 	const members = appMembersQuery.data?.data?.find((ap: any) => ap.appId);
 	return (
-		<div className="space-y-5 h-96">
+		<div className="space-y-5">
 			<section>
 				<h2 className="text-lg font-bold">
 					Adicionar membros para um aplicativo
