@@ -170,8 +170,6 @@ export default function AccountPage() {
 			<div className="flex flex-col items-center p-10">
 				<div className="w-full max-w-3xl space-y-5">
 					<form action="POST" onSubmit={handleSubmit(onSubmit)}>
-						<h1 className="text-2xl">Minhas configurações</h1>
-						<Separator />
 						<section className="grid grid-cols-2 gap-8 py-5">
 							<div>
 								<p>Avatar</p>

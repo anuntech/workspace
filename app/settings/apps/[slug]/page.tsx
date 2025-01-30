@@ -283,9 +283,6 @@ export default function AppPage({ params }: { params: { slug: string } }) {
 			return (
 				<div className="flex gap-2">
 					<UninstallButton />
-					<Button size="icon" variant="outline">
-						<Settings />
-					</Button>
 				</div>
 			);
 		} else {

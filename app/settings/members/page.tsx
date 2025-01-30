@@ -74,24 +74,22 @@ export default function MembersPage() {
 						</BreadcrumbItem>
 						<BreadcrumbSeparator className="hidden md:block" />
 						<BreadcrumbItem>
-							<BreadcrumbPage>Membros</BreadcrumbPage>
+							<BreadcrumbPage>
+								Membros{" "}
+								{!membersQuery.isPending &&
+								!plansQuery.isPending &&
+								plan?.membersLimit ? (
+									`(${membersQuantity}/${plan?.membersLimit})`
+								) : (
+									<Skeleton className="w-11" />
+								)}
+							</BreadcrumbPage>
 						</BreadcrumbItem>
 					</BreadcrumbList>
 				</Breadcrumb>
 			</header>
 			<main className="flex flex-col items-center p-10">
 				<div className="w-full max-w-3xl space-y-5">
-					<h1 className="text-2xl flex gap-3">
-						Membros{" "}
-						{!membersQuery.isPending &&
-						!plansQuery.isPending &&
-						plan?.membersLimit ? (
-							`(${membersQuantity}/${plan?.membersLimit})`
-						) : (
-							<Skeleton className="w-11" />
-						)}
-					</h1>
-					<Separator />
 					<Tabs defaultValue="members" className="space-y-10">
 						<TabsList>
 							<TabsTrigger value="members">Membros</TabsTrigger>
