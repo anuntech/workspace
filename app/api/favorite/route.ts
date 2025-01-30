@@ -14,12 +14,23 @@ async function POSTHandler(req: NextRequest) {
 	const body = await req.json();
 	const session = await getServerSession(authOptions);
 
-	const application = await Applications.findById(body.applicationId);
-	if (!application) {
+	// Verificar se o tipo é válido
+	if (!["application", "link"].includes(body.type)) {
 		return NextResponse.json(
-			{ error: "Application not found" },
-			{ status: 404 },
+			{ error: "Invalid type, must be 'application' or 'link'" },
+			{ status: 400 },
 		);
+	}
+
+	// Verificar se o application/link existe apenas quando for do tipo 'application'
+	if (body.type === "application") {
+		const application = await Applications.findById(body.applicationId);
+		if (!application) {
+			return NextResponse.json(
+				{ error: "Application not found" },
+				{ status: 404 },
+			);
+		}
 	}
 
 	const workspace = await Workspace.findById(body.workspaceId);
@@ -46,17 +57,18 @@ async function POSTHandler(req: NextRequest) {
 
 	const favoriteIndex = myApplications.favoriteApplications.findIndex(
 		(a) =>
-			a.applicationId.toString() === application.id.toString() &&
-			a.userId.toString() === session.user.id,
+			a.applicationId.toString() === body.applicationId.toString() &&
+			a.userId.toString() === session.user.id &&
+			a.type === body.type,
 	);
 
 	if (favoriteIndex == -1) {
 		myApplications?.favoriteApplications.push({
 			userId: new mongoose.Types.ObjectId(session.user.id),
-			applicationId: application.id,
+			applicationId: body.applicationId,
+			type: body.type,
 		});
 		await myApplications.save();
-
 		return NextResponse.json(myApplications);
 	}
 
