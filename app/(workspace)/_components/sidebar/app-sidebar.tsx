@@ -32,7 +32,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const workspace = urlParams.get("workspace");
 	const applicationsQuery = useQuery({
 		queryKey: ["/favorite"],
-		queryFn: async () => api.get(`/api//favorite?workspaceId=${workspace}`),
+		queryFn: async () => api.get(`/api/favorite?workspaceId=${workspace}`),
 	});
 
 	const applicationsAllowQuery = useQuery({

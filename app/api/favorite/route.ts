@@ -146,30 +146,30 @@ async function GETHandler(req: NextRequest) {
 	const isNotAdminAndOwner =
 		memberRole !== "admin" && workspace.owner.toString() !== session.user.id;
 
-	// if (isNotAdminAndOwner) {
-	// 	// This is the condition that allows the user to see only the applications that he has permission to see
-	// 	const applicationsIdsThatUserHasPermission =
-	// 		workspace.rules.allowedMemberApps
-	// 			.filter(
-	// 				(app) =>
-	// 					!!app.members.find((m) => m.memberId.toString() == session.user.id),
-	// 			)
-	// 			.map((app) => app.appId.toString());
+	if (isNotAdminAndOwner) {
+		// This is the condition that allows the user to see only the applications that he has permission to see
+		const applicationsIdsThatUserHasPermission =
+			workspace.rules.allowedMemberApps
+				.filter(
+					(app) =>
+						!!app.members.find((m) => m.memberId.toString() == session.user.id),
+				)
+				.map((app) => app.appId.toString());
 
-	// 	const linksIdsThatUserHasPermission = workspace.links
-	// 		.filter((link) =>
-	// 			link.membersAllowed.some((m) => m.toString() == session.user.id),
-	// 		)
-	// 		.map((link) => link._id.toString());
+		const linksIdsThatUserHasPermission = workspace.links
+			.filter((link) =>
+				link.membersAllowed.some((m) => m.toString() == session.user.id),
+			)
+			.map((link) => link._id.toString());
 
-	// 	userFavorites = userFavorites.filter(
-	// 		(app) =>
-	// 			applicationsIdsThatUserHasPermission.includes(
-	// 				app.applicationId._id.toString(),
-	// 			) ||
-	// 			linksIdsThatUserHasPermission.includes(app.applicationId.toString()),
-	// 	);
-	// }
+		userFavorites = userFavorites.filter(
+			(app) =>
+				applicationsIdsThatUserHasPermission.includes(
+					app.applicationId._id.toString(),
+				) ||
+				linksIdsThatUserHasPermission.includes(app.applicationId.toString()),
+		);
+	}
 
 	const favorites = await Promise.all(
 		userFavorites.map(async (fav) => {
@@ -177,7 +177,15 @@ async function GETHandler(req: NextRequest) {
 				const link = workspace.links.find(
 					(link) => link._id.toString() === fav.applicationId.toString(),
 				);
-				return link;
+				return {
+					...link,
+					name: link.title,
+					applicationUrlType: link.urlType,
+					applicationUrl: link.url,
+					fields: link.fields,
+					icon: link.icon,
+					type: "link",
+				};
 			}
 
 			return await Applications.findById(fav.applicationId);
