@@ -51,9 +51,16 @@ async function POSTHandler(req: NextRequest) {
 	}
 
 	await connectMongo();
-	const myApplications = await MyApplications.findOne({
+	let myApplications = await MyApplications.findOne({
 		workspaceId: new mongoose.Types.ObjectId(body.workspaceId),
 	});
+
+	if (!myApplications) {
+		myApplications = await MyApplications.create({
+			workspaceId: new mongoose.Types.ObjectId(body.workspaceId),
+			favoriteApplications: [],
+		});
+	}
 
 	const favoriteIndex = myApplications.favoriteApplications.findIndex(
 		(a) =>
@@ -78,7 +85,7 @@ async function POSTHandler(req: NextRequest) {
 	return NextResponse.json(myApplications);
 }
 
-export const POST = routeWrapper(POSTHandler, "/api/favorite");
+export const POST = POSTHandler;
 
 async function GETHandler(req: NextRequest) {
 	const { searchParams } = new URL(req.url);
@@ -119,7 +126,7 @@ async function GETHandler(req: NextRequest) {
 
 	const myApplications = await MyApplications.findOne({
 		workspaceId: new mongoose.Types.ObjectId(workspaceId),
-	}).populate("favoriteApplications.applicationId");
+	});
 
 	if (!myApplications) {
 		return NextResponse.json(
@@ -139,24 +146,48 @@ async function GETHandler(req: NextRequest) {
 	const isNotAdminAndOwner =
 		memberRole !== "admin" && workspace.owner.toString() !== session.user.id;
 
-	if (isNotAdminAndOwner) {
-		// This is the condition that allows the user to see only the applications that he has permission to see
-		const applicationsIdsThatUserHasPermission =
-			workspace.rules.allowedMemberApps
-				.filter(
-					(app) =>
-						!!app.members.find((m) => m.memberId.toString() == session.user.id),
-				)
-				.map((app) => app.appId.toString());
-		userFavorites = userFavorites.filter((app) =>
-			applicationsIdsThatUserHasPermission.includes(
-				app.applicationId._id.toString(),
-			),
-		);
-	}
+	// if (isNotAdminAndOwner) {
+	// 	// This is the condition that allows the user to see only the applications that he has permission to see
+	// 	const applicationsIdsThatUserHasPermission =
+	// 		workspace.rules.allowedMemberApps
+	// 			.filter(
+	// 				(app) =>
+	// 					!!app.members.find((m) => m.memberId.toString() == session.user.id),
+	// 			)
+	// 			.map((app) => app.appId.toString());
+
+	// 	const linksIdsThatUserHasPermission = workspace.links
+	// 		.filter((link) =>
+	// 			link.membersAllowed.some((m) => m.toString() == session.user.id),
+	// 		)
+	// 		.map((link) => link._id.toString());
+
+	// 	userFavorites = userFavorites.filter(
+	// 		(app) =>
+	// 			applicationsIdsThatUserHasPermission.includes(
+	// 				app.applicationId._id.toString(),
+	// 			) ||
+	// 			linksIdsThatUserHasPermission.includes(app.applicationId.toString()),
+	// 	);
+	// }
+
+	const favorites = await Promise.all(
+		userFavorites.map(async (fav) => {
+			if (fav.type === "link") {
+				const link = workspace.links.find(
+					(link) => link._id.toString() === fav.applicationId.toString(),
+				);
+				return link;
+			}
+
+			return await Applications.findById(fav.applicationId);
+		}),
+	);
 
 	return NextResponse.json({
-		favorites: userFavorites,
+		favorites: favorites.map((fav) => ({
+			applicationId: fav,
+		})),
 	});
 }
 

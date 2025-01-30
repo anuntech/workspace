@@ -68,7 +68,7 @@ export function DropdownLink({
 	const changeFavoriteMutation = useMutation({
 		mutationFn: async () =>
 			api.post(`/api/favorite`, {
-				linkId,
+				applicationId: linkId,
 				workspaceId: workspace,
 				type: "link",
 			}),
