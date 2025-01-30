@@ -10,6 +10,7 @@ const ErrorLogSchema = new mongoose.Schema(
 		workspace: { type: mongoose.Schema.Types.ObjectId, ref: "Workspace" },
 		requestBody: { type: Object },
 		queryParams: { type: Object },
+		expiresAt: { type: Date, expires: "120d" },
 	},
 	{ timestamps: true },
 );
