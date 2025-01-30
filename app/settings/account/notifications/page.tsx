@@ -96,11 +96,7 @@ export default function NotificationsPage() {
 			</header>
 
 			<div className="py-6 px-4">
-				<div className="flex items-center mb-4">
-					<h1 className="text-2xl font-semibold">Suas notificações</h1>
-				</div>
-
-				<div className="mt-4 flex gap-4">
+				<div className="mt-4 flex gap-2">
 					<Button variant="outline" size="sm">
 						Todas
 					</Button>

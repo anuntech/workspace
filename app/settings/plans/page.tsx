@@ -51,8 +51,6 @@ export default function PlansPage() {
 			</header>
 			<div className="flex flex-col items-center p-10">
 				<div className="w-full max-w-3xl space-y-5">
-					<h1 className="text-2xl">Planos</h1>
-					<Separator />
 					<section className="grid grid-cols-3 py-5">
 						<div className="space-y-5">
 							<div className="space-y-3 pr-3 pt-3">

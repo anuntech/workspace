@@ -49,9 +49,7 @@ export default function MembersPage({ params }: { params: { appId: string } }) {
 				</Breadcrumb>
 			</header>
 			<main className="flex flex-col items-center p-10">
-				<div className="w-full max-w-3xl space-y-5 h-full">
-					<h1 className="text-2xl flex gap-3">Membros</h1>
-					<Separator />
+				<div className="w-full max-w-3xl space-y-5">
 					<Tabs defaultValue="members-manager" className="space-y-10">
 						<TabsList>
 							<TabsTrigger value="members-manager">
