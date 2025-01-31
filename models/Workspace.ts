@@ -202,17 +202,6 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
 					url: {
 						type: String,
 						maxlength: [500, "A URL não pode ter mais de 1000 caracteres."],
-						validate: {
-							validator: (v: string) => {
-								try {
-									new URL(v);
-									return true;
-								} catch {
-									return false;
-								}
-							},
-							message: "A URL deve ser válida.",
-						},
 						trim: true,
 					},
 					icon: {
