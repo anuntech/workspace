@@ -48,9 +48,11 @@ export function DropdownApplication({
 		queryFn: async () => api.get(`/api/favorite?workspaceId=${workspace}`),
 	});
 
+	console.log(applicationsQuery.data?.data.favorites, "AQUIII");
+	console.log(applicationId, "AQUIII");
+
 	const isThisAnFavoriteApp = applicationsQuery.data?.data.favorites.some(
-		(a: any) =>
-			a.userId == session.data?.user?.id && a.applicationId.id == applicationId,
+		(a: any) => a.applicationId.id == applicationId,
 	);
 
 	const changeFavoriteMutation = useMutation({
