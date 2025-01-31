@@ -20,7 +20,7 @@ async function DELETEHandler(
 
 	const { workspaceId } = params;
 
-	if (!workspaceId || mongoose.Types.ObjectId.isValid(workspaceId)) {
+	if (!workspaceId) {
 		return NextResponse.json(
 			{ error: "Invalid workspace ID" },
 			{ status: 400 },
@@ -58,7 +58,7 @@ async function GETHandler(
 
 	const { workspaceId } = params;
 
-	if (!workspaceId || mongoose.Types.ObjectId.isValid(workspaceId)) {
+	if (!workspaceId) {
 		return NextResponse.json(
 			{ error: "Invalid workspace ID" },
 			{ status: 400 },
