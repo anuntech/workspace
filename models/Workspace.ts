@@ -191,9 +191,28 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
 				title: {
 					type: String,
 					required: [true, "O título do link é obrigatório."],
+					maxlength: [
+						30,
+						"O título do link não pode ter mais de 30 caracteres.",
+					],
+					minlength: [1, "O título do link não pode estar vazio."],
+					trim: true,
 				},
 				url: {
 					type: String,
+					maxlength: [500, "A URL não pode ter mais de 500 caracteres."],
+					validate: {
+						validator: (v: string) => {
+							try {
+								new URL(v);
+								return true;
+							} catch {
+								return false;
+							}
+						},
+						message: "A URL deve ser válida.",
+					},
+					trim: true,
 				},
 				icon: {
 					type: {
@@ -205,6 +224,7 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
 						type: String,
 						trim: true,
 						maxlength: MAX_ICON_VALUE_LENGTH,
+						required: [true, "O valor do ícone é obrigatório."],
 					},
 				},
 				urlType: {
@@ -218,10 +238,22 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
 						key: {
 							type: String,
 							required: true,
+							maxlength: [
+								50,
+								"A chave do campo não pode ter mais de 50 caracteres.",
+							],
+							minlength: [1, "A chave do campo não pode estar vazia."],
+							trim: true,
 						},
 						value: {
 							type: String,
 							required: true,
+							maxlength: [
+								500,
+								"O valor do campo não pode ter mais de 500 caracteres.",
+							],
+							minlength: [1, "O valor do campo não pode estar vazio."],
+							trim: true,
 						},
 						redirectType: {
 							type: String,
