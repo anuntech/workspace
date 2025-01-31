@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import connectMongo from "@/libs/mongoose";
 import Workspace from "@/models/Workspace";
 import { routeWrapper } from "@/libs/routeWrapper";
+import mongoose from "mongoose";
 
 export const GET = routeWrapper(
 	GETHandler,
@@ -17,6 +18,13 @@ async function GETHandler(
 	const session = await getServerSession(authOptions);
 
 	const { workspaceId } = params;
+
+	if (!mongoose.Types.ObjectId.isValid(workspaceId)) {
+		return NextResponse.json(
+			{ error: "Invalid workspace ID" },
+			{ status: 400 },
+		);
+	}
 
 	await connectMongo();
 
