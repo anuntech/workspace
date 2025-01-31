@@ -203,10 +203,14 @@ async function GETHandler(req: NextRequest) {
 		}),
 	);
 
-	return NextResponse.json({
-		favorites: favorites.map((fav) => ({
+	const formatedFavorites = favorites
+		.map((fav) => ({
 			applicationId: fav,
-		})),
+		}))
+		.filter((fav) => fav.applicationId.id);
+
+	return NextResponse.json({
+		favorites: formatedFavorites,
 	});
 }
 

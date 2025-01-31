@@ -181,6 +181,10 @@ function AlertDialogDemo({
 				queryKey: ["workspace/links"],
 				type: "all",
 			});
+			await queryClient.refetchQueries({
+				queryKey: ["/favorite"],
+				type: "all",
+			});
 		},
 	});
 
