@@ -58,7 +58,7 @@ export function DropdownLink({
 
 	const applicationsQuery = useQuery({
 		queryKey: ["/favorite"],
-		queryFn: async () => api.get(`/api//favorite?workspaceId=${workspace}`),
+		queryFn: async () => api.get(`/api/favorite?workspaceId=${workspace}`),
 	});
 
 	const isThisAnFavoriteApp = applicationsQuery.data?.data.favorites.some(
@@ -67,9 +67,10 @@ export function DropdownLink({
 
 	const changeFavoriteMutation = useMutation({
 		mutationFn: async () =>
-			api.post(`/api//favorite`, {
-				linkId,
+			api.post(`/api/favorite`, {
+				applicationId: linkId,
 				workspaceId: workspace,
+				type: "link",
 			}),
 		onSuccess: async () => {
 			await queryClient.refetchQueries({
@@ -107,11 +108,10 @@ export function DropdownLink({
 				</DropdownMenuTrigger>
 				<DropdownMenuContent className="w-56">
 					<DropdownMenuGroup>
-						{/* Disable feature of favorite links while not working */}
-						{/* <DropdownMenuItem onClick={() => changeFavoriteMutation.mutate()}>
+						<DropdownMenuItem onClick={() => changeFavoriteMutation.mutate()}>
 							<Heart />
 							{isThisAnFavoriteApp ? "Remover dos" : "Adicionar aos"} favoritos
-						</DropdownMenuItem> */}
+						</DropdownMenuItem>
 						{roleQuery.data?.data?.role !== "member" &&
 							!roleQuery.isPending && (
 								<>

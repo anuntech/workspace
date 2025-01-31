@@ -48,7 +48,7 @@ async function POSTHandler(request: Request) {
 	const profilePhotoId = randomUUID().toString();
 
 	let icon: {
-		type: "image" | "emoji" | "lucide";
+		type: "image" | "emoji" | "lucide" | "favicon";
 		value: string;
 	};
 
@@ -74,7 +74,7 @@ async function POSTHandler(request: Request) {
 			break;
 		default:
 			icon = {
-				type: body.get("iconType") as "image" | "emoji" | "lucide",
+				type: body.get("iconType") as "image" | "emoji" | "lucide" | "favicon",
 				value: body.get("icon") as string,
 			};
 	}

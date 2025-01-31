@@ -9,9 +9,9 @@ import { IconComponent } from "./get-lucide-icons";
 interface AvatarSelectorProps {
 	onAvatarChange: (avatar: {
 		value: string;
-		type: "image" | "emoji" | "lucide";
+		type: "image" | "emoji" | "lucide" | "favicon";
 	}) => void;
-	data?: { value: string; type: "image" | "emoji" | "lucide" };
+	data?: { value: string; type: "image" | "emoji" | "lucide" | "favicon" };
 	setOnLoad?: Dispatch<SetStateAction<boolean>>;
 	imageUrlWithoutS3?: string;
 	emojiSize?: string;
@@ -27,7 +27,7 @@ export function AvatarSelector({
 }: AvatarSelectorProps) {
 	const handleAvatarChange = (newAvatar: {
 		value: string;
-		type: "image" | "emoji" | "lucide";
+		type: "image" | "emoji" | "lucide" | "favicon";
 	}) => {
 		onAvatarChange(newAvatar);
 	};
@@ -52,9 +52,15 @@ export function AvatarSelector({
 			);
 		}
 
-		const src = data?.value
+		let src = "";
+
+		src = data?.value
 			? getS3Image(data.value)
 			: imageUrlWithoutS3 || "/shad.png";
+
+		if (data?.type === "favicon") {
+			src = data.value || "/shad.png";
+		}
 
 		return (
 			<img
@@ -72,10 +78,10 @@ export function AvatarSelector({
 
 				<div
 					className="
-            absolute inset-0 flex items-center justify-center 
+            absolute inset-0 flex items-center justify-center
             bg-black bg-opacity-50 opacity-0
-            group-hover:opacity-100 
-            rounded-md 
+            group-hover:opacity-100
+            rounded-md
             transition-opacity duration-300
           "
 				>

@@ -14,17 +14,37 @@ async function POSTHandler(req: NextRequest) {
 	const body = await req.json();
 	const session = await getServerSession(authOptions);
 
-	const application = await Applications.findById(body.applicationId);
-	if (!application) {
+	// Verificar se o tipo é válido
+	if (!["application", "link"].includes(body.type)) {
 		return NextResponse.json(
-			{ error: "Application not found" },
-			{ status: 404 },
+			{ error: "Invalid type, must be 'application' or 'link'" },
+			{ status: 400 },
 		);
+	}
+
+	// Verificar se o application/link existe apenas quando for do tipo 'application'
+	if (body.type === "application") {
+		const application = await Applications.findById(body.applicationId);
+		if (!application) {
+			return NextResponse.json(
+				{ error: "Application not found" },
+				{ status: 404 },
+			);
+		}
 	}
 
 	const workspace = await Workspace.findById(body.workspaceId);
 	if (!workspace) {
 		return NextResponse.json({ error: "Workspace not found" }, { status: 404 });
+	}
+
+	if (body.type === "link") {
+		const link = workspace.links.find(
+			(link) => link._id.toString() === body.applicationId.toString(),
+		);
+		if (!link) {
+			return NextResponse.json({ error: "Link not found" }, { status: 404 });
+		}
 	}
 
 	if (
@@ -40,23 +60,31 @@ async function POSTHandler(req: NextRequest) {
 	}
 
 	await connectMongo();
-	const myApplications = await MyApplications.findOne({
+	let myApplications = await MyApplications.findOne({
 		workspaceId: new mongoose.Types.ObjectId(body.workspaceId),
 	});
 
+	if (!myApplications) {
+		myApplications = await MyApplications.create({
+			workspaceId: new mongoose.Types.ObjectId(body.workspaceId),
+			favoriteApplications: [],
+		});
+	}
+
 	const favoriteIndex = myApplications.favoriteApplications.findIndex(
 		(a) =>
-			a.applicationId.toString() === application.id.toString() &&
-			a.userId.toString() === session.user.id,
+			a.applicationId.toString() === body.applicationId.toString() &&
+			a.userId.toString() === session.user.id &&
+			a.type === body.type,
 	);
 
 	if (favoriteIndex == -1) {
 		myApplications?.favoriteApplications.push({
 			userId: new mongoose.Types.ObjectId(session.user.id),
-			applicationId: application.id,
+			applicationId: body.applicationId,
+			type: body.type,
 		});
 		await myApplications.save();
-
 		return NextResponse.json(myApplications);
 	}
 
@@ -107,7 +135,7 @@ async function GETHandler(req: NextRequest) {
 
 	const myApplications = await MyApplications.findOne({
 		workspaceId: new mongoose.Types.ObjectId(workspaceId),
-	}).populate("favoriteApplications.applicationId");
+	});
 
 	if (!myApplications) {
 		return NextResponse.json(
@@ -136,15 +164,49 @@ async function GETHandler(req: NextRequest) {
 						!!app.members.find((m) => m.memberId.toString() == session.user.id),
 				)
 				.map((app) => app.appId.toString());
-		userFavorites = userFavorites.filter((app) =>
-			applicationsIdsThatUserHasPermission.includes(
-				app.applicationId._id.toString(),
-			),
+
+		const linksIdsThatUserHasPermission = workspace.links
+			.filter((link) =>
+				link.membersAllowed.some((m) => m.toString() == session.user.id),
+			)
+			.map((link) => link._id.toString());
+
+		userFavorites = userFavorites.filter(
+			(app) =>
+				applicationsIdsThatUserHasPermission.includes(
+					app.applicationId._id.toString(),
+				) ||
+				linksIdsThatUserHasPermission.includes(app.applicationId.toString()),
 		);
 	}
 
+	const favorites = await Promise.all(
+		userFavorites.map(async (fav) => {
+			if (fav.type === "link") {
+				const link = workspace.links.find(
+					(link) => link._id.toString() === fav.applicationId.toString(),
+				);
+				return {
+					...link,
+					name: link?.title,
+					applicationUrlType: link?.urlType,
+					applicationUrl: link?.url,
+					fields: link?.fields,
+					icon: link?.icon,
+					type: "link",
+					id: link?._id.toString(),
+					_id: link?._id.toString(),
+				};
+			}
+
+			return await Applications.findById(fav.applicationId);
+		}),
+	);
+
 	return NextResponse.json({
-		favorites: userFavorites,
+		favorites: favorites.map((fav) => ({
+			applicationId: fav,
+		})),
 	});
 }
 

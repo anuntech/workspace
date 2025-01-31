@@ -70,7 +70,7 @@ export function SidebarApplication({
 	return (
 		<SidebarMenuItem>
 			<Accordion type="multiple">
-				{data.fields.length > 0 ? (
+				{data.fields?.length > 0 ? (
 					<AccordionItem value="item-1" className="border-none">
 						<SidebarMenuButton
 							asChild
@@ -94,6 +94,12 @@ export function SidebarApplication({
 												className="size-5 pointer-events-none"
 												name={data.icon.value}
 											/>
+										)}
+										{data.icon?.type === "favicon" && (
+											<Avatar className="size-5">
+												<AvatarImage src={data.icon?.value || data.avatarSrc} />
+												<AvatarFallback>{data.avatarFallback}</AvatarFallback>
+											</Avatar>
 										)}
 										{(data.icon?.type === "image" || !data.icon) && (
 											<Avatar className="size-5">
@@ -189,6 +195,12 @@ export function SidebarApplication({
 											className="size-5 pointer-events-none"
 											name={data.icon.value}
 										/>
+									)}
+									{data.icon?.type === "favicon" && (
+										<Avatar className="size-5">
+											<AvatarImage src={data.icon?.value || data.avatarSrc} />
+											<AvatarFallback>{data.avatarFallback}</AvatarFallback>
+										</Avatar>
 									)}
 									{(data.icon?.type === "image" || !data.icon) && (
 										<Avatar className="size-5">

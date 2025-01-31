@@ -8,6 +8,7 @@ export interface IMyApplications extends Document {
 	favoriteApplications: {
 		applicationId: mongoose.Types.ObjectId;
 		userId: mongoose.Types.ObjectId;
+		type: "application" | "link";
 	}[];
 }
 
@@ -31,11 +32,15 @@ const myApplicationSchema = new mongoose.Schema<IMyApplications>(
 			{
 				applicationId: {
 					type: mongoose.Types.ObjectId,
-					ref: "Applications",
 				},
 				userId: {
 					type: mongoose.Types.ObjectId,
 					ref: "User",
+				},
+				type: {
+					type: String,
+					enum: ["application", "link"],
+					required: true,
 				},
 			},
 		],

@@ -22,12 +22,12 @@ export function NavFavorites() {
 
 	const applicationsQuery = useQuery({
 		queryKey: ["/favorite"],
-		queryFn: async () => api.get(`/api//favorite?workspaceId=${workspace}`),
+		queryFn: async () => api.get(`/api/favorite?workspaceId=${workspace}`),
 	});
 
 	const setPositionsMutation = useMutation({
 		mutationFn: async (data: any) =>
-			api.post(`/api//favorite/set-positions`, {
+			api.post(`/api/favorite/set-positions`, {
 				data,
 				workspaceId: workspace,
 			}),
@@ -36,6 +36,8 @@ export function NavFavorites() {
 	if (applicationsQuery.isPending) {
 		return <Skeleton className="h-7 mx-2" />;
 	}
+
+	console.log(applicationsQuery.data.data);
 
 	let enabledApplications: any;
 
@@ -111,6 +113,7 @@ export function NavFavorites() {
 													key={data.name}
 													data={data}
 													workspace={workspace}
+													isLink={data.type === "link"}
 												/>
 											</div>
 										)}

@@ -132,7 +132,12 @@ async function DELETEHandler(request: Request) {
 		return NextResponse.json({ error: "Workspace not found" }, { status: 404 });
 	}
 
-	if (worksPace.owner.toString() !== session.user.id) {
+	const isAuthorizedToInviteUser = getAuthorizationToInviteUser(
+		worksPace,
+		session,
+	);
+
+	if (!isAuthorizedToInviteUser) {
 		return NextResponse.json(
 			{ error: "You do not have permission to remove this invite" },
 			{ status: 403 },

@@ -3,7 +3,7 @@ export interface LinkFormData {
 		icon: FormData | null;
 		imageUrlWithoutS3: string;
 		emojiAvatar: string;
-		emojiAvatarType: "emoji" | "lucide" | "image";
+		emojiAvatarType: "emoji" | "lucide" | "image" | "favicon";
 		galleryPhotos: FileList;
 	};
 	principalLink: {
