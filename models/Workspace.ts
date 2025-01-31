@@ -234,36 +234,44 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
 						default: "none",
 						required: true,
 					},
-					fields: [
-						{
-							key: {
-								type: String,
-								required: true,
-								maxlength: [
-									50,
-									"A chave do campo não pode ter mais de 50 caracteres.",
-								],
-								minlength: [1, "A chave do campo não pode estar vazia."],
-								trim: true,
+					fields: {
+						type: [
+							{
+								key: {
+									type: String,
+									required: true,
+									maxlength: [
+										50,
+										"A chave do campo não pode ter mais de 50 caracteres.",
+									],
+									minlength: [1, "A chave do campo não pode estar vazia."],
+									trim: true,
+								},
+								value: {
+									type: String,
+									required: true,
+									maxlength: [
+										500,
+										"O valor do campo não pode ter mais de 500 caracteres.",
+									],
+									minlength: [1, "O valor do campo não pode estar vazio."],
+									trim: true,
+								},
+								redirectType: {
+									type: String,
+									enum: ["iframe", "newWindow", "sameWindow"],
+									default: "iframe",
+									required: true,
+								},
 							},
-							value: {
-								type: String,
-								required: true,
-								maxlength: [
-									500,
-									"O valor do campo não pode ter mais de 500 caracteres.",
-								],
-								minlength: [1, "O valor do campo não pode estar vazio."],
-								trim: true,
+						],
+						validate: {
+							validator: function (fields: any[]) {
+								return fields.length <= 20;
 							},
-							redirectType: {
-								type: String,
-								enum: ["iframe", "newWindow", "sameWindow"],
-								default: "iframe",
-								required: true,
-							},
+							message: "Cada link pode ter no máximo 20 campos.",
 						},
-					],
+					},
 					membersAllowed: {
 						type: [mongoose.Schema.Types.ObjectId],
 						ref: "User",
