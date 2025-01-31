@@ -30,4 +30,4 @@ jobs:
           [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
           nvm install 21
           nvm use 21
-          npm run build && docker compose up -d --build
+          npm run build
