@@ -14,14 +14,6 @@ const nextConfig = {
 		],
 	},
 	reactStrictMode: false,
-	webpack: (config, { isServer }) => {
-		if (!isServer) {
-			config.watchOptions = {
-				ignored: [/node_modules/, /\.next/],
-			};
-		}
-		return config;
-	},
 };
 
 module.exports = nextConfig;
