@@ -5,6 +5,7 @@ import connectMongo from "@/libs/mongoose";
 import Workspace from "@/models/Workspace";
 import MyApplications from "@/models/MyApplications";
 import { routeWrapper } from "@/libs/routeWrapper";
+import mongoose from "mongoose";
 
 export const DELETE = routeWrapper(
 	DELETEHandler,
@@ -18,6 +19,13 @@ async function DELETEHandler(
 	const session = await getServerSession(authOptions);
 
 	const { workspaceId } = params;
+
+	if (!workspaceId) {
+		return NextResponse.json(
+			{ error: "Invalid workspace ID" },
+			{ status: 400 },
+		);
+	}
 
 	await connectMongo();
 
@@ -49,6 +57,13 @@ async function GETHandler(
 	const session = await getServerSession(authOptions);
 
 	const { workspaceId } = params;
+
+	if (!workspaceId) {
+		return NextResponse.json(
+			{ error: "Invalid workspace ID" },
+			{ status: 400 },
+		);
+	}
 
 	await connectMongo();
 

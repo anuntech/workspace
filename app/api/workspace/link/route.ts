@@ -6,6 +6,7 @@ import { authOptions } from "@/libs/next-auth";
 import { routeWrapper } from "@/libs/routeWrapper";
 import { s3Client } from "@/libs/s3-client";
 import Applications from "@/models/Applications";
+import MyApplications from "@/models/MyApplications";
 import User from "@/models/User";
 import Workspace from "@/models/Workspace";
 import { PutObjectCommand, PutObjectCommandInput } from "@aws-sdk/client-s3";
@@ -210,6 +211,19 @@ async function DELETEHandler(request: Request) {
 
 	workspace.links.splice(linkIndex, 1);
 	await workspace.save();
+
+	await MyApplications.findOneAndUpdate(
+		{
+			workspaceId: workspace.id,
+		},
+		{
+			$pull: {
+				favoriteApplications: {
+					applicationId: linkId,
+				},
+			},
+		},
+	);
 
 	return NextResponse.json({ links: workspace.links || [] });
 }

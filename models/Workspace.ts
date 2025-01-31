@@ -86,25 +86,34 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
 		},
 		members: {
 			type: [
-				{
+				new mongoose.Schema({
 					memberId: {
 						type: mongoose.Schema.Types.ObjectId,
 						ref: "User",
 						required: true,
-						unique: true,
 					},
 					role: {
 						type: String,
 						enum: ["admin", "member"],
 						required: true,
 					},
-				},
+				}),
 			],
+			validate: {
+				validator: function (members: any[]) {
+					const uniqueMemberIds = new Set(
+						members.map((member) => member.memberId.toString()),
+					);
+					return uniqueMemberIds.size === members.length;
+				},
+				message:
+					"Um membro não pode ser adicionado mais de uma vez ao workspace.",
+			},
 			default: [],
 		},
 		invitedMembersEmail: {
 			type: [
-				{
+				new mongoose.Schema({
 					invitedAt: {
 						type: Date,
 						default: Date.now,
@@ -116,10 +125,19 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
 							validator: (email: string) => EMAIL_REGEX.test(email),
 							message: "O email é inválido.",
 						},
-						unique: true,
 					},
-				},
+				}),
 			],
+			validate: {
+				validator: function (invites: any[]) {
+					const uniqueEmails = new Set(
+						invites.map((invite) => invite.email.toLowerCase()),
+					);
+					return uniqueEmails.size === invites.length;
+				},
+				message:
+					"Um email não pode ser convidado mais de uma vez para o workspace.",
+			},
 			default: [],
 		},
 		plan: {
@@ -168,58 +186,89 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
 				},
 			],
 		},
-		links: [
-			{
-				title: {
-					type: String,
-					required: [true, "O título do link é obrigatório."],
-				},
-				url: {
-					type: String,
-				},
-				icon: {
-					type: {
+		links: {
+			type: [
+				{
+					title: {
 						type: String,
-						enum: ["image", "emoji", "lucide", "favicon"],
-						required: true,
-					},
-					value: {
-						type: String,
+						required: [true, "O título do link é obrigatório."],
+						maxlength: [
+							30,
+							"O título do link não pode ter mais de 30 caracteres.",
+						],
+						minlength: [1, "O título do link não pode estar vazio."],
 						trim: true,
-						maxlength: MAX_ICON_VALUE_LENGTH,
 					},
-				},
-				urlType: {
-					type: String,
-					enum: ["none", "iframe", "newWindow", "sameWindow"],
-					default: "none",
-					required: true,
-				},
-				fields: [
-					{
-						key: {
+					url: {
+						type: String,
+						maxlength: [500, "A URL não pode ter mais de 1000 caracteres."],
+						trim: true,
+					},
+					icon: {
+						type: {
 							type: String,
+							enum: ["image", "emoji", "lucide", "favicon"],
 							required: true,
 						},
 						value: {
 							type: String,
-							required: true,
-						},
-						redirectType: {
-							type: String,
-							enum: ["iframe", "newWindow", "sameWindow"],
-							default: "iframe",
-							required: true,
+							trim: true,
+							maxlength: MAX_ICON_VALUE_LENGTH,
+							required: [true, "O valor do ícone é obrigatório."],
 						},
 					},
-				],
-				membersAllowed: {
-					type: [mongoose.Schema.Types.ObjectId],
-					ref: "User",
-					default: [],
+					urlType: {
+						type: String,
+						enum: ["none", "iframe", "newWindow", "sameWindow"],
+						default: "none",
+						required: true,
+					},
+					fields: {
+						type: [
+							{
+								key: {
+									type: String,
+									required: true,
+									maxlength: [
+										50,
+										"A chave do campo não pode ter mais de 50 caracteres.",
+									],
+									minlength: [1, "A chave do campo não pode estar vazia."],
+									trim: true,
+								},
+								value: {
+									type: String,
+									required: true,
+									maxlength: [
+										500,
+										"O valor do campo não pode ter mais de 500 caracteres.",
+									],
+									minlength: [1, "O valor do campo não pode estar vazio."],
+									trim: true,
+								},
+								redirectType: {
+									type: String,
+									enum: ["iframe", "newWindow", "sameWindow"],
+									default: "iframe",
+									required: true,
+								},
+							},
+						],
+						validate: {
+							validator: function (fields: any[]) {
+								return fields.length <= 20;
+							},
+							message: "Cada link pode ter no máximo 20 campos.",
+						},
+					},
+					membersAllowed: {
+						type: [mongoose.Schema.Types.ObjectId],
+						ref: "User",
+						default: [],
+					},
 				},
-			},
-		],
+			],
+		},
 	},
 	{
 		toJSON: { virtuals: true },
@@ -250,29 +299,45 @@ workspaceSchema.pre("save", async function (next) {
 
 workspaceSchema.pre("validate", async function (next) {
 	try {
-		const uniqueEmails = Array.from(
-			new Set(this.invitedMembersEmail.map((invite) => invite.email)),
-		);
-		this.invitedMembersEmail = uniqueEmails.map((email) => ({
-			email,
-			invitedAt:
-				this.invitedMembersEmail.find((invite) => invite.email === email)
-					?.invitedAt || new Date(),
-		}));
+		if (this.isModified("invitedMembersEmail")) {
+			const uniqueEmails = Array.from(
+				new Set(this.invitedMembersEmail.map((invite) => invite.email)),
+			);
+			this.invitedMembersEmail = uniqueEmails.map((email) => ({
+				email,
+				invitedAt:
+					this.invitedMembersEmail.find((invite) => invite.email === email)
+						?.invitedAt || new Date(),
+			}));
+		}
 
-		const uniqueMemberIds = Array.from(
-			new Set(this.members.map((member) => member.memberId.toString())),
-		);
-		this.members = uniqueMemberIds
-			.map((memberId) => ({
-				memberId: this.members.find(
-					(member) => member.memberId.toString() === memberId,
-				)?.memberId,
-				role: this.members.find(
-					(member) => member.memberId.toString() === memberId,
-				)?.role,
-			}))
-			.filter((member) => member.memberId && member.role) as any;
+		if (this.isModified("members")) {
+			const uniqueMemberIds = Array.from(
+				new Set(this.members.map((member) => member.memberId.toString())),
+			);
+			this.members = uniqueMemberIds
+				.map((memberId) => ({
+					memberId: this.members.find(
+						(member) => member.memberId.toString() === memberId,
+					)?.memberId,
+					role: this.members.find(
+						(member) => member.memberId.toString() === memberId,
+					)?.role,
+				}))
+				.filter((member) => member.memberId && member.role) as any;
+		}
+
+		// Add link validation
+		if (this.isModified("links")) {
+			const maxLinks = this.plan === "free" ? 10 : 50;
+			if (this.links.length > maxLinks) {
+				const errorMessage =
+					this.plan === "free"
+						? "Workspaces gratuitos podem ter no máximo 10 links. Atualize para premium para adicionar mais links."
+						: "Workspaces premium podem ter no máximo 50 links.";
+				this.invalidate("links", errorMessage);
+			}
+		}
 
 		next();
 	} catch (error) {

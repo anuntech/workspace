@@ -28,22 +28,36 @@ const myApplicationSchema = new mongoose.Schema<IMyApplications>(
 			],
 			default: [],
 		},
-		favoriteApplications: [
-			{
-				applicationId: {
-					type: mongoose.Types.ObjectId,
+		favoriteApplications: {
+			type: [
+				new mongoose.Schema({
+					applicationId: {
+						type: mongoose.Types.ObjectId,
+						required: true,
+					},
+					userId: {
+						type: mongoose.Types.ObjectId,
+						ref: "User",
+						required: true,
+					},
+					type: {
+						type: String,
+						enum: ["application", "link"],
+						required: true,
+					},
+				}),
+			],
+			validate: {
+				validator: function (favorites: any[]) {
+					const uniquePairs = new Set(
+						favorites.map((fav) => `${fav.applicationId}-${fav.userId}`),
+					);
+					return uniquePairs.size === favorites.length;
 				},
-				userId: {
-					type: mongoose.Types.ObjectId,
-					ref: "User",
-				},
-				type: {
-					type: String,
-					enum: ["application", "link"],
-					required: true,
-				},
+				message:
+					"Um usuário não pode favoritar o mesmo aplicativo mais de uma vez.",
 			},
-		],
+		},
 	},
 	{
 		toJSON: { virtuals: true },
