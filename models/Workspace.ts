@@ -186,90 +186,106 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
 				},
 			],
 		},
-		links: [
-			{
-				title: {
-					type: String,
-					required: [true, "O título do link é obrigatório."],
-					maxlength: [
-						30,
-						"O título do link não pode ter mais de 30 caracteres.",
-					],
-					minlength: [1, "O título do link não pode estar vazio."],
-					trim: true,
-				},
-				url: {
-					type: String,
-					maxlength: [500, "A URL não pode ter mais de 500 caracteres."],
-					validate: {
-						validator: (v: string) => {
-							try {
-								new URL(v);
-								return true;
-							} catch {
-								return false;
-							}
-						},
-						message: "A URL deve ser válida.",
-					},
-					trim: true,
-				},
-				icon: {
-					type: {
+		links: {
+			type: [
+				{
+					title: {
 						type: String,
-						enum: ["image", "emoji", "lucide", "favicon"],
-						required: true,
-					},
-					value: {
-						type: String,
+						required: [true, "O título do link é obrigatório."],
+						maxlength: [
+							30,
+							"O título do link não pode ter mais de 30 caracteres.",
+						],
+						minlength: [1, "O título do link não pode estar vazio."],
 						trim: true,
-						maxlength: MAX_ICON_VALUE_LENGTH,
-						required: [true, "O valor do ícone é obrigatório."],
 					},
-				},
-				urlType: {
-					type: String,
-					enum: ["none", "iframe", "newWindow", "sameWindow"],
-					default: "none",
-					required: true,
-				},
-				fields: [
-					{
-						key: {
+					url: {
+						type: String,
+						maxlength: [500, "A URL não pode ter mais de 1000 caracteres."],
+						validate: {
+							validator: (v: string) => {
+								try {
+									new URL(v);
+									return true;
+								} catch {
+									return false;
+								}
+							},
+							message: "A URL deve ser válida.",
+						},
+						trim: true,
+					},
+					icon: {
+						type: {
 							type: String,
+							enum: ["image", "emoji", "lucide", "favicon"],
 							required: true,
-							maxlength: [
-								50,
-								"A chave do campo não pode ter mais de 50 caracteres.",
-							],
-							minlength: [1, "A chave do campo não pode estar vazia."],
-							trim: true,
 						},
 						value: {
 							type: String,
-							required: true,
-							maxlength: [
-								500,
-								"O valor do campo não pode ter mais de 500 caracteres.",
-							],
-							minlength: [1, "O valor do campo não pode estar vazio."],
 							trim: true,
-						},
-						redirectType: {
-							type: String,
-							enum: ["iframe", "newWindow", "sameWindow"],
-							default: "iframe",
-							required: true,
+							maxlength: MAX_ICON_VALUE_LENGTH,
+							required: [true, "O valor do ícone é obrigatório."],
 						},
 					},
-				],
-				membersAllowed: {
-					type: [mongoose.Schema.Types.ObjectId],
-					ref: "User",
-					default: [],
+					urlType: {
+						type: String,
+						enum: ["none", "iframe", "newWindow", "sameWindow"],
+						default: "none",
+						required: true,
+					},
+					fields: [
+						{
+							key: {
+								type: String,
+								required: true,
+								maxlength: [
+									50,
+									"A chave do campo não pode ter mais de 50 caracteres.",
+								],
+								minlength: [1, "A chave do campo não pode estar vazia."],
+								trim: true,
+							},
+							value: {
+								type: String,
+								required: true,
+								maxlength: [
+									500,
+									"O valor do campo não pode ter mais de 500 caracteres.",
+								],
+								minlength: [1, "O valor do campo não pode estar vazio."],
+								trim: true,
+							},
+							redirectType: {
+								type: String,
+								enum: ["iframe", "newWindow", "sameWindow"],
+								default: "iframe",
+								required: true,
+							},
+						},
+					],
+					membersAllowed: {
+						type: [mongoose.Schema.Types.ObjectId],
+						ref: "User",
+						default: [],
+					},
+				},
+			],
+			validate: {
+				validator: function (links: any[]) {
+					if (this.plan === "free") {
+						return links.length <= 20;
+					}
+					return links.length <= 100;
+				},
+				message: function (props: any) {
+					if (this.plan === "free") {
+						return "Workspaces gratuitos podem ter no máximo 20 links. Atualize para premium para adicionar mais links.";
+					}
+					return "Workspaces premium podem ter no máximo 100 links.";
 				},
 			},
-		],
+		},
 	},
 	{
 		toJSON: { virtuals: true },
