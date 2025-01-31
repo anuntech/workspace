@@ -268,20 +268,6 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
 					},
 				},
 			],
-			validate: {
-				validator: function (links: any[]) {
-					if (this.plan === "free") {
-						return links.length <= 20;
-					}
-					return links.length <= 100;
-				},
-				message: function (props: any) {
-					if (this.plan === "free") {
-						return "Workspaces gratuitos podem ter no máximo 20 links. Atualize para premium para adicionar mais links.";
-					}
-					return "Workspaces premium podem ter no máximo 100 links.";
-				},
-			},
 		},
 	},
 	{
@@ -339,6 +325,18 @@ workspaceSchema.pre("validate", async function (next) {
 					)?.role,
 				}))
 				.filter((member) => member.memberId && member.role) as any;
+		}
+
+		// Add link validation
+		if (this.isModified("links")) {
+			const maxLinks = this.plan === "free" ? 10 : 50;
+			if (this.links.length > maxLinks) {
+				const errorMessage =
+					this.plan === "free"
+						? "Workspaces gratuitos podem ter no máximo 10 links. Atualize para premium para adicionar mais links."
+						: "Workspaces premium podem ter no máximo 50 links.";
+				this.invalidate("links", errorMessage);
+			}
 		}
 
 		next();

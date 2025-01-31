@@ -71,11 +71,18 @@ export function UserSearchInput({
 				<Input
 					placeholder="Selecione um usuário"
 					value={query}
-					onChange={(e) => setQuery(e.target.value)}
+					onChange={(e) => {
+						setQuery(e.target.value);
+						setIsDropdownOpen(true);
+					}}
 					onFocus={() => setIsDropdownOpen(true)}
 					onBlur={() => setTimeout(() => setIsDropdownOpen(false), 100)}
 					className="flex-1 min-w-[100px] border-none focus:ring-0 focus:outline-none shadow-none focus-visible:outline-none  focus-visible:ring-0"
-					disabled={membersQuery.isPending}
+					disabled={
+						membersQuery.isPending ||
+						membersQuery.isRefetching ||
+						membersQuery.isFetching
+					}
 				/>
 			</div>
 
