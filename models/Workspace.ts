@@ -86,25 +86,34 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
 		},
 		members: {
 			type: [
-				{
+				new mongoose.Schema({
 					memberId: {
 						type: mongoose.Schema.Types.ObjectId,
 						ref: "User",
 						required: true,
-						unique: true,
 					},
 					role: {
 						type: String,
 						enum: ["admin", "member"],
 						required: true,
 					},
-				},
+				}),
 			],
+			validate: {
+				validator: function (members: any[]) {
+					const uniqueMemberIds = new Set(
+						members.map((member) => member.memberId.toString()),
+					);
+					return uniqueMemberIds.size === members.length;
+				},
+				message:
+					"Um membro não pode ser adicionado mais de uma vez ao workspace.",
+			},
 			default: [],
 		},
 		invitedMembersEmail: {
 			type: [
-				{
+				new mongoose.Schema({
 					invitedAt: {
 						type: Date,
 						default: Date.now,
@@ -116,10 +125,19 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
 							validator: (email: string) => EMAIL_REGEX.test(email),
 							message: "O email é inválido.",
 						},
-						unique: true,
 					},
-				},
+				}),
 			],
+			validate: {
+				validator: function (invites: any[]) {
+					const uniqueEmails = new Set(
+						invites.map((invite) => invite.email.toLowerCase()),
+					);
+					return uniqueEmails.size === invites.length;
+				},
+				message:
+					"Um email não pode ser convidado mais de uma vez para o workspace.",
+			},
 			default: [],
 		},
 		plan: {
