@@ -28,8 +28,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const sideBar = useSidebar();
 	const session = useSession();
 	sideBar.setOpen(
-		localStorage?.getItem("sidebar") == "true" ||
-			localStorage?.getItem("sidebar") == undefined,
+		typeof window !== "undefined" &&
+			(localStorage?.getItem("sidebar") == "true" ||
+				localStorage?.getItem("sidebar") == undefined),
 	);
 
 	const urlParams = useSearchParams();
