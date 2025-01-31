@@ -11,7 +11,7 @@ import { UserSearchInput } from "@/components/user-search-input";
 import { IUser } from "@/models/User";
 import { Button } from "@/components/ui/button";
 import api from "@/libs/api";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/hooks/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Trash2 } from "lucide-react";
@@ -98,13 +98,23 @@ export function LinkShareManager({
 		deleteMemberMutation.mutate(memberId);
 	};
 
+	const queryClient = useQueryClient();
+
 	return (
 		<Dialog
 			open={isOpen}
 			onOpenChange={async (open) => {
 				setIsOpen(open);
 				setTimeout(() => (document.body.style.pointerEvents = ""), 500);
-				await membersAllowed.refetch();
+
+				if (open) {
+					await Promise.all([
+						membersAllowed.refetch(),
+						queryClient.refetchQueries({
+							queryKey: ["workspace/members"],
+						}),
+					]);
+				}
 			}}
 		>
 			<DialogTrigger asChild></DialogTrigger>

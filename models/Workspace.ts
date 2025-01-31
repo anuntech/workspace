@@ -186,58 +186,89 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
 				},
 			],
 		},
-		links: [
-			{
-				title: {
-					type: String,
-					required: [true, "O título do link é obrigatório."],
-				},
-				url: {
-					type: String,
-				},
-				icon: {
-					type: {
+		links: {
+			type: [
+				{
+					title: {
 						type: String,
-						enum: ["image", "emoji", "lucide", "favicon"],
-						required: true,
-					},
-					value: {
-						type: String,
+						required: [true, "O título do link é obrigatório."],
+						maxlength: [
+							30,
+							"O título do link não pode ter mais de 30 caracteres.",
+						],
+						minlength: [1, "O título do link não pode estar vazio."],
 						trim: true,
-						maxlength: MAX_ICON_VALUE_LENGTH,
 					},
-				},
-				urlType: {
-					type: String,
-					enum: ["none", "iframe", "newWindow", "sameWindow"],
-					default: "none",
-					required: true,
-				},
-				fields: [
-					{
-						key: {
+					url: {
+						type: String,
+						maxlength: [500, "A URL não pode ter mais de 1000 caracteres."],
+						trim: true,
+					},
+					icon: {
+						type: {
 							type: String,
+							enum: ["image", "emoji", "lucide", "favicon"],
 							required: true,
 						},
 						value: {
 							type: String,
-							required: true,
-						},
-						redirectType: {
-							type: String,
-							enum: ["iframe", "newWindow", "sameWindow"],
-							default: "iframe",
-							required: true,
+							trim: true,
+							maxlength: MAX_ICON_VALUE_LENGTH,
+							required: [true, "O valor do ícone é obrigatório."],
 						},
 					},
-				],
-				membersAllowed: {
-					type: [mongoose.Schema.Types.ObjectId],
-					ref: "User",
-					default: [],
+					urlType: {
+						type: String,
+						enum: ["none", "iframe", "newWindow", "sameWindow"],
+						default: "none",
+						required: true,
+					},
+					fields: {
+						type: [
+							{
+								key: {
+									type: String,
+									required: true,
+									maxlength: [
+										50,
+										"A chave do campo não pode ter mais de 50 caracteres.",
+									],
+									minlength: [1, "A chave do campo não pode estar vazia."],
+									trim: true,
+								},
+								value: {
+									type: String,
+									required: true,
+									maxlength: [
+										500,
+										"O valor do campo não pode ter mais de 500 caracteres.",
+									],
+									minlength: [1, "O valor do campo não pode estar vazio."],
+									trim: true,
+								},
+								redirectType: {
+									type: String,
+									enum: ["iframe", "newWindow", "sameWindow"],
+									default: "iframe",
+									required: true,
+								},
+							},
+						],
+						validate: {
+							validator: function (fields: any[]) {
+								return fields.length <= 20;
+							},
+							message: "Cada link pode ter no máximo 20 campos.",
+						},
+					},
+					membersAllowed: {
+						type: [mongoose.Schema.Types.ObjectId],
+						ref: "User",
+						default: [],
+					},
 				},
-			},
-		],
+			],
+		},
 	},
 	{
 		toJSON: { virtuals: true },
@@ -294,6 +325,18 @@ workspaceSchema.pre("validate", async function (next) {
 					)?.role,
 				}))
 				.filter((member) => member.memberId && member.role) as any;
+		}
+
+		// Add link validation
+		if (this.isModified("links")) {
+			const maxLinks = this.plan === "free" ? 10 : 50;
+			if (this.links.length > maxLinks) {
+				const errorMessage =
+					this.plan === "free"
+						? "Workspaces gratuitos podem ter no máximo 10 links. Atualize para premium para adicionar mais links."
+						: "Workspaces premium podem ter no máximo 50 links.";
+				this.invalidate("links", errorMessage);
+			}
 		}
 
 		next();

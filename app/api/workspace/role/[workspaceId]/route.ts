@@ -19,7 +19,7 @@ async function GETHandler(
 
 	const { workspaceId } = params;
 
-	if (!mongoose.Types.ObjectId.isValid(workspaceId)) {
+	if (!workspaceId || !mongoose.Types.ObjectId.isValid(workspaceId)) {
 		return NextResponse.json(
 			{ error: "Invalid workspace ID" },
 			{ status: 400 },
