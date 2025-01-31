@@ -250,15 +250,29 @@ workspaceSchema.pre("save", async function (next) {
 
 workspaceSchema.pre("validate", async function (next) {
 	try {
-		const emails = this.invitedMembersEmail.map((invite) => invite.email);
-		if (new Set(emails).size !== emails.length) {
-			throw new Error("Emails convidados devem ser únicos");
-		}
+		const uniqueEmails = Array.from(
+			new Set(this.invitedMembersEmail.map((invite) => invite.email)),
+		);
+		this.invitedMembersEmail = uniqueEmails.map((email) => ({
+			email,
+			invitedAt:
+				this.invitedMembersEmail.find((invite) => invite.email === email)
+					?.invitedAt || new Date(),
+		}));
 
-		const memberIds = this.members.map((member) => member.memberId.toString());
-		if (new Set(memberIds).size !== memberIds.length) {
-			throw new Error("IDs de membros devem ser únicos");
-		}
+		const uniqueMemberIds = Array.from(
+			new Set(this.members.map((member) => member.memberId.toString())),
+		);
+		this.members = uniqueMemberIds
+			.map((memberId) => ({
+				memberId: this.members.find(
+					(member) => member.memberId.toString() === memberId,
+				)?.memberId,
+				role: this.members.find(
+					(member) => member.memberId.toString() === memberId,
+				)?.role,
+			}))
+			.filter((member) => member.memberId && member.role) as any;
 
 		next();
 	} catch (error) {
