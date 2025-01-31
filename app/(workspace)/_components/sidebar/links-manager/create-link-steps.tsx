@@ -70,6 +70,8 @@ export function CreateLinkStepsDialog({
 	);
 
 	useEffect(() => {
+		if (data !== initialFormData) return;
+
 		if (linkId && link) {
 			const formData = new FormData();
 			formData.append("icon", link.icon.value);
