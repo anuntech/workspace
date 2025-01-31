@@ -6,6 +6,7 @@ import Workspace from "@/models/Workspace";
 import mongoose from "mongoose";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
+import { getAuthorizationToInviteUser } from "@/app/api/workspace/invite/_utils/get-authorization-to-invite-user";
 
 export const DELETE = routeWrapper(
 	DELETEHandler,
@@ -30,7 +31,12 @@ async function DELETEHandler(
 		return NextResponse.json({ error: "Workspace not found" }, { status: 404 });
 	}
 
-	if (worksPace.owner.toString() !== session.user.id) {
+	const isAuthorizedToInviteUser = getAuthorizationToInviteUser(
+		worksPace,
+		session,
+	);
+
+	if (!isAuthorizedToInviteUser) {
 		return NextResponse.json(
 			{ error: "You do not have permission to remove this member" },
 			{ status: 403 },

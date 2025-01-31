@@ -27,7 +27,11 @@ import { NavLinks } from "./nav-links";
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const sideBar = useSidebar();
 	const session = useSession();
-	sideBar.setOpen(localStorage?.getItem("sidebar") == "true");
+	sideBar.setOpen(
+		localStorage?.getItem("sidebar") == "true" ||
+			localStorage?.getItem("sidebar") == undefined,
+	);
+
 	const urlParams = useSearchParams();
 	const workspace = urlParams.get("workspace");
 	const applicationsQuery = useQuery({
