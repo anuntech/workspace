@@ -230,8 +230,8 @@ const workspaceSchema = new mongoose.Schema<IWorkspace>(
 									type: String,
 									required: true,
 									maxlength: [
-										50,
-										"A chave do campo não pode ter mais de 50 caracteres.",
+										30,
+										"A chave do campo não pode ter mais de 30 caracteres.",
 									],
 									minlength: [1, "A chave do campo não pode estar vazia."],
 									trim: true,
