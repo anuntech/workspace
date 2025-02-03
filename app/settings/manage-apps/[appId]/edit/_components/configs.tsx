@@ -187,14 +187,12 @@ export const Configs = ({ data, id }: Props) => {
 	const onSubmit = (data: BasicInformationForm) => {
 		if (!isValid) return;
 
-		console.log(data);
 
 		const dataWithImages = {
 			...data,
 			images: getValues("images"),
 		};
 
-		console.log(dataWithImages);
 
 		saveApplicationMutation.mutate(dataWithImages);
 	};

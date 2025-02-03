@@ -37,7 +37,7 @@ export default function ServicePage({ params }: { params: { id: string } }) {
 		return;
 	}
 
-	if (linksQuery.isPending || linksQuery.isRefetching) {
+	if (linksQuery.isPending) {
 		return (
 			<div className="h-[100vh] flex justify-center items-center">
 				<LoaderCircle className="m-auto animate-spin" />

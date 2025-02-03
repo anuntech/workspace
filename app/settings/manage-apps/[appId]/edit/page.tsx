@@ -68,8 +68,6 @@ export default function EditPage({ params }: { params: { appId: string } }) {
 
 	if (!application) return <></>;
 
-	console.log(application);
-
 	return (
 		<>
 			<header className="flex sticky top-0 bg-background h-16 shrink-0 items-center gap-2 px-4">

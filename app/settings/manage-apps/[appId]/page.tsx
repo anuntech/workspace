@@ -29,8 +29,6 @@ export default function MembersPage({ params }: { params: { appId: string } }) {
 		(app: any) => app._id === params.appId,
 	);
 
-	console.log(application);
-
 	return (
 		<>
 			<header className="flex sticky top-0 bg-background h-16 shrink-0 items-center gap-2 px-4">

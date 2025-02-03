@@ -37,8 +37,6 @@ export function NavFavorites() {
 		return <Skeleton className="h-7 mx-2" />;
 	}
 
-	console.log(applicationsQuery.data.data);
-
 	let enabledApplications: any;
 
 	if (applicationsQuery?.data?.data && applicationsQuery.data.status === 200) {

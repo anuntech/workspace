@@ -140,8 +140,6 @@ export const LinkFormComponent = ({
 	const onSubmit = (data: PrincipalLinkForm) => {
 		if (!isValid) return;
 
-		console.log(data);
-
 		saveApplicationMutation.mutate(data);
 	};
 

@@ -198,7 +198,6 @@ export function CreateLinkStepsDialog({
 	};
 
 	const handleSave = () => {
-		console.log("handleSave");
 		const formData = new FormData();
 
 		formData.append("url", data.principalLink.link || "");
