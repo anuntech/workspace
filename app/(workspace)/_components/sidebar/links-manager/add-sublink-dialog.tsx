@@ -33,7 +33,10 @@ interface AddSublinkDialogProps {
 }
 
 const sublinkSchema = z.object({
-	title: z.string().min(1, "Título é obrigatório"),
+	title: z
+		.string()
+		.min(1, "Título é obrigatório")
+		.max(30, "Título máximo de 30 caracteres"),
 	link: z.string().url("Link inválido").min(1, "Link é obrigatório"),
 	type: z.enum(["iframe", "newWindow", "sameWindow"]),
 });
