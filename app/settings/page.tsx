@@ -33,6 +33,8 @@ import {
 	BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Loader, LoaderCircle } from "lucide-react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 
 type Workspace = {
 	name?: string;
@@ -93,7 +95,18 @@ export default function SettingsPage() {
 		handleSubmit,
 		setValue,
 		formState: { isSubmitting },
-	} = useForm<Workspace>();
+	} = useForm<Workspace>({
+		resolver: zodResolver(
+			z.object({
+				name: z
+					.string()
+					.min(1, { message: "O nome é obrigatório" })
+					.regex(/^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/, {
+						message: "O nome deve conter apenas letras e espaços.",
+					}),
+			}),
+		),
+	});
 
 	const queryClient = useQueryClient();
 

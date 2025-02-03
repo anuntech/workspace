@@ -22,7 +22,7 @@ const workspaceSchema = z
 		"O nome do workspace não pode exceder 50 caracteres. Por favor, insira um nome mais curto.",
 	)
 	.regex(
-		/^[a-zA-Z0-9 _-]+$/,
+		/^[A-Za-zÀ-ÖØ-öø-ÿ0-9\s\-_]+$/,
 		"O nome do workspace contém caracteres inválidos. Use apenas letras, números, espaços, traços ou sublinhados.",
 	);
 

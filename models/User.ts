@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema(
 			trim: true,
 			maxlength: 100,
 			validate: {
-				validator: (v: string) => /^[a-zA-Z\s]+$/.test(v),
+				validator: (v: string) => /^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/.test(v),
 				message: "O nome deve conter apenas letras e espaços.",
 			},
 		},
