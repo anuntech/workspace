@@ -104,6 +104,13 @@ export default function SettingsPage() {
 					.regex(/^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/, {
 						message: "O nome deve conter apenas letras e espaços.",
 					}),
+				icon: z.object({
+					value: z.string().min(1, { message: "O avatar é obrigatório" }),
+					type: z
+						.string()
+						.min(1, { message: "O tipo de avatar é obrigatório" }),
+				}),
+				id: z.string().min(1, { message: "O workspace é obrigatório" }),
 			}),
 		),
 	});
