@@ -77,14 +77,13 @@ async function PATCHHandler(
 		return NextResponse.json({ error: "Workspace not found" }, { status: 404 });
 	}
 
-	const userRole = worksPace.members.find(
-		(member) => member.memberId.toString() === memberId,
-	);
+	const memberRole = worksPace.members.find(
+		(member) => member.memberId.toString() === session.user.id.toString(),
+	)?.role;
 
 	if (
-		userRole &&
-		userRole?.role != "admin" &&
-		worksPace.owner.toString() !== session.user.id
+		worksPace.owner.toString() !== session.user.id &&
+		memberRole !== "admin"
 	) {
 		return NextResponse.json(
 			{ error: "You do not have permission to update this workspace" },
