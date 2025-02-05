@@ -51,8 +51,8 @@ async function POSTHandler(request: Request) {
 			{ status: 403 },
 		);
 	}
-
-	if (worksPace.members.map((a) => a.memberId).includes(user.id)) {
+  
+	if (worksPace.members.map((a) => a.memberId.toString()).includes(user.id)) {
 		return NextResponse.json(
 			{ error: "You are already a member of this workspace" },
 			{ status: 403 },
