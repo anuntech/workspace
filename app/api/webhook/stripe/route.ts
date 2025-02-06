@@ -51,11 +51,6 @@ async function POSTHandler(req: NextRequest) {
 			const stripeObject: Stripe.Checkout.Session = event.data
 				.object as Stripe.Checkout.Session;
 
-			if (stripeObject.payment_status !== "paid") {
-				console.log("Payment not completed yet.");
-				break;
-			}
-
 			const session = await findCheckoutSession(stripeObject.id);
 
 			const customerId = session?.customer;
@@ -88,6 +83,11 @@ async function POSTHandler(req: NextRequest) {
 			} else {
 				console.error("No user found");
 				throw new Error("No user found");
+			}
+
+			if (stripeObject.payment_status !== "paid") {
+				console.log("Payment not completed yet.");
+				break;
 			}
 
 			// Update user data + Grant user access to your product. It's a boolean in the database, but could be a number of credits, etc...
