@@ -51,7 +51,6 @@ async function POSTHandler(req: NextRequest) {
 			const stripeObject: Stripe.Checkout.Session = event.data
 				.object as Stripe.Checkout.Session;
 
-			// Check if the payment status is 'paid'
 			if (stripeObject.payment_status !== "paid") {
 				console.log("Payment not completed yet.");
 				break;
@@ -103,16 +102,12 @@ async function POSTHandler(req: NextRequest) {
 			const workspace = await Workspace.findById(workspaceId);
 			if (type == "premium") {
 				workspace.plan = "premium";
-			} else if (type == "app") {
-				workspace.boughtApplications.push(
-					new mongoose.Types.ObjectId(applicationId),
-				);
-			} else if (type == "app-rentable") {
+			} else if (type == "app" || type == "app-rentable") {
 				workspace.boughtApplications.push(
 					new mongoose.Types.ObjectId(applicationId),
 				);
 			}
-			workspace.save();
+			await workspace.save();
 
 			const subscriptionId = stripeObject.subscription; // ID da assinatura criada
 
@@ -184,7 +179,7 @@ async function POSTHandler(req: NextRequest) {
 				);
 			}
 
-			if (type == "app-rentable") {
+			if (type == "app-rentable" || type == "app") {
 				await Workspace.findByIdAndUpdate(workspaceId, {
 					$pull: {
 						boughtApplications: applicationId,
@@ -220,17 +215,17 @@ async function POSTHandler(req: NextRequest) {
 			const workspaceId = stripeObject.metadata?.workspaceId;
 			const type = stripeObject.metadata?.type;
 			const applicationId = stripeObject.metadata?.applicationId;
+
 			const workspace = await Workspace.findById(workspaceId);
 			if (type == "premium") {
 				workspace.plan = "premium";
-			} else if (type == "app") {
+			} else if (type == "app" || type == "app-rentable") {
 				workspace.boughtApplications.push(
 					new mongoose.Types.ObjectId(applicationId),
 				);
 			}
 
-			workspace.save();
-
+			await workspace.save();
 			break;
 		}
 

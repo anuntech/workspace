@@ -45,7 +45,7 @@ const config = {
 				// REQUIRED — we use this to find the plan in the webhook (for instance if you want to update the user's credits based on the plan)
 				priceId:
 					process.env.NODE_ENV === "development"
-						? "price_1QG2taDt9rgw0mera1J81f09"
+						? "price_1QDATbDt9rgw0merdExAQP6j"
 						: "price_1PvmfsDt9rgw0merrFqNh1Nc",
 				//  REQUIRED - Name of the plan, displayed on the pricing page
 				name: "Workspace Anual",
