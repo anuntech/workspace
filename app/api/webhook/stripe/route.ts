@@ -51,6 +51,12 @@ async function POSTHandler(req: NextRequest) {
 			const stripeObject: Stripe.Checkout.Session = event.data
 				.object as Stripe.Checkout.Session;
 
+			// Check if the payment status is 'paid'
+			if (stripeObject.payment_status !== "paid") {
+				console.log("Payment not completed yet.");
+				break;
+			}
+
 			const session = await findCheckoutSession(stripeObject.id);
 
 			const customerId = session?.customer;
