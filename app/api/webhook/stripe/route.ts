@@ -219,7 +219,7 @@ async function POSTHandler(req: NextRequest) {
 				);
 			}
 
-			workspace.save();
+			await workspace.save();
 
 			const subscriptionId = stripeObject.subscription;
 
