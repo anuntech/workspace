@@ -103,11 +103,7 @@ async function POSTHandler(req: NextRequest) {
 			const workspace = await Workspace.findById(workspaceId);
 			if (type == "premium") {
 				workspace.plan = "premium";
-			} else if (type == "app") {
-				workspace.boughtApplications.push(
-					new mongoose.Types.ObjectId(applicationId),
-				);
-			} else if (type == "app-rentable") {
+			} else if (type == "app" || type == "app-rentable") {
 				workspace.boughtApplications.push(
 					new mongoose.Types.ObjectId(applicationId),
 				);
@@ -184,7 +180,7 @@ async function POSTHandler(req: NextRequest) {
 				);
 			}
 
-			if (type == "app-rentable") {
+			if (type == "app-rentable" || type == "app") {
 				await Workspace.findByIdAndUpdate(workspaceId, {
 					$pull: {
 						boughtApplications: applicationId,
@@ -223,7 +219,7 @@ async function POSTHandler(req: NextRequest) {
 			const workspace = await Workspace.findById(workspaceId);
 			if (type == "premium") {
 				workspace.plan = "premium";
-			} else if (type == "app") {
+			} else if (type == "app" || type == "app-rentable") {
 				workspace.boughtApplications.push(
 					new mongoose.Types.ObjectId(applicationId),
 				);
