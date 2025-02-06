@@ -51,6 +51,11 @@ async function POSTHandler(req: NextRequest) {
 			const stripeObject: Stripe.Checkout.Session = event.data
 				.object as Stripe.Checkout.Session;
 
+			if (stripeObject.payment_status !== "paid") {
+				console.log("Payment not completed yet.");
+				break;
+			}
+
 			const session = await findCheckoutSession(stripeObject.id);
 
 			const customerId = session?.customer;
@@ -92,29 +97,29 @@ async function POSTHandler(req: NextRequest) {
 			// user.hasAccess = true;
 			await user.save();
 
-			// const type = stripeObject.metadata?.type;
-			// const applicationId = stripeObject.metadata?.applicationId;
-			// const workspace = await Workspace.findById(workspaceId);
-			// if (type == "premium") {
-			// 	workspace.plan = "premium";
-			// } else if (type == "app" || type == "app-rentable") {
-			// 	workspace.boughtApplications.push(
-			// 		new mongoose.Types.ObjectId(applicationId),
-			// 	);
-			// }
-			// workspace.save();
+			const type = stripeObject.metadata?.type;
+			const applicationId = stripeObject.metadata?.applicationId;
+			const workspace = await Workspace.findById(workspaceId);
+			if (type == "premium") {
+				workspace.plan = "premium";
+			} else if (type == "app" || type == "app-rentable") {
+				workspace.boughtApplications.push(
+					new mongoose.Types.ObjectId(applicationId),
+				);
+			}
+			await workspace.save();
 
-			// const subscriptionId = stripeObject.subscription; // ID da assinatura criada
+			const subscriptionId = stripeObject.subscription; // ID da assinatura criada
 
-			// if (subscriptionId) {
-			// 	await stripe.subscriptions.update(subscriptionId as string, {
-			// 		metadata: {
-			// 			workspaceId: stripeObject.metadata.workspaceId,
-			// 			applicationId: stripeObject.metadata.applicationId,
-			// 			type: stripeObject.metadata.type,
-			// 		},
-			// 	});
-			// }
+			if (subscriptionId) {
+				await stripe.subscriptions.update(subscriptionId as string, {
+					metadata: {
+						workspaceId: stripeObject.metadata.workspaceId,
+						applicationId: stripeObject.metadata.applicationId,
+						type: stripeObject.metadata.type,
+					},
+				});
+			}
 
 			// Extra: send email with user link, product page, etc...
 			// try {
@@ -210,6 +215,7 @@ async function POSTHandler(req: NextRequest) {
 			const workspaceId = stripeObject.metadata?.workspaceId;
 			const type = stripeObject.metadata?.type;
 			const applicationId = stripeObject.metadata?.applicationId;
+
 			const workspace = await Workspace.findById(workspaceId);
 			if (type == "premium") {
 				workspace.plan = "premium";
@@ -220,19 +226,6 @@ async function POSTHandler(req: NextRequest) {
 			}
 
 			await workspace.save();
-
-			const subscriptionId = stripeObject.subscription;
-
-			if (subscriptionId) {
-				await stripe.subscriptions.update(subscriptionId as string, {
-					metadata: {
-						workspaceId: stripeObject.metadata.workspaceId,
-						applicationId: stripeObject.metadata.applicationId,
-						type: stripeObject.metadata.type,
-					},
-				});
-			}
-
 			break;
 		}
 

@@ -21,7 +21,7 @@ const config = {
 			{
 				// REQUIRED — we use this to find the plan in the webhook (for instance if you want to update the user's credits based on the plan)
 				priceId:
-					process.env.STRIPE_PRICE === "development"
+					process.env.NODE_ENV === "development"
 						? "price_1QDATbDt9rgw0merdExAQP6j"
 						: "price_1PIzblDt9rgw0merPasD5R4m",
 				//  REQUIRED - Name of the plan, displayed on the pricing page
@@ -44,7 +44,7 @@ const config = {
 			{
 				// REQUIRED — we use this to find the plan in the webhook (for instance if you want to update the user's credits based on the plan)
 				priceId:
-					process.env.STRIPE_PRICE === "development"
+					process.env.NODE_ENV === "development"
 						? "price_1QDATbDt9rgw0merdExAQP6j"
 						: "price_1PvmfsDt9rgw0merrFqNh1Nc",
 				//  REQUIRED - Name of the plan, displayed on the pricing page
