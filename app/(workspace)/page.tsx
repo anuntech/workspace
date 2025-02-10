@@ -58,7 +58,7 @@ export default function WorkspacePage() {
 					<Breadcrumb>
 						<BreadcrumbList>
 							<BreadcrumbItem>
-								<BreadcrumbPage>Dashboard</BreadcrumbPage>
+								<BreadcrumbPage>Página Inicial</BreadcrumbPage>
 							</BreadcrumbItem>
 						</BreadcrumbList>
 					</Breadcrumb>
