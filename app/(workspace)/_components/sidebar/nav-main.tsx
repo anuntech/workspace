@@ -1,23 +1,16 @@
 "use client";
 
-import { ChevronRight, House, Settings, type LucideIcon } from "lucide-react";
+import { Brain, Code, Cpu, House, Server, Settings } from "lucide-react";
 
-import {
-	Collapsible,
-	CollapsibleContent,
-	CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import { Collapsible } from "@/components/ui/collapsible";
 import {
 	SidebarGroup,
 	SidebarGroupLabel,
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarMenuItem,
-	SidebarMenuSub,
-	SidebarMenuSubButton,
-	SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "../../../../components/ui/skeleton";
 import Link from "next/link";
@@ -37,7 +30,7 @@ export function NavMain() {
 
 	return (
 		<SidebarGroup>
-			<SidebarGroupLabel>Plataforma</SidebarGroupLabel>
+			<SidebarGroupLabel>Menu</SidebarGroupLabel>
 			<SidebarMenu>
 				<Collapsible asChild className="group/collapsible">
 					<SidebarMenuItem>
@@ -48,7 +41,21 @@ export function NavMain() {
 						>
 							<Link href={`/?workspace=${workspace}`}>
 								<House />
-								<span>Dashboard</span>
+								<span>Página Inicial</span>
+							</Link>
+						</SidebarMenuButton>
+					</SidebarMenuItem>
+				</Collapsible>
+				<Collapsible asChild className="group/collapsible">
+					<SidebarMenuItem>
+						<SidebarMenuButton
+							className="hover:bg-gray-200 hover:text-gray-900 transition-colors duration-150"
+							asChild
+							tooltip={"Anuntech IA"}
+						>
+							<Link href={`/ia?workspace=${workspace}`}>
+								<Cpu />
+								<span>Anuntech IA</span>
 							</Link>
 						</SidebarMenuButton>
 					</SidebarMenuItem>
