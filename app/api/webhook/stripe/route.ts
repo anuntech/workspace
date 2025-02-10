@@ -96,6 +96,11 @@ async function POSTHandler(req: NextRequest) {
 
 			// user.hasAccess = true;
 			await user.save();
+      
+      if (stripeObject.payment_status !== "paid") {
+				console.log("Payment not completed yet.");
+				break;
+			}
 
 			const type = stripeObject.metadata?.type;
 			const applicationId = stripeObject.metadata?.applicationId;
