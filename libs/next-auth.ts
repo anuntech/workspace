@@ -93,16 +93,22 @@ export const authOptions: NextAuthOptionsExtended = {
 			return url.startsWith(baseUrl) ? url : baseUrl;
 		},
 	},
-	...(process.env.NODE_ENV === "production" && {
-		cookies: {
-			sessionToken: {
-				name: `__Secure-next-auth.session-token`,
-				options: {
-					domain: `.${process.env.DOMAIN}`,
-				},
+	cookies: {
+		sessionToken: {
+			name:
+				process.env.NODE_ENV === "production"
+					? "__Secure-next-auth.session-token"
+					: "next-auth.session-token",
+			options: {
+				domain:
+					process.env.NODE_ENV === "production" ? ".anuntech.com" : undefined,
+				path: "/",
+				secure: process.env.NODE_ENV === "production",
+				sameSite: "lax",
 			},
 		},
-	}),
+	},
+
 	session: {
 		strategy: "jwt",
 	},
