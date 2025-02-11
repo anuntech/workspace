@@ -84,8 +84,8 @@ export default function ServicePage({ params }: { params: { id: string } }) {
 			<iframe
 				src={
 					!subFieldUrl
-						? `${app.applicationUrl}?workspace=${workspace}`
-						: `${subFieldUrl}?workspace=${workspace}`
+						? `${app.applicationUrl}?workspaceId=${workspace}`
+						: `${subFieldUrl}?workspaceId=${workspace}`
 				}
 				width="100%"
 				height="100%"
