@@ -93,6 +93,16 @@ export const authOptions: NextAuthOptionsExtended = {
 			return url.startsWith(baseUrl) ? url : baseUrl;
 		},
 	},
+	...(process.env.NODE_ENV === "production" && {
+		cookies: {
+			sessionToken: {
+				name: `__Secure-next-auth.session-token`,
+				options: {
+					domain: `.${process.env.DOMAIN}`,
+				},
+			},
+		},
+	}),
 	session: {
 		strategy: "jwt",
 	},
