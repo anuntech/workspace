@@ -101,7 +101,7 @@ export const authOptions: NextAuthOptionsExtended = {
 					: "next-auth.session-token",
 			options: {
 				domain:
-					process.env.NODE_ENV === "production" ? ".anuntech.com" : undefined,
+					process.env.NODE_ENV === "production" ? ".anun.tech" : undefined,
 				path: "/",
 				secure: process.env.NODE_ENV === "production",
 				sameSite: "lax",
