@@ -91,6 +91,8 @@ async function PUTHandler(request: Request) {
 
 	let application;
 
+	console.log(fieldId);
+
 	if (fieldId) {
 		application = await Applications.findOneAndUpdate(
 			{
