@@ -96,14 +96,13 @@ export const authOptions: NextAuthOptionsExtended = {
 	cookies: {
 		sessionToken: {
 			name:
-				process.env.NODE_ENV === "production"
-					? "__Secure-next-auth.session-token"
-					: "next-auth.session-token",
+				process.env.DOMAIN === "localhost"
+					? "next-auth.session-token"
+					: "__Secure-next-auth.session-token",
 			options: {
-				domain:
-					process.env.NODE_ENV === "production" ? ".anun.tech" : undefined,
+				domain: process.env.DOMAIN,
 				path: "/",
-				secure: process.env.NODE_ENV === "production",
+				secure: process.env.DOMAIN !== "localhost",
 				sameSite: "lax",
 			},
 		},

@@ -52,7 +52,10 @@ export const MenuMain = ({ data, id }: Props) => {
 								<LinkFormComponent
 									data={{
 										basicInformation: data.basicInformation,
-										link: data.principalLink,
+										link: {
+											applicationUrl: data.principalLink.applicationUrl,
+											applicationUrlType: data.principalLink.applicationUrlType,
+										},
 									}}
 									id={id}
 									menuType="menu-main"

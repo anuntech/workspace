@@ -115,6 +115,15 @@ export const LinkFormComponent = ({
 				dataUpdated = data;
 			}
 
+			if (linkType === "principal-link") {
+				const { data } = await api.put(
+					`/api/applications/edit/${menuType}`,
+					formData,
+				);
+
+				dataUpdated = data;
+			}
+
 			return dataUpdated;
 		},
 		onSuccess: () => {
