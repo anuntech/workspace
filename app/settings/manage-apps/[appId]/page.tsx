@@ -57,7 +57,7 @@ export default function MembersPage({ params }: { params: { appId: string } }) {
 								switch (option.type) {
 									case "iframe":
 										return (
-											<TabsTrigger key={option.id} value={option.id}>
+											<TabsTrigger key={option._id} value={option._id}>
 												{option.title}
 											</TabsTrigger>
 										);
@@ -65,8 +65,8 @@ export default function MembersPage({ params }: { params: { appId: string } }) {
 										return (
 											<a href={option.link} className="w-full">
 												<TabsTrigger
-													key={option.id}
-													value={option.id}
+													key={option._id}
+													value={option._id}
 													className="w-full"
 												>
 													{option.title}
@@ -76,6 +76,7 @@ export default function MembersPage({ params }: { params: { appId: string } }) {
 									case "newWindow":
 										return (
 											<button
+												key={option._id}
 												onClick={() => window.open(option.link, "_blank")}
 												className="w-full text-left"
 											>
@@ -91,7 +92,7 @@ export default function MembersPage({ params }: { params: { appId: string } }) {
 							<MembersManager params={params} />
 						</TabsContent>
 						{application?.configurationOptions.map((option: any) => (
-							<TabsContent key={option.id} value={option.id}>
+							<TabsContent key={option._id} value={option._id}>
 								<iframe
 									src={option.link}
 									width="100%"
