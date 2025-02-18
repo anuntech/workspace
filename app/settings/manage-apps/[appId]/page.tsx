@@ -47,50 +47,54 @@ export default function MembersPage({ params }: { params: { appId: string } }) {
 				</Breadcrumb>
 			</header>
 			<main className="flex flex-col items-center p-10">
-				<div className="w-full max-w-3xl space-y-5">
-					<Tabs defaultValue="members-manager" className="space-y-10">
-						<TabsList>
-							<TabsTrigger value="members-manager">
-								Gerencenciar membros
-							</TabsTrigger>
-							{application?.configurationOptions.map((option: any) => {
-								switch (option.type) {
-									case "iframe":
-										return (
-											<TabsTrigger key={option._id} value={option._id}>
-												{option.title}
-											</TabsTrigger>
-										);
-									case "sameWindow":
-										return (
-											<a href={option.link} className="w-full">
-												<TabsTrigger
-													key={option._id}
-													value={option._id}
-													className="w-full"
-												>
+				<div className="w-full space-y-5">
+					<Tabs defaultValue="members-manager" className="space-y-10 mx-auto">
+						<div className="max-w-3xl mx-auto">
+							<TabsList>
+								<TabsTrigger value="members-manager">
+									Gerencenciar membros
+								</TabsTrigger>
+								{application?.configurationOptions.map((option: any) => {
+									switch (option.type) {
+										case "iframe":
+											return (
+												<TabsTrigger key={option._id} value={option._id}>
 													{option.title}
 												</TabsTrigger>
-											</a>
-										);
-									case "newWindow":
-										return (
-											<button
-												key={option._id}
-												onClick={() => window.open(option.link, "_blank")}
-												className="w-full text-left"
-											>
-												<div className="px-3 py-1.5 text-sm font-medium">
-													{option.title}
-												</div>
-											</button>
-										);
-								}
-							})}
-						</TabsList>
-						<TabsContent value="members-manager">
-							<MembersManager params={params} />
-						</TabsContent>
+											);
+										case "sameWindow":
+											return (
+												<a href={option.link} className="w-full">
+													<TabsTrigger
+														key={option._id}
+														value={option._id}
+														className="w-full"
+													>
+														{option.title}
+													</TabsTrigger>
+												</a>
+											);
+										case "newWindow":
+											return (
+												<button
+													key={option._id}
+													onClick={() => window.open(option.link, "_blank")}
+													className="w-full text-left"
+												>
+													<div className="px-3 py-1.5 text-sm font-medium">
+														{option.title}
+													</div>
+												</button>
+											);
+									}
+								})}
+							</TabsList>
+						</div>
+						<div className="max-w-3xl mx-auto">
+							<TabsContent value="members-manager">
+								<MembersManager params={params} />
+							</TabsContent>
+						</div>
 						{application?.configurationOptions.map((option: any) => (
 							<TabsContent key={option._id} value={option._id}>
 								<iframe
