@@ -19,7 +19,7 @@ export async function errorHandler(
 			stack: error?.stack,
 			user: session?.user?.id,
 			workspace: url.searchParams.get("workspaceId"),
-			requestBody: request.body ? await request.clone().json() : null,
+			requestBody: request.body ? await readRequestBody(request) : null,
 			queryParams: Object.fromEntries(url.searchParams),
 			timestamp: new Date(),
 			errorType: error?.name || "Error",
@@ -53,4 +53,19 @@ export async function errorHandler(
 			},
 		},
 	);
+}
+
+async function readRequestBody(request: Request): Promise<any> {
+	try {
+		const clonedRequest = request.clone();
+		return await clonedRequest.json();
+	} catch (error) {
+		try {
+			// Fallback to reading the body directly
+			return await request.json();
+		} catch (e) {
+			console.error("Failed to read request body:", e);
+			return null;
+		}
+	}
 }
