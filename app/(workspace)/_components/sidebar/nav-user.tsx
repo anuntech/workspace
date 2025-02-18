@@ -1,6 +1,7 @@
 "use client";
 
 import { BadgeCheck, Bell, ChevronsUpDown, LogOut } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
 	DropdownMenu,
@@ -23,6 +24,7 @@ import { getS3Image } from "@/libs/s3-client";
 import { signOut } from "next-auth/react";
 import api from "@/libs/api";
 import { IconComponent } from "@/components/get-lucide-icons";
+import { version } from "../../../../package.json";
 
 export function NavUser() {
 	const { isMobile } = useSidebar();
@@ -131,6 +133,9 @@ export function NavUser() {
 									<span className="truncate font-semibold">{data?.name}</span>
 									<span className="truncate text-xs">{data?.email}</span>
 								</div>
+							</div>
+							<div className="px-2">
+								<Badge className="mr-2">Beta v{version}</Badge>
 							</div>
 						</DropdownMenuLabel>
 						<DropdownMenuSeparator />
