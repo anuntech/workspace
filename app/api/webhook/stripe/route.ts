@@ -44,6 +44,7 @@ async function POSTHandler(req: NextRequest) {
 
 	eventType = event.type;
 
+	console.log("eventType", eventType);
 	switch (eventType) {
 		case "checkout.session.completed": {
 			// First payment is successful and a subscription is created (if mode was set to "subscription" in ButtonCheckout)
@@ -85,19 +86,25 @@ async function POSTHandler(req: NextRequest) {
 				throw new Error("No user found");
 			}
 
-			if (stripeObject.payment_status !== "paid") {
-				console.log("Payment not completed yet.");
-				break;
-			}
-
-			// Update user data + Grant user access to your product. It's a boolean in the database, but could be a number of credits, etc...
 			user.priceId = priceId;
 			user.customerId = customerId;
 
 			// user.hasAccess = true;
 			await user.save();
-      
-      if (stripeObject.payment_status !== "paid") {
+
+			const subscriptionId = stripeObject.subscription; // ID da assinatura criada
+
+			if (subscriptionId) {
+				await stripe.subscriptions.update(subscriptionId as string, {
+					metadata: {
+						workspaceId: stripeObject.metadata.workspaceId,
+						applicationId: stripeObject.metadata.applicationId,
+						type: stripeObject.metadata.type,
+					},
+				});
+			}
+
+			if (stripeObject.payment_status !== "paid") {
 				console.log("Payment not completed yet.");
 				break;
 			}
@@ -113,18 +120,6 @@ async function POSTHandler(req: NextRequest) {
 				);
 			}
 			await workspace.save();
-
-			const subscriptionId = stripeObject.subscription; // ID da assinatura criada
-
-			if (subscriptionId) {
-				await stripe.subscriptions.update(subscriptionId as string, {
-					metadata: {
-						workspaceId: stripeObject.metadata.workspaceId,
-						applicationId: stripeObject.metadata.applicationId,
-						type: stripeObject.metadata.type,
-					},
-				});
-			}
 
 			// Extra: send email with user link, product page, etc...
 			// try {
@@ -242,6 +237,34 @@ async function POSTHandler(req: NextRequest) {
 			//      - We will receive a "customer.subscription.deleted" when all retries were made and the subscription has expired
 
 			break;
+
+		case "invoice.payment_succeeded": {
+			// serve para BOLETO
+			const invoice: Stripe.Invoice = event.data.object as Stripe.Invoice;
+			const subscriptionId = invoice.subscription as string;
+
+			if (subscriptionId) {
+				const subscription =
+					await stripe.subscriptions.retrieve(subscriptionId);
+				const subscriptionMetadata = subscription.metadata;
+				const workspaceId = subscriptionMetadata.workspaceId;
+				const type = subscriptionMetadata.type;
+				const applicationId = subscriptionMetadata.applicationId;
+
+				const workspace = await Workspace.findById(
+					new mongoose.Types.ObjectId(workspaceId),
+				);
+				if (type == "premium") {
+					workspace.plan = "premium";
+				} else if (type == "app" || type == "app-rentable") {
+					workspace.boughtApplications.push(
+						new mongoose.Types.ObjectId(applicationId),
+					);
+				}
+				await workspace.save();
+			}
+			break;
+		}
 
 		default:
 		// Unhandled event type
