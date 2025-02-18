@@ -38,6 +38,7 @@ jobs:
           echo "NEXTAUTH_URL=${{ vars.NEXTAUTH_URL }}" >> .env
           echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
           echo "STRIPE_PRICE=development" >> .env
+          echo "DOMAIN=${{ vars.DOMAIN }}" >> .env
 
       - name: Install Dependencies
         run: |
