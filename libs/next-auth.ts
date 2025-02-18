@@ -93,6 +93,21 @@ export const authOptions: NextAuthOptionsExtended = {
 			return url.startsWith(baseUrl) ? url : baseUrl;
 		},
 	},
+	cookies: {
+		sessionToken: {
+			name:
+				process.env.DOMAIN === "localhost"
+					? "next-auth.session-token"
+					: "__Secure-next-auth.session-token",
+			options: {
+				domain: process.env.DOMAIN,
+				path: "/",
+				secure: process.env.DOMAIN !== "localhost",
+				sameSite: "lax",
+			},
+		},
+	},
+
 	session: {
 		strategy: "jwt",
 	},
