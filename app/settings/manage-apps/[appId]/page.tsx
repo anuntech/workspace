@@ -98,7 +98,7 @@ export default function MembersPage({ params }: { params: { appId: string } }) {
 						{application?.configurationOptions.map((option: any) => (
 							<TabsContent key={option._id} value={option._id}>
 								<iframe
-									src={option.link}
+									src={`${option.link}?workspaceId=${workspace}`}
 									width="100%"
 									style={{ border: "none", height: "70vh" }}
 									title="Roteiro Digital"
