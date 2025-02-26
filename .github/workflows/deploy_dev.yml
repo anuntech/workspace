@@ -39,6 +39,7 @@ jobs:
           echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
           echo "STRIPE_PRICE=development" >> .env
           echo "DOMAIN=${{ vars.DOMAIN }}" >> .env
+          echo "ALLOWED_ORIGINS=${{ vars.ALLOWED_ORIGINS }}" >> .env
 
       - name: Install Dependencies
         run: |
