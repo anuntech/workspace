@@ -4,59 +4,57 @@ import type { NextRequest } from "next/server";
 const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",") ?? [];
 
 const corsOptions = {
-	"Access-Control-Allow-Credentials": "true",
-	"Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-	"Access-Control-Allow-Headers":
-		"Content-Type, Authorization, X-Requested-With, Accept",
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Headers":
+                "Content-Type, Authorization, X-Requested-With, Accept",
 };
 
 export const middleware = async (request: NextRequest) => {
-	const cookieIsUpdated = request.cookies.get("cookie-is-updated");
+        const cookieIsUpdated = request.cookies.get("cookie-is-updated");
 
-	const response = NextResponse.next();
+        const response = NextResponse.next();
 
-	if (!cookieIsUpdated || cookieIsUpdated.value !== "true") {
-		const cookieName =
-			process.env.NODE_ENV === "production"
-				? "__Secure-next-auth.session-token"
-				: "next-auth.session-token";
-		const cookie = request.cookies.get(cookieName);
+        if (!cookieIsUpdated || cookieIsUpdated.value !== "true") {
+                const cookieName =
+                        process.env.NODE_ENV === "production"
+                                ? "__Secure-next-auth.session-token"
+                                : "next-auth.session-token";
+                const cookie = request.cookies.get(cookieName);
 
-		if (cookie) {
-			response.cookies.delete(cookieName);
-			response.cookies.set("cookie-is-updated", "true");
-		}
-	}
+                if (cookie) {
+                        response.cookies.delete(cookieName);
+                        response.cookies.set("cookie-is-updated", "true");
+                }
+        }
 
-	// Check the origin from the request
-	const origin = request.headers.get("origin") ?? "";
-	const isAllowedOrigin = allowedOrigins.includes(origin);
+        const origin = request.headers.get("origin") ?? "";
+        const isAllowedOrigin = allowedOrigins.includes(origin);
 
-	// Handle preflighted requests
-	const isPreflight = request.method === "OPTIONS";
+        const isPreflight = request.method === "OPTIONS";
 
-	if (isPreflight) {
-		const preflightHeaders = {
-			...(isAllowedOrigin && { "Access-Control-Allow-Origin": origin }),
-			...corsOptions,
-		};
-		return NextResponse.json({}, { headers: preflightHeaders });
-	}
+        if (isPreflight) {
+                const preflightHeaders = {
+                        ...(isAllowedOrigin && { "Access-Control-Allow-Origin": origin }),
+                        ...corsOptions,
+                };
+                return NextResponse.json({}, { headers: preflightHeaders });
+        }
 
-	if (isAllowedOrigin) {
-		response.headers.set("Access-Control-Allow-Origin", origin);
-	}
+        if (isAllowedOrigin) {
+                response.headers.set("Access-Control-Allow-Origin", origin);
+        }
 
-	Object.entries(corsOptions).forEach(([key, value]) => {
-		response.headers.set(key, value);
-	});
+        Object.entries(corsOptions).forEach(([key, value]) => {
+                response.headers.set(key, value);
+        });
 
-	return response;
+        return response;
 };
 
 export const config = {
-	matcher: [
-		"/api/:path*",
-		"/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
-	],
+        matcher: [
+                "/api/:path*",
+                "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
+        ],
 };
