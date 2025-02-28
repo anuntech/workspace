@@ -81,11 +81,6 @@ export default function ServicePage({ params }: { params: { id: string } }) {
 					</Breadcrumb>
 				</div>
 			</header>
-			{isIframeLoading && (
-				<div className="h-[100vh] flex justify-center items-center">
-					<LoaderCircle className="m-auto animate-spin text-[#3b82f6]" />
-				</div>
-			)}
 			<iframe
 				src={!subFieldUrl ? app.url : subFieldUrl}
 				width="100%"
