@@ -24,12 +24,12 @@ export default async function OnboardingLayout({
 				</Link>
 			</header>
 			<main className="flex flex-1 flex-col items-center justify-center gap-8">
-				<img
-					src="/anuntech-icon-black.png"
+				<Image
+					src="/anuntech.png"
 					width={100}
 					height={100}
 					alt="Anuntech Logo"
-					className="mb-[-20px]"
+					className="mb-[-25px]"
 				/>
 				{children}
 			</main>
