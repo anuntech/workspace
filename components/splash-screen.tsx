@@ -1,33 +1,26 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React from "react";
+
+import Image from "next/image";
 
 export default function SplashScreen({ onFinish }: { onFinish: () => void }) {
-	const videoRef = useRef<HTMLVideoElement>(null);
-
 	const handleVideoEnd = () => {
-		onFinish();
+		setTimeout(() => {
+			onFinish();
+		}, 3000);
 	};
 
 	return (
 		<div className="fixed inset-0 z-50 flex items-center justify-center bg-white">
-			<video
-				ref={videoRef}
-				src="/splash.mp4"
-				autoPlay
-				muted
-				onEnded={handleVideoEnd}
-				className="w-1/2 h-1/2 object-cover"
+			<Image
+				src="/gif.gif"
+				alt="Splash Screen"
+				className="object-cover"
+				width={500}
+				height={500}
+				onLoad={handleVideoEnd}
 			/>
-			{/* Botão de pular se desejar */}
-			{/*
-      <button
-        onClick={onFinish}
-        className="absolute top-4 right-4 text-white z-50"
-      >
-        Pular
-      </button>
-      */}
 		</div>
 	);
 }

@@ -21,6 +21,7 @@ import {
 	PlusSquare,
 	UserPlus,
 } from "lucide-react";
+import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 
 export function TutorialDashboard() {
@@ -107,11 +108,12 @@ export function TutorialDashboard() {
 
 	return (
 		<div className="flex flex-col items-center justify-center h-[88vh] px-4">
-			<img
-				src="./anuntech-icon-black.png"
+			<Image
+				src="/anuntech.png"
 				width={200}
 				height={200}
 				alt="Anuntech Logo"
+				className="mb-[-25px]"
 			/>
 
 			<h1 className="text-3xl font-bold mb-6 tracking-wide text-gray-800">
