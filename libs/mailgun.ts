@@ -50,7 +50,7 @@ export const sendEmail = async ({
 
 	await mg.messages.create(
 		(config.mailgun.subdomain ? `${config.mailgun.subdomain}.` : "") +
-			config.domainName,
+			config.mailgun.domain,
 		data,
 	);
 };
