@@ -51,7 +51,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
 	return (
 		<Sidebar
-			collapsible="icon"
+			collapsible="offcanvas"
 			className="bg-[#F4F4F5] border-none" // Add your custom background color here
 			{...props}
 		>
