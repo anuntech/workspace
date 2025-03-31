@@ -89,7 +89,6 @@ async function POSTHandler(request: Request) {
 			{ status: 403 },
 		);
 	}
-
 	await Workspace.findByIdAndUpdate(workspaceId, {
 		$push: {
 			invitedMembersEmail: { email, invitedAt: new Date() },
@@ -110,10 +109,10 @@ async function POSTHandler(request: Request) {
 		);
 	}
 
-	await sendInviteWorkspaceEmail(email, workspaceId, worksPace.name);
 	if (user) {
 		await sendInviteNotification(user.id, session.user.id, worksPace.id);
 	}
+	await sendInviteWorkspaceEmail(email, workspaceId, worksPace.name);
 
 	return NextResponse.json(user);
 }

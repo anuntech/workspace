@@ -35,11 +35,6 @@ export default function IA() {
 					</Breadcrumb>
 				</div>
 			</header>
-			{isIframeLoading && (
-				<div className="h-[100vh] flex justify-center items-center">
-					<LoaderCircle className="m-auto animate-spin text-[#3b82f6]" />
-				</div>
-			)}
 			<iframe
 				src="https://ia.anun.tech"
 				width="100%"

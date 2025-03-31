@@ -49,6 +49,7 @@ export interface ConfigProps {
 		cdn?: string;
 	};
 	mailgun: {
+		domain: string;
 		subdomain: string;
 		fromNoReply: string;
 		fromAdmin: string;
