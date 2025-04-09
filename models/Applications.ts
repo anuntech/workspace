@@ -47,7 +47,7 @@ const applicationSchema = new mongoose.Schema<IApplications>(
 		cta: {
 			type: String,
 			trim: true,
-			maxlength: 50,
+			maxlength: 200,
 		},
 		applicationUrl: {
 			type: String,
