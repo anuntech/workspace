@@ -46,9 +46,9 @@ export default function MembersPage({ params }: { params: { appId: string } }) {
 					</BreadcrumbList>
 				</Breadcrumb>
 			</header>
-			<main className="flex flex-col items-center p-10">
-				<div className="w-full space-y-5">
-					<Tabs defaultValue="members-manager" className="space-y-10 mx-auto">
+			<main className="flex flex-col items-center">
+				<div className="w-full">
+					<Tabs defaultValue="members-manager" className="space-y-5 mx-auto">
 						<div className="max-w-3xl mx-auto">
 							<TabsList>
 								<TabsTrigger value="members-manager">
@@ -100,7 +100,7 @@ export default function MembersPage({ params }: { params: { appId: string } }) {
 								<iframe
 									src={`${option.link}?workspaceId=${workspace}`}
 									width="100%"
-									style={{ border: "none", height: "70vh" }}
+									style={{ border: "none", height: "calc(100vh - 7.5rem)" }}
 									title="Roteiro Digital"
 								/>
 							</TabsContent>
