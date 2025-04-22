@@ -23,8 +23,8 @@ export default async function SettingsLayout({
 			<RedirectIsMember>
 				<AppSidebar />
 				<SidebarInset className="bg-[#F4F4F5]">
-					<div className="flex flex-1 bg-white flex-col h-[100vh] rounded-2xl">
-						<main className="overflow-auto bg-white">{children}</main>
+					<div className="flex flex-1 bg-white flex-col pt-0 h-[100vh]">
+						{children}
 					</div>
 				</SidebarInset>
 			</RedirectIsMember>

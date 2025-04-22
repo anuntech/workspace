@@ -46,8 +46,8 @@ export default function WorkspacePage() {
 
 	return (
 		<>
-			<header className="flex h-14 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 px-4">
-				<div className="flex items-center gap-2">
+			<header className="flex h-14 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+				<div className="flex items-center gap-2 px-4">
 					<SidebarTrigger
 						onClick={() =>
 							localStorage.setItem("sidebar", String(!sideBar.open))
