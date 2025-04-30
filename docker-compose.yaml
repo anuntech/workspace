@@ -23,7 +23,7 @@ services:
         - STRIPE_PRICE=${STRIPE_PRICE}
         - DOMAIN=${DOMAIN}
         - ALLOWED_ORIGINS=${ALLOWED_ORIGINS}
-    container_name: nextjs-container
+    container_name: workspace-container
     restart: always
     ports:
       - "3000:3000"
